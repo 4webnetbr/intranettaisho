@@ -1,0 +1,169 @@
+
+.sidebar{
+    display: block;
+    position: absolute;
+    z-index: 100;
+    left:0rem;  
+    top: -0.3rem;
+    width: 3.5rem;
+    border: 1px solid #ccc; 
+    border-radius: 0 0.8rem 0.8rem 0rem;
+    transition: width 0.4s ease-in-out;
+    transform-origin: left;
+    transform-style: preserve-3D;
+    min-height: calc(100vh + 1rem);
+    max-height: calc(100vh + 1rem);
+    overflow: hidden;
+}
+
+.sidebar.active{
+    transition: width 0.4s ease-in-out;
+    transform-origin: left;
+    transform-style: preserve-3D;
+    width: 20rem;
+    min-width: 3.5rem;
+    max-width: 25rem;
+}
+
+.mod_nome, a .men_nome, .usu_nome{
+    /* width: 7rem; */
+    transition: all 0.4s  linear;
+    transform-origin: left;
+    transform-style: preserve-3D;
+    transform: scale(0);
+    white-space: nowrap;
+}
+
+.sidebar.active .mod_nome, .sidebar.active a .men_nome, .sidebar.active .usu_nome{
+    display: inline-block;
+    transition: all 0.4s linear ; 
+    transform-origin: left;
+    transform-style: preserve-3D;
+    white-space: nowrap;
+    transform: scale(1);
+}
+/* .manutencao{
+    transition: all 0.4s linear;
+    transform-origin: right;
+    transform-style: preserve-3D;
+} */
+
+
+.bt-manut, .bt_user{
+    max-height: 3rem;
+    height: 3rem;
+    /* width: auto;     */
+    border-radius: 5rem;
+    white-space: nowrap;
+}
+
+.img-user{
+    width: 30px;
+    height: 30px;
+    margin-left: -0.1rem;
+}
+
+.txt-bt-manut{
+    display: inline-block;
+    font-size: 1.5rem;
+    line-height: 2.5rem;
+    text-align: left;    
+    white-space: nowrap;
+    /* width: 7.5rem; */
+    transition: all 0.4s linear;
+    transform-origin: right;
+    transform-style: preserve-3D;
+    transform: scale(0);
+}
+
+.txt-bt-manut:not(d.none){
+    transform: scale(1);
+}
+
+.logo-menu{
+    position: absolute;
+    -webkit-transform: translate(0%,-60%);
+    -ms-transform: translate(0%,-60%);
+    transform: translate(0%,-60%);
+    left: 5%;
+    height: 3rem;
+    width: auto;
+}
+.icon-menu{
+    font-size: 1.7rem;
+    padding: 0.25rem;
+    width: 2.5rem;
+    /* height: 2.5rem;     */
+}
+
+.accordion-button::after{
+    content: "\f0a5";
+    right: 1rem; 
+    font-family: 'Font Awesome 6 Free';
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+    flex-shrink: 0;
+    margin-left: auto;
+    background-image: none;
+    transition: var(--bs-accordion-btn-icon-transition);
+}
+
+.accordion-button:not(.collapsed)::after {
+    content: "\f0a5";
+    right: 3.5rem; 
+    font-family: 'Font Awesome 6 Free';
+    -webkit-transform: rotate(-450deg);
+    -o-transform: rotate(-450deg);
+    transform: rotate(-450deg);
+    background-image: none;
+    transition: var(--bs-accordion-btn-icon-transition);
+}
+
+#show_user.active:after {
+    content: "";
+    margin-left: auto;
+    display: inline-block;
+    position: absolute;
+    left: -0.9rem;
+    top: 0rem;
+    left: -1.9rem;
+    top: -0.1rem;
+    border-right: 1rem solid #0dcaf0;
+    border-bottom: 1rem solid transparent;
+    border-left: 1rem solid transparent;
+    border-top: 1rem solid #0dcaf0;
+}
+
+
+#show_user.active{
+    transform: scale(1); 
+}
+      
+#show_user{
+    /* display: block; */
+    z-index:1000;
+    margin-top:3rem; 
+    left: 16rem;
+    border: 1px solid;
+    border-radius: 0 1rem 1rem 1rem;
+    transition: all 0.4s linear;
+    transform-origin: left top;
+    transform-style: preserve-3D;
+    transform: scale(0);
+}
+
+.nav-dropdown-menu {
+    min-height: 2rem;
+    max-height: 2rem;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap;
+}
+
+.nav-dropdown-menu.active, .nav-dropdown-menu.active a{
+    background-color: white;
+    border-radius: 1rem;
+    color:var(--bs-blue-light);/* #0458eb;*/
+    font-weight: bold;
+    font-style: italic;
+}

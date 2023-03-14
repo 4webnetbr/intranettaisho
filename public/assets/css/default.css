@@ -1,0 +1,297 @@
+/*---- DEFAULT -----------------------*/
+:root {
+    --bs-green-dark: #023b06;
+    --bs-blue-dark: #011542;
+    --bs-blue-light: #1491bb;
+    --bs-gray-500: #aaa8a8;
+    --bs-blue-claro: #b6d7f5;
+    --bs-white: #ffffff;
+    --bs-yellow-claro: #f4cb27;
+
+}
+
+.bg-blue-dark{
+    background-color: var(--bs-blue-dark);
+}
+
+.bg-green-dark{
+    background-color: var(--bs-green-dark);
+}
+
+.bg-green-light{
+    background-color: var(--bs-green-light);
+}
+
+.bg-white{
+    background-color: var(--bs-white);
+}
+
+.bg-blue-claro{
+    background-color: #cfe2ff61;
+}
+
+.bg-gray-500{
+    opacity: 0.7;
+    background-color: var(--bs-gray-500);
+}
+
+* { 
+    padding: 0; 
+    margin: 0; 
+}
+html,
+body{
+    max-height: 100vh;
+    max-width: 100vw;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    font-family: "Open Sans",sans-serif;
+    font-size:14px;
+}
+
+body::before {    
+    content: "";
+    background-color: aliceblue;
+    background-image: url('../images/logo_base.png');
+    background-repeat: repeat;
+    background-size: 10%;
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;    
+    opacity: 0.045;
+    transform: rotate(-30deg);
+    z-index: -1;   
+}
+
+a {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+a:hover {
+    color:var(--bs-blue-light);/* #0458eb;*/
+    font-weight: bold;
+    font-style: italic;
+}
+
+.content{
+    max-height: calc(100vh - 3rem);
+    min-height: calc(100vh - 3rem);
+    height: calc(100vh - 3rem);
+    overflow: hidden;
+    max-width: calc(100vw - 5rem);
+    width: calc(100vw - 5rem);
+    min-width: calc(100vw - 5rem);
+    position: absolute;
+    top: 5rem;
+    margin-left: 4rem;
+    margin-right: 4rem;
+}
+
+.title{
+    position: fixed;
+    top: 0rem;
+    left: 4rem;
+    max-height: 4rem;
+    min-height: 4rem;
+    height: 4rem;    
+    padding: 0.5rem 1rem;
+    max-width: calc(100vw - 5rem);
+    width: calc(100vw - 5rem);
+    min-width: calc(100vw - 5rem);
+}
+
+.container{
+    max-height: calc(100vh - 5rem);
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.tab-content{
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: 0 10px 10px 10px;
+}
+
+.tab-content>.tab-pane {
+    max-height: 80vh;
+    overflow: auto;
+}
+
+.tab-content>.tab-pane.show {
+    box-shadow: 0 -1px 1px 1px lightgrey;
+}
+.nav-item > .nav-link{
+    color: #aaa;
+}
+.nav-item > .nav-link:hover{
+    color: #000;
+}
+.nav-item > .nav-link.active{
+    margin-top: 3px;
+    box-shadow: 0 -1px 1px 1px lightgrey;
+    color: #0d6efd;
+}
+
+.form-label{
+    font-weight: 400;
+    font-style: italic;
+}
+
+.form-control:focus{ 
+    box-shadow: inset 0 0 2.5px 0.1rem rgb(13 110 253 / 25%);
+}
+.input-group-required {
+    display: flex;
+    align-items: center;
+    color: var(--bs-body-color);
+    text-align: center;
+    white-space: nowrap;
+    background-color: var(--bs-tertiary-bg);
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: 2rem;
+}
+
+.obrigatorio {
+    float: left;
+    color: red;
+    position: relative;
+    z-index: 100;
+}
+
+:required:not(select){
+    background-image: url(/assets/images/obriga2_red.png);
+    background-size: 7px 15px;
+    background-position: 0px 45%;
+    background-repeat: no-repeat;
+}
+
+select:required{
+    background-image: url(/assets/images/obriga2_red.png), var(--bs-form-select-bg-img),var(--bs-form-select-bg-icon,none);
+    background-repeat: no-repeat;
+    background-position: 0px 45%, right 0.75rem center;
+    background-size: 7px 15px, 16px 12px;
+}
+.form-control::placeholder {
+    color: gray;
+    opacity: 0.5;
+    font-style: italic;
+}
+
+.errors li{
+    list-style: none;
+    width: 100%;
+    text-align: center;
+}
+.errors ul{
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.form-control, .btn{
+    border-radius: 1.5rem;
+}
+
+.input-group-text {
+    border-top-right-radius: 1.5rem !important;
+    border-bottom-right-radius: 1.5rem !important;
+}
+
+.input-group-text.input-group-addon{
+    border-top-right-radius: 0rem !important;
+    border-bottom-right-radius: 0rem !important;
+    border-top-left-radius: 1.5rem !important;
+    border-bottom-left-radius: 1.5rem !important;
+}
+
+
+
+
+.header{
+    max-height: 4rem;
+    height: 4rem;
+    min-height: 4rem;
+    width: 100vw;
+}
+
+.bg-blue-dark{
+    background-color: var(--bs-blue-dark);
+    color: white;
+}
+
+.preloader {
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    background-color: #90A4AE;
+    opacity: 0.5; /* cor do background que vai ocupar o body */
+    z-index:1000; /* z-index para jogar para frente e sobrepor tudo */
+}
+
+.msgprocessando {
+    position: absolute;
+    color: var(--bs-blue-dark);
+    opacity: 1;
+    top: 50%; /* centralizar a parte interna do preload (onde fica a animação)*/
+    left: 50%;
+    transform: translate(-50%, -50%);  
+    z-index: 2000;
+}
+
+table.dataTable.table-info>thead.table-default th{
+    background-color: var(--bs-blue-dark);
+    color: white;
+}
+table.dataTable.table>:not(caption)>*>* {
+    background-color: transparent;
+    box-shadow: 0 0 0 0px #fff !important;
+}
+table.dataTable.table-info>tbody>tr.odd  {
+    background-color: white !important;
+    box-shadow: 0 0 0 0px #fff !important;
+}
+table.dataTable.table-info>tbody>tr.even{
+    background-color: var(--bs-blue-claro) !important;
+}
+table.dataTable.table-info>tbody>tr:hover, table.dataTable.table-striped>tbody>tr>*:hover {
+    background-color:   rgb(131 178 198) !important;
+    cursor: pointer;
+}
+
+/* SCROLLBAR PERSONALIZADO */
+::-webkit-scrollbar {
+    width: 20px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px #011542;
+    border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #011542;
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px white;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #1F76B6;
+}
+/* end: Preloader */
+
+.fade.in {
+    opacity: 1;
+}
+
+.btn.hover {
+    color: var(--bs-btn-hover-color);
+    background-color: var(--bs-btn-hover-bg);
+    border-color: var(--bs-btn-hover-border-color);
+}
