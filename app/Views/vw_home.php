@@ -1,0 +1,16 @@
+<?=$this->extend('templates/default_template')?>
+
+<?=$this->section('header');?>
+  <?=view('strut/vw_titulo');?>
+<?=$this->endSection();?>
+
+<?=$this->section('menu');?>
+    <?=view('strut/vw_menu');?>
+<?=$this->endSection();?>
+
+<?=$this->section('content');?>
+  <div id='content' class='container '>
+    <div class="row d-flex justify-content-between px-3">
+    </div>
+  </div>
+<?=$this->endSection();?>
