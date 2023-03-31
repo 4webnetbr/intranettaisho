@@ -13,12 +13,14 @@ class SetupClasseModel extends Model
     protected $useSoftDeletes   = true;
 
     protected $allowedFields    = ['clas_id',
+                                    'clas_modulo_id',
                                     'clas_titulo',
                                     'clas_icone',
                                     'clas_controler',
                                     'clas_tabela',
                                     'clas_descricao',
                                     'clas_regras_gerais',
+                                    'clas_regras_cadastro',
                                     'clas_texto_botao'
                                 ];
 
@@ -81,16 +83,20 @@ class SetupClasseModel extends Model
      * @param bool $id 
      * @return array
      */
-    public function getClasseId($id = false)
+    public function getClasseId($clas_id = false)
     {
-        $this->builder()
-                ->select('*');
-        if ($id) {
-            $this->builder()->where('clas_id', $id);
+        $db = db_connect();
+        $builder = $db->table('vw_setup_classe_relac');
+        $builder->select('*'); 
+        if($clas_id){
+            $builder->where("clas_id", $clas_id);
         }
-        $this->builder()->where('clas_excluido',null);
-        $this->builder()->orderBy('clas_titulo');
-        return $this->find();
+        $ret = $builder->get()->getResultArray();
+
+        // debug($this->db->getLastQuery(), false);
+        
+        return $ret;
+
     }                 
 
     /**
@@ -104,30 +110,40 @@ class SetupClasseModel extends Model
      */
     public function getClasseSearch($termo)
     {
-        $this->builder()
-        ->select('setup_classe.*, menu.men_id')
-        ->join('setup_menu menu', 'menu.men_classe_id = setup_classe.clas_id AND menu.men_excluido IS NULL','left')
-        ->where(trim(strtoupper('clas_controler')), trim(strtoupper($termo)));
-        return $this->find();
+        $s_titulo = ['clas_titulo' => $termo.'%'];
+        $s_contro = ['clas_controler' => $termo.'%'];
+        $db = db_connect();
+        $builder = $db->table('vw_setup_classe_relac');
+        $builder->select('*'); 
+        $builder->like($s_contro);
+        $builder->orLike($s_titulo);
+        $ret = $builder->get()->getResultArray();
+        // debug($this->db->getLastQuery(), false);
+        return $ret;
     }                 
 
     /**
-     * getClasseTitulo
+     * getClasseSearch
      *
-     * Retorna os dados da Classe, pelo Título informado
+     * Retorna os dados da Classe, pelo perfil (id) informado
      * Utilizado nas Seleções de Classe
      *  
-     * @param mixed $termo 
+     * @param mixed $perfil
      * @return array
      */
-    public function getClasseTitulo($termo)
+    public function getClassePerfil($perfil = false)
     {
-        $array = ['clas_titulo' => $termo.'%'];
-        $this->builder()->select(['clas_id','clas_titulo','clas_icone']);
-        $this->builder()->where('clas_excluido',null);
-        $this->builder()->like($array);
-    
-        return $this->builder()->get()->getResultArray();
-    }            
-    
+        $db = db_connect();
+        $builder = $db->table('vw_setup_classe_relac');
+        $builder->select('*'); 
+        if($perfil){
+            $builder->join('setup_perfil_item pit','pit.pit_classe_id = vw_setup_classe_relac.clas_id AND pit.pit_perfil_id = '.$perfil,'left');
+            // $builder->where('pit.pit_perfil_id',$perfil);
+        }
+        $ret = $builder->get()->getResultArray();
+        // debug($this->db->getLastQuery(), false);
+        return $ret;
+    }                 
+
+
 }

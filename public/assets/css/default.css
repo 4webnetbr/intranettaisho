@@ -3,6 +3,7 @@
     --bs-green-dark: #023b06;
     --bs-blue-dark: #011542;
     --bs-blue-light: #1491bb;
+    --bs-gray-padrao: #d8d7d7;
     --bs-gray-500: #aaa8a8;
     --bs-blue-claro: #b6d7f5;
     --bs-white: #ffffff;
@@ -33,6 +34,9 @@
 .bg-gray-500{
     opacity: 0.7;
     background-color: var(--bs-gray-500);
+}
+.bg-gray-padrao{
+    background-color: var(--bs-gray-padrao);
 }
 
 * { 
@@ -69,6 +73,7 @@ body::before {
 a {
     cursor: pointer;
     text-decoration: none;
+    color: inherit;
 }
 
 a:hover {
@@ -91,7 +96,15 @@ a:hover {
     margin-right: 4rem;
 }
 
-.title{
+.content_modal{
+    height: 40vh;
+    overflow: hidden;
+    margin-top: 5rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
+
+.title, .title-modal{
     position: fixed;
     top: 0rem;
     left: 4rem;
@@ -103,6 +116,12 @@ a:hover {
     width: calc(100vw - 5rem);
     min-width: calc(100vw - 5rem);
 }
+.title-modal{
+    position: relative;
+    display: inline;
+    width: max-content;
+}
+
 
 .container{
     max-height: calc(100vh - 5rem);
@@ -262,6 +281,27 @@ table.dataTable.table-info>tbody>tr:hover, table.dataTable.table-striped>tbody>t
     cursor: pointer;
 }
 
+table.dataTable>tbody>tr{
+    vertical-align: middle;
+}
+
+.dataTables_length{
+    width: 50%;
+    float: left;
+}
+.dt-buttons{
+    width: 20%;
+    float: left;
+    margin-right: 1%;
+}
+.dataTables_info{
+    width: 38%;
+    float: left;
+    padding-top:.15em !important;
+}
+.dataTables_paginate{
+    float: right;
+}
 /* SCROLLBAR PERSONALIZADO */
 ::-webkit-scrollbar {
     width: 20px;
@@ -294,4 +334,35 @@ table.dataTable.table-info>tbody>tr:hover, table.dataTable.table-striped>tbody>t
     color: var(--bs-btn-hover-color);
     background-color: var(--bs-btn-hover-bg);
     border-color: var(--bs-btn-hover-border-color);
+}
+
+.form-switch .form-check-input{
+    transform: rotate(-90deg);
+    margin: 0.5rem 0rem;
+    padding-left: 0;
+}
+.collapse-perfil.collapse:not(.show){
+    display: none;
+}
+.collapse-perfil.collapse{
+    display: inline-block;
+}
+.collapse-perfil.collapsing{
+    display: inline-block;
+}
+
+.toast{
+    transition: all 0.10s linear;
+    transform-origin: right;
+    transform-style: preserve-3D;
+    transform: scale(0);
+}
+
+.toast.show{
+    transform: scale(1);
+}
+
+.py-15{
+    padding-top: .15rem !important;
+    padding-bottom: .15rem !important;
 }

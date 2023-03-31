@@ -1,4 +1,5 @@
 <?php namespace App\Controllers\Setup;
+
 use App\Controllers\BaseController;
 use App\Models\Setup\SetupPerfilItemModel;
 
@@ -10,7 +11,7 @@ class Home_setup extends BaseController
 
 	public function __construct(){
 		$this->data 			= session()->getFlashdata('dados_classe');
-		$this->perfil_ite 		= new SetupPerfilItemModel();
+		// $this->perfil_ite 		= new SetupPerfilItemModel();
         if ($this->data['erromsg'] != '') {
             $this->__erro();
         }

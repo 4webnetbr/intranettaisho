@@ -25,16 +25,19 @@
     </table>
     </div>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js" integrity="sha512-a9NgEEK7tsCvABL7KqtUTQjl69z7091EVPpw5KxPlZ93T141ffe1woLtbXTX+r2/8TtTvRX/v4zTL2UlMUPgwg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js" integrity="sha512-pAoMgvsSBQTe8P3og+SAnjILwnti03Kz92V3Mxm0WOtHuA482QeldNM5wEdnKwjOnQ/X11IM6Dn3nbmvOz365g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/jszip-2.5.0/dt-1.13.2/b-2.3.4/b-colvis-2.3.4/b-html5-2.3.4/b-print-2.3.4/cr-1.6.1/date-1.3.0/fc-4.2.1/fh-3.3.1/kt-2.8.1/r-2.4.0/rg-1.3.0/rr-1.3.2/sc-2.1.0/sb-1.4.0/sp-2.1.1/sl-1.6.0/sr-1.2.1/datatables.min.css"/>
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css"/> -->
  
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/jszip-2.5.0/dt-1.13.2/b-2.3.4/b-colvis-2.3.4/b-html5-2.3.4/b-print-2.3.4/cr-1.6.1/date-1.3.0/fc-4.2.1/fh-3.3.1/kt-2.8.1/r-2.4.0/rg-1.3.0/rr-1.3.2/sc-2.1.0/sb-1.4.0/sp-2.1.1/sl-1.6.0/sr-1.2.1/datatables.min.js"></script>
 
     <script>
       jQuery('#table').dataTable({
         "ajax" : "<?=$url_lista;?>",
-        "responsive": true,
+        "bJQueryUI": true,
+        "responsive": false,
         "sPaginationType": "full_numbers",
         "aaSorting": [],
         "oLanguage": {
@@ -63,21 +66,76 @@
         "columnDefs": [
           { "visible": false, "targets": 0 }, 
           { "width": "8em", "targets": -1 },
-          { "orderable": false, "targets": -1 },
+          { "orderable": false, "targets": [-1] },
           { "className": "text-center acao", "targets": -1},
           { "className": "acao", "targets": 0 },
           { "className": "text-wrap", "targets": 1},
         ],
+        buttons: {
+          dom: {
+              button: {
+                  className: "btn btn-outline-primary btn-sm"
+              }
+          },
+          buttons: [
+            {
+                extend: 'excelHtml5',
+                title: function() {
+                  return document.title + ' - ' + jQuery('#legenda').text() ; 
+                },
+                filename: function() {
+                  return document.title + ' - ' + jQuery('#legenda').text() ; 
+                }, 
+                exportOptions: {
+                    columns: [':not(.acao)'],
+                },
+                // className: 'btn-outline-primary' 
+            },
+            {
+                extend: 'pdfHtml5',
+                text: 'PDF',
+                title: function() {
+                  return document.title + ' - ' + jQuery('#legenda').text() ; 
+                },
+                filename: function() {
+                  return document.title + ' - ' + jQuery('#legenda').text() ; 
+                }, 
+                exportOptions: {
+                    columns: [':not(.acao)'],
+                },
+                // className: 'btn-outline-primary' 
+            },
+            {
+                extend: 'print', 
+                text: 'Imprimir',
+                title: function() {
+                  return document.title + ' - ' + jQuery('#legenda').text() ; 
+                },
+                exportOptions: {
+                    columns: [':not(.acao)'],
+                },
+                // className: 'btn-outline-primary' 
+            },
+          ]
+        },
         "bProcessing": true,
-        "bScrollCollapse": true,
+        "bScrollCollapse": false,
         "bPaginate": true,
-        // "sDom": 'frtBip',
+        "sDom": 'lrftBip', 
+        // "sDom": 'fltBip',  
         "fnDrawCallback": function (oSettings) {
           jQuery('table#table > tbody > tr').on("mouseover",function() {
             jQuery(this).children().find('.btn').addClass('hover');
           }).on('mouseleave', function () {
             jQuery(this).children().find('.btn').removeClass('hover');
           });
+        }
+      });
+
+
+      jQuery('#table').on('click', 'tbody tr td:not(".acao")', function() {
+        if(this.parentNode.children[0].children[0].href != null){
+          redireciona(this.parentNode.children[0].children[0].href);
         }
       });
     </script>

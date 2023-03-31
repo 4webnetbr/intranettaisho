@@ -112,8 +112,12 @@ class Login extends BaseController
                 $usu_tipo       = $log_setup[0]['usu_tipo'];
                 $sem_avat       = base_url('assets/images/sem_avatar.png');
                 $logo_def       = base_url('assets/images/logo_header.png');
+                $icone          = base_url('assets/images/favicon.png');
+                $path_ser       = FCPATH.'assets/uploads/usuario/';
                 $img_path       = site_url('assets/uploads/usuario/');
-                if(file_exists($img_path.$img_name)){
+                // echo $img_path.$img_name;
+                // exit;
+                if(file_exists($path_ser.$img_name)){
                     $avatar = $img_path.$img_name;
                 } else {
                     $avatar = $sem_avat;
@@ -131,12 +135,13 @@ class Login extends BaseController
                     'usu_whats'     => isset($log_setup[0]['usu_whats'])?$log_setup[0]['usu_whats']:'N',
                     'usu_avatar'    => $avatar,
                     'logo'          => $logo_def,
+                    'icone'         => $icone,
                     'logged_in'     => true,
                     'ismobile'      => $mobile
                 ];
                 $session->set($newdata);
                 // debug($session,false);
-                return redirect()->to('/home_setup');
+                return redirect()->to('/home');
             } else {
                 $session->setFlashdata('msg', 'Usuário ou Senha Inválidos');
                 return redirect()->to('/login');

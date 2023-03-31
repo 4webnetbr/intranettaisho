@@ -39,18 +39,20 @@ class loginFilter implements FilterInterface
                 $retorno['permissao']   = false;
                 $retorno['erromsg'] = '<h2>Atenção</h2>A Classe <b>'.$nomeclasse.'</b> <span style="color:red">Não foi Encontrada!</span><br>Informe o Problema ao Administrador do Sistema!';
             } else {
-                $busca_classe = $busca_classe[0];
+                $busca_classe           = $busca_classe[0];
                 $retorno['icone']       = $busca_classe['clas_icone'];
                 $retorno['title']       = $busca_classe['clas_titulo'];
                 $retorno['controler']   = $busca_classe['clas_controler'];
                 $retorno['metodo']      = $metodo;
-                $retorno['opc_menu']    = $busca_classe['men_id'];
+                $retorno['regras_gerais']    = $busca_classe['clas_regras_gerais'];
+                $retorno['regras_cadastro']    = $busca_classe['clas_regras_cadastro'];
                 $retorno['bt_add']      = $busca_classe['clas_texto_botao']; 
                 $retorno['perfil_usu']  = $perfil_usu; 
-                $retorno['it_menu']     = $menu->getMenuPerfil($perfil_usu, $tipo_usu);
+                // $retorno['it_menu']     =  $menu->getMenuPerfil($perfil_usu, $tipo_usu);
+                $retorno['it_menu']     =  monta_menu($perfil_usu, $tipo_usu);
                 // d($retorno['it_menu']);
-                if ($busca_classe['men_id']) { 
-                    $busca_permissoes       = $perfil_pit->getItemPerfil($perfil_usu, $busca_classe['men_id']);
+                if ($busca_classe['clas_id']) { 
+                    $busca_permissoes       = $perfil_pit->getItemPerfilClasse($perfil_usu, $busca_classe['clas_id']);
                     // d($busca_permissoes);
                     if (sizeof($busca_permissoes) == 0) {
                         $retorno['permissao']   = '';
@@ -63,7 +65,7 @@ class loginFilter implements FilterInterface
                 // $response = service('response');
                 // d($retorno);
                 $retorno['erromsg'] = '';
-                if($metodo == ''){
+                if($metodo == '' || $metodo == 'index'){
                     if ($retorno['permissao'] == '') {
                         $retorno['erromsg'] = '<h2>Sem autorização para acessar a lista de <br>'.$retorno['title'].'</h2><br>Solicite acesso ao Administrador do Sistema';
                     }

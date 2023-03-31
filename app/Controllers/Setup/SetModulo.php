@@ -26,7 +26,7 @@ Class SetModulo extends BaseController
 	public function index() 
 	{
         $this->data['desc_metodo'] = 'Listagem de ';
-        $this->data['colunas'] = array('ID','Módulo','Ordem','Ações');
+        $this->data['colunas'] = array('ID','Módulo','Ações');
         $this->data['url_lista']  = base_url($this->data['controler'].'/lista');
 
         echo view('vw_lista', $this->data);
@@ -48,13 +48,12 @@ Class SetModulo extends BaseController
                 $exclui = "<button class='btn btn-outline-danger btn-sm' data-mdb-toggle='tooltip' data-mdb-placement='top' title='Excluir este Registro' onclick='excluir(\"".$url_del."\",\"".$modu['mod_nome']."\")'><i class='far fa-trash-alt'></i></button>";
             }
             
-            $dados_modulo[$p]['mod_nome'] = "<i class='".$modu['mod_icone']."'></i> ".$modu['mod_nome'];
+            $dados_modulo[$p]['mod_nome'] = anchor($this->data['controler'].'/edit/'.$modu['mod_id'],"<i class='".$modu['mod_icone']."'></i> ".$modu['mod_nome']);
             $dados_modulo[$p]['acao'] = $edit.' '.$exclui;
             $modu = $dados_modulo[$p];
             $result[] = [
                 $modu['mod_id'],
                 $modu['mod_nome'],
-                $modu['mod_order'],
                 $modu['acao']
             ];
         }
@@ -65,21 +64,26 @@ Class SetModulo extends BaseController
         echo json_encode($modus); 
     }
 
-    public function add(){
+    public function add($modal = false){
         $this->def_campos();
 
         $secao[0] = 'Dados Gerais'; 
-        $campos[0][0][0] = $this->mod_id; 
-        $campos[0][0][1] = $this->mod_nome;
-        $campos[0][0][2] = $this->mod_orde;
-        $campos[0][0][3] = $this->mod_icon;
+        $campos[0][0] = $this->mod_id; 
+        $campos[0][1] = $this->mod_nome;
+        $campos[0][2] = $this->mod_orde;
+        $campos[0][3] = $this->mod_icon;
 
 		$this->data['secoes']     = $secao;
         $this->data['campos']     = $campos;
 		$this->data['destino']    = 'store';
 
         $this->data['desc_metodo'] = 'Cadastro de ';
-		echo view('vw_edicao', $this->data);
+        if(!$modal){
+            echo view('vw_edicao', $this->data);
+        } else {
+            // $this->data['destino']    = 'store/modal';
+            echo view('vw_edicao_modal', $this->data);
+        }
     }
 
     public function edit($id){
@@ -87,10 +91,10 @@ Class SetModulo extends BaseController
 		$this->def_campos($dados_modulo);
 
         $secao[0] = 'Dados Gerais'; 
-        $campos[0][0][0] = $this->mod_id; 
-        $campos[0][0][1] = $this->mod_nome;
-        $campos[0][0][2] = $this->mod_orde;
-        $campos[0][0][3] = $this->mod_icon;
+        $campos[0][0] = $this->mod_id; 
+        $campos[0][1] = $this->mod_nome;
+        $campos[0][2] = $this->mod_orde;
+        $campos[0][3] = $this->mod_icon;
 
 		$this->data['secoes']     = $secao;
         $this->data['campos']     = $campos;

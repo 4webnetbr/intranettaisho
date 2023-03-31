@@ -13,6 +13,7 @@ class SetDicionario extends BaseController
     {
         $this->data      = session()->getFlashdata('dados_classe');
         $this->dicionario  = new SetupDicDadosModel();
+        $this->permissao = $this->data['permissao'];
         if ($this->data['erromsg'] != '') {
             $this->__erro();
         }
@@ -26,9 +27,7 @@ class SetDicionario extends BaseController
     public function index()
     {
         $this->data['colunas'] = ['Nome', 'Nome', 'Registros','Descrição',  'Ações'];
-        $this->data['url_lista'] = base_url(
-            $this->data['controler'] . '/lista'
-        );
+        $this->data['url_lista'] = base_url($this->data['controler'].'/lista');
 
         echo view('vw_lista', $this->data);
     }
@@ -40,21 +39,24 @@ class SetDicionario extends BaseController
         // debug($dados_tab, false);
         for ($p = 0; $p < sizeof($dados_tab); $p++) {
             $tabela = $dados_tab[$p];
-            $detalhes = anchor(
-                $this->data['controler'] . "/show/" . $tabela['table_name'],
-                '<i class="far fa-eye"></i>',
-                [
-                    'class' => 'btn btn-outline-info btn-sm mx-1',
-                    'data-mdb-toggle' => 'tooltip',
-                    'data-mdb-placement' => 'top',
-                    'title' => 'Detalhes da Tabela', 
-                ]
-            );
-
+            $detalhes = '';
+            if (strpbrk($this->permissao, 'C')) {
+                $detalhes = anchor(
+                    $this->data['controler'] . "/show/" . $tabela['table_name'],
+                    '<i class="far fa-eye"></i>',
+                    [
+                        'class' => 'btn btn-outline-info btn-sm mx-1',
+                        'data-mdb-toggle' => 'tooltip',
+                        'data-mdb-placement' => 'top',
+                        'title' => 'Detalhes da Tabela', 
+                    ]
+                );
+            }
+            $dados_tab[$p]['table_name'] = anchor($this->data['controler'] . "/show/" . $tabela['table_name'],$tabela['table_name']);
             $dados_tab[$p]['acao'] = $detalhes;
             $tabela = $dados_tab[$p];
             $result[] = [
-                $tabela['table_name'],
+                $tabela['table_rows'],
                 $tabela['table_name'],
                 $tabela['table_rows'],
                 $tabela['table_comment'],
@@ -75,18 +77,18 @@ class SetDicionario extends BaseController
         $this->def_campos($dados_tabela);
 
         $secao[0] = 'Dados Gerais';
-        $campos[0][0][0] = $this->tab_id;
-        $campos[0][0][1] = $this->tab_nome;
-        $campos[0][0][2] = $this->tab_desc;
-        $campos[0][0][3] = $this->tab_regi;
+        $campos[0][0] = $this->tab_id;
+        $campos[0][1] = $this->tab_nome;
+        $campos[0][2] = $this->tab_desc;
+        $campos[0][3] = $this->tab_regi;
 
         $this->def_campos_campos($table);
 
         $secao[1] = 'Campos';
-        $campos[1][0][0] = $this->tab_camp;
+        $campos[1][0] = $this->tab_camp;
 
         $secao[2] = 'Relacionamentos';
-        $campos[2][0][0] = $this->tab_trel;
+        $campos[2][0] = $this->tab_trel;
         // debug($campos);
         // 
         $this->data['secoes'] = $secao;
@@ -121,15 +123,15 @@ class SetDicionario extends BaseController
         $this->tab_nome = $nome->create();
 
         $desc = new Campos();
-        $desc->objeto = 'textoarea';
-        $desc->tipo = 'textarea';
+        $desc->objeto = 'texto';
         $desc->nome = 'table_comment';
         $desc->id = 'table_comment';
         $desc->label = 'Descrição';
         $desc->place = 'Descrição';
-        $nome->leitura = true;
-        $desc->size = 80;
-        $desc->tamanho = 3;
+        $desc->leitura = true;
+        $desc->size     = 70;
+        $desc->max_size = 3;
+        $desc->tamanho  = 80;
         $desc->valor = isset($dados['table_comment'])
             ? $dados['table_comment']
             : '';

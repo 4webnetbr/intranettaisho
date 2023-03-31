@@ -12,6 +12,7 @@ class SetFuncoes extends BaseController
     public function __construct()
     {
         $this->data      = session()->getFlashdata('dados_classe');
+        $this->permissao = $this->data['permissao'];
         if ($this->data['erromsg'] != '') {
             $this->__erro();
         }
@@ -58,19 +59,24 @@ class SetFuncoes extends BaseController
                             $nome = '';
                             $descricao = $lin_func[1];
                         }
-                        $detalhes = anchor(
-                            $this->data['controler'] . "/show/" .$arquivo.'/'.$c,
-                            '<i class="far fa-eye"></i>',
-                            [
-                                'class' => 'btn btn-outline-info btn-sm mx-1',
-                                'data-mdb-toggle' => 'tooltip',
-                                'data-mdb-placement' => 'top',
-                                'title' => 'Detalhes da Tabela', 
-                            ]
-                        );
+                        $detalhes = '';
+                        if (strpbrk($this->permissao, 'C')) {
+                            $detalhes = anchor(
+                                $this->data['controler'] . "/show/" .$arquivo.'/'.$c,
+                                '<i class="far fa-eye"></i>',
+                                [
+                                    'class' => 'btn btn-outline-info btn-sm mx-1',
+                                    'data-mdb-toggle' => 'tooltip',
+                                    'data-mdb-placement' => 'top',
+                                    'title' => 'Código da Função', 
+                                ]
+                            );
+                        }
+                        $arquiv = anchor(
+                            $this->data['controler'] . "/show/" .$arquivo.'/'.$c,$arquivo);
                         $result[] = [
                             $arquivo,
-                            $arquivo,
+                            $arquiv,
                             $nome,
                             $descricao,
                             $detalhes,
@@ -110,12 +116,14 @@ class SetFuncoes extends BaseController
                                 'class' => 'btn btn-outline-info btn-sm mx-1',
                                 'data-mdb-toggle' => 'tooltip',
                                 'data-mdb-placement' => 'top',
-                                'title' => 'Detalhes da Tabela', 
+                                'title' => 'Código da Função', 
                             ]
                         );
+                        $arquiv = anchor(
+                            $this->data['controler'] . "/show/" .$arquivo.'/'.$c,$arquivo);
                         $result[] = [
                             $arquivo,
-                            $arquivo,
+                            $arquiv,
                             $nome,
                             $descricao,
                             $detalhes,
@@ -177,7 +185,7 @@ class SetFuncoes extends BaseController
         $this->def_campos($funcao);
 
         $secao[0] = 'Código Fonte';
-        $campos[0][0][0] = $this->def_funcao;
+        $campos[0][0] = $this->def_funcao;
 
         $this->data['secoes'] = $secao;
         $this->data['campos'] = $campos;

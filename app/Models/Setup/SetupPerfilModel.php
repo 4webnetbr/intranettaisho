@@ -7,6 +7,7 @@ class SetupPerfilModel extends Model {
 
     protected $table      = 'setup_perfil';
     protected $primaryKey = 'per_id';
+    protected $useAutoIncrement = true;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = true;
@@ -14,21 +15,15 @@ class SetupPerfilModel extends Model {
     protected $allowedFields = ['per_id',
                                 'per_nome',
                                 'per_descricao',
-                                'per_empresa_id',
                                 ];
                                 
-    protected $useTimestamps = true;
-    protected $createdField  = 'per_criado';
-    protected $updatedField  = 'per_alterado';
-    protected $deletedField  = 'per_excluido';
-
-    protected $skipValidation     = false;    
-
+    protected $skipValidation   = true;  
+    protected $deletedField  = "per_excluido";
     // Callbacks
     protected $allowCallbacks = true;
-    protected $afterInsert   = ['depoisInsert'];
-    protected $afterUpdate   = ['depoisUpdate'];
-    protected $afterDelete   = ['depoisDelete'];
+    protected $afterInsert   = ["depoisInsert"];
+    protected $afterUpdate   = ["depoisUpdate"];
+    protected $afterDelete   = ["depoisDelete"];
 
     protected $logdb;
 
@@ -39,8 +34,8 @@ class SetupPerfilModel extends Model {
      */
     protected function depoisInsert(array $data) {
         $logdb = new LogMonModel(); 
-        $registro = $data['id'];
-        $log = $logdb->insertLog($this->table,'Incluído',$registro, $data['data']);
+        $registro = $data["id"];
+        $log = $logdb->insertLog($this->table,"Incluído",$registro, $data["data"]);
         return $data;
     }
 
@@ -51,8 +46,8 @@ class SetupPerfilModel extends Model {
      */
     protected function depoisUpdate(array $data) {
         $logdb = new LogMonModel(); 
-        $registro = $data['id'][0];
-        $log = $logdb->insertLog($this->table,'Alterado',$registro, $data['data']);
+        $registro = $data["id"][0];
+        $log = $logdb->insertLog($this->table,"Alterado",$registro, $data["data"]);
         return $data;
     } 
 
@@ -63,12 +58,12 @@ class SetupPerfilModel extends Model {
      */
     protected function depoisDelete(array $data) {
         $logdb = new LogMonModel(); 
-        $registro = $data['id'][0];
-        $log = $logdb->insertLog($this->table,'Excluído',$registro, $data['data']);
+        $registro = $data["id"][0];
+        $log = $logdb->insertLog($this->table,"Excluído",$registro, $data["data"]);
         return $data;
     } 
 
-    public function getPerfilId($id = false)
+    public function getPerfil($id = false)
     {
         $this->builder()->select();
         if ($id) {

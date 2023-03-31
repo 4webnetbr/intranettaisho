@@ -35,6 +35,7 @@ use CodeIgniter\Libraries;
  * @param string    $pasta      - Pasta do arquivo de imagem
  * @param string    $img_name   - Nome do arquivo de Imagem pré-carregada
  * @param string    $pai        - nome do campo pai, para um campo dependente
+ * @param string    $i_cone     - icone do label
  */
 class Campos
 {
@@ -67,6 +68,8 @@ class Campos
     public $tipo_form       = 'inline';
     public $pasta           = '';
     public $img_name        = '';
+    public $i_cone          = '';
+    public $novo_cadastro   = '';
 
     // DEPENDENTE
     public $pai       = '';
@@ -198,7 +201,7 @@ class Campos
             'id'            => $this->id,
             'type'          => $this->tipo,
             'class'			=> "btn $this->classe ",
-            'content'       => $this->label,
+            'content'       => $this->i_cone.$this->label,
             'onclick'  		=> $this->funcao_chan
         );
         if ($this->hint != '') {
@@ -230,7 +233,7 @@ class Campos
             $resp .= $this->cr_label();
         }
         $largura = $this->tamanho.'ch';
-        $resp .= "<div class='form-check form-switch' style='width: 10ch'>";
+        $resp .= "<div class='form-check form-switch'>";
         $field = array(
                 'name'  		=> $this->nome,
                 'id'    		=> $this->id,
@@ -242,7 +245,7 @@ class Campos
                 'label' 		=> $this->label,
                 'hint'  		=> $this->hint,
                 'onchange' 		=> $this->funcao_chan,
-                'class' 		=> "form-check-input ml-2 float-end $this->classe",
+                'class' 		=> "form-check-input ml-2 float-start $this->classe",
                 // 'style'         => 'max-width: '.$largura
         );
         if ($this->valor == $this->selecionado) {
@@ -301,6 +304,7 @@ class Campos
             }
             if($this->leitura === true){
                 $field['readonly'] = "readonly";
+                $field['disabled'] = "disabled";
                 $field['onfocus'] = "this.blur()";
                 $field['tabindex'] = -1;
             }
@@ -344,6 +348,7 @@ class Campos
         );
         if ($this->leitura === true) {
             $field['readonly'] = "readonly";
+            $field['disabled'] = "disabled";
             $field['onfocus'] = "this.blur()";
             $field['tabindex'] = -1;
         }
@@ -609,6 +614,7 @@ class Campos
         );
         if ($this->leitura === true) {
             $field['readonly'] = "readonly";
+            $field['disabled'] = "disabled";
             $field['onfocus'] = "this.blur()";
             $field['tabindex'] = -1;
         }
@@ -656,6 +662,7 @@ class Campos
         );
         if ($this->leitura === true) {
             $field['readonly'] = "readonly";
+            $field['disabled'] = "disabled";
             $field['onfocus'] = "this.blur()";
             $field['tabindex'] = -1;
         }
@@ -710,6 +717,7 @@ class Campos
 
         if ($this->leitura === true) {
             $field['readonly'] = "readonly";
+            $field['disabled'] = "disabled";
             $field['onfocus'] = "this.blur()";
             $field['tabindex'] = -1;
         }
@@ -764,6 +772,7 @@ class Campos
 
         if ($this->leitura === true) {
             $field['readonly'] = "readonly";
+            $field['disabled'] = "disabled";
             $field['onfocus'] = "this.blur()";
             $field['tabindex'] = -1;
         }
@@ -818,6 +827,7 @@ class Campos
 
         if ($this->leitura === true) {
             $field['readonly'] = "readonly";
+            $field['disabled'] = "disabled";
             $field['onfocus'] = "this.blur()";
             $field['tabindex'] = -1;
         }
@@ -881,6 +891,7 @@ class Campos
             $field['class'] = "form-control";
             $field['data-bs-toggle'] = "";
             $field['readonly'] = "readonly";
+            $field['disabled'] = "disabled";
             $field['onfocus'] = "this.blur()";
             $field['tabindex'] = -1;
         }
@@ -891,13 +902,26 @@ class Campos
         $resp .= form_input($field);
         if ($this->leitura === false) {
             $resp .= "<span class='input-group-text'><i class='fa fa-search'></i></span>\n";
-            $resp .= "<ul id='dd_$this->nome' class='dropdown-menu w-100' aria-labelledby='bus_".$this->nome."' data-popper-placement='bottom-start' data-bs-auto-close='true' style='position: absolute; inset: 0px auto auto 0px; margin: 0px;transform: translate(0px, 40px)'>\n";
+            $resp .= "<ul id='dd_$this->nome' class='dropdown-menu w-100 bg-gray-padrao opacity-100 border border-dark border-1' aria-labelledby='bus_".$this->nome."' data-popper-placement='bottom-start' data-bs-auto-close='true' style='margin: 0px;transform: translate(0rem, 10rem); max-height: 10rem;overflow-y: auto;'>\n";
             $resp .= "    <li><h6 class='dropdown-header disabled'>Digite 3 letras para buscar...</h6></li>\n";
             $resp .= "</ul>\n";
         }
         $resp .= "</div>\n";
         $resp .= "</div>\n";
         $resp .= "</div>\n";
+        if($this->novo_cadastro != ''){
+            $field_btn = array(
+                'name'          => 'bt_ad_'.$this->nome,
+                'id'            => 'bt_ad_'.$this->id,
+                'style'         => 'width:2.5rem',
+                'type'          => 'button',
+                'hint'          => "Novo Cadastro",
+                'class'			=> "btn btn-outline-secondary ",
+                'content'       => "<i class='fa-solid fa-wand-sparkles fa-flip-horizontal'></i> ",
+                'onclick'  		=> "openModal('".$this->novo_cadastro."')"
+            );
+            $resp .= form_button($field_btn);
+        }
         return $resp;
     }
 
@@ -938,6 +962,7 @@ class Campos
 
         if ($this->leitura === true) {
             $field['readonly'] = "readonly";
+            $field['disabled'] = "disabled";
             $field['onfocus'] = "this.blur()";
             $field['tabindex'] = -1;
         }

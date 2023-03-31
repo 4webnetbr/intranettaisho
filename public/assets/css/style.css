@@ -580,11 +580,8 @@ select[readonly] {
 .toast{
   position: absolute;
   width: 20% !important;
-  top: 50px;
+  top: 150px;
   right: 10px;  
-  /* animation-name: diresq;
-  animation-duration: 2s;
-  animation-fill-mode: forwards; */
   transition: all 0.4s linear;
   transform-origin: top right;
   transform-style: preserve-3D;

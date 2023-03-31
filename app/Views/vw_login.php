@@ -2,7 +2,7 @@
 
 <?=$this->section('content');?>
 <div class="container text-center col-lg-6 col-10">
-  	<div class="row mt-5 justify-content-center h-100">
+  	<div class="row justify-content-center h-100">
     	<div class="col col-lg-8 col-12 mt-5 bg-login align-middle p-0">
 			<div class="col-12 bg-white">
 				<img src='<?=$logo;?>' width='70%' />

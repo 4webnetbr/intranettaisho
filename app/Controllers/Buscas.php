@@ -3,7 +3,6 @@ use App\Controllers\BaseController;
 use App\Models\Setup\SetupClasseModel;
 use App\Models\Setup\SetupDicDadosModel;
 use App\Models\Setup\SetupMenuModel;
-use App\Models\Setup\SetupMenuNovoModel;
 use App\Models\Setup\SetupModuloModel;
 use App\Models\Setup\SetupUsuarioModel;
 
@@ -11,7 +10,6 @@ class Buscas extends BaseController
 {
     public $data = [];
     public $menu;
-    public $menunovo;
     public $modulo; 
     public $classe;
     public $usuario; 
@@ -19,7 +17,6 @@ class Buscas extends BaseController
 
 	public function __construct(){
 		$this->menu 		        = new SetupMenuModel();
-		$this->menunovo 		    = new SetupMenuNovoModel();
 		$this->modulo 		        = new SetupModuloModel();
 		$this->classe 		        = new SetupClasseModel();
         $this->usuario              = new SetupUsuarioModel();
@@ -44,14 +41,17 @@ class Buscas extends BaseController
         echo json_encode($hierarquia);
     }
     public function busca_menu_pai(){
-        $menus = $this->menunovo->getMenuPai();
-        echo json_encode($menus);
+        $menus = $this->menu->getMenuPai();
+        $menu_pai = array_column($menus,'men_etiqueta','men_id');
+        echo json_encode($menu_pai);
     }
+
     public function busca_submenu(){
         $data = $_REQUEST;
         $termo              = $data['campo'][0]['id_dep'];
-        $submenus = $this->menunovo->getSubMenu($termo);
-        echo json_encode($submenus);
+        $submenus = $this->menu->getSubMenu($termo);
+        $sub_menu = array_column($submenus,'men_etiqueta','men_id');
+        echo json_encode($sub_menu);
     }
 
 
@@ -62,7 +62,7 @@ class Buscas extends BaseController
             $modulos            = $this->modulo->getModulosSearch($termo);
             if(sizeof($modulos) <= 0){
                 $ret[0]['id'] = '-1';
-                $ret[0]['text'] = 'Módulo não encontrada...';
+                $ret[0]['text'] = 'Módulo não encontrado...';
             } else {
                 for ($c = 0;$c<sizeof($modulos);$c++) {
                     $ret[$c]['id']      = $modulos[$c]['mod_id'];
@@ -112,7 +112,7 @@ class Buscas extends BaseController
         $ret    = [];
         if ($_REQUEST['busca']) {
             $termo              = $_REQUEST['busca'];
-            $class = $this->classe->getClasseTitulo($termo);
+            $class = $this->classe->getClasseSearch($termo);
             if(sizeof($class) <= 0){
                 $ret[0]['id'] = '-1';
                 $ret[0]['text'] = 'Classe não encontrada...';

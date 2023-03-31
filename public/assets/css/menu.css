@@ -5,7 +5,8 @@
     z-index: 100;
     left:0rem;  
     top: -0.3rem;
-    width: 3.5rem;
+    width: 3.8rem;
+    padding-right: 0.2rem;
     border: 1px solid #ccc; 
     border-radius: 0 0.8rem 0.8rem 0rem;
     transition: width 0.4s ease-in-out;
@@ -23,6 +24,13 @@
     width: 20rem;
     min-width: 3.5rem;
     max-width: 25rem;
+}
+.acc_base{
+    height: calc(100vh - 11rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: inline-block;
+    width: -webkit-fill-available;
 }
 
 .mod_nome, a .men_nome, .usu_nome{
@@ -47,9 +55,14 @@
     transform-origin: right;
     transform-style: preserve-3D;
 } */
+.menu{
+    /* background-color: lightblue; */
+}
+.submenu{
+    /* background-color: lightcyan; */
+}
 
-
-.bt-manut, .bt_user{
+.bt-manut, .bt_user, .bt_empresa{
     max-height: 3rem;
     height: 3rem;
     /* width: auto;     */
@@ -57,7 +70,7 @@
     white-space: nowrap;
 }
 
-.img-user{
+.img-user, .img-empresa{
     width: 30px;
     height: 30px;
     margin-left: -0.1rem;
@@ -71,12 +84,12 @@
     white-space: nowrap;
     /* width: 7.5rem; */
     transition: all 0.4s linear;
-    transform-origin: right;
+    transform-origin: left;
     transform-style: preserve-3D;
     transform: scale(0);
 }
 
-.txt-bt-manut:not(d.none){
+.txt-bt-manut:not(.usu_nome,.men_nome, .mod_nome){
     transform: scale(1);
 }
 
@@ -90,12 +103,18 @@
     width: auto;
 }
 .icon-menu{
-    font-size: 1.7rem;
-    padding: 0.25rem;
-    width: 2.5rem;
-    /* height: 2.5rem;     */
+    font-size: 1.4rem;
+    padding: 0.2rem;
+    width: 2.15rem;
+    height: 2.15rem;
 }
 
+.icon-submenu{
+    font-size: 1.2rem;
+    padding: 0.1rem;
+    width: 2rem;
+    height: 2rem;
+}
 .accordion-button::after{
     content: "\f0a5";
     right: 1rem; 
@@ -120,15 +139,40 @@
     transition: var(--bs-accordion-btn-icon-transition);
 }
 
-#show_user.active:after {
+.accordion-button.menu{
+    background-color: var(--bs-accordion-active-bg);
+    box-shadow: inset 0 calc(-1 * var(--bs-accordion-border-width)) 0 var(--bs-accordion-border-color);
+}
+
+.accordion-button.menu:not(.collapsed), .accordion-button.submenu:not(.collapsed){
+    border:1px groove grey;
+}
+
+.accordion-button.submenu{
+    /* background-color: lightcyan; */
+    box-shadow: inset 0 calc(-1 * var(--bs-accordion-border-width)) 0 var(--bs-accordion-border-color);
+}
+
+
+#show_user.active:after{
     content: "";
     margin-left: auto;
     display: inline-block;
     position: absolute;
-    left: -0.9rem;
-    top: 0rem;
-    left: -1.9rem;
-    top: -0.1rem;
+    left: -0.2rem;
+    top: -0.2rem;
+    border-left: 1rem solid #0dcaf0;
+    border-bottom: 1rem solid transparent;
+    border-right: 1rem solid transparent;
+    border-top: 1rem solid #0dcaf0;}
+
+#show_ajuda.show:after {
+    content: "";
+    margin-left: auto;
+    display: inline-block;
+    position: absolute;
+    right: -0.2rem;
+    top: -0.2rem;
     border-right: 1rem solid #0dcaf0;
     border-bottom: 1rem solid transparent;
     border-left: 1rem solid transparent;
@@ -136,15 +180,20 @@
 }
 
 
+#show_ajuda.show{
+    transform: scale(1); 
+}
 #show_user.active{
+    margin-top:3rem; 
+    left: 18rem;
     transform: scale(1); 
 }
       
 #show_user{
     /* display: block; */
     z-index:1000;
-    margin-top:3rem; 
-    left: 16rem;
+    margin-top:1rem; 
+    left: 0rem;
     border: 1px solid;
     border-radius: 0 1rem 1rem 1rem;
     transition: all 0.4s linear;
@@ -152,18 +201,39 @@
     transform-style: preserve-3D;
     transform: scale(0);
 }
+.card-img-top{
+    height: 12rem;
+    width: 12rem;
+}
 
+#show_ajuda{
+    z-index:1000;
+    margin-top:3rem; 
+    border: 1px solid;
+    border-radius: 1rem 0 1rem 1rem ;
+    transition: all 0.4s ease-in-out;
+    transform-origin: right top;
+    transform-style: preserve-3D;
+    transform: scale(0);
+    right: 6rem;
+    left: auto;
+}
+#show_ajuda > .card-body{
+    height: 25rem;
+    overflow-y: auto;
+    overflow-x: hidden;    
+}
 .nav-dropdown-menu {
-    min-height: 2rem;
-    max-height: 2rem;
+    min-height: 1.65rem;
+    max-height: 1.65rem;
     border-bottom: 1px solid #ddd;
     white-space: nowrap;
 }
 
 .nav-dropdown-menu.active, .nav-dropdown-menu.active a{
-    background-color: white;
+    background-color: var(--bs-accordion-btn-focus-border-color);
     border-radius: 1rem;
-    color:var(--bs-blue-light);/* #0458eb;*/
-    font-weight: bold;
+    color:var(--bs-white);/* #0458eb;*/
     font-style: italic;
+    border: 1px solid black;
 }

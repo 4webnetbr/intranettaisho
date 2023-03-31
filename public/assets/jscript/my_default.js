@@ -14,14 +14,19 @@ jQuery(document).ready(function() {
         }); 
     };;
 
+    jQuery(".toast").on("hide.bs.toast", function(){
+        jQuery(".toast-body").html('');
+    });
     /**
      * Submete o Formulário com ajax
      * Document Ready my_default
      */
-    jQuery('form').submit(function (event) {
-        bloqueiaTela();
+    jQuery('#form1, #form_modal').submit(function (event) {
         var form = jQuery(this);
         var tipo = form.attr('type');
+        if(tipo != 'modal'){
+            bloqueiaTela();
+        }
         if(tipo != 'normal'){
             event.preventDefault(); // avoid to execute the actual submit of the form.
             jQuery(".moeda").each(function () {
@@ -42,15 +47,34 @@ jQuery(document).ready(function() {
                 // data: form.serialize(), // serializes the form's elements.
                 data: dadosForm, // serializes the form's elements.
                 success: function(data){
-                    desBloqueiaTela();
-                    if(tipo == 'novaguia'){
-                        redirec_blank(data.url);
-                    } else {
+                    if(tipo != 'modal'){
+                        desBloqueiaTela();
                         if(!data.erro){
-                            redireciona(data.url)
+                            if(data.url){
+                                if(tipo == 'novaguia'){
+                                    redirec_blank(data.url);
+                                } else {
+                                    redireciona(data.url)
+                                }
+                            }
                         } else {
-                            boxAlert(data.msg, data.erro,data.url,false, 2, false);
+                            boxAlert(data.msg, data.erro,data.url,false, 1, false);
                         }
+                    } else {
+                        var myModalEl = document.getElementById('myModal');
+                        var modal = bootstrap.Modal.getInstance(myModalEl)
+                        modal.hide();
+                        jQuery('.toast-body').html(data.msg);
+                        texto = jQuery('.toast-body').html();
+                        if(jQuery.trim(texto) != ''){
+                            jQuery(".toast").toast("show");
+                            jQuery(".toast").toast({
+                              delay: 3000
+                            }); 
+                            jQuery(".toast").toast({
+                              animation: true
+                            }); 
+                        };;                                        
                     }
                 }
             });
@@ -169,10 +193,14 @@ function openModal(url){
         url: url,
         dataType: 'html',
         success: function(data){
+            jQuery('.modal-body').html(data);
             var myModal = new bootstrap.Modal(document.getElementById("myModal"), {});
-            document.onreadystatechange = function () {
+            // document.onreadystatechange = function () {
               myModal.show();
-            };
+            //   myModal.addEventListener('shown.bs.modal', () => {
+            //     myInput.focus()
+            //   })              
+            // };
         }
     });
 };;

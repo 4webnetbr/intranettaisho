@@ -7,6 +7,7 @@ class SetupUsuarioModel extends Model
 {
     protected $table      = 'setup_usuario';
     protected $primaryKey = 'usu_id';
+    protected $useAutoIncrement = true;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = true;
@@ -20,12 +21,9 @@ class SetupUsuarioModel extends Model
                                 'usu_tipo'
                                 ];
 
-    protected $useTimestamps = true;
-    protected $createdField  = 'usu_criado';
-    protected $updatedField  = 'usu_alterado';
     protected $deletedField  = 'usu_excluido';
 
-    protected $skipValidation     = false;    
+    protected $skipValidation     = true;    
      
     // Callbacks
     protected $allowCallbacks = true;
@@ -96,15 +94,15 @@ class SetupUsuarioModel extends Model
      */
     public function getUsuarioId($id = false)
     {
-        $this->builder()
-                ->select('setup_usuario.*, per.per_id, per.per_nome')
-                ->join('setup_perfil per', 'per.per_id = setup_usuario.usu_perfil_id');
-        if ($id) {
-            $this->builder()->where('usu_id', $id);
+        $db = db_connect();
+        $builder = $db->table('vw_setup_usuario_relac');
+        $builder->select('*'); 
+        if($id){
+            $builder->where('usu_id', $id);
         }
-        $this->builder()->where('usu_excluido',null);
-        $this->builder()->orderBy('usu_nome');
-        return $this->builder()->get()->getResultArray();
+        $ret = $builder->get()->getResultArray();
+        // debug($this->db->getLastQuery(), false);
+        return $ret;
     }                 
  
     /**
@@ -119,13 +117,13 @@ class SetupUsuarioModel extends Model
     public function getUsuarioSearch($termo)
     {
         $array = ['usu_nome' => $termo.'%'];
-        $this->builder()
-                ->select(['usu_nome','usu_id'])
-                ->like($array);
-    
-        $this->builder()->orderBy('usu_nome', 'ASC');
-
-        return $this->builder()->get()->getResultArray();
+        $db = db_connect();
+        $builder = $db->table('vw_setup_usuario_relac');
+        $builder->select('*'); 
+        $builder->like($array);
+        $ret = $builder->get()->getResultArray();
+        // debug($this->db->getLastQuery(), false);
+        return $ret;
     }                 
 
 }

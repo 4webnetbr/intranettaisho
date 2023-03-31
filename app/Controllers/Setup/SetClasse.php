@@ -45,7 +45,7 @@ class SetClasse extends BaseController
     public function index()
     {
         $this->data['desc_metodo'] = 'Listagem de ';
-        $this->data['colunas'] = ['ID', 'Titulo', 'Controler','Descrição', 'Ações'];
+        $this->data['colunas'] = ['ID', 'Módulo  <i class="fa fa-arrow-right-long"></i>  Classe', 'Controler','Descrição', 'Ações'];
         $this->data['url_lista'] = base_url($this->data['controler'].'/lista');
 
         echo view('vw_lista', $this->data);
@@ -60,7 +60,7 @@ class SetClasse extends BaseController
     public function lista()
     {
         $result = [];
-        $dados_classe = $this->classe->findAll();
+        $dados_classe = $this->classe->getClasseId();
         for ($p = 0; $p < sizeof($dados_classe); $p++) {
             $class = $dados_classe[$p];
             $edit = '';
@@ -88,7 +88,7 @@ class SetClasse extends BaseController
                     "\")'><i class='far fa-trash-alt'></i></button>";
             }
 
-            $dados_classe[$p]['clas_titulo'] = "<i class='".$class['clas_icone']."'></i> ".$class['clas_titulo'];
+            $dados_classe[$p]['clas_titulo'] = anchor($this->data['controler'] . '/edit/' . $class['clas_id'],"<i class='".$class['mod_icone']."'></i> ".$class['mod_nome']."  <i class='fa fa-arrow-right-long'></i>  <i class='".$class['clas_icone']."'></i> ".$class['clas_titulo']);
             $dados_classe[$p]['acao'] = $edit . ' ' . $exclui;
             $class = $dados_classe[$p];
             $result[] = [
@@ -117,19 +117,20 @@ class SetClasse extends BaseController
         $this->def_campos();
 
         $secao[0] = 'Dados Gerais';
-        $campos[0][0][0] = $this->clas_id;
-        $campos[0][0][1] = $this->clas_titulo;
-        $campos[0][0][2] = $this->clas_icon;
-        $campos[0][0][3] = $this->clas_cont;
-        $campos[0][0][4] = $this->clas_txtb;
-        $campos[0][0][5] = $this->clas_tabela;
-        $campos[0][0][6] = $this->clas_desc;
+        $campos[0][0] = $this->clas_id;
+        $campos[0][1] = $this->clas_modulo;
+        $campos[0][2] = $this->clas_titulo;
+        $campos[0][3] = $this->clas_icon;
+        $campos[0][4] = $this->clas_cont;
+        $campos[0][5] = $this->clas_txtb;
+        $campos[0][6] = $this->clas_desc;
+        $campos[0][7] = $this->clas_tabela;
 
         $secao[1] = 'Regras Gerais';
-        $campos[1][0][0] = $this->clas_regg;
+        $campos[1][0] = $this->clas_regg;   
 
         $secao[2] = 'Regras do Cadastro';
-        $campos[2][0][0] = $this->clas_regc;
+        $campos[2][0] = $this->clas_regc;
 
 
         $this->data['secoes'] = $secao;
@@ -152,33 +153,34 @@ class SetClasse extends BaseController
         $this->def_campos($dados_classe);
 
         $secao[0] = 'Dados Gerais';
-        $campos[0][0][0] = $this->clas_id;
-        $campos[0][0][1] = $this->clas_titulo;
-        $campos[0][0][2] = $this->clas_icon;
-        $campos[0][0][3] = $this->clas_cont;
-        $campos[0][0][4] = $this->clas_txtb;
-        $campos[0][0][5] = $this->clas_desc;
+        $campos[0][0] = $this->clas_id;
+        $campos[0][1] = $this->clas_modulo;
+        $campos[0][2] = $this->clas_titulo;
+        $campos[0][3] = $this->clas_icon;
+        $campos[0][4] = $this->clas_cont;
+        $campos[0][5] = $this->clas_txtb;
+        $campos[0][6] = $this->clas_desc;
 
         $secao[1] = 'Regras Gerais';
-        $campos[1][0][0] = $this->clas_regg;
+        $campos[1][0] = $this->clas_regg;
 
         $secao[2] = 'Filtros';
-        $campos[2][0][0] = 'tabela';
-        $campos[2][0][1] = $this->clas_filtros;
+        $campos[2][0] = 'tabela';
+        $campos[2][1] = $this->clas_filtros;
 
         $secao[3] = 'Cadastro';
-        $campos[3][0][0] = $this->clas_regc;
+        $campos[3][0] = $this->clas_regc;
 
         $secao[4] = 'Base de Dados';
-        $campos[4][0][0] = $this->clas_tabela;
-        $campos[4][0][1] = $this->clas_camp;
-        $campos[4][0][2] = $this->clas_trel;
+        $campos[4][0] = $this->clas_tabela;
+        $campos[4][1] = $this->clas_camp;
+        $campos[4][2] = $this->clas_trel;
 
         $secao[5] = 'Funções';
-        $campos[5][0][0] = $this->clas_meto;
+        $campos[5][0] = $this->clas_meto;
 
         $secao[6] = 'Código Fonte';
-        $campos[6][0][0] = $this->clas_codi;
+        $campos[6][0] = $this->clas_codi;
 
         $this->data['secoes'] = $secao;
         $this->data['campos'] = $campos;
@@ -220,6 +222,21 @@ class SetClasse extends BaseController
         $id->id = 'clas_id';
         $id->valor = isset($dados['clas_id']) ? $dados['clas_id'] : '';
         $this->clas_id = $id->create();
+
+		$modu =  new Campos();
+		$modu->objeto  	    = 'selbusca';
+        $modu->nome    	    = 'clas_modulo_id';
+        $modu->id      	    = 'clas_modulo_id';
+        $modu->label   	    = 'Módulo';
+        $modu->place   	    = 'Módulo';
+        $modu->obrigatorio  = true;
+        $modu->hint    	    = 'Escolha o Módulo';
+		$modu->valor	    = (isset($dados['mod_id']))?$dados['mod_id']:'';
+        $modu->selecionado  = (isset($dados['mod_nome']))?$dados['mod_nome']:'';
+        $modu->busca        = base_url('buscas/busca_modulo');
+		$modu->tamanho      = 35;
+        $modu->novo_cadastro = base_url('SetModulo/add/modal=true');
+        $this->clas_modulo = $modu->create();
 
         $titulo = new Campos();
         $titulo->objeto = 'input';
@@ -435,13 +452,15 @@ class SetClasse extends BaseController
         // debug($dados);
         $dados_clas = [
             'clas_id'           => $dados['clas_id'],
+            'clas_modulo_id'       => $dados['clas_modulo_id'],
             'clas_titulo'       => $dados['clas_titulo'],
             'clas_icone'        => $dados['clas_icone'],
             'clas_controler'    => $dados['clas_controler'],
             'clas_texto_botao'  => $dados['clas_texto_botao'],
-            'clas_tabela'    => $dados['clas_tabela'],
+            'clas_tabela'       => $dados['clas_tabela'],
             'clas_descricao'    => $dados['clas_descricao'],
             'clas_regras_gerais'       => $dados['clas_regras_gerais'],
+            'clas_regras_cadastro'       => $dados['clas_regras_cadastro'],
         ];
         if ($this->classe->save($dados_clas)) {
             $ret['erro'] = false;

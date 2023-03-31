@@ -143,17 +143,28 @@ jQuery(document).ready(function() {
      */
     jQuery('input[type="checkbox"]').click(function(){
         var id = jQuery(this).attr('id');
-        var pos = id.includes("[0]");
-        if(pos){
-            var classe = jQuery(this).attr("class");
-            var checked =jQuery(this).prop("checked");
-            jQuery('input[type="checkbox"]').each(
-                function( i ) {
-                    if(jQuery(this).hasClass(classe)){
-                        jQuery(this).prop("checked", checked)
-                    }
-                }
-            );
+        var checked =jQuery(this).prop("checked");
+        mod = id.match(/[0-9]+/g)[0];
+        cla = id.match(/[0-9]+/g)[1];
+        if(cla == 0){ // todas as classes
+            var opcao = id.substr(0,id.indexOf('['));
+            if(opcao == 'pit_all'){
+                jQuery("input[id^='pit_consulta["+mod+"]']").prop("checked", checked); 
+                jQuery("input[id^='pit_adicao["+mod+"]']").prop("checked", checked); 
+                jQuery("input[id^='pit_edicao["+mod+"]']").prop("checked", checked); 
+                jQuery("input[id^='pit_exclusao["+mod+"]']").prop("checked", checked); 
+                jQuery("input[id^='pit_all["+mod+"]']").prop("checked", checked); 
+            } else {
+                jQuery("input[id^='"+opcao+"["+mod+"]']").prop("checked", checked); 
+            }
+        } else {
+            var opcao = id.substr(0,id.indexOf('['));
+            if(opcao == 'pit_all'){
+                jQuery('#pit_consulta\\['+mod+'\\]\\['+cla+'\\]').prop("checked", checked); 
+                jQuery('#pit_adicao\\['+mod+'\\]\\['+cla+'\\]').prop("checked", checked); 
+                jQuery('#pit_edicao\\['+mod+'\\]\\['+cla+'\\]').prop("checked", checked); 
+                jQuery('#pit_exclusao\\['+mod+'\\]\\['+cla+'\\]').prop("checked", checked); 
+            }
         }
     });;
 
@@ -603,9 +614,13 @@ function compara_senha(contra, senha){
      var contra_senha = jQuery('#'+contra).val();
      var nova_senha   = jQuery('#'+senha).val();
      if(contra_senha != nova_senha){
-         jQuery('#msg_senha').html('Senhas não conferem! REVISE!');
+         jQuery('#msg_senha').html('<b>Senhas não conferem! REVISE!</b>');
+         jQuery('#msg_senha').addClass('p-2 px-4');
+         jQuery('#bt_salvar').attr('disabled',true);
      } else {
         jQuery('#msg_senha').html('');
+        jQuery('#msg_senha').removeClass('p-2 px-4');
+        jQuery('#bt_salvar').attr('disabled',false);
     }
  };;
 
