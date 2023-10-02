@@ -7,8 +7,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pelegrini -::- V2023</title>
-    <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/x-icon">
+    <title>Estoque -::- CeqNep</title>
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/x-icon">
 
   <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -18,9 +18,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
   <!-- Estilo principal -->
-    <link rel="stylesheet" href="<?=base_url('assets/css/default.css?nocache='.time());?>">
+    <link rel="stylesheet" href="<?=base_url('assets/css/default.css');?>">
   <!-- Estilos personalizados -->
-    <link rel="stylesheet" href="<?=base_url('assets/css/menu.css?nocache='.time());?>">
+    <link rel="stylesheet" href="<?=base_url('assets/css/menu.css');?>">
   <?php
     if(isset($styles) && strlen($styles)>0){
       $styles = explode(',',$styles);
@@ -38,6 +38,7 @@
   <!-- Scripts personalizados -->
     <script src="https://kit.fontawesome.com/eb647d7482.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js" integrity="sha512-oVbWSv2O4y1UzvExJMHaHcaib4wsBMS5tEP3/YkMP6GmkwRJAa79Jwsv+Y/w7w2Vb/98/Xhvck10LyJweB8Jsw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 
     <script src="<?=base_url('assets/jscript/my_default.js');?>"></script>
     <script src="<?=base_url('assets/jscript/my_menu.js');?>"></script>
@@ -67,10 +68,12 @@
     <!-- fim do preloader -->   
     <section class="header">
         <?=$this->renderSection('titulo');?>
-        <?//=$this->renderSection('header');?>
     </section>
     <section class="menu">
         <?=$this->renderSection('menu');?>
+    </section>
+    <section class="menu_etapas">
+        <?=$this->renderSection('menu_etapas');?>
     </section>
     <section class="content">
         <?=$this->renderSection('content');?>
@@ -96,7 +99,7 @@
 </html>
 <script>
 //<![CDATA[
-  jQuery(window).on('load', function () {
+  jQuery( window ).on("load", function() {
     jQuery('#bloqueiaTela').delay(250).fadeOut(250); 
   })
 //]]>  

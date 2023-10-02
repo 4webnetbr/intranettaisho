@@ -57,22 +57,24 @@ body{
 body::before {    
     content: "";
     background-color: aliceblue;
-    background-image: url('../images/logo_base.png');
+    background-image: url('../images/logo_base3.png');
     background-repeat: repeat;
-    background-size: 10%;
+    background-size: 15%;
     position: absolute;
-    width: 200%;
-    height: 200%;
-    top: -50%;
-    left: -50%;    
-    opacity: 0.045;
-    transform: rotate(-30deg);
+    width: 100%;
+    height: 100%;
+    top: 0%;
+    left: 0%;    
+    opacity: 0.085;
+    /* transform: rotate(-30deg); */
     z-index: -1;   
 }
 
 a {
     cursor: pointer;
     text-decoration: none;
+}
+table > a {
     color: inherit;
 }
 
@@ -83,15 +85,15 @@ a:hover {
 }
 
 .content{
-    max-height: calc(100vh - 3rem);
-    min-height: calc(100vh - 3rem);
-    height: calc(100vh - 3rem);
+    max-height: calc(100vh - 5rem);
+    min-height: calc(100vh - 5rem);
+    height: calc(100vh - 5rem);
     overflow: hidden;
     max-width: calc(100vw - 5rem);
     width: calc(100vw - 5rem);
     min-width: calc(100vw - 5rem);
     position: absolute;
-    top: 5rem;
+    /* top: 5rem; */
     margin-left: 4rem;
     margin-right: 4rem;
 }
@@ -112,9 +114,9 @@ a:hover {
     min-height: 4rem;
     height: 4rem;    
     padding: 0.5rem 1rem;
-    max-width: calc(100vw - 5rem);
-    width: calc(100vw - 5rem);
-    min-width: calc(100vw - 5rem);
+    max-width: calc(100vw - 4rem);
+    width: calc(100vw - 4rem);
+    min-width: calc(100vw - 4rem);
 }
 .title-modal{
     position: relative;
@@ -125,21 +127,29 @@ a:hover {
 
 .container{
     max-height: calc(100vh - 5rem);
-    max-width: 100%;
+    max-width: 98%;
     overflow: hidden;
 }
 
-.tab-content{
+.tab-content, .tab-content-prin{
     border: var(--bs-border-width) solid var(--bs-border-color);
     border-radius: 0 10px 10px 10px;
 }
 
-.tab-content>.tab-pane {
+.tab-content>.tab-pane{
     max-height: 80vh;
     overflow: auto;
+    height: auto;
+    min-height: 80vh;
 }
 
-.tab-content>.tab-pane.show {
+.tab-content-prin>.tab-pane-prin {
+    max-height: 90vh;
+    overflow: hidden;
+    min-height: 90vh;
+}
+
+.tab-content>.tab-pane.show, .tab-content-prin>.tab-pane-prin.show {
     box-shadow: 0 -1px 1px 1px lightgrey;
 }
 .nav-item > .nav-link{
@@ -180,7 +190,7 @@ a:hover {
     z-index: 100;
 }
 
-:required:not(select){
+:required:not(select), select:required + button.form-control {
     background-image: url(/assets/images/obriga2_red.png);
     background-size: 7px 15px;
     background-position: 0px 45%;
@@ -210,12 +220,17 @@ select:required{
 }
 
 .form-control, .btn{
-    border-radius: 1.5rem;
+    border-radius: 1.5rem !important;
+}
+.form-control{
+    background-color: rgb(235 246 253 / 50%);
+    --bs-form-select-bg-img: none;
 }
 
 .input-group-text {
     border-top-right-radius: 1.5rem !important;
     border-bottom-right-radius: 1.5rem !important;
+    margin-left: -0.75rem !important;
 }
 
 .input-group-text.input-group-addon{
@@ -223,6 +238,8 @@ select:required{
     border-bottom-right-radius: 0rem !important;
     border-top-left-radius: 1.5rem !important;
     border-bottom-left-radius: 1.5rem !important;
+    margin-right: -0.75rem !important;
+    margin-left: 0.10rem !important;
 }
 
 
@@ -284,9 +301,8 @@ table.dataTable.table-info>tbody>tr:hover, table.dataTable.table-striped>tbody>t
 table.dataTable>tbody>tr{
     vertical-align: middle;
 }
-
 .dataTables_length{
-    width: 50%;
+    width: auto;
     float: left;
 }
 .dt-buttons{
@@ -294,35 +310,50 @@ table.dataTable>tbody>tr{
     float: left;
     margin-right: 1%;
 }
+
+
 .dataTables_info{
-    width: 38%;
+    /* width: 38%; */
     float: left;
     padding-top:.15em !important;
 }
 .dataTables_paginate{
     float: right;
+    margin-top: -0.35em !important;
+    width: auto;
+}
+div#table_processing{
+    z-index: 100;
+}
+
+div.dataTables_processing>div:last-child>div, div.msgprocessando>div:last-child>div {
+    background-color: rgb(13 110 253) ;
+}
+
+.pagination, .pagination > li, .pagination > li > a{
+    border-radius: 5rem !important;
 }
 /* SCROLLBAR PERSONALIZADO */
 ::-webkit-scrollbar {
-    width: 20px;
+    width: 12px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
     box-shadow: inset 0 0 5px #011542;
-    border-radius: 10px;
+    border-radius: 7px;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
     background: #011542;
-    border-radius: 10px;
+    border-radius: 7px;
     box-shadow: inset 0 0 5px white;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #1F76B6;
+    background: #011542;
 }
 /* end: Preloader */
 
@@ -365,4 +396,91 @@ table.dataTable>tbody>tr{
 .py-15{
     padding-top: .15rem !important;
     padding-bottom: .15rem !important;
+}
+
+.bootstrap-select .dropdown-menu li a.selected{
+    background-color: var(--bs-info);
+}    
+.dropdown-toggle[aria-expanded="false"]::after {
+    content: "\f0a5";
+    right: 3.5rem;
+    font-family: 'Font Awesome 6 Free';
+    background-image: none;
+    transition: var(--bs-accordion-btn-icon-transition);
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+}
+
+.dropdown-toggle[aria-expanded="true"]::after {
+    content: "\f0a5";
+    right: 3.5rem;
+    font-family: 'Font Awesome 6 Free';
+    -webkit-transform: rotate(-450deg);
+    -o-transform: rotate(-450deg);
+    transform: rotate(-450deg);
+    background-image: none;
+    transition: var(--bs-accordion-btn-icon-transition);
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+}
+
+.inner.show{
+    max-height: 20vh !important;
+}
+
+.bootstrap-select > .dropdown-toggle{
+    white-space: inherit !important;
+}
+.fs-7 {
+    font-size: 0.75rem !important;
+}
+
+.textovertical{
+    width:1px;
+    word-wrap: break-word;
+    font-family: monospace; 
+    white-space: pre-wrap;
+}
+
+button.disabled{
+    background-color: var(--bs-form-control-disabled-bg);
+    opacity: 1;
+}
+
+.table2{
+    border-bottom: 0.5px solid #ccc;
+    width: 100%;
+}
+
+.w-90{
+    width: 90% !important;
+}.w-10{
+    width: 10% !important;
+}
+.valid-tab{
+    transform: translate(-100%,15%)!important;
+}
+
+.bootstrap-select.popup > .dropdown-menu.show{
+    position: inherit!important;
+    z-index: 1100;
+    max-height: 15rem!important;
+    margin-bottom: 1rem!important;
+    top: -2rem!important; 
+    display: grid;
+} */
+
+
+table tbody td{
+    white-space: nowrap;
+}
+
+.theadfilter{
+    z-index: 200;
+    position: fixed;
+    opacity: 1;
 }

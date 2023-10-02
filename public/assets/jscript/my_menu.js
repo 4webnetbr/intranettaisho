@@ -9,6 +9,11 @@ const mobileScreen = window.matchMedia("(max-width: 990px )");;
  * Executado no carregamento da página
  */
 jQuery(document).ready(function () {
+    jQuery(".nav-dropdown-menu-etapa").each(function( index ) {
+        if(jQuery(this)[0].id == jQuery('#id_ref').val()){
+            jQuery(this).addClass('active');
+        }
+    });
     jQuery(".nav-dropdown-menu").each(function( index ) {
         if(jQuery(this)[0].id == jQuery('#controler').val()){
             submenu = jQuery(this)[0].getAttribute('data-submenu');
@@ -57,6 +62,15 @@ jQuery(document).ready(function () {
     },function(){
         if(!jQuery('#show_user').hasClass('active')){
             jQuery('.sidebar').toggleClass('active');
+        }
+    });
+    jQuery('.sideetapa').hover(function() {
+        if(!jQuery('.sideetapa').hasClass('active')){
+            jQuery('.sideetapa').toggleClass('active');
+        }
+    },function(){
+        if(!jQuery('#show_user').hasClass('active')){
+            jQuery('.sideetapa').toggleClass('active');
         }
     });
     jQuery('.bt-manut.add').hover(function() {

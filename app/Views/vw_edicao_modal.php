@@ -6,7 +6,7 @@
 <?=$this->section('content');?>
     <script src="<?=base_url('assets/jscript/my_fields.js');?>"></script>
     
-    <div id='content' class='container page-content bg-light'>
+    <div id='content' class='container page-content bg-light m-0'>
     <!-- <div id='content' class='vh-auto page-content dashboard dashboard-app dashboard-content '> -->
     <form id="form_modal" method="post"  action="<?= site_url($controler."/".$destino) ?>" class="col-12" type="modal" enctype="multipart/form-data">
         <?

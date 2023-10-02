@@ -3,7 +3,7 @@ use CodeIgniter\Model;
 
 class CommonModel extends Model
 {
-    protected $table            = 'setup_log';
+    protected $table            = 'cfg_log';
     protected $primaryKey       = 'log_id';
     protected $useAutoIncremodt = true;
 

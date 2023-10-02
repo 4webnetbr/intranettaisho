@@ -1,0 +1,17 @@
+DUVIDAS INTEGRAÇÕES SAPIENS
+
+as empresas da ceqnep, são tratadas como Empresa ou Filiais, no SAPIENS?
+Importar o Cadastro de Empresas
+
+Existe movimentação de estoques entre as empresas?
+Os depósitos, são separados por empresas, ou por filiais, ou são comuns a todas?
+
+WebServices Necessários
+
+com.senior.g5.co.cad.filial
+com.senior.g5.co.cad.deposito
+com.senior.g5.co.cad.familias
+com.senior.g5.co.cad.produtos
+
+com.senior.g5.co.mcm.est.requisicoes
+com.senior.g5.co.mcm.est.saldoestoque 

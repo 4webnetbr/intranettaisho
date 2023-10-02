@@ -13,10 +13,9 @@
 <?=$this->endSection();?>
 
 
-<?=$this->section('content');?>
-    <script src="<?=base_url('assets/jscript/my_fields.js');?>"></script>
-    
-    <div id='content' class='container page-content bg-light'>
+<?=$this->section('content');
+?>
+    <div id='content' class='container page-content bg-light m-0'>
     <!-- <div id='content' class='vh-auto page-content dashboard dashboard-app dashboard-content '> -->
     <form id="form1" method="post"  action="<?= site_url($controler."/".$destino) ?>" class="col-12" enctype="multipart/form-data">
         <?
@@ -46,7 +45,11 @@
                 echo "<li class='nav-item ' role='presentation'>";
                 $secao = url_amigavel($secoes[$s]);
                 // echo "Secao ".$secao;
-				echo "<button class='nav-link $active' id='".$secao."-tab' data-bs-toggle='tab' data-bs-target='#".$secao."' type='button' role='tab' aria-controls='".$secao."' aria-selected='false'><i class='far fa-hand-point-right'></i>&nbsp;-&nbsp;".$secoes[$s]."</button>";
+                echo "<span id='".$secao."-valid' class='float-end valid-tab badge rounded-pill bg-danger d-none'>!</span>";
+				echo "<button class='nav-link $active' id='".$secao."-tab' data-bs-toggle='tab' data-bs-target='#".$secao."' type='button' role='tab' aria-controls='".$secao."' aria-selected='false'>";
+                echo "<i class='far fa-hand-point-right'></i>";
+                echo "&nbsp;-&nbsp;".$secoes[$s];
+                echo "</button>";
                 echo "</li>";
 				$active = '';
             }
@@ -54,41 +57,40 @@
             echo "</div>";
 			$active = 'show active';
             echo "<div class='tab-content bg-white' id='myTabContent'>";
-            for ($s=0;$s<sizeof($secoes);$s++) {
+            for ($s=0;$s<count($secoes);$s++) {
                 $secao = url_amigavel($secoes[$s]);
 				echo "<div class='tab-pane fade p-lg-3 p-2 $active' id='".$secao."' role='tabpanel' aria-labelledby='".$secao."-tab' tabindex='0'>";
                 $campos_se = $campos[$s];
+                $display      = (isset($displ[$s]))?$displ[$s]:'';
                 $contrep   = 0;
-                $cta_campo = 0;
-                $tipo      = '';
-                if ($campos_se[0] == 'tabela') {
-                    $tipo = $campos_se[0];
-                    $cta_campo = 1;
+                if ($display == 'tabela') {
                     echo "<div id='rep_".$secao."' class='rep_campos d-inline-table table2-responsive rep_$secao' data-".$secao."-index='$contrep'>";
-                    echo "<table class='table2 table-sm'>";
-                    echo "<tr>";
-                }
-                for ($c=$cta_campo;$c<sizeof($campos_se);$c++) {
-                    if ($tipo == 'tabela') {
-                        echo "<td class='d-initial h-auto align-top'>";
-                    }
-                    echo $campos_se[$c];
-                    if ($tipo  == 'tabela') {
+                    for ($c=0;$c<sizeof($campos_se);$c++) {
+                        $campos_se_lin = $campos_se[$c];
+                        echo "<table class='table2 table-sm' width='100%' data-index='$contrep'>";
+                        echo "<tr>";
+                        for ($cl=0;$cl<(sizeof($campos_se_lin)-2);$cl++) {
+                            echo "<td class='d-initial h-auto align-baseline'>";
+                            echo $campos_se_lin[$cl];
+                            echo "</td>";
+                        }
+                        echo "<td class='d-initial h-auto align-middle w-10'>";
+                        echo $campos_se_lin[$cl];
+                        echo $campos_se_lin[$cl+1];
+                        $sobe = "'sobe'";
+                        $desce = "'desce'";
+                        echo "<button name='bt_up[$c]' type='button' id='bt_up[$c]' class='btn btn-outline-info btn-sm bt-up $secao mt-4 float-end' onclick='sobe_desce_item(this,\"sobe\",$secao)' title='Acima' data-index='$c'><i class='fa fa-arrow-up' aria-hidden='true'></i></button>";
+                        echo "<button name='bt_down[$c]' type='button' id='bt_down[$c]' class='btn btn-outline-info btn-sm bt-down $secao mt-4 float-end' onclick='sobe_desce_item(this,\"desce\",$secao)' title='Abaixo' data-index='$c'><i class='fa fa-arrow-down' aria-hidden='true'></i></button>";
                         echo "</td>";
+                        echo "</tr>";
+                        echo "</table>";
+                        $contrep++;
                     }
-                }
-                if ($tipo == 'tabela') {
-                    echo "<td style='min-width:5vw;text-align:center'>";
-                    $none = 'd-none';
-                    if($s == sizeof($campos_se)-1){
-                        $none = '';
-                    }
-                    echo "<button id='bt_repete__$s' data-index='__$s' class='btn btn-outline-success btn-sm bt-repete $none' type='button' onclick='repete_campo(\"".$secao."\",this)'><i class='fas fa-plus-square'></i></button>";
-                    echo "<button id='bt_exclui__$s' data-index='__$s' class='btn btn-outline-danger  btn-sm bt-exclui' type='button' onclick='exclui_campo(\"".$secao."\",this)'><i class='fas fa-trash'></i></button>";
-                    echo "</td>";
-                    echo "</tr>";
-                    echo "</table>";
                     echo "</div>";
+                } else {
+                    for ($c=0;$c<sizeof($campos_se);$c++) {
+                        echo $campos_se[$c];
+                    }
                 }
                 $contrep++;
                 echo "</div>";
@@ -99,6 +101,9 @@
 		?>
     </form>    
     </div>
+    <script src="<?=base_url('assets/jscript/bootstrap-select.js');?>"></script>
+    <script src="<?=base_url('assets/jscript/my_fields.js');?>"></script>
+    <script src="<?=base_url('assets/jscript/my_consulta.js');?>"></script>
 
     <script src="<?=base_url('assets/jscript/summernote-lite.js');?>"></script>
     <script src="<?=base_url('assets/jscript/jquery.bootstrap-duallistbox.js');?>"></script>
@@ -108,6 +113,7 @@
     <link rel="stylesheet" href="<?=base_url('assets/css/summernote-lite.css');?>">
     <link rel="stylesheet" href="<?=base_url('assets/css/summernote.min.css');?>">
     <link rel="stylesheet" href="<?=base_url('assets/css/bootstrap-duallistbox.css');?>">
+    <link rel="stylesheet" href="<?=base_url('assets/css/bootstrap-select.css');?>">
 
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjscript/latest/moment.min.js"></script> -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
@@ -120,6 +126,10 @@
 
     <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
+
+    <script>
+        carregamentos_iniciais();
+    </script>
     <?
     if(isset($script)){
         echo $script;

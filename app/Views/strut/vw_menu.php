@@ -1,7 +1,7 @@
 <!-- Section Menu -->
 <?=$this->section('menu');?>
 <?php
-// debug($it_menu);
+// debug($etapas);
   $url_sair = base_url('/login');
   $avatar = session()->get('usu_avatar'); 
   $nomeus = session()->get('usu_nome'); 
@@ -31,7 +31,7 @@
     <p class="card-text"><?=session()->get('usu_perfil');?></p>
     <?php 
       echo "<hr>";
-      echo anchor('SetUsuario/edit_senha', 'Editar Perfil');
+      echo anchor('CfgUsuario/edit_senha/' . session()->usu_id, 'Editar Perfil');
       echo "<hr>";
       echo anchor(base_url('/login'), '<i class="fas fa-sign-out-alt"></i> - Sair');
     ?>
@@ -61,17 +61,18 @@
     </div>
     <?
     // debug($it_menu);
-    for($m=0;$m<count($it_menu);$m++){
-      $opcao = $it_menu[$m];
+    foreach($it_menu as $ke => $valu){
+      // for($m=0;$m<count($it_menu);$m++){
+      $opcao = $it_menu[$ke];
       if($opcao['men_metodo'] != 'index' && ($opcao['men_hierarquia'] == '1' || $opcao['men_hierarquia'] == '4')){
-        $opcao['clas_controler'] = $opcao['clas_controler'].'/'.$opcao['men_metodo'];
+        $opcao['cls_controler'] = $opcao['cls_controler'].'/'.$opcao['men_metodo'];
       }
 
       if($opcao['men_hierarquia'] == '1'){ // é Opção do Menu
       ?>
         <div class="accordion accordion-item accordion-body ms-2 py-1 px-0 h-auto bg-blue-claro">
-        <a id="<?=strtolower($opcao['clas_controler']);?>" href="<?=base_url($opcao['clas_controler']);?>" class="text-body-emphasis">
-          <div id="<?=strtolower($opcao['clas_controler']);?>" data-menu='' class='nav-dropdown-menu mt-0 ms-1 mb-1'>
+        <a id="<?=strtolower($opcao['cls_controler']);?>" href="<?=base_url($opcao['cls_controler']);?>" class="text-body-emphasis">
+          <div id="<?=strtolower($opcao['cls_controler']);?>" data-menu='' class='nav-dropdown-menu mt-0 ms-1 mb-1'>
             <div class='align-items-center rounded-circle p-0 me-2 text-center float-start'  style='width:1.65rem; height:1.65rem;margin-top: 0.15rem !important'>
               <i class='<?=$opcao['men_icone'];?>'></i>
             </div>
@@ -104,13 +105,13 @@
                 <div class="accordion-body ms-1 py-1 px-0 h-auto bg-blue-claro">
                 <?
                   // $subopc = $opcao[$m];
-                  // debug($it_menu[$m]['niv1'], false);
-                  for($sm=0;$sm<count($opcao['niv1']);$sm++){
-                    $subopc = $opcao['niv1'][$sm];
+                  // debug($opcao['niv1'], true);
+                  foreach($opcao['niv1'] as $key => $value){
+                    $subopc = $opcao['niv1'][$key];
                     if($subopc['men_hierarquia'] == '4'){ // é Opção do Menu
                     ?>
-                      <a id="<?=strtolower($subopc['clas_controler']);?>" href="<?=base_url($subopc['clas_controler']);?>" class="text-body-emphasis">
-                        <div id="<?=strtolower($subopc['clas_controler']);?>" data-menu='accordion1'  data-collapse='collapse<?=$opcao['men_id'];?>' class='nav-dropdown-menu mt-0 ms-1 mb-1'>
+                      <a id="<?=strtolower($subopc['cls_controler']);?>" href="<?=base_url($subopc['cls_controler']);?>" class="text-body-emphasis">
+                        <div id="<?=strtolower($subopc['cls_controler']);?>" data-menu='accordion1'  data-collapse='collapse<?=$opcao['men_id'];?>' class='nav-dropdown-menu mt-0 ms-1 mb-1'>
                           <div class='align-items-center rounded-circle p-0 me-2 text-center float-start'  style='width:1.65rem; height:1.65rem;'>
                             <i class='<?=$subopc['men_icone'];?>'></i>
                           </div>
@@ -137,11 +138,12 @@
                             <div id="collapse<?=$subopc['men_id'];?>" class="accordion-collapse submenu collapse " aria-labelledby="head<?=$subopc['men_id'];?>" data-bs-parent="#accordion<?=$cont_accord;?>">
                               <div class="accordion-body ms-2 py-1 px-0 h-auto bg-blue-claro">
                               <?
-                                for($ss=0;$ss<count($subopc['niv2']);$ss++){
-                                  $subsub = $subopc['niv2'][$ss];
-                                ?>
-                                  <a id="<?=strtolower($subsub['clas_controler']);?>" href="<?=base_url($subsub['clas_controler']);?>" class="text-body-emphasis">
-                                    <div id="<?=strtolower($subsub['clas_controler']);?>" data-submenu='accordion<?=$cont_accord;?>' data-collapse='collapse<?=$subopc['men_id'];?>' class='nav-dropdown-menu mt-0 ms-1 mb-1'>
+                                foreach($subopc['niv2'] as $key2 => $value2){
+                                  $subsub = $subopc['niv2'][$key2];
+                                  $onclic = base_url($subsub['cls_controler']);
+                                  ?>
+                                  <a id="<?=strtolower($subsub['cls_controler']);?>" href="<?=$onclic;?>" class="text-body-emphasis">
+                                    <div id="<?=strtolower($subsub['cls_controler']);?>" data-submenu='accordion<?=$cont_accord;?>' data-collapse='collapse<?=$subopc['men_id'];?>' class='nav-dropdown-menu mt-0 ms-1 mb-1'>
                                       <div class='align-items-center rounded-circle p-0 me-2 text-center float-start'  style='width:1.45rem; height:1.45rem;'>
                                         <i class='<?=$subsub['men_icone'];?>'></i>
                                       </div>

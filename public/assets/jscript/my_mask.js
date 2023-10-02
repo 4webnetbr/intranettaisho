@@ -9,19 +9,19 @@ function mascara(obj,tipo){
     if(tipo == "mcep"){
         v=v.replace(/\D/g,"");                    //Remove tudo o que não é dígito
         v=v.replace(/^(\d{5})(\d)/,"$1-$2");         //Esse é tão fácil que não merece explicações
-        return v;
+        obj.value = v;
     }
     if(tipo == "mtel"){
         v=v.replace(/\D/g,"");             //Remove tudo o que não é dígito
         v=v.replace(/^(\d{2})(\d)/g,"($1) $2"); //Coloca parênteses em volta dos dois primeiros dígitos
         v=v.replace(/(\d)(\d{4})$/,"$1-$2");    //Coloca hífen entre o quarto e o quinto dígitos
-        return v;
+        obj.value = v;
     }
     if(tipo == "mcel2"){
         v=v.replace(/\D/g,"");             //Remove tudo o que não é dígito
         v=v.replace(/^(\d{2})(\d)/g,"($1) $2"); //Coloca parênteses em volta dos dois primeiros dígitos
         v=v.replace(/(\d)(\d{4})$/,"$1-$2");    //Coloca hífen entre o quarto e o quinto dígitos
-        return v;
+        obj.value = v;
     }
     if(tipo == "mcel"){
         var r = v.replace(/\D/g, "");
@@ -35,7 +35,7 @@ function mascara(obj,tipo){
         } else {
           r = r.replace(/^(\d*)/, "($1");
         }
-        return r;        
+        obj.value = v;
     }
     if(tipo == "mcnpj"){
         v=v.replace(/\D/g,"");                           //Remove tudo o que não é dígito
@@ -43,7 +43,7 @@ function mascara(obj,tipo){
         v=v.replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3"); //Coloca ponto entre o quinto e o sexto dígitos
         v=v.replace(/\.(\d{3})(\d)/,".$1/$2");           //Coloca uma barra entre o oitavo e o nono dígitos
         v=v.replace(/(\d{4})(\d)/,"$1-$2");              //Coloca um hífen depois do bloco de quatro dígitos
-        return v;
+        obj.value = v;
     }
     if(tipo == "mcpf"){
         v=v.replace(/\D/g,"");                    //Remove tudo o que não é dígito
@@ -51,35 +51,41 @@ function mascara(obj,tipo){
         v=v.replace(/(\d{3})(\d)/,"$1.$2");       //Coloca um ponto entre o terceiro e o quarto dígitos
                                                 //de novo (para o segundo bloco de números)
         v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2"); //Coloca um hífen entre o terceiro e o quarto dígitos
-        return v;
+        obj.value = v;
     }
     if(tipo == "mdata"){
         v=v.replace(/\D/g,"");                    //Remove tudo o que não é dígito
         v=v.replace(/(\d{2})(\d)/,"$1/$2");
         v=v.replace(/(\d{2})(\d)/,"$1/$2");
         v=v.replace(/(\d{2})(\d{2})$/,"$1$2");
-        return v;
+        obj.value = v;
     }
     if(tipo == "mtempo"){
         v=v.replace(/\D/g,"");                    //Remove tudo o que não é dígito
         v=v.replace(/(\d{1})(\d{2})(\d{2})/,"$1:$2.$3");
-        return v;
+        obj.value = v;
     }
     if(tipo == "mhora"){
         v=v.replace(/\D/g,"");                    //Remove tudo o que não é dígito
         v=v.replace(/(\d{2})(\d)/,"$1h$2");
-        return v;
+        obj.value = v;
     }
     if(tipo == "mrg"){
         v=v.replace(/\D/g,"");                                      //Remove tudo o que não é dígito
         v=v.replace(/(\d)(\d{7})$/,"$1.$2");    //Coloca o . antes dos últimos 3 dígitos, e antes do verificador
         v=v.replace(/(\d)(\d{4})$/,"$1.$2");    //Coloca o . antes dos últimos 3 dígitos, e antes do verificador
         v=v.replace(/(\d)(\d)$/,"$1-$2");               //Coloca o - antes do último dígito
-        return v;
+        obj.value = v;
     }
     if(tipo == "mnum"){
-        v=v.replace(/\D/g,"");                                      //Remove tudo o que não é dígito
-        return v;
+        v=v.replace(/\D/g,"");       //Remove tudo o que não é dígito
+        obj.value = v;
+    }
+    if(tipo == "mquantia"){
+        // v=v.replace(/\D/g,"");//Remove tudo o que não é dígito
+        v=v.replace(/[A-Za-z!-,@#$%]/g,"");//Remove tudo o que não é dígito
+        v=v.replace(/([0-9]{1,10})([.]{0,1})([0-9]{0,4})$/,"$1$2$3");
+        obj.value = v;
     }
     if(tipo == "mvalor"){
         v=v.replace(/\D/g,"");//Remove tudo o que não é dígito
@@ -87,8 +93,10 @@ function mascara(obj,tipo){
         v=v.replace(/(\d)(\d{5})$/,"$1.$2");//coloca o ponto dos milhares
     
         v=v.replace(/(\d)(\d{2})$/,"$1,$2");//coloca a virgula antes dos 2 últimos dígitos
-        
-        return v;
+        if(v.length > 3){
+            v=v.replace(/^(0)(\d)/g,"$2"); //remove “0″ à esquerda
+        }        
+        obj.value = v;
     }
 };;
 
@@ -98,12 +106,12 @@ function mascara(obj,tipo){
  * @param {object} obj - Campo origem
  */
 function sair_moeda(obj){
-	vvalor = converteMoedaFloat(jQuery(obj).val());
-	if(vvalor == ''){
-		vvalor = 0;
-	}
-	valormoeda = converteFloatMoeda(vvalor.toFixed(2));
-	jQuery(obj).val(valormoeda);
+	// vvalor = converteMoedaFloat(jQuery(obj).val());
+	// if(vvalor == ''){
+	// 	vvalor = 0;
+	// }
+	// valormoeda = converteFloatMoeda(vvalor.toFixed(2));
+	// jQuery(obj).val(valormoeda);
 };;
 
 /**
@@ -121,11 +129,15 @@ function entrar_moeda(obj){
  * @param {string} valor - valor a ser convertido
  */
 function converteMoedaFloat(valor) {
-    if (valor === "") {
+    if (valor === "" || valor == undefined) {
         valor = 0;
     } else {
-        valor = valor.replace(".", "");
-        valor = valor.replace(",", ".");
+        if(valor.indexOf(".") > -1){
+            valor = valor.replace(".", "");
+        }
+        if(valor.indexOf(",") > -1){
+            valor = valor.replace(",", ".");
+        }
         valor = parseFloat(valor);
     }
     return valor;

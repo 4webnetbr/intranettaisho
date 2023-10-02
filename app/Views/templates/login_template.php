@@ -7,15 +7,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pelegrini -::- V2023</title>
-    <link rel="shortcut icon" href="/assets/images/favicon.png?noc=<?=time();?>" type="image/x-icon">
+    <title>Estoque -::- CeqNep</title>
+    <link rel="shortcut icon" href="/assets/images/favicon.ico?noc=<?=time();?>" type="image/x-icon">
 
   <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
   <!-- Bootstrap icones -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"> -->
 
   <!-- Estilo principal -->
     <link rel="stylesheet" href="<?=base_url('assets/css/default.css?nocache='.time());?>">
@@ -51,7 +51,7 @@
   
 </head>
 <body>
-    <section class="content">
+    <section>
         <?=$this->renderSection('content');?>
     </section>
 </body>

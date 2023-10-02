@@ -1,10 +1,10 @@
 <?php namespace App\Controllers;
 use App\Controllers\BaseController;
-use App\Models\Setup\SetupClasseModel;
-use App\Models\Setup\SetupDicDadosModel;
-use App\Models\Setup\SetupMenuModel;
-use App\Models\Setup\SetupModuloModel;
-use App\Models\Setup\SetupUsuarioModel;
+use App\Models\Config\ConfigClasseModel;
+use App\Models\Config\ConfigDicDadosModel;
+use App\Models\Config\ConfigMenuModel;
+use App\Models\Config\ConfigModuloModel;
+use App\Models\Config\ConfigUsuarioModel;
 
 class Buscas extends BaseController
 {
@@ -16,11 +16,11 @@ class Buscas extends BaseController
     public $admDados;
 
 	public function __construct(){
-		$this->menu 		        = new SetupMenuModel();
-		$this->modulo 		        = new SetupModuloModel();
-		$this->classe 		        = new SetupClasseModel();
-        $this->usuario              = new SetupUsuarioModel();
-        $this->admDados             = new SetupDicDadosModel();
+		$this->menu 		        = new ConfigMenuModel();
+		$this->modulo 		        = new ConfigModuloModel();
+		$this->classe 		        = new ConfigClasseModel();
+        $this->usuario              = new ConfigUsuarioModel();
+        $this->admDados             = new ConfigDicDadosModel();
 	}
 
     public function busca_hierarquia(){
@@ -47,13 +47,22 @@ class Buscas extends BaseController
     }
 
     public function busca_submenu(){
-        $data = $_REQUEST;
-        $termo              = $data['campo'][0]['id_dep'];
-        $submenus = $this->menu->getSubMenu($termo);
-        $sub_menu = array_column($submenus,'men_etiqueta','men_id');
-        echo json_encode($sub_menu);
+        if ($_REQUEST['busca']) {
+            $termo              = $_REQUEST['busca'];
+            $submenus = $this->menu->getSubMenu($termo);
+            if(sizeof($submenus) <= 0){
+                $ret[0]['id'] = '-1';
+                $ret[0]['text'] = 'SubMenu não encontrada...';
+            } else {
+                for ($c = 0;$c<sizeof($submenus);$c++) {
+                    $ret[$c]['id']      = $submenus[$c]['men_id'];
+                    $ret[$c]['text']    = $submenus[$c]['men_etiqueta'];
+                }
+            }
+        }
+        echo json_encode($ret);
+        exit;
     }
-
 
     public function busca_modulo(){
         $ret    = [];
@@ -118,9 +127,9 @@ class Buscas extends BaseController
                 $ret[0]['text'] = 'Classe não encontrada...';
             } else {
                 for ($c = 0;$c<sizeof($class);$c++) {
-                    $ret[$c]['id']      = $class[$c]['clas_id'];
-                    $ret[$c]['text']    = $class[$c]['clas_titulo'];
-                    $ret[$c]['icone']    = $class[$c]['clas_icone'];
+                    $ret[$c]['id']      = $class[$c]['cls_id'];
+                    $ret[$c]['text']    = $class[$c]['cls_nome'];
+                    $ret[$c]['icone']    = $class[$c]['cls_icone'];
                 }
             }
         }
@@ -138,9 +147,9 @@ class Buscas extends BaseController
                 $ret[0]['text'] = 'Classe não encontrada...';
             } else {
                 for ($c = 0;$c<sizeof($class);$c++) {
-                    $ret[$c]['id']      = $class[$c]['clas_id'];
-                    $ret[$c]['text']    = $class[$c]['clas_titulo'];
-                    $ret[$c]['icone']    = $class[$c]['clas_icone'];
+                    $ret[$c]['id']      = $class[$c]['cls_id'];
+                    $ret[$c]['text']    = $class[$c]['cls_nome'];
+                    $ret[$c]['icone']    = $class[$c]['cls_icone'];
                 }
             }
         }
@@ -163,6 +172,7 @@ class Buscas extends BaseController
 
     public function busca_tabela(){
         $ret    = [];
+        // debug($_REQUEST,false);
         if ($_REQUEST['busca']) {
             $termo            = $_REQUEST['busca'];
             $tabelas         = $this->admDados->getTabelaSearch($termo);
@@ -178,5 +188,7 @@ class Buscas extends BaseController
         }
         echo json_encode($ret);
     }
+
+
 
 }

@@ -1,13 +1,13 @@
 <?php namespace Config;
 
-use App\Controllers\Setup;
+use App\Controllers\Config;
 use CodeIgniter\Config\Services;
 // Create a new instance of our RouteCollection class.
 $routes = Services::routes();
 
 /*
  * --------------------------------------------------------------------
- * Router Setup
+ * Router Config
  * --------------------------------------------------------------------
  */
 $routes->setDefaultNamespace('App\Controllers');
@@ -32,29 +32,41 @@ $routes->setAutoRoute(true);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'home::index');
-$routes->get('/home_setup', 'Setup\Home_setup::index');
+$routes->get('/home_config', 'Config\Home_config::index');
 
-$routes->get('/SetModulo', 'Setup\SetModulo::index');
-$routes->get('/SetModulo/(:any)', 'Setup\SetModulo::$1');
-$routes->post('/SetModulo/(:any)', 'Setup\SetModulo::$1');
+$routes->get('/CfgModulo', 'Config\CfgModulo::index');
+$routes->get('/CfgModulo/(:any)', 'Config\CfgModulo::$1');
+$routes->post('/CfgModulo/(:any)', 'Config\CfgModulo::$1');
 
-$routes->get('/SetClasse', 'Setup\SetClasse::index');
-$routes->get('/SetClasse/(:any)', 'Setup\SetClasse::$1');
-$routes->post('/SetClasse/(:any)', 'Setup\SetClasse::$1');
+$routes->get('/CfgClasse', 'Config\CfgClasse::index');
+$routes->get('/CfgClasse/(:any)', 'Config\CfgClasse::$1');
+$routes->post('/CfgClasse/(:any)', 'Config\CfgClasse::$1');
 
-$routes->get('/SetMenu', 'Setup\SetMenu::index');
-$routes->get('/SetMenu/(:any)', 'Setup\SetMenu::$1');
-$routes->post('/SetMenu/(:any)', 'Setup\SetMenu::$1');
+$routes->get('/CfgMenu', 'Config\CfgMenu::index');
+$routes->get('/CfgMenu/(:any)', 'Config\CfgMenu::$1');
+$routes->post('/CfgMenu/(:any)', 'Config\CfgMenu::$1');
 
-$routes->get('/SetDicionario', 'Setup\SetDicionario::index');
-$routes->get('/SetDicionario/(:any)', 'Setup\SetDicionario::$1');
-$routes->post('/SetDicionario/(:any)', 'Setup\SetDicionario::$1');
+$routes->get('/CfgDicionario', 'Config\CfgDicionario::index');
+$routes->get('/CfgDicionario/(:any)', 'Config\CfgDicionario::$1');
+$routes->post('/CfgDicionario/(:any)', 'Config\CfgDicionario::$1');
 
-$routes->get('/SetFuncoes', 'Setup\SetFuncoes::index');
-$routes->get('/SetFuncoes/(:any)', 'Setup\SetFuncoes::$1');
-$routes->post('/SetFuncoes/(:any)', 'Setup\SetFuncoes::$1');
+$routes->get('/CfgFuncoes', 'Config\CfgFuncoes::index');
+$routes->get('/CfgFuncoes/(:any)', 'Config\CfgFuncoes::$1');
+$routes->post('/CfgFuncoes/(:any)', 'Config\CfgFuncoes::$1');
 
-$routes->match(['get', 'post'], '/SetModulo/(:any)/(:any)', 'Setup\SetModulo::$1::$2');
+$routes->get('/CfgPerfil', 'Config\CfgPerfil::index');
+$routes->get('/CfgPerfil/(:any)', 'Config\CfgPerfil::$1');
+$routes->post('/CfgPerfil/(:any)', 'Config\CfgPerfil::$1');
+
+$routes->get('/CfgUsuario', 'Config\CfgUsuario::index');
+$routes->get('/CfgUsuario/(:any)', 'Config\CfgUsuario::$1');
+$routes->post('/CfgUsuario/(:any)', 'Config\CfgUsuario::$1');
+
+$routes->match(['get', 'post'], '/CfgModulo/(:any)/(:any)', 'Config\CfgModulo::$1::$2');
+
+// $routes->get('/(:any)', '$1');
+// $routes->post('/(:any)/(:any)', '$1::$2');
+
 
 /*
  * --------------------------------------------------------------------

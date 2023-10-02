@@ -8115,7 +8115,7 @@ var Buttons_Buttons = /*#__PURE__*/function () {
   }, {
     key: "tableMoveHandler",
     value: function tableMoveHandler(event) {
-      var PX_PER_EM = 18;
+      var PX_prf_EM = 18;
       var $picker = external_root_jQuery_commonjs2_jquery_commonjs_jquery_amd_jquery_default()(event.target.parentNode); // target is mousecatcher
 
       var $dimensionDisplay = $picker.next();
@@ -8138,8 +8138,8 @@ var Buttons_Buttons = /*#__PURE__*/function () {
       }
 
       var dim = {
-        c: Math.ceil(posOffset.x / PX_PER_EM) || 1,
-        r: Math.ceil(posOffset.y / PX_PER_EM) || 1
+        c: Math.ceil(posOffset.x / PX_prf_EM) || 1,
+        r: Math.ceil(posOffset.y / PX_prf_EM) || 1
       };
       $highlighted.css({
         width: dim.c + 'em',

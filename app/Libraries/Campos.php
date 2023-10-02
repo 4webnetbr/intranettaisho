@@ -1,10 +1,14 @@
-<?php namespace App\Libraries;
+<?php
+namespace App\Libraries;
 
+use App\Models\Config\ConfigDicDadosModel;
 use CodeIgniter\Libraries;
 
 /**
  * Campos_cust
  * Criação de Campo Customizado
+ * @param string    $tabela     - informa a Tabela de Origem do Campo
+ * @param string    $campo     -  informa o Campo de Origem
  * @param string    $objeto     - informa o tipo de campo a ser criado
  * @param boolean   $obrigatorio- verdadeiro se o campo for obrigatorio
  * @param boolean   $leitura    - verdadeiro se o campo for somente leitura
@@ -17,6 +21,8 @@ use CodeIgniter\Libraries;
  * @param int       $size       - Quantia de Caracteres do Campo
  * @param int       $max_size   - Quantia de Caracteres máximo do Campo
  * @param int       $tamanho    - Largura do campo
+ * @param int       $colunas    - Colunas do Textarea
+ * @param int       $linhas    - -Linhas do Textarea
  * @param string    $funcao_chan- Função que será executada na alteracao do campo
  * @param string    $funcao_blur- Função que será executada na saída do campo
  * @param string    $refer      - Campo de Referência
@@ -36,9 +42,13 @@ use CodeIgniter\Libraries;
  * @param string    $img_name   - Nome do arquivo de Imagem pré-carregada
  * @param string    $pai        - nome do campo pai, para um campo dependente
  * @param string    $i_cone     - icone do label
+ * @param int       $ordem
+ * @param array     $attrdata
  */
 class Campos
 {
+    public $tabela;         // input, select, textarea, botao, file
+    public $campo;         // input, select, textarea, botao, file
     public $objeto;         // input, select, textarea, botao, file
     public $obrigatorio     = false;
     public $leitura         = false;
@@ -51,6 +61,8 @@ class Campos
     public $size            = 30;
     public $max_size        = 30;
     public $tamanho         = 50;
+    public $linhas          = 3;
+    public $colunas         = 100;
     public $funcao_chan     = '';
     public $funcao_blur     = '';
     public $refer           = '';
@@ -58,36 +70,174 @@ class Campos
     public $tipo_arquivo    = '';
     public $hint            = '';
     public $minimo          = 0;
-    public $maximo          = 100;
+    public $maximo          = 50;
     public $step            = 1;
     public $opcoes          = [];
     public $selecionado     = "";
     public $selecmulti      = [];
     public $busca           = '';
     public $repete          = false;
-    public $tipo_form       = 'inline';
+    public $tipo_form       = 'vertical';
     public $pasta           = '';
     public $img_name        = '';
     public $i_cone          = '';
     public $novo_cadastro   = '';
-
+    public $attrdata        = [];
     // DEPENDENTE
-    public $pai       = '';
+    public $pai             = '';
+    public $infotop         = '';
+    public $infobot         = '';
+    public $ordem           = null;
 
-    
+    public $dicionario;
+    public $tip_camp;
+
     public function __construct()
     {
         helper('form');
+        $this->tip_camp['char']      = 'Caracter curto';
+        $this->tip_camp['varchar']   = 'Caracter longo';
+        $this->tip_camp['mediumtext'] = 'Texto';
+        $this->tip_camp['text']      = 'Texto';
+        $this->tip_camp['int']       = 'Inteiro';
+        $this->tip_camp['decimal']   = 'Decimal';
+        $this->tip_camp['float']     = 'Moeda';
+        $this->tip_camp['date']      = 'Data';
+        $this->tip_camp['timestamp'] = 'Data e Hora';
+        $this->tip_camp['datetime']  = 'Data e Hora';
     }
-    
-    public function create() : string
+
+    /**
+     * Create campo
+     * @return string
+     */
+    public function create(): string
     {
+        // echo $this->id." Largura ".$this->tamanho."<br>";
+
+        if (isset($this->tabela) && $this->tabela != '' && isset($this->campo) && $this->campo != '') {
+            $this->dicionario = new ConfigDicDadosModel();
+            $dados_campo = $this->dicionario->getDetalhesCampo($this->tabela, $this->campo);
+            if (count($dados_campo)) {
+                $dad_camp = $dados_campo[0];
+                if ($this->id == '') {
+                    $this->id = $dad_camp['COLUMN_NAME'];
+                    $this->nome = $dad_camp['COLUMN_NAME'];
+                }
+                $this->label = $dad_camp['COLUMN_COMMENT'];
+                if ($this->place == '') {
+                    $this->place = 'Informe ' . $dad_camp['COLUMN_COMMENT'];
+                }
+                if ($this->hint == '') {
+                    $this->hint = $dad_camp['COLUMN_COMMENT'];
+                }
+                if ($this->tip_camp[$dad_camp['DATA_TYPE']] == 'Data') {
+                    if (!isset($this->objeto)) {
+                        $this->objeto = 'input';
+                    }
+                    $this->tipo = 'date';
+                    $this->size = 10;
+                    $this->tamanho = 15;
+                } elseif ($this->tip_camp[$dad_camp['DATA_TYPE']] == 'Data e Hora') {
+                    if (!isset($this->objeto)) {
+                        $this->objeto = 'input';
+                    }
+                    $this->tipo = 'datetime-local';
+                    $this->size = 18;
+                    $this->tamanho = 23;
+                } elseif (
+                    $this->tip_camp[$dad_camp['DATA_TYPE']] == 'Caracter curto'
+                        || ($this->tip_camp[$dad_camp['DATA_TYPE']] == 'Caracter longo'
+                        && $dad_camp['COLUMN_SIZE'] <= 100)
+                ) {
+                    if (!isset($this->objeto)) {
+                        $this->objeto = 'input';
+                    }
+                    $this->tipo = 'text';
+                    if (intval($dad_camp['COLUMN_SIZE']) > 50) {
+                        $this->size    = 40;
+                        $this->max_size    = $dad_camp['COLUMN_SIZE'];
+                    } else {
+                        $this->size    = intval($dad_camp['COLUMN_SIZE']);
+                    }
+                    if (!isset($this->tamanho) || $this->tamanho == 50) {
+                        $this->tamanho = $this->size + 5;
+                    }
+                } elseif (
+                    $this->tip_camp[$dad_camp['DATA_TYPE']] == 'Caracter longo'
+                    && $dad_camp['COLUMN_SIZE'] > 100
+                ) {
+                    if (!isset($this->objeto)) {
+                        $this->objeto = 'texto';
+                    }
+                    $this->linhas = 3;
+                    $this->colunas = 80;
+                    $this->maximo  = $dad_camp['COLUMN_SIZE'];
+                } elseif ($this->tip_camp[$dad_camp['DATA_TYPE']] == 'Texto') {
+                    if (!isset($this->objeto)) {
+                        $this->objeto = 'texto';
+                    }
+                    $this->linhas = 3;
+                    $this->colunas = 80;
+                    $this->maximo = $dad_camp['COLUMN_SIZE'];
+                    $this->classe = 'editor';
+                } elseif ($this->tip_camp[$dad_camp['DATA_TYPE']] == 'Inteiro') {
+                    if (!isset($this->objeto)) {
+                        $this->objeto = 'input';
+                    }
+                    $this->tipo = 'number';
+                    if (!isset($this->tamanho)) {
+                        $this->size = 10;
+                        $this->tamanho = 15;
+                    }
+                } elseif ($this->tip_camp[$dad_camp['DATA_TYPE']] == 'Decimal') {
+                    if (!isset($this->objeto)) {
+                        $this->objeto = 'input';
+                    }
+                    $this->tipo = 'quantia';
+                    $this->size = $dad_camp['NUMERIC_SCALE'];
+
+                    if (!isset($this->tamanho)) {
+                        $this->tamanho = 15;
+                    }
+                } elseif ($this->tip_camp[$dad_camp['DATA_TYPE']] == 'Moeda') {
+                    if (!isset($this->objeto)) {
+                        $this->objeto = 'input';
+                    }
+                    $this->tipo = 'moeda';
+
+                    if (!isset($this->tamanho)) {
+                        $this->size = 10;
+                        $this->tamanho = 15;
+                    }
+                }
+                if (stripos($dad_camp['COLUMN_NAME'], 'cep')) {
+                    $this->tipo = 'cep';
+                }
+            }
+        }
+
         if ($this->objeto == 'botao') {
-            $ret = $this->cr_botao();
-        } else if ($this->objeto == 'oculto') {
+            $ret = $this->crBotao();
+        } elseif ($this->objeto == 'oculto') {
             $ret = $this->cr_oculto();
+        } elseif ($this->objeto == 'imagem') {
+            $ret = "<div id='ig_$this->id' class='d-inline-block col-2'>";
+            $ret .= $this->cr_imagem();
+            $ret .= "</div>";
         } else {
-            $ret = "<div id='ig_$this->id' class='row g-1 align-items-center'>";
+            if ($this->tipo_form == 'inline') {
+                if ($this->repete) {
+                    $ret = "<div id='ig_$this->id' class='row d-inline-flex g-1 align-items-center'>";
+                } else {
+                    $ret = "<div id='ig_$this->id' class='row d-inline-flex g-1 align-items-center col-6 mb-2'>";
+                }
+            } else {
+                $ret = "<div id='ig_$this->id' class='row d-flex g-1 align-items-center col-12'>";
+            }
+            if ($this->infotop != '') {
+                $ret .= "<div class='text-info'><i class='fa-solid fa-bullhorn'></i> $this->infotop</div>";
+            }
             if ($this->objeto == 'show') {
                 $ret .= $this->cr_show();
             }
@@ -98,7 +248,7 @@ class Campos
             if ($this->objeto == 'daterange') {
                 $ret .= $this->cr_daterange();
             }
-            
+
             if ($this->objeto == 'texto') {
                 $ret .= $this->cr_texto();
             }
@@ -110,9 +260,15 @@ class Campos
             if ($this->objeto == 'checkbox') {
                 $ret .= $this->cr_checkbox();
             }
+            if ($this->objeto == 'checkbutton') {
+                $ret .= $this->cr_checkbutton();
+            }
 
             if ($this->objeto == 'radio') {
                 $ret .= $this->cr_radio();
+            }
+            if ($this->objeto == 'radiobutton') {
+                $ret .= $this->cr_radiobutton();
             }
 
             if ($this->objeto == 'dual') {
@@ -132,26 +288,30 @@ class Campos
             if ($this->objeto == 'depende') {
                 $ret .= $this->cr_depende();
             }
-            if ($this->objeto == 'imagem') {
-                $ret .= $this->cr_imagem();
-            }
+            // if ($this->objeto == 'imagem') {
+                // $ret .= $this->cr_imagem();
+            // }
 
             if ($this->objeto == 'text_show') {
                 $ret .= $this->cr_text_show();
             }
 
             if ($this->tipo == 'AUTOCOMPLETE') {
-                $this->hint = " data-toggle='tooltip' data-original-title='".$this->CI->lang->line('ms_3caracteres')."'";
+                $this->hint = " data-toggle='tooltip' data-original-title='"
+                . lang('ms_3caracteres')
+                . "'";
             }
-
+            if ($this->infobot != '') {
+                $ret .= "<div class='text-warning fst-italic w-auto ms-3'><i class='fa-solid fa-triangle-exclamation'></i> $this->infobot</div>";
+            }
             $ret .= "</div>";
         }
         return $ret;
     }
 
-    public function cr_label($ident = '')
+    public function crLabel($ident = '')
     {
-        if($ident == ''){
+        if ($ident == '') {
             $ident = $this->id;
         }
         $label = array(
@@ -164,14 +324,15 @@ class Campos
             $label_text .= "<i class='fa fa-file-archive-o'></i> Selecionar Arquivo";
         }
 
-        if ($this->tipo_form == 'vertical') {
-            $ret = "<div class='col-12 col-lg-12 d-block'>";
+        if ($this->tipo_form == 'inline') {
+            $ret = "<div class='col-12 d-block'>";
         } else {
             $ret = "<div class='col-12 col-lg-2 d-block'>";
         }
+        // $ret = "<div class='col-12 col-lg-2 d-block'>";
     
         if ($this->repete) {
-            $ret = "<div class='p-0 me-3 mb-0 me-lg-0 d-block'>";
+            // $ret = "<div class='p-0 me-3 mb-0 me-lg-0 d-block'>";
         }
         $ret .= form_label($label_text, $ident, $label);
         $ret .= "</div>";
@@ -182,19 +343,19 @@ class Campos
     {
         $resp = '';
         if ($this->label != '') {
-            $resp .= $this->cr_label();
+            $resp .= $this->crlabel();
         }
         $altura  = $this->tamanho.'rem';
         $largura = $this->size.'ch';
 
-        $resp .= "<div class='border rounded bg-gradient-secondary input-group mb-lg-1 mb-2 overflow-auto' style='width: $largura !important; height: $altura !important'>";
+        $resp .= "<div class='border rounded bg-gradient-secondary input-group mb-lg-1 mb-2 overflow-auto' style='width: auto !important; height: $altura !important'>";
         $resp .= $this->valor;
         $resp .= "</div>";
 
         return $resp;
     }
 
-    public function cr_botao(): string
+    public function crBotao(): string
     {
         $field = array(
             'name'          => $this->nome,
@@ -202,12 +363,19 @@ class Campos
             'type'          => $this->tipo,
             'class'			=> "btn $this->classe ",
             'content'       => $this->i_cone.$this->label,
-            'onclick'  		=> $this->funcao_chan
+            'onclick'  		=> $this->funcao_chan,
+            'title'         => $this->place,
+            // 'data-index'    => $this->attrdata,
         );
         if ($this->hint != '') {
             $field['data-mdb-toggle'] = "tooltip";
             $field['data-mdb-placement'] = "bottom";
             $field['title'] = $this->hint;
+        }
+        if (isset($this->attrdata)) {
+            foreach($this->attrdata as $key => $value) {
+                $field[$key] = $value;
+            }
         }
         $resp = form_button($field);
         return $resp;
@@ -230,10 +398,10 @@ class Campos
     {
         $resp = '';
         if ($this->label != '') {
-            $resp .= $this->cr_label();
+            $resp .= $this->crlabel();
         }
         $largura = $this->tamanho.'ch';
-        $resp .= "<div class='form-check form-switch'>";
+        $resp .= "<div class='form-check form-switch form-control px-1' style='width: auto'>";
         $field = array(
                 'name'  		=> $this->nome,
                 'id'    		=> $this->id,
@@ -268,14 +436,53 @@ class Campos
         return $resp;
     }
 
+    public function cr_checkbutton()
+    {
+        $resp = '';
+        if ($this->label != '') {
+            $resp .= $this->crlabel();
+        }
+        $largura = $this->tamanho.'ch';
+        $resp .= "<div class='form-check form-switch form-check-inline form-control px-1 sort overflow-auto overflow-x-hidden' style='width: auto; max-height: 70vh; '>";
+        $cont = 0;
+        foreach ( $this->opcoes as $valor => $label ) {
+            $id = $this->id.'['.$cont.']';
+            // debug($label, false);
+            $field = array(
+                    'name'  		=> $this->nome,
+                    'id'    		=> $id,
+                    'value' 		=> $valor,
+                    'autocomplete'  => 'off',
+                    'class' 		=> "btn-check ui-state-default position-fixed"
+            );
+            $checked = false;
+            if (in_array($valor,$this->selecionado)) {
+                $checked = true;
+            }
+            if ($this->leitura === true) {
+                $field['readonly'] = "readonly";
+                // $field['disabled'] = "disabled";
+                $field['onfocus'] = "this.blur()";
+                $field['tabindex'] = -1;
+            }
+            $lab = "<label class='btn $this->classe fs-4' for='$id'> $label </label>";
+            $resp .= "<div class='d-inline-flex me-2 col-12'>";
+            $resp .= form_checkbox($field, '', $checked).$lab;
+            $resp .= '</div>';
+            $cont++;
+        }
+        $resp .= "</div>";
+        return $resp;
+    }
+
     public function cr_radio()
     {
         $resp = '';
         if ($this->label != '') {
-            $resp .= $this->cr_label();
+            $resp .= $this->crlabel();
         }
         $largura = $this->tamanho.'ch';
-        $resp .= "<div class='form-check form-switch form-check-inline' style='width: 50ch'>";
+        $resp .= "<div class='form-check form-switch form-check-inline  form-control px-1' style='width: auto'>";
         $cont = 0;
         foreach ( $this->opcoes as $valor => $label ) {
             $id = $this->id.'['.$cont.']';
@@ -293,23 +500,60 @@ class Campos
                     'onchange' 		=> $this->funcao_chan,
                     'class' 		=> "form-check-input ml-2 $this->classe"
             );
-            if($valor == $this->selecionado){
+            if ($valor == $this->selecionado) {
                 $field['checked'] = true;
             }
-            if($this->obrigatorio === true){
+            if ($this->obrigatorio === true) {
                 $field['required'] = true;
                 // $resp .= "<span class='input-group-required' ><i class='fa-solid fa-caret-right form-control-require obrigatorio' title='Campo Obrigatório'></i></span>";
             } else {
                 $field['required'] = false;
             }
-            if($this->leitura === true){
+            if ($this->leitura === true) {
                 $field['readonly'] = "readonly";
                 $field['disabled'] = "disabled";
                 $field['onfocus'] = "this.blur()";
                 $field['tabindex'] = -1;
             }
-            $lab = "<label class='form-check-label px-1' for='$id'> $label </label>";
-            $resp .= "<div class='d-inline-flex' style='width: 15ch'>";
+            $lab = "<label class='form-check-label px-1 m-auto mx-0' for='$id'> $label </label>";
+            $resp .= "<div class='d-inline-flex' style='width: auto'>";
+            $resp .= form_radio($field).$lab;
+            $resp .= '</div>';
+            $cont++;
+        }
+        $resp .= "</div>";
+        return $resp;
+    }
+
+    public function cr_radiobutton()
+    {
+        $resp = '';
+        if ($this->label != '') {
+            $resp .= $this->crlabel();
+        }
+        $largura = $this->tamanho.'ch';
+        $resp .= "<div class='form-check form-switch form-check-inline  form-control px-1 w-auto'>";
+        $cont = 0;
+        foreach ( $this->opcoes as $valor => $label ) {
+            $id = $this->id.'['.$cont.']';
+            $field = array(
+                    'name'  		=> $this->nome,
+                    'id'    		=> $id,
+                    'value' 		=> $valor,
+                    'autocomplete'  => 'off',
+                    'class' 		=> "btn-check position-fixed"
+            );
+            if ($valor == $this->selecionado) {
+                $field['checked'] = true;
+            }
+            if ($this->leitura === true) {
+                $field['readonly'] = "readonly";
+                // $field['disabled'] = "disabled";
+                $field['onfocus'] = "this.blur()";
+                $field['tabindex'] = -1;
+            }
+            $lab = "<label class='btn $this->classe fs-6' for='$id'> $label </label>";
+            $resp .= "<div class='d-inline-flex me-2'>";
             $resp .= form_radio($field).$lab;
             $resp .= '</div>';
             $cont++;
@@ -322,13 +566,17 @@ class Campos
     {
         $resp = '';
         if ($this->label != '') {
-            $resp .= $this->cr_label();
+            $resp .= $this->crlabel();
         }
         $largura = $this->tamanho.'ch';
         if (session()->ismobile) {
             $largura = '';
         }
-        $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: $largura !important'>";
+        $hasvalid = '';
+        if ($this->tipo == 'cpf') {
+            $hasvalid = ' has-validation';
+        }
+        $resp .= "<div class='input-group mb-lg-1 mb-2 $hasvalid' style='width: auto !important; max-width: $largura !important;'>";
         $field = array(
             'type'  		=> $this->tipo,
             'name'  		=> $this->nome,
@@ -344,17 +592,21 @@ class Campos
             'data-enabled' 	=> $this->leitura,
             'data-alter' 	=> false,
             'data-label' 	=> $this->label,
+            'data-index'    => $this->ordem,
+            'data-nome'    => $this->campo,
             'placeholder' 	=> $this->place,
         );
+        if ($this->tipo == 'senha') {
+            $field['type'] = "password";
+        }
         if ($this->leitura === true) {
             $field['readonly'] = "readonly";
             $field['disabled'] = "disabled";
             $field['onfocus'] = "this.blur()";
             $field['tabindex'] = -1;
         }
-        if ($this->obrigatorio === true && $this->tipo != 'login' && $this->tipo != 'password') {
+        if ($this->obrigatorio === true && $this->tipo != 'login' && $this->tipo != 'password' && $this->tipo != 'senha') {
             $field['required'] = true;
-            // $resp .= "<span class='input-group-required' ><i class='fa-solid fa-caret-right form-control-require obrigatorio' title='Campo Obrigatório'></i></span>";
         }
         if ($this->hint != '') {
             $field['data-mdb-toggle'] = "tooltip";
@@ -369,30 +621,77 @@ class Campos
                 $field['aria-describedby'] = 'ig_'.$this->nome;
                 $resp .= "<span class='input-group-text input-group-addon'><i class='".$this->valor."'></i></span>";
                 break;
+            case 'sonumero':
+                $field['type'] = 'number';
+                $field['onkeyup'] = 'mascara(this, \'mnum\')';
+                $field['onchange'] = 'mascara(this, \'mnum\')';
+                $field['pattern'] = '/[\d,.?!'.$this->size.'}$/';
+                $field['style'] 			= 'text-align: right';
+                $field['aria-describedby'] = 'ig_'.$this->nome;
+                break;
             case 'quantia':
                 $field['type'] = 'text';
                 $field['onkeyup'] = 'mascara(this, \'mquantia\')';
                 $field['onblur'] = $this->funcao_blur;
-                $field['pattern'] = '[0-9]$';
+                $field['value'] = floatToQuantia($this->valor, $this->size);
+                $field['pattern'] = "/^([\d]*\,?[\d]{0,".$this->size."})$/";
                 $field['style'] = 'text-align: right';
                 $field['aria-describedby'] = 'ig_'.$this->nome;
                 break;
-            case 'sonumero':
-                $field['type']              = 'text';
+            case 'inteiro':
+                $field['type']              = 'number';
                 $field['onkeyup']           = 'mascara(this, \'mnum\')';
                 $field['onchange']          = 'mascara(this, \'mnum\')';
-                $field['pattern']           = '\\d{1,'.$this->size.'}';
+                $field['pattern']           = '/\\d{1,'.$this->size.'}/';
                 $field['style'] 			= 'text-align: right';
                 $field['aria-describedby']  = 'ig_'.$this->nome;
                 break;
+            case 'number':
+                $field['type'] = 'number';
+                $field['dir'] = 'rtl';
+                $field['min'] = $this->minimo;
+                $field['max'] = $this->maximo;
+                $field['step'] = $this->step;
+                $field['onfocus'] = 'entrar_moeda(this)';
+                $field['style'] = 'text-align: right';
+                break;
+            case 'moeda':
+                $field['type'] = 'text';
+                $field['onkeyup'] = 'mascara(this, \'mvalor\')';
+                $field['pattern'] = "/^([\$]?)([0-9]*\,?[0-9]{0,2})$/";
+                $field['onchange'] = $this->funcao_chan;
+                $field['data-origin'] = floatToMoeda($this->valor);
+                $field['value'] = floatToMoeda($this->valor);
+                $field['data-person'] = '0';
+                $field['onblur']    = 'sair_moeda(this);'.$this->funcao_blur;
+                $field['onfocus'] = 'entrar_moeda(this)';
+                $field['class'] = $field['class'].' moeda has-validation';
+                $field['style'] = 'text-align: right';
+                break;
+            case 'date':
+            case 'datetime-local':
+                break;
+            case 'senha':
+                $resp .= "<span class='input-group-text input-group-addon' id='ad_$this->nome'><i class='bi bi-key'></i></span>";
+                break;
             case 'password':
+                $fieldpassoculto =array(
+                    'type'  		=> 'password',
+                    'name'  		=> 'enganagoogle',
+                    'value' 		=> '',
+                    'style'         => "opacity: 0;position: absolute;"
+                );
+                $resp .= form_input($fieldpassoculto);
+                $field['class'] = "form-control $this->classe password";
                 $field['onchange']           = $this->funcao_chan;
+                $field['onblur']             = 'validaSenha(this);oculta_passinfo();'.$this->funcao_blur;
+                // $field['pattern'] = '/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[$*&@#])(?:([0-9a-zA-Z$*&@#])(?!\1)) {6,8}$/';
                 $field['aria-describedby'] = 'ad_'.$this->nome;
                 $resp .= "<span class='input-group-text input-group-addon' id='ad_$this->nome'><i class='bi bi-key'></i></span>";
                 break;
             case 'email':
                 $field['type'] = 'email';
-                $field['pattern'] = '^[\w\.=-]+@[\w\.-]+\.[\w]{2,3}$';
+                $field['pattern'] = '/^[\w\.=-]+@[\w\.-]+\.[\w]{2,3}$/';
                 $field['style'] = 'text-align: left';
                 $field['aria-describedby'] = 'ad_'.$this->nome;
                 $field['data-original-title'] = 'Informe um E-mail válido!';
@@ -402,7 +701,7 @@ class Campos
             case 'site':
             case 'url':
                 $field['type'] = 'url';
-                $field['pattern'] = '^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$';
+                $field['pattern'] = '/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/';
                 $field['style'] = 'text-align: left';
                 $field['aria-describedby'] = 'ad_'.$this->nome;
                 $field['data-original-title'] = 'Informe uma url válida!';
@@ -412,7 +711,7 @@ class Campos
             case 'telefone':
             case 'fone':
                 $field['type'] = 'tel';
-                $field['pattern'] = '^\(\d{2}\) \d{4}\-\d{4}$';
+                $field['pattern'] = '/^\(\d{2}\) \d{4}\-\d{4}$/';
                 $field['onkeyup'] = 'mascara(this, \'mtel\')';
                 $field['style'] = 'text-align: left';
                 $field['aria-describedby'] = 'ad_'.$this->nome;
@@ -425,7 +724,7 @@ class Campos
             case 'whatsapp':
             case 'whats':
                 $field['type'] = 'tel';
-                $field['pattern'] = '^\(\d{2}\) \d{4,5}\-\d{4}$';
+                $field['pattern'] = '/^\(\d{2}\) \d{4,5}\-\d{4}$/';
                 $field['onkeyup'] = 'mascara(this, \'mcel2\')';
                 $field['style'] = 'text-align: left';
                 $field['aria-describedby'] = 'ad_'.$this->nome;
@@ -435,7 +734,7 @@ class Campos
                 break;
             case 'cnpj':
                 $field['type'] = 'text';
-                $field['pattern'] = '^\\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}';
+                $field['pattern'] = '/^\\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}/';
                 $field['onkeyup'] = 'mascara(this, \'mcnpj\')';
                 $field['style'] = 'text-align: right';
                 $field['aria-describedby'] = 'ad_'.$this->nome;
@@ -444,8 +743,9 @@ class Campos
                 break;
             case 'cpf':
                 $field['type'] = 'text';
-                $field['pattern'] = '^\\d{3}\.\d{3}\.\d{3}\-\d{2}';
+                $field['pattern'] = '/^\\d{3}\.\d{3}\.\d{3}\-\d{2}/';
                 $field['onkeyup'] = 'mascara(this, \'mcpf\')';
+                $field['onblur'] = $field['onblur'].';ValidaCPF(this)';
                 $field['style'] = 'text-align: right';
                 $field['aria-describedby'] = 'ad_'.$this->nome;
                 $field['data-original-title'] = 'Digite o CPF no formato 999.999.999-99';
@@ -453,12 +753,22 @@ class Campos
                 break;
             case 'cep':
                 $field['type'] = 'text';
-                $field['pattern'] = '^\\d{5}\-\d{3}$';
+                $field['pattern'] = '/^\\d{5}\-\d{3}$/';
                 $field['onkeyup'] = 'mascara(this, \'mcep\')';
                 $field['style'] = 'text-align: right';
                 $field['aria-describedby'] = 'ad_'.$this->nome;
                 $field['data-original-title'] = 'Digite o CEP no formato 99999-999';
                 $field['title'] = 'Digite o CEP no formato 99999-999';
+                break;
+            case 'placaveiculo':
+                $field['type'] = 'text';
+                $field['pattern'] = '/^\\[A-Z]{3}\-\d[A-Z0-9]\d{2}$/';
+                $field['onkeyup'] = 'mascara(this, \'mplaca\')';
+                $field['class'] = "form-control $this->classe text-uppercase";
+                $field['style'] = 'text-align: left';
+                $field['data-original-title'] = 'Informe uma Placa Válida! AAA=0000 ou AAA-0A00';
+                $field['title'] = 'Informe uma Placa Válida! AAA=0000 ou AAA-0A00';
+                $field['aria-describedby'] = 'ig_'.$this->nome;
                 break;
             case 'file':
                 $field['type'] = 'file';
@@ -487,34 +797,6 @@ class Campos
                 $resp .= "<img id='img_".$this->nome."' src='".$this->valor."' for='".$this->id."' class='img-thumbnail sempadding' alt=''  />";
                 $resp .= "</div><div class='clear'></div>";
                 break;
-            case 'number':
-                $field['type'] = 'number';
-                $field['dir'] = 'rtl';
-                $field['min'] = $this->minimo;
-                $field['max'] = $this->maximo;
-                $field['step'] = $this->step;
-                $field['onfocus'] = 'entrar_moeda(this)';
-                $field['style'] = 'text-align: right';
-                break;
-            case 'date':
-            case 'datetime-local':
-                // if ($field['value'] != "") {
-                //     $field['max'] = $field['value'];
-                // }
-                // $resp .= '<i class="fa fa-calendar-o form-control-icon" aria-hidden="true"></i>';
-                break;
-            case 'moeda':
-                $field['type'] = 'text';
-                $field['onkeyup'] = 'mascara(this, \'mvalor\')';
-                $field['pattern'] = '([0-9]{1,3}\.)?[0-9]{1,3},[0-9]{2}$'; //'\\d{1,3}(?:\.\d{3})*,\d{2}$';
-                $field['onchange'] = $this->funcao_chan;
-                $field['data-origin'] = $this->valor;
-                $field['data-person'] = '0';
-                $field['onblur']    = 'sair_moeda(this)';
-                $field['onfocus'] = 'entrar_moeda(this)';
-                $field['class'] = $field['class'].' moeda';
-                $field['style'] = 'text-align: right';
-                break;
             case 'textselect': //pega o texto do select informado
                 $field['type'] = 'text';
                 $busca = "busca_textselect(this,\"".$this->nome."\")";
@@ -542,13 +824,26 @@ class Campos
                 break;
         }
         $resp .= form_input($field);
+        if ($this->tipo == 'password' || $this->tipo == 'senha') {
+            // $resp .= "<span name='show_password' class='input-group-text bi bi-eye-slash-fill show_password' id='ada_$this->nome' data-field='$this->nome'></span>";
+        }
+        if ($this->obrigatorio) {
+            $resp .= "<div class='invalid-feedback'>";
+            $resp .= $this->label.' é obrigatório';
+            $resp .= "</div>";            
+        }
+        if ($this->tipo == 'cpf') {
+            $resp .= "<div class='invalid-feedback'>";
+            $resp .= "CPF Inválido, verifique!";
+            $resp .= "</div>";
+        }
         if ($this->tipo == 'password') {
-            $resp .= "<span name='show_password' class='input-group-text bi bi-eye-slash-fill show_password' id='ada_$this->nome' data-field='$this->nome'></span>";
+            $resp .= "<div id='pass-info' class='invalid-feedback  border border-1 bg-white position-content p-2' style='z-index:200;top:2rem'></div>";
         }
 
         $resp .= "</div>";
         
-        // if($this->tipo == 'icone'){
+        // if ($this->tipo == 'icone') {
         //     $resp .= "</div>";
         // }
         return $resp;
@@ -558,13 +853,13 @@ class Campos
     {
         $resp = '';
         if ($this->label != '') {
-            $resp .= $this->cr_label();
+            $resp .= $this->crlabel();
         }
         $largura = $this->tamanho.'ch';
         if (session()->ismobile) {
             $largura = '';
         }
-        $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: $largura !important'>";
+        $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: auto !important'>";
         $field = array(
             'type'  		=> 'text',
             'name'  		=> $this->nome,
@@ -589,13 +884,17 @@ class Campos
     {
         $resp = '';
         if ($this->label != '') {
-            $resp .= $this->cr_label();
+            $resp .= $this->crlabel();
         }
-        $largura = $this->tamanho.'ch';
+        $largura = $this->colunas.'ch !important';
         if (session()->ismobile) {
             $largura = '';
         }
-        $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: $largura !important'>";
+        if ($this->classe == 'editor') {
+            $resp .= "<div class='input-group mb-lg-1 mb-2'>";
+        } else {
+            $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: auto'>";
+        }
         $field = array(
                 'type'  		=> 'textarea',
                 'name'  		=> $this->nome,
@@ -605,11 +904,12 @@ class Campos
                 'data-alter' 	=> false,
                 'data-label' 	=> $this->label,
                 'placeholder' 	=> $this->place,
-                'cols'			=> $this->size,
-                'rows' 			=> $this->max_size,
+                'cols'			=> $this->colunas,
+                'rows' 			=> $this->linhas,
+                'maxlength'     => $this->maximo,
                 'hint'  		=> $this->hint,
                 'onblur' 		=> $this->funcao_blur,
-                'style'         => 'white-space: normal;width: auto',
+                'style'         => 'white-space: normal;max-width:50%;',
                 'class' 		=> "$this->classe form-control",
         );
         if ($this->leitura === true) {
@@ -637,13 +937,13 @@ class Campos
     {
         $resp = '';
         if ($this->label != '') {
-            $resp .= $this->cr_label();
+            $resp .= $this->crlabel();
         }
         $largura = $this->tamanho.'ch';
         if (session()->ismobile) {
             $largura = '';
         }
-        $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: $largura !important'>";
+        $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: auto !important'>";
         $field = array(
                 'type'  		=> 'textarea',
                 'name'  		=> $this->nome,
@@ -653,11 +953,12 @@ class Campos
                 'data-alter' 	=> false,
                 'data-label' 	=> $this->label,
                 'placeholder' 	=> $this->place,
-                'cols'			=> $this->size,
-                'rows' 			=> $this->tamanho,
+                'cols'			=> $this->colunas,
+                'rows' 			=> $this->linhas,
+                'maxlength'     => $this->tamanho,
                 'hint'  		=> $this->hint,
                 'onblur' 		=> $this->funcao_blur,
-                'style'         => 'white-space: normal;width: auto',
+                'style'         => 'white-space: normal;width: auto; max-width:50%;',
                 'class' 		=> 'form-control',
         );
         if ($this->leitura === true) {
@@ -677,6 +978,11 @@ class Campos
         }
 
         $resp .= form_textarea($field);
+        if ($this->obrigatorio) {
+            $resp .= "<div class='invalid-feedback'>";
+            $resp .= $this->label.' é obrigatório';
+            $resp .= "</div>";            
+        }
         $resp .= "</div>";
         
         return $resp;
@@ -686,13 +992,13 @@ class Campos
     {
         $resp = '';
         if ($this->label != '') {
-            $resp .= $this->cr_label();
+            $resp .= $this->crlabel();
         }
         $largura = $this->tamanho.'ch';
         if (session()->ismobile) {
             $largura = '';
         }
-        $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: $largura !important'>";
+        $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: auto !important'>";
 
         $field = array(
                 'name'  		=> $this->nome,
@@ -732,6 +1038,11 @@ class Campos
         }
       
         $resp .= form_dropdown($field, $this->opcoes, $this->selecionado);
+        if ($this->obrigatorio) {
+            $resp .= "<div class='invalid-feedback'>";
+            $resp .= $this->label.' é obrigatório';
+            $resp .= "</div>";            
+        }
 
         $resp .= "</div>";
 
@@ -742,33 +1053,38 @@ class Campos
     {
         $resp = '';
         if ($this->label != '') {
-            $resp .= $this->cr_label();
+            $resp .= $this->crlabel();
         }
         $largura = $this->tamanho.'ch';
+        $larguramax = ($this->tamanho+5).'ch';
         if (session()->ismobile) {
             $largura = '';
         }
-        $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: $largura !important'>";
+        $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: $larguramax !important; max-width: $largura !important; max-width: $larguramax !important;'>";
 
         $field = array(
-                'name'  		=> $this->nome,
-                'id'    		=> $this->id,
+                'name'  		=> $this->nome.'[]',
+                'id'    		=> $this->id.'[]',
                 'data-enabled' 	=> $this->leitura,
                 'data-alter' 	=> false,
                 'data-label' 	=> $this->label,
                 'data-valor'	=> $this->selecionado,
                 'placeholder' 	=> $this->place,
                 'hint'  		=> $this->hint,
+                'onchange' 		=> $this->funcao_chan,
                 'multiple'      => '',
                 'data-live-search' => "true",
-                'class' 		=> 'selpic form-control form-select show-tick'
+                'class' 		=> 'selectpicker form-control form-select show-tick'
         );
+        if ($this->ordem != null) {
+            $field['data-index'] = $this->ordem; 
+        }
         if (!isset($this->size) || $this->size == '') {
             $this->size = -1;
         }
-        if ($this->place != '') {
-            $this->opcoes = array('""'  => 'Escolha '.$this->place)+$this->opcoes;
-        }
+        // if ($this->place != '') {
+        //     $this->opcoes = array('""'  => 'Escolha '.$this->place)+$this->opcoes;
+        // }
 
         if ($this->leitura === true) {
             $field['readonly'] = "readonly";
@@ -787,6 +1103,11 @@ class Campos
         }
       
         $resp .= form_multiselect($field, $this->opcoes, $this->selecmulti);
+        if ($this->obrigatorio) {
+            $resp .= "<div class='invalid-feedback'>";
+            $resp .= $this->label.' é obrigatório';
+            $resp .= "</div>";            
+        }
 
         $resp .= "</div>";
 
@@ -797,13 +1118,14 @@ class Campos
     {
         $resp = '';
         if ($this->label != '') {
-            $resp .= $this->cr_label();
+            $resp .= $this->crlabel();
         }
         $largura = $this->tamanho.'ch';
+        $larguramax = ($this->tamanho+5).'ch';
         if (session()->ismobile) {
             $largura = '';
         }
-        $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: $largura !important'>";
+        $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: $larguramax !important; max-width: $largura !important; max-width: $larguramax !important;'>";
 
         $field = array(
                 'name'  		=> $this->nome,
@@ -812,27 +1134,32 @@ class Campos
                 'data-alter' 	=> false,
                 'data-label' 	=> $this->label,
                 'data-valor'	=> $this->selecionado,
+                'data-live-search' => 'true',
                 'placeholder' 	=> $this->place,
                 'hint'  		=> $this->hint,
                 'onchange' 		=> $this->funcao_chan,
                 'onblur'        => $this->funcao_blur,
-                'class' 		=> ' form-control form-select'
+                'data-live-search' => "true",
+                'class' 		=> ' form-control form-select selectpicker'
         );
+        if ($this->ordem != null) {
+            $field['data-index'] = $this->ordem; 
+        }
         if (!isset($this->size) || $this->size == '') {
             $this->size = -1;
         }
-        if ($this->place != '') {
-            $this->opcoes = array(''  => 'Escolha '.$this->place)+$this->opcoes;
-        }
-
         if ($this->leitura === true) {
             $field['readonly'] = "readonly";
             $field['disabled'] = "disabled";
             $field['onfocus'] = "this.blur()";
             $field['tabindex'] = -1;
         }
+        $obriga = '';
         if ($this->obrigatorio === true) {
             $field['required'] = true;
+            $obriga .= "<div id='".$this->id."-fival' class='invalid-feedback'>";
+            $obriga .= $this->label.' é obrigatório';
+            $obriga .= "</div>";            
             // $resp .= "<span class='input-group-required' ><i class='fa-solid fa-caret-right form-control-require obrigatorio' title='Campo Obrigatório'></i></span>";
         }
         if ($this->hint != '') {
@@ -840,76 +1167,11 @@ class Campos
             $field['data-mdb-placement'] = "bottom";
             $field['title'] = $this->hint;
         }
-      
         $resp .= form_dropdown($field, $this->opcoes, $this->selecionado);
+        $resp .= $obriga;
 
         $resp .= "</div>";
-
-        return $resp;
-    }
-
-    public function cr_selbusca()
-    {
-        $resp = '';
-        if ($this->label != '') {
-            $resp .= $this->cr_label('bus_'.$this->id);
-        }
-        $largura = $this->tamanho.'ch';
-        if (session()->ismobile) {
-            $largura = '';
-        }
-        $resp .= "<div class='mb-lg-1 mb-2' style='width: $largura !important'>";
-        // CRIA O CAMPO OCULTO QUE ARMAZENA O REGISTRO SELECIONADO
-        $field = array(
-                'type'  		=> 'hidden',
-                'name'  		=> $this->nome,
-                'id'    		=> $this->nome,
-                'value' 		=> $this->valor,
-                'onblur'        => $this->funcao_blur,
-                'onchange' 		=> $this->funcao_chan,
-        );
-        $resp .= form_input($field);
-
-        // CRIA O DROPDOWN DE BUSCA
-        $resp .= "<div id='db_$this->id' class='dropdown '>\n";
-        $resp .= "<div class='input-group' >\n";
-        $field = array(
-                        'type'  		=> 'text',
-                        'name'  		=> 'bus_'.$this->nome,
-                        'id'    		=> 'bus_'.$this->id,
-                        'size'			=> $this->size,
-                        'maxlength' 	=> $this->tamanho,
-                        'value'         => $this->selecionado,
-                        'autocomplete'  => 'off',
-                        'placeholder' 	=> 'Digite 3 letras para buscar...',
-                        'onKeyUp' 	    => "buscar('$this->busca', this,'$this->nome');",
-                        'class' 		=> "form-control dropdown-toggle",
-                        'data-bs-toggle'=> "dropdown",
-                        'aria-expanded' => "false",
-                    );
-        if ($this->leitura === true) {
-            $field['class'] = "form-control";
-            $field['data-bs-toggle'] = "";
-            $field['readonly'] = "readonly";
-            $field['disabled'] = "disabled";
-            $field['onfocus'] = "this.blur()";
-            $field['tabindex'] = -1;
-        }
-        if ($this->obrigatorio === true) {
-            $field['required'] = true;
-            // $resp .= "<span class='input-group-required' ><i class='fa-solid fa-caret-right form-control-require obrigatorio' title='Campo Obrigatório'></i></span>";
-        }
-        $resp .= form_input($field);
-        if ($this->leitura === false) {
-            $resp .= "<span class='input-group-text'><i class='fa fa-search'></i></span>\n";
-            $resp .= "<ul id='dd_$this->nome' class='dropdown-menu w-100 bg-gray-padrao opacity-100 border border-dark border-1' aria-labelledby='bus_".$this->nome."' data-popper-placement='bottom-start' data-bs-auto-close='true' style='margin: 0px;transform: translate(0rem, 10rem); max-height: 10rem;overflow-y: auto;'>\n";
-            $resp .= "    <li><h6 class='dropdown-header disabled'>Digite 3 letras para buscar...</h6></li>\n";
-            $resp .= "</ul>\n";
-        }
-        $resp .= "</div>\n";
-        $resp .= "</div>\n";
-        $resp .= "</div>\n";
-        if($this->novo_cadastro != ''){
+        if ($this->novo_cadastro != '' && $this->leitura === false) {
             $field_btn = array(
                 'name'          => 'bt_ad_'.$this->nome,
                 'id'            => 'bt_ad_'.$this->id,
@@ -922,26 +1184,189 @@ class Campos
             );
             $resp .= form_button($field_btn);
         }
+
         return $resp;
     }
 
-    public function cr_depende()
+    public function cr_selbusca()
     {
         $resp = '';
         if ($this->label != '') {
-            $resp .= $this->cr_label();
+            $resp .= $this->crlabel();
         }
         $largura = $this->tamanho.'ch';
+        $larguramax = ($this->tamanho+5).'ch';
+        // echo "Largura ".$this->tamanho;
         if (session()->ismobile) {
             $largura = '';
         }
-        $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: $largura !important'>";
+        $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: $larguramax !important; max-width: $largura !important; max-width: $larguramax !important;'>";
 
         $field = array(
                 'name'  		=> $this->nome,
                 'id'    		=> $this->id,
                 'data-enabled' 	=> $this->leitura,
                 'data-alter' 	=> false,
+                'data-label' 	=> $this->label,
+                'data-valor'	=> $this->selecionado,
+                'data-live-search' => 'true',
+                'data-busca'    => $this->busca,
+                'placeholder' 	=> $this->place,
+                'hint'  		=> $this->hint,
+                'onchange' 		=> $this->funcao_chan,
+                'onblur'        => $this->funcao_blur,
+                'class' 		=> ' form-control form-select selbusca selectpicker'
+        );
+        if ($this->ordem != null) {
+            $field['data-index'] = $this->ordem; 
+        }
+        if (!isset($this->size) || $this->size == '') {
+            $this->size = -1;
+        }
+        if ($this->leitura === true) {
+            $field['readonly'] = "readonly";
+            $field['disabled'] = "disabled";
+            $field['onfocus'] = "this.blur()";
+            $field['tabindex'] = -1;
+        }
+        $obriga = '';
+        if ($this->obrigatorio === true) {
+            $field['required'] = true;
+            $obriga .= "<div id='".$this->id."-fival' class='invalid-feedback'>";
+            $obriga .= $this->label.' é obrigatório';
+            $obriga .= "</div>";            
+            // $resp .= "<span class='input-group-required' ><i class='fa-solid fa-caret-right form-control-require obrigatorio' title='Campo Obrigatório'></i></span>";
+        }
+        if ($this->hint != '') {
+            $field['data-mdb-toggle'] = "tooltip";
+            $field['data-mdb-placement'] = "bottom";
+            $field['title'] = $this->hint;
+        }
+        // debug($this->selecionado);
+        $resp .= form_dropdown($field, $this->opcoes, $this->selecionado);
+        $resp .= $obriga;
+
+        $resp .= "</div>";
+        if ($this->novo_cadastro != '' && $this->leitura === false) {
+            $field_btn = array(
+                'name'          => 'bt_ad_'.$this->nome,
+                'id'            => 'bt_ad_'.$this->id,
+                'style'         => 'width:2.5rem',
+                'type'          => 'button',
+                'hint'          => "Novo Cadastro",
+                'class'			=> "btn btn-outline-secondary ",
+                'content'       => "<i class='fa-solid fa-wand-sparkles fa-flip-horizontal'></i> ",
+                'onclick'  		=> "openModal('".$this->novo_cadastro."')"
+            );
+            $resp .= form_button($field_btn);
+        }
+
+        return $resp;
+    }
+
+    // public function cr_selbusca()
+    // {
+    //     $resp = '';
+    //     if ($this->label != '') {
+    //         $resp .= $this->crlabel('bus_'.$this->id);
+    //     }
+    //     $largura = $this->tamanho.'ch';
+    //     if (session()->ismobile) {
+    //         $largura = '';
+    //     }
+    //     // debug($this->valor, false);
+    //     $resp .= "<div class='mb-lg-1 mb-2' style='width: $largura !important'>";
+    //     // CRIA O CAMPO OCULTO QUE ARMAZENA O REGISTRO SELECIONADO
+    //     $field = array(
+    //             'type'  		=> 'hidden',
+    //             'name'  		=> $this->nome,
+    //             'id'    		=> $this->nome,
+    //             'value' 		=> $this->valor,
+    //             'onblur'        => $this->funcao_blur,
+    //             'onchange' 		=> $this->funcao_chan,
+    //     );
+    //     $resp .= form_input($field);
+
+    //     // CRIA O DROPDOWN DE BUSCA
+    //     $resp .= "<div id='db_$this->id' class='dropdown '>\n";
+    //     $resp .= "<div class='input-group' >\n";
+    //     $field = array(
+    //                     'type'  		=> 'text',
+    //                     'name'  		=> 'bus_'.$this->nome,
+    //                     'id'    		=> 'bus_'.$this->id,
+    //                     'size'			=> $this->size,
+    //                     'maxlength' 	=> $this->tamanho,
+    //                     'value'         => $this->selecionado,
+    //                     'autocomplete'  => 'off',
+    //                     'placeholder' 	=> 'Digite 3 letras para buscar...',
+    //                     'onKeyUp' 	    => "buscar('$this->busca', this,'$this->nome');",
+    //                     'class' 		=> "form-control dropdown-toggle",
+    //                     'data-bs-toggle'=> "dropdown",
+    //                     'aria-expanded' => "false",
+    //                 );
+    //     if ($this->leitura === true) {
+    //         $field['class'] = "form-control";
+    //         $field['data-bs-toggle'] = "";
+    //         $field['readonly'] = "readonly";
+    //         $field['disabled'] = "disabled";
+    //         $field['onfocus'] = "this.blur()";
+    //         $field['tabindex'] = -1;
+    //     }
+    //     $obriga = '';
+    //     if ($this->obrigatorio === true) {
+    //         $field['required'] = true;
+    //         $obriga .= "<div id='".$this->id."-fival' class='invalid-feedback'>";
+    //         $obriga .= $this->label.' é obrigatório';
+    //         $obriga .= "</div>";            
+    //         // $resp .= "<span class='input-group-required' ><i class='fa-solid fa-caret-right form-control-require obrigatorio' title='Campo Obrigatório'></i></span>";
+    //     }
+    //     $resp .= form_input($field);
+    //     if ($this->leitura === false) {
+    //         $resp .= "<span class='input-group-text'><i class='fa fa-search'></i></span>\n";
+    //         $resp .= "<ul id='dd_$this->nome' class='dropdown-menu w-100 bg-gray-padrao opacity-100 border border-dark border-1' aria-labelledby='bus_".$this->nome."' data-popper-placement='bottom-start' data-bs-auto-close='true' style='margin: 0px;transform: translate(0rem, 10rem); max-height: 10rem;overflow-y: auto;'>\n";
+    //         $resp .= "    <li><h6 class='dropdown-header disabled'>Digite 3 letras para buscar...</h6></li>\n";
+    //         $resp .= "</ul>\n";
+    //     }
+    //     $resp .= $obriga;
+    //     $resp .= "</div>\n";
+    //     $resp .= "</div>\n";
+
+    //     $resp .= "</div>\n";
+    //     if ($this->novo_cadastro != '' && $this->leitura === false) {
+    //         $field_btn = array(
+    //             'name'          => 'bt_ad_'.$this->nome,
+    //             'id'            => 'bt_ad_'.$this->id,
+    //             'style'         => 'width:2.5rem',
+    //             'type'          => 'button',
+    //             'hint'          => "Novo Cadastro",
+    //             'class'			=> "btn btn-outline-secondary ",
+    //             'content'       => "<i class='fa-solid fa-wand-sparkles fa-flip-horizontal'></i> ",
+    //             'onclick'  		=> "openModal('".$this->novo_cadastro."')"
+    //         );
+    //         $resp .= form_button($field_btn);
+    //     }
+    //     return $resp;
+    // }
+
+    public function cr_depende()
+    {
+        $resp = '';
+        if ($this->label != '') {
+            $resp .= $this->crlabel();
+        }
+        $largura = $this->tamanho.'ch';
+        $larguramax = ($this->tamanho+5).'ch';
+        if (session()->ismobile) {
+            $largura = '';
+        }
+        $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: $larguramax !important; max-width: $largura !important; max-width: $larguramax !important;'>";
+
+        $field = array(
+                'name'  		=> $this->nome,
+                'id'    		=> $this->id,
+                'data-enabled' 	=> $this->leitura,
+                'data-alter' 	=> false,
+                'data-live-search' => 'true',
                 'data-label' 	=> $this->label,
                 'data-valor'	=> $this->valor,
                 'placeholder' 	=> $this->place,
@@ -951,8 +1376,12 @@ class Campos
                 'data-busca'    => $this->busca,
                 'data-pai'      => $this->pai,
                 'onfocus' 		=> "testa_dep('".$this->pai."')",
-                'class' 		=> ' form-control form-select dependente'
+                'class' 		=> ' form-control form-select dependente selectpicker'
         );
+
+        if ($this->ordem != null) {
+            $field['data-index'] = $this->ordem; 
+        }
         if (!isset($this->size) || $this->size == '') {
             $this->size = -1;
         }
@@ -966,8 +1395,12 @@ class Campos
             $field['onfocus'] = "this.blur()";
             $field['tabindex'] = -1;
         }
+        $obriga = '';
         if ($this->obrigatorio === true) {
             $field['required'] = true;
+            $obriga .= "<div id='".$this->id."-fival' class='invalid-feedback'>";
+            $obriga .= $this->label.' é obrigatório';
+            $obriga .= "</div>";            
             // $resp .= "<span class='input-group-required' ><i class='fa-solid fa-caret-right form-control-require obrigatorio' title='Campo Obrigatório'></i></span>";
         }
         if ($this->hint != '') {
@@ -975,8 +1408,21 @@ class Campos
             $field['data-mdb-placement'] = "bottom";
             $field['title'] = $this->hint;
         }
-        $resp .= form_dropdown($field, $this->opcoes, $this->valor);
+        $resp .= form_dropdown($field, $this->opcoes, $this->selecionado).$obriga;
         $resp .= "</div>";
+        if ($this->novo_cadastro != '' && $this->leitura === false) {
+            $field_btn = array(
+                'name'          => 'bt_ad_'.$this->nome,
+                'id'            => 'bt_ad_'.$this->id,
+                'style'         => 'width:2.5rem',
+                'type'          => 'button',
+                'hint'          => "Novo Cadastro",
+                'class'			=> "btn btn-outline-secondary ",
+                'content'       => "<i class='fa-solid fa-wand-sparkles fa-flip-horizontal'></i> ",
+                'onclick'  		=> "openModal('".$this->novo_cadastro."')"
+            );
+            $resp .= form_button($field_btn);
+        }
 
         // $busca = "busca_dependente(this,\"".$this->nome."\",\"".$this->busca."\",\"".$this->valor."\")";
                     
@@ -996,13 +1442,13 @@ class Campos
     {
         $resp = '';
         if ($this->label != '') {
-            $resp .= $this->cr_label();
+            $resp .= $this->crlabel();
         }
         $largura = $this->tamanho.'ch';        
         if (session()->ismobile) {
             $largura = '';
         }
-        $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: $largura !important'>";
+        $resp .= "<div class='input-group mb-lg-1 mb-2'>";
 
         $field = array(
             'name'  		=> $this->nome,
@@ -1018,18 +1464,21 @@ class Campos
             'style'         => "display:none",
             'class'         => ""
         );
-        if($this->leitura !== true){
-            $resp .= "<label id='lbl_$this->id' class='btn btn-primary' style='white-space: normal;width:$largura; padding:0.8em;' for='$this->id' data-mdb-toggle='tooltip' data-mdb-placement='bottom' title='' data-bs-original-title='A imagem será redimensionada para $this->size X $this->tamanho proporcionalmente' aria-label='A imagem será redimensionada para $this->size X $this->tamanho proporcionalmente' ><i class=\"fas fa-image\"></i> Selecionar imagem de $this->label</label>";
+        if ($this->leitura !== true) {
+            $resp .= "<label id='lbl_$this->id' class='btn btn-primary' style='white-space: normal;width:".$this->size."px; padding:0.8em;' for='".$this->id."' data-mdb-toggle='tooltip' data-mdb-placement='bottom' title='' data-bs-original-title='A imagem será redimensionada para ".$this->size." X ".$this->tamanho." proporcionalmente' aria-label='A imagem será redimensionada para $this->size X $this->tamanho proporcionalmente' ><i class=\"fas fa-image\"></i> Clique para selecionar imagem de $this->label";
         }
 
-        $resp .= "<div id='view_img_".$this->nome."' class='show img-thumbnail sempadding' style='width:".$this->size."px; height:".$this->tamanho."px;' >";
-        $resp .= "<img id='img_".$this->nome."' src='".$this->valor."' for='".$this->id."' class='img-thumbnail sempadding' alt='' style='width:".$this->size."px; height:".$this->tamanho."px;' />";
+        $resp .= "<div id='view_img_".$this->nome."' class='show img-thumbnail ' >";
+        $resp .= "<img id='img_".$this->nome."' src='".$this->valor."' for='".$this->id."' class='img-thumbnail sempadding' alt='' style='width:".$this->size."px;' />";
         $resp .= "</div>";
 
-        if ($this->obrigatorio === true) {
-            // $resp .= "<span class='input-group-required' ><i class='fa-solid fa-caret-right form-control-require obrigatorio' title='Campo Obrigatório'></i></span>";
-        }
+										  
+																																										 
+		 
         $resp .= form_upload($field, $this->valor);
+        if ($this->leitura !== true) {
+            $resp .= "</label>";
+        }
 
         $resp .= "</div>";
         return $resp;

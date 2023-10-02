@@ -1,28 +1,63 @@
 jQuery(document).ready(function() {  
+    jQuery(".div-img-etapa").mousedown(function(ev){
+        if(ev.which == 2)
+        {
+            urlimage = this.children[0].src;
+            openImgDiv(urlimage,'show_image');
+            ev.stopPropagation();
+            ev.preventDefault();
+            // these two are older ways I like to add to maximize browser compat
+            ev.returnValue = false;
+            ev.cancelBubble = true;
+            return false;                 //   alert("Right mouse button clicked on element with id myId");
+        }
+    });
     /**
      * se a div Toast tiver conteúdo mostra por 3 segundos
      * Document Ready my_default
      */
     texto = jQuery('.toast-body').html();
     if(jQuery.trim(texto) != ''){
+        jQuery(".toast").toast({
+            delay: 1000,                                    
+            animation: true,
+            autohide: true,
+        }); 
         jQuery(".toast").toast("show");
-        jQuery(".toast").toast({
-          delay: 3000
-        }); 
-        jQuery(".toast").toast({
-          animation: true
-        }); 
     };;
 
     jQuery(".toast").on("hide.bs.toast", function(){
         jQuery(".toast-body").html('');
     });
+
+    jQuery("#bt_salvar").on('click', function(){
+        jQuery("[id*='-valid']").addClass('d-none');
+        jQuery("[id*='-fival']").removeClass('d-block');
+        var form = jQuery(this)[0].form;
+
+        if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+        }
+
+        form.classList.add('was-validated');
+
+
+        jQuery('.was-validated :invalid').each(function(index) {
+            nid = jQuery(this)[0].id;
+            jQuery("[id='"+nid+"-fival']").addClass('d-block');
+            tab = jQuery(this)[0].closest('.tab-pane').id;
+            jQuery("[id='"+tab+"-valid']").removeClass('d-none');
+        });
+    })
     /**
      * Submete o Formulário com ajax
      * Document Ready my_default
      */
     jQuery('#form1, #form_modal').submit(function (event) {
         var form = jQuery(this);
+        form.addClass('was-validated');
+
         var tipo = form.attr('type');
         if(tipo != 'modal'){
             bloqueiaTela();
@@ -33,9 +68,11 @@ jQuery(document).ready(function() {
                 var valor = converteMoedaFloat(jQuery(this).val());
                 jQuery(this).val(valor);
             });
-        
+            var disabled = form.find(':input:disabled').removeAttr('disabled');
+
             var dadosForm = new FormData(this);
-            console.log(dadosForm);
+            disabled.attr('disabled','disabled');
+            console.log(dadosForm.values);
             var url = form.attr('action');
             jQuery.ajax({
                 type: "POST",
@@ -80,6 +117,17 @@ jQuery(document).ready(function() {
             });
         }
     });;
+
+	// VERIFICA SE O CAMPO SOFREU ALTERNATES E CASO POSITIVO, ALTERA A VARIAVE data-alter PARA VERDADEIRO
+	// ISSO PODE SER USADO NA SAÍDA DO FORMULÁRIO, PARA TESTAR SE HOUVE ALTERAÇÕES NOS DADOS
+	jQuery('body').on('keydown','input,select,textarea', function(event){
+        if(event.keyCode > 47 && event.keyCode < 91){
+            if(this.getAttribute['data-origin'] != this.value){
+                this.setAttribute('data-alter',true);
+            }
+        }
+	});
+
 })
 
 /**
@@ -156,6 +204,30 @@ function openUrlDiv(url, div){
 };;
 
 /**
+ * openOpcMenu
+ * Abre a URL fornecida, dentro da Div informada
+ * @param {string} url - URL de destino
+ * @param {string} div - nome da Div de destino
+ */
+function openOpcMenu(url){
+    jQuery.ajax({
+        type: 'POST',
+        async: true,
+        dataType: 'html',
+        url: url,
+        success: function (retorno) {
+            
+            jQuery("#"+div).html(retorno);
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            retorno = xhr.statusText;
+            boxAlert(retorno, true,'',false, 2, false);
+        }
+    });
+
+};;
+
+/**
  * openPDFModal
  * Abre o PDF informado na URL, numa Janela Modal
  * @param {string} url - URL do PDF
@@ -205,6 +277,32 @@ function openModal(url){
     });
 };;
 
+/**
+ * openImgDiv
+ * Abre a Imagem fornecida, dentro da Div informada
+ * @param {string} Imagem - URL da imagem de destino
+ * @param {string} div - nome da Div de destino
+ */
+function openImgDiv(url, div){
+    text = '';
+    text += "<div id='"+div+"' onclick='removeDiv(\""+div+"\")'>";
+    text += "<div class='d-block m-auto h-100 w-100 opacity-50 bg-gray-padrao position-absolute ' style='z-index: 200; top:0' >";
+    text += "</div>";
+    text += "<div class='d-block m-auto h-75 w-75 border border-2 border-info rounded-3 shadow bg-white position-relative m-auto align-itens-center' style='z-index: 300;'>";
+    text += "<img src='"+url+"' class='d-block position-relative m-auto' style='max-height: 40rem;' />";
+    text += "</div>";
+    text += "</div>";
+    jQuery('body').append(text);
+};;
+
+/**
+ * removeDiv
+ * remove a Div Aberta
+ * @param {string} div - nome da Div de destino
+ */
+function removeDiv(div){
+    jQuery('#'+div).remove();
+};;
 
 
 /**
@@ -224,23 +322,26 @@ function toogle_div(iddiv){
  * @param {url} url - url de exclusão do Registro
  * @param {string} registro - descrição do Registro que será excluído
  */
- function excluir(url, registro){
+
+function excluir(url, registro){
     msg = "Confirma a Exclusão do Registro?<br><h5 class='text-center'>"+registro+"</h5>";
-    boxAlert(msg, false, url, false, 3, true);
+    boxAlert(msg, false, url, false, 4, true);
 };;
 
 /**
  * boxAlert
  * Cria um box de Alerta para o Usuário
+ * Se for confirmação de exclusão, a url deve ser vazia e o box retornará a opção escolhida (Sim/Não)
  *
  * @param {string} msg    - Mensagem que será exibida
+ * @param {string} titulo    - Título do Alerta
  * @param {boolean} erro  - verdadeiro, caso seja uma mensagem de ERRO
  * @param {url}     url   - url que será executada no callback
  * @param {boolean} close - verdadeiro, Mostra o botão para fechar o Alerta
  * @param {integer} tipo  - Determina as características do Box 1 = Atenção, 2 = Informação
  * @param {boolean} confirma  - verdadeiro, Mostra os botões Sim ou Não para Confirmação
  */
-function boxAlert(msg, erro = false, url, close = false, tipo = 1, confirma = false){
+function boxAlert(msg, erro = false, url, close = false, tipo = 1, confirma = false, titulo = ''){
     if(tipo == 1){ // ATENÇÃO
         titulo = '<h3><i class="fas fa-exclamation-triangle"></i><span class="mx-2">Atenção</span></h3>';
     } else if(tipo == 2){ // INFORMAÇÃO
@@ -252,7 +353,7 @@ function boxAlert(msg, erro = false, url, close = false, tipo = 1, confirma = fa
             message: "<div class='text-center'><h5>"+msg+"</h5></div>",
             centerVertical: true,
             closeButton: close,
-            size: 'small',
+            size: 'large',
             className: 'rubberBand animated',
             callback: function () {
                 if(!erro){
@@ -261,8 +362,13 @@ function boxAlert(msg, erro = false, url, close = false, tipo = 1, confirma = fa
             }     
         });
     } else {
+        if(titulo == ''){
+            titulo = '<h3><i class="fas fa-question-circle"></i><span class="mx-2">Exclusão de Registro</span></h3>';
+        } else {
+            titulo = '<h3><i class="fas fa-question-circle"></i><span class="mx-2">'+titulo+'</span></h3>';
+        }
         bootbox.confirm({
-            title: '<h3><i class="fas fa-question-circle"></i><span class="mx-2">Exclusão de Registro</span></h3>',
+            title: titulo,
             message: "<div class='text-center'><h5>"+msg+"</h5></div>",
             centerVertical: true,
             size: 'large',
@@ -280,7 +386,27 @@ function boxAlert(msg, erro = false, url, close = false, tipo = 1, confirma = fa
             },
             callback: function (result) {
                 if(result){ 
-                    redireciona(url);
+                    if(url.indexOf('location') > -1){
+                        eval(url);
+                    } else {
+                        if(tipo == 4){
+                            jQuery.ajax({
+                                type: 'POST',
+                                async: true,
+                                dataType: 'json',
+                                url: url,
+                                success: function (retorno) {
+                                    if (retorno.erro) {
+                                        boxAlert(retorno.msg, true, '', false, 1, false);
+                                    } else {
+                                        location.href = document.referrer;
+                                    }
+                                }
+                            });
+                        } else {
+                            redireciona(url);
+                        }
+                    }
                 }
             }
         });
@@ -291,8 +417,90 @@ function boxAlert(msg, erro = false, url, close = false, tipo = 1, confirma = fa
     } else if(tipo == 2){ // INFORMAÇÃO
         jQuery('.modal-header').css("background-color", "green");
         jQuery('.modal-header').css("color", "white");
-    } else if(tipo == 3){ // EXCLUIR
+    } else if(tipo > 2){ // EXCLUIR
         jQuery('.modal-header').css("background-color", "orange");
         jQuery('.modal-header').css("color", "black");
+    }
+};;
+
+function abre_tab(url, tab, tipo){
+    ulprin = jQuery('#tabPrincipal');
+    liprin = ulprin.find('li');
+    jQuery.ajax({
+        type: 'POST',
+        async: true,
+        dataType: 'json',
+        url: url,
+        success: function (retorno) {
+            if(tipo == 'etapa'){
+                tabpos = liprin[0].id.substring(3);
+                jQuery("#li-"+tabpos).id = 'li-'+tab;
+                jQuery("#but-"+tabpos).id = 'but-'+tab;
+                jQuery("#tab-"+tabpos).id = 'tab-'+tab;
+                jQuery("#tab-"+tab).html(retorno);
+            } else {
+                if(jQuery("#li-"+tab).length){
+                    jQuery("#tab-"+tab).html(retorno);
+                } else {
+                    textli = "<li id='li="+retorno.dados.url_amiga+"' class='nav-item' role='presentation'>"
+                    textli += "    <button class='nav-link active' id='but-"+retorno.dados.url_amiga+"' data-bs-toggle='tab' data-bs-target='#tab-"+retorno.dados.url_amiga+"' type='button' role='tab' aria-controls='tab-"+retorno.dados.url_amiga+"' aria-selected='true'>";
+                    textli += "    <i class='far fa-hand-point-right'></i>";
+                    textli += "        &nbsp;-&nbsp;"+retorno.dados.title;
+                    textli += "    </button>";
+                    textli += "</li>";
+                    jQuery("#tabPrincipal").append(textli);
+                    textpn = "<div id='tab-"+retorno.dados.url_amiga+"' class='tab-pane-prin fade p-lg-3 p-2 active show' role='tabpanel' aria-labelledby='tab-"+retorno.dados.url_amiga+"' tabindex='0'>";
+                    textpn += retorno.html;
+                    textpn += "</div>";
+                    jQuery("#principal").append(textpn);
+                }
+            }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            retorno = xhr.statusText;
+            boxAlert(retorno, true,'',false, 2, false);
+        }
+    });
+}
+
+function removerTags(html){
+    const data = new DOMParser().parseFromString(html, 'text/html');
+    return data.body.textContent || "";
+ }
+
+ function tiraAcentos(txt) {
+    if (txt != null && txt != '' && txt != undefined) {
+        var i = txt.toLowerCase().trim();
+
+        var acentos = "ãáàâäéèêëíìîïõóòôöúùûüç";
+        var sem_acentos = "aaaaaeeeeiiiiooooouuuuc";
+
+        for (var x = 0; x < i.length; x++) {
+            var str_pos = acentos.indexOf(i.substr(x, 1));
+            if (str_pos != -1) {
+                i = i.replace(acentos.charAt(str_pos), sem_acentos.charAt(str_pos));
+            }
+        }
+
+        return i;
+    } else {
+        return txt;
+    }
+};;
+
+
+function cancelar() {
+    var elemAlterado = "false";
+    jQuery("input, select, textarea").each(function () {
+        elemAlterado = this.getAttribute('data-alter'); // Referência do elemento atual
+        if (elemAlterado == "true") {
+            return false;
+        }
+    });
+    if (elemAlterado == "true") {
+        msg = "Algumas informações desta página, ainda não foram salvas!!! <br> Confirmando a saída, essas informações serão perdidas definitivamente!<br><br>Confirma Saída?";
+        boxAlert(msg, false, 'location.href = document.referrer;', false, 3, true,'Registro Alterado');
+    } else {
+        location.href = document.referrer;
     }
 };;

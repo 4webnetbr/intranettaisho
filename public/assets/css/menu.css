@@ -1,10 +1,9 @@
 
-.sidebar{
+.sidebar, .sideetapa{
     display: block;
     position: absolute;
     z-index: 100;
-    left:0rem;  
-    top: -0.3rem;
+    top: 0.3rem;
     width: 3.8rem;
     padding-right: 0.2rem;
     border: 1px solid #ccc; 
@@ -12,9 +11,21 @@
     transition: width 0.4s ease-in-out;
     transform-origin: left;
     transform-style: preserve-3D;
-    min-height: calc(100vh + 1rem);
-    max-height: calc(100vh + 1rem);
+    min-height: calc(100vh - 1rem);
+    max-height: calc(100vh - 1rem);
     overflow: hidden;
+    overflow-y: auto;
+}
+
+.sideetapa{
+    left:auto;  
+    right:0rem;  
+    top: 5rem;
+    padding-left: 0.2rem;
+    border-radius: 0.8rem 0 0 0.8rem;
+    transform-origin: right;
+    min-height: 5rem;
+    max-height: calc(100vh - 5rem);
 }
 
 .sidebar.active{
@@ -25,12 +36,55 @@
     min-width: 3.5rem;
     max-width: 25rem;
 }
+
+.sideetapa.active{
+    transition: width 0.4s ease-in-out;
+    transform-origin: right;
+    transform-style: preserve-3D;
+    width: 15rem;
+    min-width: 3.5rem;
+    max-width: 25rem;
+}
+
+div.dt-button-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    background: radial-gradient(ellipse farthest-corner at center, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.7) 100%);
+    z-index: 2001;
+}
+
+div.dt-button-collection {
+    position: absolute;
+    top: 4rem!important;
+    left: 0;
+    width: 200px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    padding: 0.75em 0;
+    border: 2px solid rgba(0, 0, 0, 0.50);
+    background-color: white;
+    overflow: hidden;
+    z-index: 2002;
+    border-radius: 15px;
+    box-shadow: 3px 4px 10px 1px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+    height: auto;
+}
+
 .acc_base{
-    height: calc(100vh - 11rem);
-    overflow-y: auto;
+    height: calc(100vh - 13rem);
+    overflow-y: hidden;
     overflow-x: hidden;
     display: inline-block;
     width: -webkit-fill-available;
+}
+
+.sidebar.active div .accordion.acc_base{
+    overflow-y: auto;
 }
 
 .mod_nome, a .men_nome, .usu_nome{
@@ -42,7 +96,7 @@
     white-space: nowrap;
 }
 
-.sidebar.active .mod_nome, .sidebar.active a .men_nome, .sidebar.active .usu_nome{
+.sidebar.active .mod_nome, .sidebar.active a .men_nome, .sidebar.active .usu_nome, .sideetapa.active a .men_nome{
     display: inline-block;
     transition: all 0.4s linear ; 
     transform-origin: left;
@@ -70,10 +124,15 @@
     white-space: nowrap;
 }
 
-.img-user, .img-empresa{
+.img-user{
     width: 30px;
     height: 30px;
     margin-left: -0.1rem;
+}
+.img-empresa{
+    width: 40px;
+    height: 40px;
+    margin-left: -0.35rem;
 }
 
 .txt-bt-manut{
@@ -97,16 +156,16 @@
     position: absolute;
     -webkit-transform: translate(0%,-60%);
     -ms-transform: translate(0%,-60%);
-    transform: translate(0%,-60%);
+    transform: translate(0%,-55%);
     left: 5%;
     height: 3rem;
-    width: auto;
+    width: 10rem;
 }
 .icon-menu{
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     padding: 0.2rem;
-    width: 2.15rem;
-    height: 2.15rem;
+    width: 2.20rem;
+    height: 2.20rem;
 }
 
 .icon-submenu{
@@ -205,6 +264,15 @@
     height: 12rem;
     width: 12rem;
 }
+.card-img-etapa{
+    max-height: 11rem;
+    max-width: 11rem;    
+}
+.div-img-etapa{
+    background-color: white;
+    height: 12rem;
+    text-align: center;
+}
 
 #show_ajuda{
     z-index:1000;
@@ -230,10 +298,18 @@
     white-space: nowrap;
 }
 
-.nav-dropdown-menu.active, .nav-dropdown-menu.active a{
+
+.nav-dropdown-menu.active, .nav-dropdown-menu.active a,.nav-dropdown-menu-etapa.active, .nav-dropdown-menu-etapa.active a{
     background-color: var(--bs-accordion-btn-focus-border-color);
     border-radius: 1rem;
-    color:var(--bs-white);/* #0458eb;*/
+    color:black;/* #0458eb;*/
     font-style: italic;
     border: 1px solid black;
+}
+
+.nav-dropdown-menu:hover, .nav-dropdown-menu-etapa:hover{
+    background-color: var(--bs-white) ;
+    color: black;/* #0458eb;*/
+    border-radius: 1rem;
+    border: 0.75px inset #898989;
 }

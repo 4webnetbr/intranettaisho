@@ -11,6 +11,9 @@
 <?=$this->section('content');?>
   <div id='content' class='container '>
     <div class="row d-flex justify-content-between px-3">
+      <?php
+      // =monta_card();
+      ?>
     </div>
   </div>
 <?=$this->endSection();?>

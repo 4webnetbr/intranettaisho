@@ -13,7 +13,16 @@ class LogMonModel {
 		$this->conn = $mongodb->getConn();
 	}
 
-	function get_logs_list($tabela, $registro) {
+	/**
+	 * get_logs_last
+	 * Busca o último registro do Log
+	 *
+	 * @param mixed $tabela
+	 * @param mixed $registro
+	 * @return array
+	 */
+	function get_logs_last($tabela, $registro)
+	{
 		try {
 			$filter = [
                 'log_tabela'=>$tabela,
@@ -34,6 +43,36 @@ class LogMonModel {
 			show_error('Error while fetching logs: ' . $ex->getMessage(), 500);
 		}
 	}
+
+	/**
+	 * get_logs_all
+	 * Lista todos os registros de Log do Registro
+	 *
+	 * @param mixed $tabela
+	 * @param mixed $registro
+	 * @return array
+	 */
+	function get_logs_all($tabela, $registro) {
+		try {
+			$filter = [
+                'log_tabela'=>$tabela,
+                'log_id_registro'=>$registro,
+                'log_data'=>[ '$gt'  =>  '' ]
+            ];
+            $options = [
+                'projection' => ['_id' => 0],
+                'sort' => ['log_data' => -1],
+            ];            
+			$query = new \MongoDB\Driver\Query($filter, $options);
+
+			$result = $this->conn->executeQuery($this->database . '.' . $this->collection, $query);
+			
+			return $result->toArray();
+		} catch(\MongoDB\Driver\Exception\RuntimeException $ex) {
+			show_error('Error while fetching logs: ' . $ex->getMessage(), 500);
+		}
+	}
+
 
 	function get_logs_id($_id) {
 		try {

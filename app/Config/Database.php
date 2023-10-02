@@ -45,6 +45,29 @@ class Database extends Config
     ];
 
     /**
+     * The config database connection.
+     */
+    public array $dbConfig = [
+        'DSN'      => '',
+        'hostname' => 'localhost',
+        'username' => 'estoque_user',
+        'password' => 'n3hoUV3LwAIyE2gv8C55',
+        'database' => 'config_ceqweb_db',
+        'DBDriver' => 'MySQLi',
+        'DBPrefix' => '',
+        'pConnect' => false,
+        'DBDebug'  => true,
+        'charset'  => 'utf8',
+        'DBCollat' => 'utf8_general_ci',
+        'swapPre'  => '',
+        'encrypt'  => false,
+        'compress' => false,
+        'strictOn' => false,
+        'failover' => [],
+        'port'     => 3306,
+    ];
+
+    /**
      * This database connection is used when
      * running PHPUnit database tests.
      */

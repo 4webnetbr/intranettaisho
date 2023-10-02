@@ -2,12 +2,12 @@
 
 use App\Controllers\BaseController;
 use App\Libraries\Campos;
-use App\Models\Setup\SetupUsuarioModel;
+use App\Models\Config\ConfigUsuarioModel;
 
 class Login extends BaseController
 {
     private $login = '' ;
-    public $usuario_setup;
+    public $usuario_config;
     public $data;
     public $usu_login;
     public $usu_senha;
@@ -15,7 +15,7 @@ class Login extends BaseController
     public $bt_limpar;
     
     public function __construct(){
-        $this->usuario_setup = new SetupUsuarioModel();
+        $this->usuario_config = new ConfigUsuarioModel();
         $this->data['styles'] = 'login';    
         $this->data['scripts'] = 'my_fields,my_mask';    
         // TODO LIGAÇÃO COM OS USUÁRIOS DO CEQWEB
@@ -27,18 +27,18 @@ class Login extends BaseController
         $login->tipo    = 'login';
         $login->nome    = 'usu_login';
         $login->id      = 'usu_login';
-        $login->label   = 'Login';
-        $login->place   = 'Login';
+        $login->label   = 'Usuário';
+        $login->place   = 'Usuário';
         $login->obrigatorio = true;
-        $login->hint    = 'Informe o Login';
+        $login->hint    = 'Informe o Usuário';
         $login->size    = 30;
-        $login->tamanho  = 50;
+        $login->tamanho  = 30;
         $login->tipo_form = 'vertical';
         $this->usu_login = $login->create();
 
 		$senha =  new Campos();
 		$senha->objeto  = 'input';
-        $senha->tipo    = 'password';
+        $senha->tipo    = 'senha';
         $senha->nome    = 'usu_senha';
         $senha->id      = 'usu_senha';
         $senha->label   = 'Senha';
@@ -46,7 +46,7 @@ class Login extends BaseController
         $senha->obrigatorio = true;
         $senha->hint    = 'Informe a Senha';
         $senha->size    = 8;
-        $senha->tamanho   = 50;
+        $senha->tamanho   = 34;
         $senha->tipo_form = 'vertical';
         $this->usu_senha = $senha->create();
 
@@ -76,7 +76,7 @@ class Login extends BaseController
         if(session()->logged_in === true){
             session()->destroy();
         }
-        $logo                   = base_url('assets/images/logo_header.png');
+        $logo                   = base_url('assets/images/logo_header.jpg');
 
         $this->def_campos();
 
@@ -102,17 +102,17 @@ class Login extends BaseController
         $agent = $this->request->getUserAgent();
         $mobile = $agent->isMobile();
         $login = strtolower(trim($this->request->getVar('usu_login')));
-        $senha = strtolower(trim($this->request->getVar('usu_senha')));
-        $data = array('lower(trim(usu_login))'=>$login,'lower(trim(usu_senha))'=>md5($senha));       
+        $senha = trim($this->request->getVar('usu_senha'));
+        $data = array('lower(trim(usu_login))'=>$login,'trim(usu_senha)'=>md5($senha));       
         // $log_usu =  $this->usuario_estoque->usuLogon($data); 
         // if(sizeof($log_usu) == 0){
-            $log_setup =  $this->usuario_setup->usuLogonSetup($data); 
-            if($log_setup){
-                $img_name       = 'usu_'.$log_setup[0]['usu_id'].'.jpg';
-                $usu_tipo       = $log_setup[0]['usu_tipo'];
+            $log_config =  $this->usuario_config->usuLogonConfig($data); 
+            if($log_config){
+                $img_name       = 'usu_'.$log_config[0]['usu_id'].'.jpg';
+                // $usu_tipo       = $log_config[0]['usu_tipo'];
                 $sem_avat       = base_url('assets/images/sem_avatar.png');
                 $logo_def       = base_url('assets/images/logo_header.png');
-                $icone          = base_url('assets/images/favicon.png');
+                $icone          = base_url('assets/images/favicon.ico');
                 $path_ser       = FCPATH.'assets/uploads/usuario/';
                 $img_path       = site_url('assets/uploads/usuario/');
                 // echo $img_path.$img_name;
@@ -125,14 +125,19 @@ class Login extends BaseController
         
                 // debug($logado, false);
                 // GRAVAR SESSÃO
+                if ($log_config[0]['dash_usuario'] != '') {
+                    $dash = $log_config[0]['dash_usuario'];
+                } else {
+                    $dash = $log_config[0]['dash_perfil'];
+                }
                 $newdata = [
-                    'usu_id'        => $log_setup[0]['usu_id'],
-                    'usu_nome'      => $log_setup[0]['usu_nome'],
-                    'usu_login'     => $log_setup[0]['usu_login'],
-                    'usu_perfil_id' => $log_setup[0]['usu_perfil_id'],
-                    'usu_perfil'    => $log_setup[0]['per_nome'], 
-                    'usu_tipo'      => $log_setup[0]['usu_tipo'],
-                    'usu_whats'     => isset($log_setup[0]['usu_whats'])?$log_setup[0]['usu_whats']:'N',
+                    'usu_id'        => $log_config[0]['usu_id'],
+                    'usu_nome'      => $log_config[0]['usu_nome'],
+                    'usu_login'     => $log_config[0]['usu_login'],
+                    'usu_perfil_id' => $log_config[0]['prf_id'],
+                    'usu_perfil'    => $log_config[0]['prf_nome'],
+                    'usu_dashboard' => $dash,
+                    'usu_whats'     => isset($log_config[0]['usu_whats']) ? $log_config[0]['usu_whats'] : 'N',
                     'usu_avatar'    => $avatar,
                     'logo'          => $logo_def,
                     'icone'         => $icone,
@@ -141,7 +146,8 @@ class Login extends BaseController
                 ];
                 $session->set($newdata);
                 // debug($session,false);
-                return redirect()->to('/home');
+                // return redirect()->to('/home');
+                return redirect()->to('/' . $dash);
             } else {
                 $session->setFlashdata('msg', 'Usuário ou Senha Inválidos');
                 return redirect()->to('/login');
