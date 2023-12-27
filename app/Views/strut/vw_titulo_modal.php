@@ -40,7 +40,7 @@ $ajuda        = '';
           <div class="align-items-center py-1 text-start float-start font-weight-bold" style="">            
             <i class="fas fa-save" style="font-size: 2rem;"></i>
           </div>
-          <div class="align-items-start mx-4 txt-bt-manut">
+          <div class="align-items-start txt-bt-manut">
             Salvar
           </div>
         </button>

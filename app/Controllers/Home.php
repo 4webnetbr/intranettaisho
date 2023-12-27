@@ -12,7 +12,7 @@ class Home extends BaseController
     public $novopedido;
 
 	public function __construct(){
-		$this->data  = session()->getFlashdata('dados_classe');
+		$this->data  = session()->getFlashdata('dados_tela');
         $this->permissao = $this->data['permissao'];
         if($this->data['erromsg'] != ''){
             $this->__erro();

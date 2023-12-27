@@ -26,7 +26,7 @@ use CodeIgniter\Libraries;
  * @param string    $funcao_chan- Função que será executada na alteracao do campo
  * @param string    $funcao_blur- Função que será executada na saída do campo
  * @param string    $refer      - Campo de Referência
- * @param string    $classe     - Classe personalizada a ser aplicado no campo
+ * @param string    $classs     - Classe personalizada a ser aplicado no campo
  * @param string    $tipo_arquivo - Tipos de Arquivo suportados pelo campo imagem
  * @param string    $hint       - Hint (tooltip) a ser mostrado no campo
  * @param int       $minimo     - Valor mínimo para o campo do tipo number
@@ -66,7 +66,7 @@ class Campos
     public $funcao_chan     = '';
     public $funcao_blur     = '';
     public $refer           = '';
-    public $classe          = '';
+    public $classs          = '';
     public $tipo_arquivo    = '';
     public $hint            = '';
     public $minimo          = 0;
@@ -180,7 +180,7 @@ class Campos
                     $this->linhas = 3;
                     $this->colunas = 80;
                     $this->maximo = $dad_camp['COLUMN_SIZE'];
-                    $this->classe = 'editor';
+                    $this->classs = 'editor';
                 } elseif ($this->tip_camp[$dad_camp['DATA_TYPE']] == 'Inteiro') {
                     if (!isset($this->objeto)) {
                         $this->objeto = 'input';
@@ -304,6 +304,9 @@ class Campos
             if ($this->infobot != '') {
                 $ret .= "<div class='text-warning fst-italic w-auto ms-3'><i class='fa-solid fa-triangle-exclamation'></i> $this->infobot</div>";
             }
+            if (($this->objeto == 'input' && $this->tipo == 'text') || $this->objeto == 'textoarea' || $this->objeto == 'texto'){
+                $ret .= "<div id='dc-$this->id' class='div-caract badge bg-info-subtle'></div>";
+            }
             $ret .= "</div>";
         }
         return $ret;
@@ -361,7 +364,7 @@ class Campos
             'name'          => $this->nome,
             'id'            => $this->id,
             'type'          => $this->tipo,
-            'class'			=> "btn $this->classe ",
+            'class'			=> "btn $this->classs ",
             'content'       => $this->i_cone.$this->label,
             'onclick'  		=> $this->funcao_chan,
             'title'         => $this->place,
@@ -413,7 +416,7 @@ class Campos
                 'label' 		=> $this->label,
                 'hint'  		=> $this->hint,
                 'onchange' 		=> $this->funcao_chan,
-                'class' 		=> "form-check-input ml-2 float-start $this->classe",
+                'class' 		=> "form-check-input ml-2 float-start $this->classs",
                 // 'style'         => 'max-width: '.$largura
         );
         if ($this->valor == $this->selecionado) {
@@ -465,7 +468,7 @@ class Campos
                 $field['onfocus'] = "this.blur()";
                 $field['tabindex'] = -1;
             }
-            $lab = "<label class='btn $this->classe fs-4' for='$id'> $label </label>";
+            $lab = "<label class='btn $this->classs fs-4' for='$id'> $label </label>";
             $resp .= "<div class='d-inline-flex me-2 col-12'>";
             $resp .= form_checkbox($field, '', $checked).$lab;
             $resp .= '</div>';
@@ -498,7 +501,7 @@ class Campos
                     // 'label' 		=> $valor,
                     'hint'  		=> $this->hint,
                     'onchange' 		=> $this->funcao_chan,
-                    'class' 		=> "form-check-input ml-2 $this->classe"
+                    'class' 		=> "form-check-input ml-2 $this->classs"
             );
             if ($valor == $this->selecionado) {
                 $field['checked'] = true;
@@ -552,7 +555,7 @@ class Campos
                 $field['onfocus'] = "this.blur()";
                 $field['tabindex'] = -1;
             }
-            $lab = "<label class='btn $this->classe fs-6' for='$id'> $label </label>";
+            $lab = "<label class='btn $this->classs fs-6' for='$id'> $label </label>";
             $resp .= "<div class='d-inline-flex me-2'>";
             $resp .= form_radio($field).$lab;
             $resp .= '</div>';
@@ -587,7 +590,7 @@ class Campos
             'maxlength' 	=> isset($this->max_size)?$this->max_size:$this->size,
             'hint'  		=> $this->hint,
             'onblur' 		=> $this->funcao_blur,
-            'class' 		=> "form-control $this->classe",
+            'class' 		=> "form-control $this->classs",
             'data-inicial' 	=> $this->valor,
             'data-enabled' 	=> $this->leitura,
             'data-alter' 	=> false,
@@ -617,7 +620,7 @@ class Campos
         switch ($this->tipo) {
             case 'icone':
                 $field['type'] = 'text';
-                $field['class'] = "form-control $this->classe icone";
+                $field['class'] = "form-control $this->classs icone";
                 $field['aria-describedby'] = 'ig_'.$this->nome;
                 $resp .= "<span class='input-group-text input-group-addon'><i class='".$this->valor."'></i></span>";
                 break;
@@ -682,7 +685,7 @@ class Campos
                     'style'         => "opacity: 0;position: absolute;"
                 );
                 $resp .= form_input($fieldpassoculto);
-                $field['class'] = "form-control $this->classe password";
+                $field['class'] = "form-control $this->classs password";
                 $field['onchange']           = $this->funcao_chan;
                 $field['onblur']             = 'validaSenha(this);oculta_passinfo();'.$this->funcao_blur;
                 // $field['pattern'] = '/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[$*&@#])(?:([0-9a-zA-Z$*&@#])(?!\1)) {6,8}$/';
@@ -764,7 +767,7 @@ class Campos
                 $field['type'] = 'text';
                 $field['pattern'] = '/^\\[A-Z]{3}\-\d[A-Z0-9]\d{2}$/';
                 $field['onkeyup'] = 'mascara(this, \'mplaca\')';
-                $field['class'] = "form-control $this->classe text-uppercase";
+                $field['class'] = "form-control $this->classs text-uppercase";
                 $field['style'] = 'text-align: left';
                 $field['data-original-title'] = 'Informe uma Placa Válida! AAA=0000 ou AAA-0A00';
                 $field['title'] = 'Informe uma Placa Válida! AAA=0000 ou AAA-0A00';
@@ -869,7 +872,7 @@ class Campos
             'data-label' 	=> $this->label,
             'size'			=> $this->size,
             'maxlength' 	=> isset($this->max_size)?$this->max_size:$this->size,
-            'class' 		=> "daterange form-control $this->classe"
+            'class' 		=> "daterange form-control $this->classs"
         );
         if ($this->obrigatorio === true) {
             // $resp .= "<span class='input-group-required' ><i class='fa-solid fa-caret-right form-control-require obrigatorio' title='Campo Obrigatório'></i></span>";
@@ -890,7 +893,7 @@ class Campos
         if (session()->ismobile) {
             $largura = '';
         }
-        if ($this->classe == 'editor') {
+        if ($this->classs == 'editor') {
             $resp .= "<div class='input-group mb-lg-1 mb-2'>";
         } else {
             $resp .= "<div class='input-group mb-lg-1 mb-2' style='width: auto'>";
@@ -909,8 +912,8 @@ class Campos
                 'maxlength'     => $this->maximo,
                 'hint'  		=> $this->hint,
                 'onblur' 		=> $this->funcao_blur,
-                'style'         => 'white-space: normal;max-width:50%;',
-                'class' 		=> "$this->classe form-control",
+                'style'         => 'white-space: normal;',
+                'class' 		=> "$this->classs form-control",
         );
         if ($this->leitura === true) {
             $field['readonly'] = "readonly";
@@ -955,10 +958,10 @@ class Campos
                 'placeholder' 	=> $this->place,
                 'cols'			=> $this->colunas,
                 'rows' 			=> $this->linhas,
-                'maxlength'     => $this->tamanho,
+                'maxlength'     => $this->maximo,
                 'hint'  		=> $this->hint,
                 'onblur' 		=> $this->funcao_blur,
-                'style'         => 'white-space: normal;width: auto; max-width:50%;',
+                'style'         => 'white-space: normal;width: auto;',
                 'class' 		=> 'form-control',
         );
         if ($this->leitura === true) {

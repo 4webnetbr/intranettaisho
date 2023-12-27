@@ -236,11 +236,14 @@ function carregamentos_iniciais(){
      */
     jQuery('input[type="checkbox"]').click(function(){
         var id = jQuery(this).attr('id');
+        var opcao = id.substr(0,id.indexOf('['));
+        if(opcao.substr(0,3) != 'pit') {
+            return;
+        }
         var checked =jQuery(this).prop("checked");
         mod = id.match(/[0-9]+/g)[0];
         cla = id.match(/[0-9]+/g)[1];
         if(cla == 0){ // todas as classes
-            var opcao = id.substr(0,id.indexOf('['));
             if(opcao == 'pit_all'){
                 jQuery("input[id^='pit_consulta["+mod+"]']").prop("checked", checked); 
                 jQuery("input[id^='pit_adicao["+mod+"]']").prop("checked", checked); 
@@ -248,17 +251,80 @@ function carregamentos_iniciais(){
                 jQuery("input[id^='pit_exclusao["+mod+"]']").prop("checked", checked); 
                 jQuery("input[id^='pit_all["+mod+"]']").prop("checked", checked); 
             } else {
-                jQuery("input[id^='"+opcao+"["+mod+"]']").prop("checked", checked); 
+                jQuery("input[id^='"+opcao+"["+mod+"]']").prop("checked", checked);
+                if(opcao == 'pit_consulta' && 
+                    jQuery("input[id^='pit_consulta["+mod+"]']").prop("checked") == false) 
+                {
+                    jQuery("input[id^='pit_adicao["+mod+"]']").prop("checked", checked); 
+                    jQuery("input[id^='pit_edicao["+mod+"]']").prop("checked", checked); 
+                    jQuery("input[id^='pit_exclusao["+mod+"]']").prop("checked", checked); 
+                    jQuery("input[id^='pit_all["+mod+"]']").prop("checked", checked); 
+                } else {
+                    if (checked == true) {
+                        jQuery("input[id^='pit_consulta["+mod+"]']").prop("checked", checked); 
+                    }
+                }
             }
         } else {
             var opcao = id.substr(0,id.indexOf('['));
             if(opcao == 'pit_all'){
-                jQuery('#pit_consulta\\['+mod+'\\]\\['+cla+'\\]').prop("checked", checked); 
-                jQuery('#pit_adicao\\['+mod+'\\]\\['+cla+'\\]').prop("checked", checked); 
-                jQuery('#pit_edicao\\['+mod+'\\]\\['+cla+'\\]').prop("checked", checked); 
-                jQuery('#pit_exclusao\\['+mod+'\\]\\['+cla+'\\]').prop("checked", checked); 
+                jQuery("input[id^='pit_consulta["+mod+"]["+cla+"]']").prop("checked", checked); 
+                jQuery("input[id^='pit_adicao["+mod+"]["+cla+"]']").prop("checked", checked); 
+                jQuery("input[id^='pit_edicao["+mod+"]["+cla+"]']").prop("checked", checked); 
+                jQuery("input[id^='pit_exclusao["+mod+"]["+cla+"]']").prop("checked", checked); 
+            } else {
+                jQuery("input[id^='pit_all["+mod+"]["+cla+"]']").prop("checked", checked); 
+                if(opcao == 'pit_consulta' && checked == false) 
+                {
+                    jQuery("input[id^='pit_adicao["+mod+"]["+cla+"]']").prop("checked", checked); 
+                    jQuery("input[id^='pit_edicao["+mod+"]["+cla+"]']").prop("checked", checked); 
+                    jQuery("input[id^='pit_exclusao["+mod+"]["+cla+"]']").prop("checked", checked); 
+                    jQuery("input[id^='pit_all["+mod+"]["+cla+"]']").prop("checked", checked); 
+                } else {
+                    if (checked == true) {
+                        jQuery("input[id^='pit_consulta["+mod+"]["+cla+"]']").prop("checked", checked); 
+                    }
+                }
+                if(jQuery("input[id^='pit_adicao["+mod+"]["+cla+"]']").prop("checked") == false || 
+                    jQuery("input[id^='pit_edicao["+mod+"]["+cla+"]']").prop("checked") == false ||
+                    jQuery("input[id^='pit_exclusao["+mod+"]["+cla+"]']").prop("checked") == false || 
+                    jQuery("input[id^='pit_consulta["+mod+"]["+cla+"]']").prop("checked" == false)) {
+                        jQuery("input[id^='pit_all["+mod+"]["+cla+"]']").prop("checked", false); 
+                }
+            }
+            if(checked == false) {
+                jQuery("input[id^='"+opcao+"["+mod+"][0]']").prop("checked", checked); 
             }
         }
+    });;
+
+    /**
+     * Clique 2opcoes
+     * Coloca ou tira a classe Checked no checkbox
+     * Document Ready my_fields
+     */
+    jQuery('.duasOpcoes').on('click', function(){
+        obj = this;
+        if(this.localName == 'div') {
+            obj = this.children[0].children[0];
+        } else if(this.localName == 'label') {
+            objfor = this.getAttribute('for');
+            objfor = objfor.replace('[','\\[');
+            objfor = objfor.replace(']','\\]');
+            obj = jQuery('#'+objfor)[0];
+        }
+        obj.setAttribute('data-alter',true);
+
+        ordem = obj.getAttribute('data-index');
+        outro = 0;
+        if(ordem == 0){
+            outro = 1;
+        }
+        var radio = obj.id.substr(0,obj.id.indexOf('['));
+        obj.checked == false;
+        jQuery(obj).parents().eq(1).addClass('d-none');
+        jQuery('#'+radio+'\\['+outro+'\\]').parents().eq(1).removeClass('d-none'); 
+        jQuery('#'+radio+'\\['+outro+'\\]').prop("checked", true); 
     });;
 
     /**
@@ -364,6 +430,39 @@ function carregamentos_iniciais(){
     jQuery("select:required option[value='']").attr("disabled","disabled");
     ;;
 
+    /**
+     * Contador de caracteres digitados
+     * Mostra quantos caracteres já foram digitados e qual o total de Caracteres aceitos
+     * 
+     */
+    jQuery("input:text, textarea").on('keyup',function() {
+        var id  = jQuery(this)[0].id;
+        id = id.replace('[','\\[');
+        id = id.replace(']','\\]');
+        var tam = jQuery(this)[0].maxLength;
+        var dig = jQuery(this)[0].value.length;
+        tdiv = dig+"/"+tam;
+        jQuery('#dc-'+id).removeClass('acabou');
+        jQuery('#dc-'+id).html(tdiv);
+        if(tam == dig){
+            jQuery('#dc-'+id).addClass('acabou');
+        }
+        console.log('Tamanho '+tam);
+        console.log('Digitado '+dig);
+    });;
+
+    /**
+     * Limpa o contador de Caracteres
+     * na saída do input limpa o contador e oculta
+     * 
+     */
+    jQuery("input:text, textarea").on('blur',function() {
+        var id  = jQuery(this)[0].id;
+        id = id.replace('[','\\[');
+        id = id.replace(']','\\]');
+        jQuery('#dc-'+id).html('');
+    });;
+
 };;
 
 function oculta_passinfo(){
@@ -433,7 +532,7 @@ function exclui_campo(objdest, obj) {
 };;
 
 /**
- * repete_campo
+ * repete_campo_velho
  * repete um campo, ou uma lista de campos, para adição de ítens
  * @param {string} objdest - nome da div de destino
  * @param {object} obj - Campo que deverá ser repetido 
@@ -1157,41 +1256,6 @@ function habilita_campos(condicao, valor, ocultos){
 };;
 
 
-/**
- * acerta_campos_cad_menu
- * Função específica para o CAdastro de Menus
- * Faz os acertos dos campos conforme a Hierarquia
- * @param {object} hierarquia  - Campo da Hierarquia
- */
-function acerta_campos_cad_menu(hierarquia){
-    jQuery('#ig_men_modulo_id').removeClass('d-none');
-    jQuery('#ig_men_menu_id').removeClass('d-none');
-    jQuery('#ig_men_classe_id').removeClass('d-none');
-    jQuery('#ig_men_submenu_id').removeClass('d-none');
-    jQuery('#bus_men_modulo_id').prop('required',false);
-    jQuery('#men_menu_id').prop('required',true);
-    jQuery('#bus_men_classe_id').prop('required',true);
-    val_hier = hierarquia.value;
-    if(val_hier == 1){ // Raiz do Menu
-        jQuery('#ig_men_modulo_id').addClass('d-none');
-        jQuery('#ig_men_menu_id').addClass('d-none');
-        jQuery('#ig_men_submenu_id').addClass('d-none');
-        jQuery('#men_menu_id').prop('required',false);
-    } else if(val_hier == 2){ // Menu
-        jQuery('#ig_men_classe_id').addClass('d-none');
-        jQuery('#ig_men_menu_id').addClass('d-none');
-        jQuery('#ig_men_submenu_id').addClass('d-none');
-        jQuery('#bus_men_classe_id').prop('required',false);
-        jQuery('#men_menu_id').prop('required',false);
-    } else if(val_hier == 3){ // SubMenu
-        jQuery('#ig_men_classe_id').addClass('d-none');
-        jQuery('#ig_men_submenu_id').addClass('d-none');
-        jQuery('#bus_men_classe_id').prop('required',false);
-    } else if(val_hier == 4){ // Opção do Menu
-        jQuery('#ig_men_modulo_id').addClass('d-none');
-        jQuery('#men_menu_id').prop('required',false);
-    } 
-}
 
 /**
  * busca_atributos
@@ -1207,8 +1271,8 @@ function busca_atributos(tipo, opcao, etiqueta, icone){
     opc = jQuery("#"+opcao).val();
     if(opc != ''){
         url = '/buscas/busca_modulo_id';
-        if(tipo == 'classe'){
-            url = '/buscas/busca_classe_id';
+        if(tipo == 'tela'){
+            url = '/buscas/busca_tela_id';
         }
         jQuery.ajax({
             type: "POST",

@@ -1,7 +1,10 @@
 <?php 
-namespace App\Controllers\Config;
+
+namespace App\Controllers\Configur;
+
 use App\Controllers\BaseController;
 use App\Libraries\Campos;
+use App\Libraries\MyCampo;
 use App\Models\Config\ConfigModuloModel;
 use DatabaseException;
 
@@ -11,8 +14,9 @@ Class CfgModulo extends BaseController
     public $permissao = '';
     public $modulo;
 
-	public function __construct(){
-		$this->data         = session()->getFlashdata('dados_classe');
+    public function __construct()
+    {
+		$this->data         = session()->getFlashdata('dados_tela');
         $this->permissao    = $this->data['permissao'];
 		$this->modulo 		= new ConfigModuloModel();
         if ($this->data['erromsg'] != '') {
@@ -51,20 +55,20 @@ Class CfgModulo extends BaseController
         echo json_encode($modulos);
     }
 
-    public function add($modal = false){
-        $this->def_campos();
+    public function add($modal = false)
+    {
+        $this->defCampos();
 
-        $secao[0] = 'Dados Gerais'; 
-        $campos[0][0] = $this->mod_id; 
+        $secao[0] = 'Dados Gerais';
+        $campos[0][0] = $this->mod_id;
         $campos[0][1] = $this->mod_nome;
-        // $campos[0][2] = $this->mod_orde;
         $campos[0][2] = $this->mod_icon;
+        $campos[0][3] = $this->mod_ativo;
 
 		$this->data['secoes']     = $secao;
         $this->data['campos']     = $campos;
 		$this->data['destino']    = 'store';
 
-        $this->data['desc_metodo'] = 'Cadastro de ';
         if(!$modal){
             echo view('vw_edicao', $this->data);
         } else {
@@ -75,20 +79,20 @@ Class CfgModulo extends BaseController
 
     public function edit($id){
 		$dados_modulo = $this->modulo->find($id);
-		$this->def_campos($dados_modulo);
+		$this->defCampos($dados_modulo);
 
         $secao[0] = 'Dados Gerais'; 
         $campos[0][0] = $this->mod_id; 
         $campos[0][1] = $this->mod_nome;
-        // $campos[0][2] = $this->mod_orde;
         $campos[0][2] = $this->mod_icon;
+        $campos[0][3] = $this->mod_ativo;
 
 		$this->data['secoes']     = $secao;
         $this->data['campos']     = $campos;
 		$this->data['destino']    = 'store';
 
         // BUSCAR DADOS DO LOG
-        $this->data['log'] = buscaLog('config_modulo', $id);
+        $this->data['log'] = buscaLog('cfg_modulo', $id);
 
         echo view('vw_edicao', $this->data);
     }
@@ -108,58 +112,52 @@ Class CfgModulo extends BaseController
         echo json_encode($ret);
     }
 
-    public function def_campos($dados = false){
-		$mid			= new Campos();
-		$mid->objeto	= 'oculto';
-		$mid->nome		= 'mod_id';
-		$mid->id		= 'mod_id';
-		$mid->valor		= (isset($dados['mod_id']))?$dados['mod_id']:'';
-		$this->mod_id	= $mid->create();
+    public function ativinativ($id, $tipo)
+    {
+        if ($tipo == 1) {
+            $dad_atin = [
+                'mod_ativo' => 'A'
+            ];
+        } else {
+            $dad_atin = [
+                'mod_ativo' => 'I'
+            ];
+        }
+        $ret = [];
+        try {
+            $this->modulo->update($id, $dad_atin);
+            $ret['erro'] = false;
+            session()->setFlashdata('msg', 'Módulo Alterado com Sucesso');
+        } catch (\CodeIgniter\Database\Exceptions\DatabaseException $e) {
+            $ret['erro'] = true;
+            $ret['msg']  = 'Não foi possível Alterar o Módulo, Verifique!<br><br>';
+        }
+        echo json_encode($ret);
+    }
 
-		$nome =  new Campos();
-		$nome->objeto  	= 'input';
-        $nome->tipo    	= 'text';
-        $nome->nome    	= 'mod_nome';
-        $nome->id      	= 'mod_nome';
-        $nome->label   	= 'Nome';
-        $nome->place   	= 'Nome';
-        $nome->obrigatorio = true;
-        $nome->hint    	= 'Informe o Nome';
-        $nome->size   	= 50;
-		$nome->tamanho  = 50;
-		$nome->valor	= (isset($dados['mod_nome']))?$dados['mod_nome']:'';
-        $this->mod_nome = $nome->create();
+    public function defCampos($dados = false)
+    {
+        $mid            = new MyCampo('cfg_modulo', 'mod_id');
+        $mid->valor     = (isset($dados['mod_id'])) ? $dados['mod_id'] : '';
+        $this->mod_id   = $mid->crOculto();
 
-		$icon =  new Campos(); 
-		$icon->objeto  	= 'input';
-        $icon->tipo    	= 'icone';
-        $icon->nome    	= 'mod_icone';
-        $icon->id      	= 'mod_icone';
-        $icon->label   	= 'Ícone';
-        $icon->place   	= 'Ícone';
-        $icon->obrigatorio = false;
-        $icon->hint    	= 'Informe o Ícone';
-        $icon->size   	= 100;
-		$icon->tamanho  = 50;
-		$icon->valor	= (isset($dados['mod_icone']))?$dados['mod_icone']:'';
-        $this->mod_icon = $icon->create();
+        $nome           =  new MyCampo('cfg_modulo', 'mod_nome');
+        $nome->valor    = (isset($dados['mod_nome'])) ? $dados['mod_nome'] : '';
+        $this->mod_nome = $nome->crInput();
 
-		$orde =  new Campos(); 
-		$orde->objeto  	= 'input';
-        $orde->tipo    	= 'number';
-        $orde->nome    	= 'mod_order';
-        $orde->id      	= 'mod_order';
-        $orde->label   	= 'Ordem';
-        $orde->place   	= 'Ordem';
-        $orde->obrigatorio = false;
-        $orde->hint    	= 'Informe a Ordem';
-        $orde->size   	= 10;
-		$orde->tamanho  = 15;
-        $orde->minimo   = 0;
-		$orde->maximo   = 50;
-        $orde->step     = 1;
-        $orde->valor    = isset($dados['mod_order']) ? $dados['mod_order'] : '';
-        $this->mod_orde = $orde->create();
+        $icon           =  new MyCampo('cfg_modulo', 'mod_icone');
+        $icon->tipo     = 'icone';
+        $icon->valor    = (isset($dados['mod_icone'])) ? $dados['mod_icone'] : '';
+        $this->mod_icon = $icon->crInput();
+
+        $opcat['A'] = 'Ativo';
+        $opcat['I'] = 'Inativo';
+
+        $ativ           = new MyCampo('cfg_modulo', 'mod_ativo');
+        $ativ->valor    = (isset($dados['mod_ativo'])) ? $dados['mod_ativo'] : 'A';
+        $ativ->selecionado    = $ativ->valor;
+        $ativ->opcoes   = $opcat;
+        $this->mod_ativo = $ativ->cr2opcoes();
     }
 
     public function store()

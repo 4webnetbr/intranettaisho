@@ -21,7 +21,7 @@ class ConfigMenuModel extends Model
                                     "men_menupai_id",
                                     "men_submenu_id",
                                     "mod_id",
-                                    "cls_id",
+                                    "tel_id",
                                     "men_etiqueta",
                                     "men_icone",
                                     "men_order",
@@ -165,7 +165,7 @@ class ConfigMenuModel extends Model
         $builder = $db->table('vw_cfg_menu_relac menu');
         $builder->select('*');
         if ($perfil_id) {
-            $builder->join('cfg_perfil_item pit', '(pit.cls_id = menu.cls_id OR menu.cls_id IS NULL) 
+            $builder->join('cfg_perfil_item pit', '(pit.tel_id = menu.tel_id OR menu.tel_id IS NULL) 
                             AND pit.prf_id = ' . $perfil_id, 'inner');
         }
         $builder->where("men_menupai_id", $menu_id);
@@ -186,7 +186,7 @@ class ConfigMenuModel extends Model
         $db = db_connect('dbConfig');
         $builder = $db->table('vw_cfg_menu_relac menu');
         if ($perfil_id) {
-            $builder->join('cfg_perfil_item pit', '(pit.cls_id = menu.cls_id OR menu.cls_id IS NULL) 
+            $builder->join('cfg_perfil_item pit', '(pit.tel_id = menu.tel_id OR menu.tel_id IS NULL) 
                             AND pit.prf_id = ' . $perfil_id, 'inner');
         }
         $builder->select('*');

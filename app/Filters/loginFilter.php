@@ -2,9 +2,9 @@
 
 namespace App\Filters;
 
-use App\Models\Config\ConfigClasseModel;
 use App\Models\Config\ConfigMenuModel;
 use App\Models\Config\ConfigPerfilItemModel;
+use App\Models\Config\ConfigTelaModel;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -27,7 +27,7 @@ class loginFilter implements FilterInterface
             if ($segmentos[count($segmentos) - 1] == 'modal=true') {
                 $modal = true;
             }
-            $nomeclasse             = $segmentos[0];
+            $nometela             = $segmentos[0];
             $metodo                 = 'index';
             if (isset($segmentos[1])) {
                 $metodo             = $segmentos[1];
@@ -36,35 +36,35 @@ class loginFilter implements FilterInterface
             $perfil_usu             = session()->get('usu_perfil_id');
             $setor_usu              = session()->get('usu_setor_id');
             $tipo_usu               = session()->get('usu_tipo');
-            $classe                 = new ConfigClasseModel();
+            $tela                 = new ConfigTelaModel();
             $perfil_pit             = new ConfigPerfilItemModel();
             $menu                   = new ConfigMenuModel();
-            $busca_classe           = $classe->getClasseSearch($nomeclasse);
-            if (!$busca_classe) {
-                $retorno['title']       = $nomeclasse;
+            $busca_tela           = $tela->getTelaSearch($nometela);
+            if (!$busca_tela) {
+                $retorno['title']       = $nometela;
                 $retorno['permissao']   = false;
-                $retorno['erromsg'] = '<h2>Atenção</h2>A Classe <b>' . $nomeclasse .
+                $retorno['erromsg'] = '<h2>Atenção</h2>A Tela <b>' . $nometela .
                 '</b> <span style="color:red">Não foi Encontrada!</span><br>
                 Informe o Problema ao Administrador do Sistema!';
             } else {
-                $busca_classe           = $busca_classe[0];
+                $busca_tela           = $busca_tela[0];
                 $retorno['modal']       = $modal;
-                $retorno['cls_id']      = $busca_classe['cls_id'];
-                $retorno['icone']       = $busca_classe['cls_classe_icone'];
-                $retorno['title']       = $busca_classe['cls_nome'];
-                $retorno['controler']   = $busca_classe['cls_controler'];
-                $retorno['tabela']      = $busca_classe['cls_tabela'];
-                $retorno['listagem']      = $busca_classe['cls_lista'];
-                // $retorno['filtros']      = $busca_classe['cls_filtros'];
+                $retorno['tel_id']      = $busca_tela['tel_id'];
+                $retorno['icone']       = $busca_tela['tel_tela_icone'];
+                $retorno['title']       = $busca_tela['tel_nome'];
+                $retorno['controler']   = $busca_tela['tel_controler'];
+                $retorno['tabela']      = $busca_tela['tel_tabela'];
+                // $retorno['listagem']      = $busca_tela['tel_lista'];
+                // $retorno['filtros']      = $busca_tela['tel_filtros'];
                 $retorno['metodo']      = $metodo;
-                $retorno['regras_gerais']    = $busca_classe['cls_regras_gerais'];
-                $retorno['regras_cadastro']    = $busca_classe['cls_regras_cadastro'];
-                $retorno['bt_add']      = $busca_classe['cls_texto_botao'];
+                $retorno['regras_gerais']    = $busca_tela['tel_regras_gerais'];
+                $retorno['regras_cadastro']    = $busca_tela['tel_regras_cadastro'];
+                $retorno['bt_add']      = $busca_tela['tel_texto_botao'];
                 $retorno['perfil_usu']  = $perfil_usu;
                 $retorno['it_menu']     =  montaMenu($perfil_usu, $tipo_usu);
                 // debug($retorno['etapas']);
-                if ($busca_classe['cls_id']) { 
-                    $retorno['permissao']       = $this->buscaPermis($retorno['it_menu'], $busca_classe['cls_id']);
+                if ($busca_tela['tel_id']) { 
+                    $retorno['permissao']       = $this->buscaPermis($retorno['it_menu'], $busca_tela['tel_id']);
                 } else {
                     $retorno['permissao']   = 'CAEX';
                 }
@@ -89,7 +89,7 @@ class loginFilter implements FilterInterface
                     }
                 }
             }
-            $ret['dados_classe'] = $retorno;
+            $ret['dados_tela'] = $retorno;
             $sessao->setFlashdata($ret);
             if (trim($retorno['erromsg']) != '') {
                 if ($modal) {
@@ -105,29 +105,29 @@ class loginFilter implements FilterInterface
         // Do something here
     }
 
-    public function buscaPermis($menu, $classe) {
+    public function buscaPermis($menu, $tela) {
         $ret = 'CAEX';
         for ($m = 0; $m < count($menu); $m++) {
             $opcao = $menu[$m];
             foreach ($opcao as $key => $value) {
-                if ($key == 'men_classe_id') {
-                    if ($value == $classe) {
+                if ($key == 'men_tela_id') {
+                    if ($value == $tela) {
                         $ret = $key['pit_permissao'];
                     }
                 } elseif (gettype($value) == 'array') {
                     for ($k = 0; $k < count($value); $k++) {
                         $val1 = $value[$k];
                         foreach ($val1 as $key1 => $value1) {
-                            if ($key1 == 'men_classe_id') {
-                                if ($value1 == $classe) {
+                            if ($key1 == 'men_tela_id') {
+                                if ($value1 == $tela) {
                                     $ret = $val1['pit_permissao'];
                                 }
                             } elseif (gettype($value1) == 'array') {
                                 for ($k2 = 0; $k2 < count($value1); $k2++) {
                                     $val2 = $value1[$k2];
                                     foreach ($val2 as $key2 => $value2) {
-                                        if ($key2 == 'men_classe_id') {
-                                            if ($value2 == $classe) {
+                                        if ($key2 == 'men_tela_id') {
+                                            if ($value2 == $tela) {
                                                 $ret = $val2['pit_permissao'];
                                             }
                                         }

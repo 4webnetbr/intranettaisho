@@ -1,16 +1,16 @@
 {
     "emptyTable": "Nenhum registro encontrado",
-    "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-    "infoFiltered": "(Filtrados de _MAX_ registros)",
+    "info": "_START_-_END_ de _TOTAL_",
+    "infoFiltered": "(Filtrados de _MAX_)",
     "infoThousands": ".",
     "loadingRecords": "Carregando...",
     "zeroRecords": "Nenhum registro encontrado",
     "search": "Pesquisar",
     "paginate": {
-        "next": "Próx",
-        "previous": "Ante",
-        "first": "Prim",
-        "last": "Últi"
+        "next": ">",
+        "previous": "<",
+        "first": "<<",
+        "last": ">>"
     },
     "aria": {
         "sortAscending": ": Ordenar colunas de forma ascendente",

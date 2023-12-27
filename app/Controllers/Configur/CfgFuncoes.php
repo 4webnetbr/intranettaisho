@@ -1,8 +1,11 @@
 <?php 
-namespace App\Controllers\Config;
+
+namespace App\Controllers\Configur;
+
 use App\Controllers\BaseController;
 use App\Libraries\Campos;
 use App\Models\Config\ConfigDicDadosModel;
+use DirectoryIterator;
 
 class CfgFuncoes extends BaseController
 {
@@ -11,7 +14,7 @@ class CfgFuncoes extends BaseController
 
     public function __construct()
     {
-        $this->data      = session()->getFlashdata('dados_classe');
+        $this->data      = session()->getFlashdata('dados_tela');
         $this->permissao = $this->data['permissao'];
         if ($this->data['erromsg'] != '') {
             $this->__erro();
@@ -65,7 +68,7 @@ class CfgFuncoes extends BaseController
                                 $this->data['controler'] . "/show/" .$arquivo.'/'.$c,
                                 '<i class="far fa-eye"></i>',
                                 [
-                                    'class' => 'btn btn-outline-info btn-sm mx-1',
+                                    'class' => 'btn btn-outline-info btn-sm mx-0 border-0 fs-0',
                                     'data-mdb-toggle' => 'tooltip',
                                     'data-mdb-placement' => 'top',
                                     'title' => 'Código da Função', 
@@ -135,54 +138,82 @@ class CfgFuncoes extends BaseController
         echo json_encode($functions);
     }
 
-
     public function show($arquivo, $posicao)
     {
         $ext = substr($arquivo, -3);
-        if(trim($ext) == '.js'){
-            $pasta = FCPATH.'/assets/jscript';
+        if (trim($ext) == '.js') {
+            $pasta = FCPATH . '/assets/jscript';
         } else {
-            $pasta = FCPATH.'../app/Helpers';
+            $pasta = FCPATH . '../app/Helpers';
         }
-        $conteudo = file_get_contents($pasta.'/'.$arquivo);
-        $coments    = explode('/**',$conteudo);
+        $conteudo = file_get_contents($pasta . '/' . $arquivo);
+        $coments    = explode('/**', $conteudo);
         // debug($posicao, false);
         // debug($coments[$posicao],false);
         $fim        = stripos($coments[$posicao], ';;');
-        if(!$fim){
+        if (!$fim) {
             $fim = strlen($coments[$posicao]);
         }
         // debug($fim, false);
-        $funcao     = htmlspecialchars(substr($coments[$posicao],0,$fim));
-        $lin_func   = explode('*',$funcao);
+        $funcao     = htmlspecialchars(substr($coments[$posicao], 0, $fim));
+        $lin_func   = explode('*', $funcao);
         // debug('Função', false);
         // debug($funcao, false);
         // debug($lin_func, false);
         $nome = $lin_func[0];
-        if(trim($nome) == ''){
+        if (trim($nome) == '') {
             $nome = $lin_func[1];
         }
-        // debug($nome,false);
-        $linhaini = 0;
+
         // debug($nome, false);
-        $fp = fopen($pasta.'/'.$arquivo, "r");
+        $fp = fopen($pasta . '/' . $arquivo, "r");
 
         $conta = 0;
-        while(!feof($fp)) { // loop em todas as linhas
+        while (!feof($fp)) { // loop em todas as linhas
             $linha = trim(fgets($fp, 4096)); // le 4096bytes ou ate o final da linha
             // debug($linha,false);
-            if(stripos($linha, trim($nome))){
+            if (stripos($linha, trim($nome))) {
                 break;
             }
             $conta++;
         }
-        $funcao = 'Arquivo: '.$arquivo.'<br>Linha Inicial: '.$conta.'<br><br>/**'.$funcao;
-        // debug($funcao);
-        $this->def_campos($funcao);
+        $funcao = 'Arquivo: ' . $arquivo . '<br>Linha Inicial: ' . $conta . '<br><br>/**' . $funcao;
+
+        $arquivo = file_get_contents($pasta . '/' . $arquivo);
+        $coments    = explode('/**', $conteudo);
+
+        $pastaapp = FCPATH . '../';
+        $arqs = $this->buscaArquivos($pastaapp);
+        $linhas = [];
+        foreach ($arqs as $arquivo) {
+            // debug($arquivo);
+            $pt_arquivos = explode('/', $arquivo);
+            $nome_arquivo = $pt_arquivos[count($pt_arquivos) - 1];
+            $conteudo = file($arquivo);
+            $linhas[$nome_arquivo] = [];
+            $achou = false;
+            for ($l = 0; $l < sizeof($conteudo); $l++) {
+                $lin = $conteudo[$l];
+                if (stripos($lin, trim($nome)) > -1) {
+                    $achou = true;
+                    $linhas[$nome_arquivo][$l + 1] = $lin;
+                }
+            }
+            if (!$achou) {
+                unset($linhas[$nome_arquivo]);
+            }
+        }
+
+        // debug($linhas);
+        $this->defCampos($funcao, $linhas);
 
         $secao[0] = 'Código Fonte';
         $campos[0][0] = $this->def_funcao;
 
+        $secao[1] = 'Referências';
+        $campos[1][0] = $this->def_refer;
+
+        $this->data['funcao'] = $funcao;
         $this->data['secoes'] = $secao;
         $this->data['campos'] = $campos;
         $this->data['destino'] = 'store';
@@ -190,7 +221,82 @@ class CfgFuncoes extends BaseController
         echo view('vw_edicao', $this->data);
     }
 
-    public function def_campos($funcao = false)
+    public function buscaArquivos($pastaapp)
+    {
+        $dir = new DirectoryIterator($pastaapp);
+        // array contendo os diretórios permitidos    
+        $diretoriosPermitidos = array("app", "Controllers","Filters","Helpers","Libraries","Views","Configur","public","assets","jscript");
+        $arquivosPermitidos = array("php","js");
+
+        $arquivos = [];
+        foreach ($dir as $file) {
+            // verifica se $file é diferente de '.' ou '..'
+            if (!$file->isDot()) {
+                // listando somente os diretórios
+                if ($file->isDir()) {
+                    // atribui o nome do diretório a variável
+                    $dirName = $file->getFilename();
+                    // listando somente o diretório permitido
+                    if (in_array($dirName, $diretoriosPermitidos)) {
+                        // subdiretórios
+                        $caminho = $file->getPathname();
+                        // chamada da função de recursividade
+                        $recurs = $this->recursivo($caminho, $dirName, $diretoriosPermitidos, $arquivosPermitidos);
+                        for ($r = 0; $r < count($recurs); $r++) {
+                            array_push($arquivos, $recurs[$r]);
+                        }
+                    }
+                }
+                // listando somente os arquivos do diretório
+                if ($file->isFile()) {
+                    if (in_array($file->getExtension(), $arquivosPermitidos)) {
+                        // atribui o nome do arquivo a variável
+                        $caminho = $file->getPathname();
+                        array_push($arquivos, $caminho);
+                    }
+                    //
+                }
+            }
+        }
+        return $arquivos;
+    }
+
+    public function recursivo($caminho, $dirName, $diretoriosPermitidos, $arquivosPermitidos)
+    {
+        global $dirName;
+        $DI = new DirectoryIterator($caminho);
+        $arq = [];
+        foreach ($DI as $file) {
+            if (!$file->isDot()) {
+                if ($file->isDir()) {
+                    // atribui o nome do diretório a variável
+                    $dirName = $file->getFilename();
+                    // listando somente o diretório permitido
+                    if (in_array($dirName, $diretoriosPermitidos)) {
+                        // subdiretórios
+                        $caminho = $file->getPathname();
+                        // chamada da função de recursividade
+                        $recurs = $this->recursivo($caminho, $dirName, $diretoriosPermitidos, $arquivosPermitidos);
+                        for ($r = 0; $r < count($recurs); $r++) {
+                            array_push($arq, $recurs[$r]);
+                        }
+                    }
+                }
+                // listando somente os arquivos do diretório
+                if ($file->isFile()) {
+                    if (in_array($file->getExtension(), $arquivosPermitidos)) {
+                        // atribui o nome do arquivo a variável
+                        $caminho = $file->getPathname();
+                        array_push($arq, $caminho);
+                    }
+                    //
+                }
+            }
+        }
+        return $arq;
+    }
+
+    public function defCampos($funcao = '', $refer = [])
     {
         $func = new Campos();
         $func->objeto = 'show';
@@ -199,9 +305,29 @@ class CfgFuncoes extends BaseController
         $func->label = 'Código Fonte da Função';
         $func->size = '100%';
         $func->tamanho = 'auto';
-        $func->valor = '<pre>'.$funcao.'</pre>';
+        $func->valor = '<pre>' . $funcao . '</pre>';
         // $codi->valor = print_r($fonte);
         $this->def_funcao = $func->create();
+
+        $ref = '';
+        foreach ($refer as $chave => $valor) {
+            $ref .= '<br>ARQUIVO: ' . $chave . '<br>';
+            // echo $chave;
+            foreach ($valor as $key => $value) {
+                $ref .= 'Linha ' . $key . ' = ' . $value;
+            }
+        }
+
+        $refe = new Campos();
+        $refe->objeto = 'show';
+        $refe->nome = 'referencia';
+        $refe->id = 'referencia';
+        $refe->label = 'Referências da Função';
+        $refe->size = '100%';
+        $refe->tamanho = 'auto';
+        $refe->valor = '<pre>' . $ref . '</pre>';
+        // $codi->valor = print_r($fonte);
+        $this->def_refer = $refe->create();
     }
 
 }

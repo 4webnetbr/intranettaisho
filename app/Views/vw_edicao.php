@@ -18,69 +18,88 @@
     <div id='content' class='container page-content bg-light m-0'>
     <!-- <div id='content' class='vh-auto page-content dashboard dashboard-app dashboard-content '> -->
     <form id="form1" method="post"  action="<?= site_url($controler."/".$destino) ?>" class="col-12" enctype="multipart/form-data">
-        <?
+        <?php
         if (sizeof($secoes)) {
             // MOBILE
             echo "<div id='operacoes' class='col-xs-12 d-flex d-lg-none d-md-none bg-light'>";
-			echo "<div id='linksecoes' class='col-xs-12 linksecoes'>";
-		    echo "<legend style='font-size:1.5em'>Ir para</legend>";
-			echo "<ul class='nav nav-pills nav-stacked'>";
-            for($s = 0; $s < count($secoes);$s++){
+            echo "<div id='linksecoes' class='col-xs-12 linksecoes'>";
+            echo "<legend style='font-size:1.5em'>Ir para</legend>";
+            echo "<ul class='nav nav-pills nav-stacked'>";
+            for ($s = 0; $s < count($secoes); $s++) {
                 $active = '';
                 $secao = url_amigavel($secoes[$s]);
-                if($s == 0){
+                if ($s == 0) {
                     $active = "active";
                 }
                 echo "<li class='nav-item ' role='presentation'>";
-				echo "<button class='nav-link $active' id='".$secao."-tab' data-bs-toggle='tab' data-bs-target='#".$secao."' type='button' role='tab' aria-controls='".$secao."' aria-selected='false'><i class='far fa-hand-point-right'></i>&nbsp;-&nbsp;".$secoes[$s]."</button>";
+                echo "<button class='nav-link $active' id='" . $secao . "-tab' 
+                      data-bs-toggle='tab' data-bs-target='#" . $secao . "' 
+                      type='button' role='tab' aria-controls='" . $secao . "' 
+                      aria-selected='false'>
+                        <i class='far fa-hand-point-right'></i>&nbsp;-&nbsp;" . $secoes[$s] .
+                    "</button>";
                 echo "</li>";
             }
-			echo "</ul>";
-			echo "</div>";
-		    echo "</div>";
+            echo "</ul>";
+            echo "</div>";
+            echo "</div>";
             echo "<div class='col-lg-12 col-md-12 d-lg-flex d-none'>";
             echo "<ul class='nav nav-tabs border-0 d-none d-lg-flex d-md-flex' id='myTab' role='tablist'>";
-			$active = 'active';
-            for ($s=0;$s<sizeof($secoes);$s++) {
+            $active = 'active';
+            for ($s = 0; $s < sizeof($secoes); $s++) {
                 echo "<li class='nav-item ' role='presentation'>";
                 $secao = url_amigavel($secoes[$s]);
                 // echo "Secao ".$secao;
-                echo "<span id='".$secao."-valid' class='float-end valid-tab badge rounded-pill bg-danger d-none'>!</span>";
-				echo "<button class='nav-link $active' id='".$secao."-tab' data-bs-toggle='tab' data-bs-target='#".$secao."' type='button' role='tab' aria-controls='".$secao."' aria-selected='false'>";
+                echo "<span id='" . $secao . "-valid' 
+                    class='float-end valid-tab badge rounded-pill bg-danger d-none'>!</span>";
+                echo "<button class='nav-link $active' id='" . $secao . "-tab' 
+                        data-bs-toggle='tab' data-bs-target='#" . $secao . "' 
+                        type='button' role='tab' aria-controls='" . $secao . "' 
+                        aria-selected='false'>";
                 echo "<i class='far fa-hand-point-right'></i>";
-                echo "&nbsp;-&nbsp;".$secoes[$s];
+                echo "&nbsp;-&nbsp;" . $secoes[$s];
                 echo "</button>";
                 echo "</li>";
-				$active = '';
+                $active = '';
             }
-			echo "</ul>";
+            echo "</ul>";
             echo "</div>";
-			$active = 'show active';
+            $active = 'show active';
             echo "<div class='tab-content bg-white' id='myTabContent'>";
-            for ($s=0;$s<count($secoes);$s++) {
+            for ($s = 0; $s < count($secoes); $s++) {
                 $secao = url_amigavel($secoes[$s]);
-				echo "<div class='tab-pane fade p-lg-3 p-2 $active' id='".$secao."' role='tabpanel' aria-labelledby='".$secao."-tab' tabindex='0'>";
+                echo "<div class='tab-pane fade p-lg-3 p-2 $active' id='" . $secao . "' role='tabpanel' 
+                        aria-labelledby='" . $secao . "-tab' tabindex='0'>";
                 $campos_se = $campos[$s];
-                $display      = (isset($displ[$s]))?$displ[$s]:'';
+                $display      = (isset($displ[$s])) ? $displ[$s] : '';
                 $contrep   = 0;
                 if ($display == 'tabela') {
-                    echo "<div id='rep_".$secao."' class='rep_campos d-inline-table table2-responsive rep_$secao' data-".$secao."-index='$contrep'>";
-                    for ($c=0;$c<sizeof($campos_se);$c++) {
+                    echo "<div id='rep_" . $secao . "' class='rep_campos d-inline-table table2-responsive rep_$secao' 
+                            data-" . $secao . "-index='$contrep'>";
+                    for ($c = 0; $c < sizeof($campos_se); $c++) {
                         $campos_se_lin = $campos_se[$c];
                         echo "<table class='table2 table-sm' width='100%' data-index='$contrep'>";
                         echo "<tr>";
-                        for ($cl=0;$cl<(sizeof($campos_se_lin)-2);$cl++) {
-                            echo "<td class='d-initial h-auto align-baseline'>";
+                        for ($cl = 0; $cl < (sizeof($campos_se_lin) - 2); $cl++) {
+                            echo "<td class='d-initial h-auto align-middle'>";
                             echo $campos_se_lin[$cl];
                             echo "</td>";
                         }
                         echo "<td class='d-initial h-auto align-middle w-10'>";
                         echo $campos_se_lin[$cl];
-                        echo $campos_se_lin[$cl+1];
+                        echo $campos_se_lin[$cl + 1];
                         $sobe = "'sobe'";
                         $desce = "'desce'";
-                        echo "<button name='bt_up[$c]' type='button' id='bt_up[$c]' class='btn btn-outline-info btn-sm bt-up $secao mt-4 float-end' onclick='sobe_desce_item(this,\"sobe\",$secao)' title='Acima' data-index='$c'><i class='fa fa-arrow-up' aria-hidden='true'></i></button>";
-                        echo "<button name='bt_down[$c]' type='button' id='bt_down[$c]' class='btn btn-outline-info btn-sm bt-down $secao mt-4 float-end' onclick='sobe_desce_item(this,\"desce\",$secao)' title='Abaixo' data-index='$c'><i class='fa fa-arrow-down' aria-hidden='true'></i></button>";
+                        echo "<button name='bt_up[$c]' type='button' id='bt_up[$c]' 
+                                class='btn btn-outline-info btn-sm bt-up $secao float-end' 
+                                onclick='sobe_desce_item(this,\"sobe\",$secao)' 
+                                title='Acima' data-index='$c'>
+                                <i class='fa fa-arrow-up' aria-hidden='true'></i></button>";
+                        echo "<button name='bt_down[$c]' type='button' id='bt_down[$c]' 
+                                class='btn btn-outline-info btn-sm bt-down $secao float-end' 
+                                onclick='sobe_desce_item(this,\"desce\",$secao)' 
+                                title='Abaixo' data-index='$c'>
+                                <i class='fa fa-arrow-down' aria-hidden='true'></i></button>";
                         echo "</td>";
                         echo "</tr>";
                         echo "</table>";
@@ -88,7 +107,7 @@
                     }
                     echo "</div>";
                 } else {
-                    for ($c=0;$c<sizeof($campos_se);$c++) {
+                    for ($c = 0; $c < sizeof($campos_se); $c++) {
                         echo $campos_se[$c];
                     }
                 }
@@ -98,7 +117,7 @@
             }
             echo "</div>";
         }
-		?>
+        ?>
     </form>    
     </div>
     <script src="<?=base_url('assets/jscript/bootstrap-select.js');?>"></script>
@@ -119,19 +138,25 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
-    <script src="<?=base_url('assets/jscript/my_mask.js?noc='.time());?>"></script>
+    <script src="<?=base_url('assets/jscript/my_mask.js?noc=' . time());?>"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fontawesome-iconpicker/3.2.0/js/fontawesome-iconpicker.min.js" integrity="sha512-7dlzSK4Ulfm85ypS8/ya0xLf3NpXiML3s6HTLu4qDq7WiJWtLLyrXb9putdP3/1umwTmzIvhuu9EW7gHYSVtCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fontawesome-iconpicker/3.2.0/css/fontawesome-iconpicker.min.css" integrity="sha512-BfgviGirSi7OFeVB2z9bxp856rzU1Tyy9Dtq2124oRUZSKXIQqpy+2LPuafc2zMd8dNUa+F7cpxbvUsZZXFltQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fontawesome-iconpicker/3.2.0/js/fontawesome-iconpicker.min.js" 
+                    integrity="sha512-7dlzSK4Ulfm85ypS8/ya0xLf3NpXiML3s6HTLu4qDq7WiJWtLLyrXb9putdP3/1umwTmzIvhuu9EW7gHYSVtCQ==" 
+                    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fontawesome-iconpicker/3.2.0/css/fontawesome-iconpicker.min.css"
+                    integrity="sha512-BfgviGirSi7OFeVB2z9bxp856rzU1Tyy9Dtq2124oRUZSKXIQqpy+2LPuafc2zMd8dNUa+F7cpxbvUsZZXFltQ==" 
+                    crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" 
+                integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" 
+                crossorigin="anonymous"></script>
 
     <script>
         carregamentos_iniciais();
     </script>
-    <?
-    if(isset($script)){
+    <?php
+    if (isset($script)) {
         echo $script;
     }
     ?>

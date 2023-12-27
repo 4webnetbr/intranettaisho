@@ -1,33 +1,33 @@
 <?php
 
-use App\Models\Config\ConfigClasseModel;
 use App\Models\Config\ConfigMenuModel;
 use App\Models\Config\ConfigPerfilItemModel;
+use App\Models\Config\ConfigTelaModel;
 use App\Models\LogMonModel;
 
 /**
- * detalhesClasse
- * Retorna os detalhes da Classe Especificada
- * @param string $nomeClasse
+ * detalhesTela
+ * Retorna os detalhes da Tela Especificada
+ * @param string $nomeTela
  * @return array
  */
-function detalhesClasse(string $nomeClasse, array $retorno)
+function detalhesTela(string $nomeTela, array $retorno)
 {
-    preg_match('/\\\\([\w]+)$/', $nomeClasse, $nome);
+    preg_match('/\\\\([\w]+)$/', $nomeTela, $nome);
     $perfil_usu             = session()->get('usu_perfil_id');
-    $classe                 = new ConfigClasseModel();
+    $tela                 = new ConfigTelaModel();
     $perfil_pit             = new ConfigPerfilItemModel();
     $menu                   = new ConfigMenuModel();
-    $busca_classe           = $classe->getClasse($nome[1])[0];
-    $retorno['title']       = $busca_classe['cls_icone'] . ' ' . $busca_classe['cls_nome'];
-    $retorno['controler']   = $busca_classe['cls_controler'];
-    $retorno['opc_menu']    = $busca_classe['men_id'];
-    $retorno['bt_add']      = $busca_classe['cls_texto_botao'];
+    $busca_tela           = $tela->getTela($nome[1])[0];
+    $retorno['title']       = $busca_tela['tel_icone'] . ' ' . $busca_tela['tel_nome'];
+    $retorno['controler']   = $busca_tela['tel_controler'];
+    $retorno['opc_menu']    = $busca_tela['men_id'];
+    $retorno['bt_add']      = $busca_tela['tel_texto_botao'];
     $retorno['perfil_usu']  = $perfil_usu;
     $retorno['it_menu']     = $menu->getMenuPerfil($perfil_usu);
 
-    if ($busca_classe['men_id']) {
-        $busca_permissoes       = $perfil_pit->getItemPerfil($perfil_usu, $busca_classe['men_id']);
+    if ($busca_tela['men_id']) {
+        $busca_permissoes       = $perfil_pit->getItemPerfil($perfil_usu, $busca_tela['men_id']);
         if (sizeof($busca_permissoes) == 0) {
             $retorno['permissao']   = false;
         } else {
@@ -41,18 +41,18 @@ function detalhesClasse(string $nomeClasse, array $retorno)
 };;
 
 /**
- * metodos_classe
- *  Retorna uma lista de métodos da Classe Especificada
+ * metodosTela
+ *  Retorna uma lista de métodos da Tela Especificada
  * @param array $metodos
+ * @param string $classe
  * @return string
  */
-function metodos_classe(array $metodos)
+function metodosTela(array $metodos, string $classe)
 {
     $text = '';
-    foreach ($metodos as $nome) {
-        $text .= "$nome<br>";
-        if ($nome == 'store') {
-            break;
+    foreach ($metodos as $nome => $valor) {
+        if ($valor->class == $classe) {
+            $text .= "$valor->name<br>";
         }
     }
     return $text;
@@ -148,15 +148,16 @@ function relacion_tabela(array $relacionamentos)
 
 /**
  * verCodigo
- *  Retorna o Código Fonte da Classe Especificada
- * @param string $nomeClasse
+ *  Retorna o Código Fonte da Tela Especificada
+ * @param string $nomeTela
  * @return string
  */
-function verCodigo($nomeClasse)
+function verCodigo($nomeTela)
 {
-    $arq = APPPATH . $nomeClasse . '.php';
+    $arq    = APPPATH . $nomeTela . '.php';
+    $text   = '';
+    $text   .= $arq . '<br>';
     // $text  = file_get_contents($arq);
-    $text = '';
     if (file_exists($arq)) {
         $text_arr  = file($arq);
         for ($l = 0; $l < count($text_arr); $l++) {
@@ -164,7 +165,7 @@ function verCodigo($nomeClasse)
             $text .= ($l + 1) . ' => ' . htmlspecialchars($linha);
         }
     } else {
-        $text = 'Classe ainda não Codificada!';
+        $text .= 'Tela ainda não Codificada!';
     }
     return $text;
 };;
@@ -448,9 +449,11 @@ function buscaLog($tabela, $registro)
             $data_alt   = data_br($document->log_data);
         }
         if ($operacao != '') {
-            $dados['operacao']     = $operacao;
-            $dados['usua_alterou'] = $user_nam;
-            $dados['data_alterou'] = $data_alt;
+            $dados['operacao']      = $operacao;
+            $dados['usua_alterou']  = $user_nam;
+            $dados['data_alterou']  = $data_alt;
+            $dados['tabela']        = $tabela;
+            $dados['registro']      = $registro;
         }
     }
 

@@ -3,37 +3,37 @@
 use App\Models\LogMonModel;
 use CodeIgniter\Model;
 
-class ConfigClasseModel extends Model
+class ConfigTelaModel extends Model
 {
     protected $DBGroup          = 'dbConfig';
 
-    protected $table            = 'cfg_classe';
-    protected $primaryKey       = 'cls_id';
+    protected $table            = 'cfg_tela';
+    protected $primaryKey       = 'tel_id';
     protected $useAutoIncrement = true;
 
     protected $returnType       = 'array';
     protected $useSoftDeletes   = true;
 
-    protected $allowedFields    = ['cls_id',
+    protected $allowedFields    = ['tel_id',
                                     'mod_id',
-                                    'cls_nome',
-                                    'cls_icone',
-                                    'cls_controler',
-                                    'cls_metodo',
-                                    'cls_texto_botao',
-                                    'cls_tabela',
-                                    'cls_descricao',
-                                    'cls_regras_gerais',
-                                    'cls_regras_cadastro',
-                                    'cls_lista'
+                                    'tel_nome',
+                                    'tel_icone',
+                                    'tel_controler',
+                                    'tel_metodo',
+                                    'tel_texto_botao',
+                                    'tel_tabela',
+                                    'tel_descricao',
+                                    'tel_regras_gerais',
+                                    'tel_regras_cadastro',
+                                    'tel_lista'
                                 ];
 
 
     protected $skipValidation   = true;
 
-    // protected $createdField  = 'cls_criado';
-    // protected $updatedField  = 'cls_alterado';
-    protected $deletedField  = 'cls_excluido';
+    // protected $createdField  = 'tel_criado';
+    // protected $updatedField  = 'tel_alterado';
+    protected $deletedField  = 'tel_excluido';
 
     // Callbacks
     protected $allowCallbacks = true;
@@ -65,7 +65,7 @@ class ConfigClasseModel extends Model
     {
         $logdb = new LogMonModel();
         $registro = $data['id'][0];
-        $logdb->insertLog($this->table, 'Alterado', $registro, $data['data']);
+        $logdb->insertLog($this->table, 'Alteração', $registro, $data['data']);
         return $data;
     }
 
@@ -83,20 +83,20 @@ class ConfigClasseModel extends Model
     }
 
     /**
-     * getClasseId
+     * getTelaId
      *
-     * Retorna os dados da Classe, pelo ID informado
+     * Retorna os dados da Tela, pelo ID informado
      *
      * @param bool $id
      * @return array
      */
-    public function getClasseId($cls_id = false)
+    public function getTelaId($tel_id = false)
     {
         $db = db_connect('dbConfig');
-        $builder = $db->table('vw_cfg_classe_relac');
+        $builder = $db->table('vw_cfg_tela_relac');
         $builder->select('*');
-        if ($cls_id) {
-            $builder->where("cls_id", $cls_id);
+        if ($tel_id) {
+            $builder->where("tel_id", $tel_id);
         }
         $ret = $builder->get()->getResultArray();
 
@@ -106,20 +106,20 @@ class ConfigClasseModel extends Model
     }
 
     /**
-     * getClasseSearch
+     * getTelaSearch
      *
-     * Retorna os dados da Classe, pelo termo (nome) informado
-     * Utilizado nas Seleções de Classe
+     * Retorna os dados da Tela, pelo termo (nome) informado
+     * Utilizado nas Seleções de Tela
      *
      * @param mixed $termo
      * @return array
      */
-    public function getClasseSearch($termo)
+    public function getTelaSearch($termo)
     {
-        $s_nome = ['cls_nome' => $termo];
-        $s_contro = ['cls_controler' => $termo];
+        $s_nome = ['tel_nome' => $termo];
+        $s_contro = ['tel_controler' => $termo];
         $db = db_connect('dbConfig');
-        $builder = $db->table('vw_cfg_classe_relac');
+        $builder = $db->table('vw_cfg_tela_relac');
         $builder->select('*');
         $builder->like($s_contro);
         // $builder->like($s_nome);
@@ -130,19 +130,19 @@ class ConfigClasseModel extends Model
     }
 
     /**
-     * getClasseModulo
+     * getTelaModulo
      *
-     * Retorna os dados da Classe, pelo termo (nome) informado
-     * Utilizado nas Seleções de Classe
+     * Retorna os dados da Tela, pelo termo (nome) informado
+     * Utilizado nas Seleções de Tela
      *
      * @param mixed $termo
      * @return array
      */
-    public function getClasseModulo($modu)
+    public function getTelaModulo($modu)
     {
         $s_modu = ['mod_id' => $modu];
         $db = db_connect('dbConfig');
-        $builder = $db->table('vw_cfg_classe_relac');
+        $builder = $db->table('vw_cfg_tela_relac');
         $builder->select('*');
         $builder->where($s_modu);
         // $builder->like($s_nome);
@@ -153,26 +153,28 @@ class ConfigClasseModel extends Model
     }
 
     /**
-     * getClasseSearch
+     * getTelaPerfil
      *
-     * Retorna os dados da Classe, pelo perfil (id) informado
-     * Utilizado nas Seleções de Classe
+     * Retorna os dados da Tela, pelo perfil (id) informado
+     * Utilizado nas Seleções de Tela
      *  
      * @param mixed $perfil
      * @return array
      */
-    public function getClassePerfil($perfil = false)
+    public function getTelaPerfil($perfil = false)
     {
         $db = db_connect('dbConfig');
-        $builder = $db->table('vw_cfg_classe_relac');
+        $builder = $db->table('vw_cfg_tela_relac');
         $builder->select('*');
         if ($perfil) {
-            $builder->join('cfg_perfil_item pit', 'pit.cls_id = vw_cfg_classe_relac.cls_id 
-                            AND pit.prf_id = ' . $perfil, 'left');
-            // $builder->where('pit.pit_perfil_id',$perfil);
+            // $builder->join('cfg_perfil_item pit', 'pit.tel_id = vw_cfg_tela_relac.tel_id 
+            //                 AND pit.prf_id = ' . $perfil, 'left');
+            $builder->where('prf_id', $perfil);
+            $builder->orWhere('prf_id', null);
         }
         $builder->orderBy('mod_nome');
         $ret = $builder->get()->getResultArray();
+        // debug($ret);
         // debug($this->db->getLastQuery(), false);
         return $ret;
     }

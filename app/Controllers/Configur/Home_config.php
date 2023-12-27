@@ -1,4 +1,6 @@
-<?php namespace App\Controllers\Config;
+<?php
+
+namespace App\Controllers\Configur;
 
 use App\Controllers\BaseController;
 use App\Models\Config\ConfigPerfilItemModel;
@@ -10,7 +12,7 @@ class Home_config extends BaseController
     public $perfil_ite;
 
 	public function __construct(){
-		$this->data 			= session()->getFlashdata('dados_classe');
+		$this->data 			= session()->getFlashdata('dados_tela');
 		// $this->perfil_ite 		= new ConfigPerfilItemModel();
         if ($this->data['erromsg'] != '') {
             $this->__erro();
@@ -23,7 +25,7 @@ class Home_config extends BaseController
     }
 
 	public function index(){
-		// $busca_permissoes       = $this->perfil_ite->getItemPerfilClasse(session()->get('usu_perfil_id'), 'Pedidos');
+		// $busca_permissoes       = $this->perfil_ite->getItemPerfilTela(session()->get('usu_perfil_id'), 'Pedidos');
 		echo view('config/vw_home', $this->data);
 	}
 }

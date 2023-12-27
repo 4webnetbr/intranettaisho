@@ -1,5 +1,8 @@
 <?php
   header("Set-Cookie: cross-site-cookie=whatever; SameSite=Strict;");
+  if(!isset($title)){
+    $title = $controler;
+  }
 ?>
 
 <!DOCTYPE html>
@@ -7,7 +10,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Estoque -::- CeqNep</title>
+    <title><?=$title;?> - Estoque > CEQNEP</title>
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/x-icon">
 
   <!-- Google Font: Source Sans Pro -->

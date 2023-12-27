@@ -11,8 +11,8 @@
 <?=$this->section('content');?>
 <div id='content' class='container page-content bg-light m-0'>
   <div class="table-responsive col-12">
-    <table id="table" class="display compact table table-sm table-info table-striped table-hover table-borderless w-100">
-      <thead class="table-default">
+    <table id="table" class="display compact table table-sm table-info table-striped table-hover table-borderless col-12">
+      <thead class="table-default col-12">
         <tr>
         <?
           for ($c = 0; $c < sizeof($colunas); $c++){
@@ -37,7 +37,6 @@
 <script type="text/javascript" language="javascript" src="<?=base_url('assets/jscript/moment.min.js');?>"></script>
 <script type="text/javascript" language="javascript" src="<?=base_url('assets/jscript/datetime-moment.js');?>"></script>
 <script type="text/javascript" language="javascript" src="<?=base_url('assets/jscript/my_lista.js');?>"></script>
-
 
 <script>
   montaListaDados('table','<?=$url_lista;?>');

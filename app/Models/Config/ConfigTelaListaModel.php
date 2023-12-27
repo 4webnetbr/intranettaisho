@@ -3,11 +3,11 @@
 use App\Models\LogMonModel;
 use CodeIgniter\Model;
 
-class ConfigClasseListaModel extends Model
+class ConfigTelaListaModel extends Model
 {
     protected $DBGroup          = 'dbConfig';
 
-    protected $table            = 'cfg_classe_lista';
+    protected $table            = 'cfg_tela_lista';
     protected $primaryKey       = 'lis_id';
     protected $useAutoIncrement = true;
 
@@ -15,7 +15,7 @@ class ConfigClasseListaModel extends Model
     protected $useSoftDeletes   = false;
 
     protected $allowedFields    = ['lis_id',
-                                    'cls_id',
+                                    'tel_id',
                                     'lis_campo',
                                     'lis_rotulo',
                                     'lis_atualizado'
@@ -54,7 +54,7 @@ class ConfigClasseListaModel extends Model
     {
         $logdb = new LogMonModel();
         $registro = $data['id'][0];
-        $log = $logdb->insertLog($this->table, 'Alterado', $registro, $data['data']);
+        $log = $logdb->insertLog($this->table, 'Alteração', $registro, $data['data']);
         return $data;
     }
 
@@ -74,17 +74,17 @@ class ConfigClasseListaModel extends Model
     /**
      * getListagem
      *
-     * Retorna os dados da ClasseLista, pelo termo (nome) informado
-     * Utilizado nas Seleções de ClasseLista
+     * Retorna os dados da TelaLista, pelo termo (nome) informado
+     * Utilizado nas Seleções de TelaLista
      *
      * @param mixed $termo
      * @return array
      */
-    public function getListagem($classelista)
+    public function getListagem($Telalista)
     {
-        $clas = ['cls_id' => $classelista];
+        $clas = ['tel_id' => $Telalista];
         $db = db_connect('dbConfig');
-        $builder = $db->table('cfg_classe_lista');
+        $builder = $db->table('cfg_tela_lista');
         $builder->select('*');
         $builder->where($clas);
         // $builder->like($s_nome);
@@ -99,14 +99,14 @@ class ConfigClasseListaModel extends Model
      *
      * Exclui campos da Listagem que não foram atualizados
      *
-     * @param string $classelista
+     * @param string $Telalista
      * @return string
      */
-    public function excluiCampoLista($classelista)
+    public function excluiCampoLista($Telalista)
     {
         $db = db_connect('dbConfig');
-        $builder = $db->table('cfg_classe_lista');
-        $builder->where("cls_id", $classelista);
+        $builder = $db->table('cfg_tela_lista');
+        $builder->where("tel_id", $Telalista);
         // $builder->groupStart();
         // $builder->where("lis_atualizado != '$data_atu'");
         // $builder->orWhere("lis_atualizado IS NULL");

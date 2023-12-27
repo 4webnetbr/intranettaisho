@@ -9,8 +9,9 @@ function montaListaDados(tabela, url){
     jQuery.fn.dataTable.moment('DD/MM/YYYY');    //Formatação sem Hora
 
     // monta o Datable 
-    jQuery('#'+tabela).dataTable(
+    var table = jQuery('#'+tabela).DataTable(
     {
+        // "serverSide": true,
         "ajax": {
             "url": url,
             "type": "Post",
@@ -27,6 +28,7 @@ function montaListaDados(tabela, url){
             { "min-width": "8em", "targets": [-1] },
             { "width": "8em", "targets": [-1] },
             { "orderable": false, "targets": [-1] },
+            { "searchable": false, "targets": [-1] },
             { "className": "text-center acao", "targets": [-1]},
             { "className": "acao", "targets": [0] },
             { "className": "text-wrap text-nowrap", "targets": ['all']},
@@ -38,12 +40,15 @@ function montaListaDados(tabela, url){
         "buttons": {
             dom: {
                 button: {
-                    className: "btn btn-outline-primary btn-sm"
+                    className: "btn btn-outline-primary wauto",
+                    style: "max-width: 31.5px!important;"
                 }
             },
             buttons: [
                 {
                     extend: 'searchBuilder', 
+                    text:'<i class="fa fa-filter" aria-hidden="true"></i>',
+                    titleAttr: 'Filtrar',
                     config:{
                         id: 'bt_filtro',
                         columns: [':not(.acao)'],
@@ -59,6 +64,8 @@ function montaListaDados(tabela, url){
                 },
                 {
                     extend: 'excelHtml5',
+                    text: '<i class="fa fa-file-excel-o" aria-hidden="true"></i>',
+                    titleAttr: 'Exportar para Excel',
                     title: function() {
                         return document.title + ' - ' + jQuery('#legenda').text() ; 
                     },
@@ -71,7 +78,8 @@ function montaListaDados(tabela, url){
                 },
                 {
                     extend: 'pdfHtml5',
-                    text: 'PDF',
+                    text: '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>',
+                    titleAttr: 'Exportar para PDF',
                     title: function() {
                         return document.title + ' - ' + jQuery('#legenda').text() ; 
                     },
@@ -84,7 +92,8 @@ function montaListaDados(tabela, url){
                 },
                 {
                     extend: 'print', 
-                    text: 'Imprimir',
+                    text: '<i class="fa fa-print" aria-hidden="true"></i>',
+                    titleAttr: 'Enviar para Impressora',
                     title: function() {
                         return document.title + ' - ' + jQuery('#legenda').text() ; 
                     },
@@ -117,6 +126,7 @@ function montaListaDados(tabela, url){
         },
     });
 
+
     jQuery('#'+tabela).on('click', 'tbody tr td:not(".acao")', function() {
         link = jQuery(this).parent().find('a')[0].href;
         if(link != null){
@@ -125,4 +135,5 @@ function montaListaDados(tabela, url){
             }
         }
     });
+
 }

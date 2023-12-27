@@ -17,7 +17,7 @@ class ConfigPerfilItemModel extends Model
     protected $allowedFields = ['pit_id',
                                 'prf_id',
                                 'mod_id',
-                                'cls_id',
+                                'tel_id',
                                 'pit_permissao'
                                 ];
 
@@ -47,8 +47,8 @@ class ConfigPerfilItemModel extends Model
         $builder->select('*');
         $builder->where('prf_id', $perfil);
         $builder->groupStart();
-        $builder->where('cls_nome', $classe);
-        $builder->orWhere('cls_id', $classe);
+        $builder->where('tel_nome', $classe);
+        $builder->orWhere('tel_id', $classe);
         $builder->groupEnd();
         $ret = $builder->get()->getResultArray();
         // d($this->db->getLastQuery());

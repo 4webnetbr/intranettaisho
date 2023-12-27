@@ -1,9 +1,12 @@
-<?php namespace App\Controllers;
+<?php
+
+namespace App\Controllers;
+
 use App\Controllers\BaseController;
-use App\Models\Config\ConfigClasseModel;
 use App\Models\Config\ConfigDicDadosModel;
 use App\Models\Config\ConfigMenuModel;
 use App\Models\Config\ConfigModuloModel;
+use App\Models\Config\ConfigTelaModel;
 use App\Models\Config\ConfigUsuarioModel;
 
 class Buscas extends BaseController
@@ -11,14 +14,14 @@ class Buscas extends BaseController
     public $data = [];
     public $menu;
     public $modulo; 
-    public $classe;
+    public $tela;
     public $usuario; 
     public $admDados;
 
 	public function __construct(){
 		$this->menu 		        = new ConfigMenuModel();
 		$this->modulo 		        = new ConfigModuloModel();
-		$this->classe 		        = new ConfigClasseModel();
+		$this->tela 		        = new ConfigTelaModel();
         $this->usuario              = new ConfigUsuarioModel();
         $this->admDados             = new ConfigDicDadosModel();
 	}
@@ -117,19 +120,19 @@ class Buscas extends BaseController
         exit;
     }
 
-    public function busca_classe() {
+    public function busca_tela() {
         $ret    = [];
         if ($_REQUEST['busca']) {
             $termo              = $_REQUEST['busca'];
-            $class = $this->classe->getClasseSearch($termo);
+            $class = $this->tela->getTelaSearch($termo);
             if(sizeof($class) <= 0){
                 $ret[0]['id'] = '-1';
-                $ret[0]['text'] = 'Classe não encontrada...';
+                $ret[0]['text'] = 'Tela não encontrada...';
             } else {
                 for ($c = 0;$c<sizeof($class);$c++) {
-                    $ret[$c]['id']      = $class[$c]['cls_id'];
-                    $ret[$c]['text']    = $class[$c]['cls_nome'];
-                    $ret[$c]['icone']    = $class[$c]['cls_icone'];
+                    $ret[$c]['id']      = $class[$c]['tel_id'];
+                    $ret[$c]['text']    = $class[$c]['tel_nome'];
+                    $ret[$c]['icone']    = $class[$c]['tel_icone'];
                 }
             }
         }
@@ -137,19 +140,19 @@ class Buscas extends BaseController
         exit;
     }
 
-    public function busca_classe_id() {
+    public function busca_tela_id() {
         $ret    = [];
         if ($_REQUEST['busca']) {
             $termo              = $_REQUEST['busca'];
-            $class = $this->classe->getClasseId($termo);
+            $class = $this->tela->getTelaId($termo);
             if(sizeof($class) <= 0){
                 $ret[0]['id'] = '-1';
-                $ret[0]['text'] = 'Classe não encontrada...';
+                $ret[0]['text'] = 'Tela não encontrada...';
             } else {
                 for ($c = 0;$c<sizeof($class);$c++) {
-                    $ret[$c]['id']      = $class[$c]['cls_id'];
-                    $ret[$c]['text']    = $class[$c]['cls_nome'];
-                    $ret[$c]['icone']    = $class[$c]['cls_icone'];
+                    $ret[$c]['id']      = $class[$c]['tel_id'];
+                    $ret[$c]['text']    = $class[$c]['tel_nome'];
+                    $ret[$c]['icone']    = $class[$c]['tel_icone'];
                 }
             }
         }

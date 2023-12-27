@@ -1,8 +1,11 @@
-<?php namespace App\Controllers\Config;
+<?php
+
+namespace App\Controllers\Configur;
+
 use App\Controllers\BaseController;
 use App\Libraries\Campos;
-use App\Models\Config\ConfigClasseModel;
 use App\Models\Config\ConfigPerfilModel;
+use App\Models\Config\ConfigTelaModel;
 use App\Models\Config\ConfigUsuarioModel;
 
 class CfgUsuario extends BaseController
@@ -11,15 +14,15 @@ class CfgUsuario extends BaseController
     public $permissao = '';
     public $usuario;
     public $perfil;
-    public $classe;
+    public $tela;
 
     public function __construct()
     {
-        $this->data = session()->getFlashdata('dados_classe');
+        $this->data = session()->getFlashdata('dados_tela');
         $this->permissao    = $this->data['permissao'];
         $this->usuario      = new ConfigUsuarioModel();
         $this->perfil       = new ConfigPerfilModel();
-        $this->classe       = new ConfigClasseModel();
+        $this->tela       = new ConfigTelaModel();
 
         if ($this->data['erromsg'] != '') {
             $this->__erro();
@@ -54,7 +57,6 @@ class CfgUsuario extends BaseController
         $usuarios = [
             'data' => montaListaColunas($this->data, 'usu_id', $dados_usuario, 'usu_nome'),
         ];
-
         echo json_encode($usuarios);
     }
 
@@ -104,6 +106,9 @@ class CfgUsuario extends BaseController
         $this->data['secoes']     = $secao;
         $this->data['campos']     = $campos;
         $this->data['destino']    = 'store';
+
+        // BUSCAR DADOS DO LOG
+        $this->data['log'] = buscaLog('cfg_usuario', $id);
 
         echo view('vw_edicao', $this->data);
     }
@@ -195,7 +200,7 @@ class CfgUsuario extends BaseController
         $login->leitura         = false;
         $login->obrigatorio     = true;
         $login->hint    	    = 'Informe o Login';
-        $login->classe       = 'text-lowercase';
+        $login->classs       = 'text-lowercase';
         $login->size   	    = 35;
 		$login->tamanho      = 40;
 		$login->valor	    = (isset($dados['usu_login']))?$dados['usu_login']:'';
@@ -220,8 +225,8 @@ class CfgUsuario extends BaseController
         }
         $this->usu_perfil   = $perfil->create();
 
-        $classes = array_column($this->classe->getClasseId(), 'cls_nome', 'cls_id');
-        array_unshift($classes, '');
+        $telas = array_column($this->tela->getTelaId(), 'tel_nome', 'tel_id');
+        array_unshift($telas, '');
         $dash                  =  new Campos();
 		$dash->objeto  	       = 'select';
         $dash->nome    	       = 'usu_dashboard';
@@ -231,7 +236,7 @@ class CfgUsuario extends BaseController
         $dash->hint    	       = 'Escolha o Dashboard';
         $dash->size   	       = 50;
 		$dash->tamanho   	   = 55;
-        $dash->opcoes          = $classes;
+        $dash->opcoes          = $telas;
 		$dash->valor	       = (isset($dados['usu_dashboard'])) ? $dados['usu_dashboard'] : '';
         $dash->selecionado     = $dash->valor;
         $this->usu_dashboard   = $dash->create();

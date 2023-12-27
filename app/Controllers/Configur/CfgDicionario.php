@@ -1,5 +1,7 @@
-<?php 
-namespace App\Controllers\Config;
+<?php
+
+namespace App\Controllers\Configur;
+
 use App\Controllers\BaseController;
 use App\Libraries\Campos;
 use App\Models\Config\ConfigDicDadosModel;
@@ -12,7 +14,7 @@ class CfgDicionario extends BaseController
 
     public function __construct()
     {
-        $this->data      = session()->getFlashdata('dados_classe');
+        $this->data      = session()->getFlashdata('dados_tela');
         $this->dicionario  = new ConfigDicDadosModel();
         $this->permissao = $this->data['permissao'];
         if ($this->data['erromsg'] != '') {

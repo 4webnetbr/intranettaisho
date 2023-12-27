@@ -67,4 +67,38 @@ class CommonModel extends Model
         
         return $ins_id;
     }
+
+    public function getPostsSearch($banco, $table, $fields, $limit, $start, $search, $col, $dir)
+    {
+        $db = db_connect($banco);
+        $builder = $db->table($table);
+        $builder->select($fields);
+        if ($search != '') {
+            $builder->like($fields[0], $search);
+            for ($f = 1; $f < count($fields); $f++) {
+                $builder->orLike($fields[$f], $search);
+            }
+        }
+        $builder->limit($limit, $start);
+        $builder->orderBy($col, $dir);
+
+        $ret = $builder->get()->getResultArray();
+        // $sql = $this->db->getLastQuery();
+        // debug($sql, false);
+        return $ret;
+    }
+
+    public function getPostsTotal($banco, $table, $fields)
+    {
+        $db = db_connect($banco);
+        $builder = $db->table($table);
+        $ret = $builder->countAll();
+
+        // $ret = $builder->get()->getResultArray();
+        // $sql = $this->db->getLastQuery();
+        // debug($sql, true);
+
+        return $ret;
+    }
+
 }

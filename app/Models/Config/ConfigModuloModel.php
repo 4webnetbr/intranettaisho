@@ -17,8 +17,8 @@ class ConfigModuloModel extends Model
 
     protected $allowedFields    = ['mod_id',
                                     'mod_nome',
-                                    // 'mod_order',
-                                    'mod_icone'
+                                    'mod_icone',
+                                    'mod_ativo'
                                 ];
 
     protected $deletedField  = 'mod_excluido';
@@ -66,7 +66,7 @@ class ConfigModuloModel extends Model
     {
         $logdb = new LogMonModel();
         $registro = $data['id'][0];
-        $log = $logdb->insertLog($this->table, 'Alterado', $registro, $data['data']);
+        $log = $logdb->insertLog($this->table, 'Alteração', $registro, $data['data']);
         return $data;
     }
 

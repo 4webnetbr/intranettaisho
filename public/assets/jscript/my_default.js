@@ -55,77 +55,83 @@ jQuery(document).ready(function() {
      * Document Ready my_default
      */
     jQuery('#form1, #form_modal').submit(function (event) {
-        var form = jQuery(this);
-        form.addClass('was-validated');
+        // se não foi clicado no botão salvar, cancela o submit
+        if (event.originalEvent.submitter.id != 'bt_salvar') {
+            return false;
+        } else {
+            var form = jQuery(this);
+            form.addClass('was-validated');
 
-        var tipo = form.attr('type');
-        if(tipo != 'modal'){
-            bloqueiaTela();
-        }
-        if(tipo != 'normal'){
-            event.preventDefault(); // avoid to execute the actual submit of the form.
-            jQuery(".moeda").each(function () {
-                var valor = converteMoedaFloat(jQuery(this).val());
-                jQuery(this).val(valor);
-            });
-            var disabled = form.find(':input:disabled').removeAttr('disabled');
+            var tipo = form.attr('type');
+            if(tipo != 'modal'){
+                bloqueiaTela();
+            }
+            if(tipo != 'normal'){
+                event.preventDefault(); // avoid to execute the actual submit of the form.
+                jQuery(".moeda").each(function () {
+                    var valor = converteMoedaFloat(jQuery(this).val());
+                    jQuery(this).val(valor);
+                });
+                var disabled = form.find(':input:disabled').removeAttr('disabled');
 
-            var dadosForm = new FormData(this);
-            disabled.attr('disabled','disabled');
-            console.log(dadosForm.values);
-            var url = form.attr('action');
-            jQuery.ajax({
-                type: "POST",
-                headers: {'X-Requested-With': 'XMLHttpRequest'},
-                url: url,
-                processData: false,
-                contentType: false,
-                dataType: 'json',
-                // data: form.serialize(), // serializes the form's elements.
-                data: dadosForm, // serializes the form's elements.
-                success: function(data){
-                    if(tipo != 'modal'){
-                        desBloqueiaTela();
-                        if(!data.erro){
-                            if(data.url){
-                                if(tipo == 'novaguia'){
-                                    redirec_blank(data.url);
-                                } else {
-                                    redireciona(data.url)
+                var dadosForm = new FormData(this);
+                disabled.attr('disabled','disabled');
+                console.log(dadosForm.values);
+                var url = form.attr('action');
+                jQuery.ajax({
+                    type: "POST",
+                    headers: {'X-Requested-With': 'XMLHttpRequest'},
+                    url: url,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    // data: form.serialize(), // serializes the form's elements.
+                    data: dadosForm, // serializes the form's elements.
+                    success: function(data){
+                        if(tipo != 'modal'){
+                            desBloqueiaTela();
+                            if(!data.erro){
+                                if(data.url){
+                                    if(tipo == 'novaguia'){
+                                        redirec_blank(data.url);
+                                    } else {
+                                        redireciona(data.url)
+                                    }
                                 }
+                            } else {
+                                boxAlert(data.msg, data.erro,data.url,false, 1, false);
                             }
                         } else {
-                            boxAlert(data.msg, data.erro,data.url,false, 1, false);
+                            var myModalEl = document.getElementById('myModal');
+                            var modal = bootstrap.Modal.getInstance(myModalEl)
+                            modal.hide();
+                            jQuery('.toast-body').html(data.msg);
+                            texto = jQuery('.toast-body').html();
+                            if(jQuery.trim(texto) != ''){
+                                jQuery(".toast").toast("show");
+                                jQuery(".toast").toast({
+                                delay: 3000
+                                }); 
+                                jQuery(".toast").toast({
+                                animation: true
+                                }); 
+                            };;                                        
                         }
-                    } else {
-                        var myModalEl = document.getElementById('myModal');
-                        var modal = bootstrap.Modal.getInstance(myModalEl)
-                        modal.hide();
-                        jQuery('.toast-body').html(data.msg);
-                        texto = jQuery('.toast-body').html();
-                        if(jQuery.trim(texto) != ''){
-                            jQuery(".toast").toast("show");
-                            jQuery(".toast").toast({
-                              delay: 3000
-                            }); 
-                            jQuery(".toast").toast({
-                              animation: true
-                            }); 
-                        };;                                        
                     }
-                }
-            });
+                });
+            }
         }
     });;
 
 	// VERIFICA SE O CAMPO SOFREU ALTERNATES E CASO POSITIVO, ALTERA A VARIAVE data-alter PARA VERDADEIRO
 	// ISSO PODE SER USADO NA SAÍDA DO FORMULÁRIO, PARA TESTAR SE HOUVE ALTERAÇÕES NOS DADOS
-	jQuery('body').on('keydown','input,select,textarea', function(event){
-        if(event.keyCode > 47 && event.keyCode < 91){
+	jQuery('body').on('keypress','input,select,textarea', function(event){
+        // if(event.keyCode > 47 && event.keyCode < 91){
             if(this.getAttribute['data-origin'] != this.value){
                 this.setAttribute('data-alter',true);
+                console.log('Alterou');
             }
-        }
+        // }
 	});
 
 })
@@ -146,6 +152,12 @@ function desBloqueiaTela(){
     jQuery('#bloqueiaTela').addClass('d-none');
 };;
 
+/** Função nova
+ *  Não faz nada é só pra exemplificar
+ */
+function naofaznada(){
+
+};;
 
 /**
  * redireciona
@@ -329,6 +341,25 @@ function excluir(url, registro){
 };;
 
 /**
+ * ativInativ
+ * Apresenta o box de alerta de Ativação/Inativação, e caso confirmado, ativa ou inativa o registro
+ * 
+ * @param {url} url - url de exclusão do Registro
+ * @param {string} registro - descrição do Registro que será excluído
+ */
+
+function ativInativ(url, registro, ativo){
+    if (ativo) {
+        msg = "Confirma a Inativação do Registro?<br><h5 class='text-center'>"+registro+"</h5>";
+        tit = "Inativação de Registro";
+    } else {
+        msg = "Confirma a Ativação do Registro?<br><h5 class='text-center'>"+registro+"</h5>";
+        tit = "Ativação de Registro";
+    }
+    boxAlert(msg, false, url, false, 4, true, tit);
+};;
+
+/**
  * boxAlert
  * Cria um box de Alerta para o Usuário
  * Se for confirmação de exclusão, a url deve ser vazia e o box retornará a opção escolhida (Sim/Não)
@@ -399,7 +430,9 @@ function boxAlert(msg, erro = false, url, close = false, tipo = 1, confirma = fa
                                     if (retorno.erro) {
                                         boxAlert(retorno.msg, true, '', false, 1, false);
                                     } else {
-                                        location.href = document.referrer;
+                                        var arr=location.href.split('/');
+                                        var controler = arr[0]+'//'+arr[2]+'/'+arr[3];                                    
+                                        location.href = controler;
                                     }
                                 }
                             });
@@ -422,6 +455,15 @@ function boxAlert(msg, erro = false, url, close = false, tipo = 1, confirma = fa
         jQuery('.modal-header').css("color", "black");
     }
 };;
+
+/**
+ * abre_tab
+ * abre a Url fornecida como parametro, via Ajax, na Tab fornecida
+ * 
+ * @param {url} url    - 
+ * @param {string} tab    - 
+ * @param {string} tipo    - para o caso de etapas
+ */
 
 function abre_tab(url, tab, tipo){
     ulprin = jQuery('#tabPrincipal');
@@ -463,12 +505,28 @@ function abre_tab(url, tab, tipo){
     });
 }
 
+
+/**
+ * removerTags
+ * Remove os Tags Html do texto fornecido como parâmetro
+ * 
+ * @param {string} html    - Texto original
+ * @return {string} texto sem tags
+ */
 function removerTags(html){
     const data = new DOMParser().parseFromString(html, 'text/html');
     return data.body.textContent || "";
  }
 
- function tiraAcentos(txt) {
+
+/**
+ * tiraAcentos
+ * Remove os Acentos do texto fornecido como parâmetro
+ * 
+ * @param {string} txt    - Texto original
+ * @return {string} texto sem acentos
+ */
+function tiraAcentos(txt) {
     if (txt != null && txt != '' && txt != undefined) {
         var i = txt.toLowerCase().trim();
 
@@ -489,7 +547,15 @@ function removerTags(html){
 };;
 
 
+/**
+ * Cancelar
+ * Cancela a Edição de Dados atual e retorna para a tela de listagem
+ * Caso existam informações não Salvas mostra o Box de Confirmação do cancelamento
+ * 
+ */
 function cancelar() {
+    var arr=location.href.split('/');
+    var controler = arr[0]+'//'+arr[2]+'/'+arr[3];
     var elemAlterado = "false";
     jQuery("input, select, textarea").each(function () {
         elemAlterado = this.getAttribute('data-alter'); // Referência do elemento atual
@@ -499,8 +565,48 @@ function cancelar() {
     });
     if (elemAlterado == "true") {
         msg = "Algumas informações desta página, ainda não foram salvas!!! <br> Confirmando a saída, essas informações serão perdidas definitivamente!<br><br>Confirma Saída?";
-        boxAlert(msg, false, 'location.href = document.referrer;', false, 3, true,'Registro Alterado');
+        boxAlert(msg, false, "location.href = '"+controler+"'", false, 3, true,'Registro Alterado');
     } else {
-        location.href = document.referrer;
+        location.href = controler;
     }
 };;
+
+
+function setCookie(name, value, duration) {
+    var cookie = name + "=" + escape(value) +
+    ((duration) ? "; duration=" + duration.toGMTString() : "") + ";path=/";
+
+    document.cookie = cookie;
+}
+
+function getCookie(name) {
+    var cookies = document.cookie;
+    var prefix = name + "=";
+    var begin = cookies.indexOf("; " + prefix);
+ 
+    if (begin == -1) {
+ 
+        begin = cookies.indexOf(prefix);
+         
+        if (begin != 0) {
+            return null;
+        }
+ 
+    } else {
+        begin += 2;
+    }
+ 
+    var end = cookies.indexOf(";", begin);
+     
+    if (end == -1) {
+        end = cookies.length;                        
+    }
+ 
+    return unescape(cookies.substring(begin + prefix.length, end));
+}
+
+function deleteCookie(name) {
+    if (getCookie(name)) {
+           document.cookie = name + "=" + "; expires=Thu, 01-Jan-70 00:00:01 GMT";
+    }
+}

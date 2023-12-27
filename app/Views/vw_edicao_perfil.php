@@ -69,24 +69,25 @@
                         echo "<div class='text-center align-items-center justify-content-center'>";
                         echo "<div class='col-7 d-inline-flex'>";
                         echo "<div class='float-left col-3 text-center text-dark-emphasis fw-bold'>Módulo</div>";
-                        echo "<div class='float-left col-4 text-center text-dark-emphasis fw-bold'>Classe</div>";
+                        echo "<div class='float-left col-4 text-center text-dark-emphasis fw-bold'>Tela</div>";
                         echo "<div class='float-left col-1 text-center text-dark-emphasis fw-bold'>Todos</div>";
                         echo "<div class='float-left col-1 text-center text-dark-emphasis fw-bold'>Consulta</div>";
                         echo "<div class='float-left col-1 text-center text-dark-emphasis fw-bold'>Adição</div>";
                         echo "<div class='float-left col-1 text-center text-dark-emphasis fw-bold'>Edição</div>";
                         echo "<div class='float-left col-1 text-center text-dark-emphasis fw-bold'>Exclusão</div>";
                         echo "</div>";
-                                echo "<div class='ondeacaba'>";
-                        for ($c=$cta_campo;$c<sizeof($campos_r);$c++) {
+                        echo "<div class='ondeacaba'>";
+                        for ($c = $cta_campo; $c < sizeof($campos_r); $c++) {
                             $campos_it = $campos2[$s]; // MÓDULOS
                             foreach ($campos_it as $item) {
                                 // debug($item, false);
                                 $prim  = 0;
                                 $modu = '';
                                 $i_collap = false;
-                                for ($it=0;$it<sizeof($item);$it++) {
+                                for ($it=0;$it<count($item);$it++) {
                                     $item_x = $item[$it];
-                                    for($mm=0;$mm<sizeof($item_x);$mm++) {
+                                    
+                                    for($mm=0;$mm<count($item_x);$mm++) {
                                         if($mm == 0){
                                             if($modu != $item_x[$mm]){
                                                 $prim = 0;
@@ -94,9 +95,9 @@
                                                 if($cta_mod > 1){
                                                     echo "</div>";
                                                 }
-                                                echo "<div class='col-7 d-inline-flex border border-1 rounded-4 rounded-bottom-0 pt-2' >";
+                                                echo "<div class='col-7 d-inline-flex border border-1 border-info rounded-4 rounded-bottom-0 pt-2 bg-info-subtle' >";
                                                 echo "<div class='float-left col-3 p-2' type='button' data-bs-toggle='collapse' data-bs-target='#collapse-mod$cta_mod' aria-expanded='false' aria-controls='collapse-mod$cta_mod'>";
-                                                echo $item_x[$mm];
+                                                echo "<h4>$item_x[$mm]</h4>";
                                                 echo "</div>";
                                                 echo "<div class='float-left col-4' type='button' data-bs-toggle='collapse' data-bs-target='#collapse-mod$cta_mod' aria-expanded='false' aria-controls='collapse-mod$cta_mod'>";
                                                 echo "";
@@ -107,7 +108,6 @@
                                         } else if($mm == 1){
                                             if($prim > 0){
                                                 echo "<div class='float-left col-3'>";
-                                                echo "";
                                                 echo "</div>";
                                                 echo "<div class='float-left col-4 p-2'>";
                                                 echo $item_x[$mm];

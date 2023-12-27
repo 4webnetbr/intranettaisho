@@ -61,9 +61,7 @@ if (!isset($desc_edicao)) {
             <div class="align-items-center py-15 text-start float-start font-weight-bold" style="">            
               <i class="fa fa-circle-plus btn-info" style="font-size: 2rem;"></i>
             </div>
-            <div class="align-items-start mx-4 txt-bt-manut d-none">
-              <?=$bt_add;?>
-            </div>
+            <div class="align-items-start txt-bt-manut d-none"><?=$bt_add;?></div>
         </button>
   <?  }
     } elseif ($metodo == 'filtro' || $metodo == 'show' ){?>
@@ -71,13 +69,11 @@ if (!isset($desc_edicao)) {
           data-mdb-toggle="tooltip"
           data-mdb-placement="top" 
           title="Voltar" 
-          onclick="redireciona('<?=base_url($controler);?>')">
+          onclick="retorna_url()">
           <div class="align-items-center py-15 text-start float-start font-weight-bold" style="">            
             <i class="fas fa-arrow-left" style="font-size: 2rem;"></i>
           </div>
-          <div class="align-items-start mx-4 txt-bt-manut">
-            Voltar
-          </div>
+          <div class="align-items-start txt-bt-manut">Voltar</div>
         </button>
   <?
     } elseif ((strpbrk($permissao, 'A') || strpbrk($permissao, 'E')) && $erromsg == ''){?>
@@ -90,11 +86,9 @@ if (!isset($desc_edicao)) {
           <div class="align-items-center py-15 text-start float-start font-weight-bold" style="">            
             <i class="fas fa-undo" style="font-size: 2rem;"></i>
           </div>
-          <div class="align-items-start mx-4 txt-bt-manut ">
-            Cancelar
-          </div>
+          <div class="align-items-start txt-bt-manut ">Cancelar</div>
         </button>
-        <button id="bt_salvar" class="btn btn-outline-success bt-manut btn-sm mb-2 float-end" 
+        <button id="bt_salvar" class="btn btn-primary bt-manut btn-sm mb-2 float-end" 
           data-mdb-toggle="tooltip"
           data-mdb-placement="top" 
           form="form1" 
@@ -104,9 +98,7 @@ if (!isset($desc_edicao)) {
           <div class="align-items-center py-15 text-start float-start font-weight-bold" style="">            
             <i class="fas fa-save" style="font-size: 2rem;"></i>
           </div>
-          <div class="align-items-start mx-4 txt-bt-manut">
-            Salvar
-          </div>
+          <div class="align-items-start txt-bt-manut">Salvar</div>
         </button>
   <?  }
   ?>

@@ -32,37 +32,37 @@ $routes->setAutoRoute(true);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'home::index');
-$routes->get('/home_config', 'Config\Home_config::index');
+$routes->get('/home_config', 'Configur\Home_config::index');
 
-$routes->get('/CfgModulo', 'Config\CfgModulo::index');
-$routes->get('/CfgModulo/(:any)', 'Config\CfgModulo::$1');
-$routes->post('/CfgModulo/(:any)', 'Config\CfgModulo::$1');
+$routes->get('/CfgModulo', 'Configur\CfgModulo::index');
+$routes->get('/CfgModulo/(:any)', 'Configur\CfgModulo::$1');
+$routes->post('/CfgModulo/(:any)', 'Configur\CfgModulo::$1');
 
-$routes->get('/CfgClasse', 'Config\CfgClasse::index');
-$routes->get('/CfgClasse/(:any)', 'Config\CfgClasse::$1');
-$routes->post('/CfgClasse/(:any)', 'Config\CfgClasse::$1');
+$routes->get('/CfgTela', 'Configur\CfgTela::index');
+$routes->get('/CfgTela/(:any)', 'Configur\CfgTela::$1');
+$routes->post('/CfgTela/(:any)', 'Configur\CfgTela::$1');
 
-$routes->get('/CfgMenu', 'Config\CfgMenu::index');
-$routes->get('/CfgMenu/(:any)', 'Config\CfgMenu::$1');
-$routes->post('/CfgMenu/(:any)', 'Config\CfgMenu::$1');
+$routes->get('/CfgMenu', 'Configur\CfgMenu::index');
+$routes->get('/CfgMenu/(:any)', 'Configur\CfgMenu::$1');
+$routes->post('/CfgMenu/(:any)', 'Configur\CfgMenu::$1');
 
-$routes->get('/CfgDicionario', 'Config\CfgDicionario::index');
-$routes->get('/CfgDicionario/(:any)', 'Config\CfgDicionario::$1');
-$routes->post('/CfgDicionario/(:any)', 'Config\CfgDicionario::$1');
+$routes->get('/CfgDicionario', 'Configur\CfgDicionario::index');
+$routes->get('/CfgDicionario/(:any)', 'Configur\CfgDicionario::$1');
+$routes->post('/CfgDicionario/(:any)', 'Configur\CfgDicionario::$1');
 
-$routes->get('/CfgFuncoes', 'Config\CfgFuncoes::index');
-$routes->get('/CfgFuncoes/(:any)', 'Config\CfgFuncoes::$1');
-$routes->post('/CfgFuncoes/(:any)', 'Config\CfgFuncoes::$1');
+$routes->get('/CfgFuncoes', 'Configur\CfgFuncoes::index');
+$routes->get('/CfgFuncoes/(:any)', 'Configur\CfgFuncoes::$1');
+$routes->post('/CfgFuncoes/(:any)', 'Configur\CfgFuncoes::$1');
 
-$routes->get('/CfgPerfil', 'Config\CfgPerfil::index');
-$routes->get('/CfgPerfil/(:any)', 'Config\CfgPerfil::$1');
-$routes->post('/CfgPerfil/(:any)', 'Config\CfgPerfil::$1');
+$routes->get('/CfgPerfil', 'Configur\CfgPerfil::index');
+$routes->get('/CfgPerfil/(:any)', 'Configur\CfgPerfil::$1');
+$routes->post('/CfgPerfil/(:any)', 'Configur\CfgPerfil::$1');
 
-$routes->get('/CfgUsuario', 'Config\CfgUsuario::index');
-$routes->get('/CfgUsuario/(:any)', 'Config\CfgUsuario::$1');
-$routes->post('/CfgUsuario/(:any)', 'Config\CfgUsuario::$1');
+$routes->get('/CfgUsuario', 'Configur\CfgUsuario::index');
+$routes->get('/CfgUsuario/(:any)', 'Configur\CfgUsuario::$1');
+$routes->post('/CfgUsuario/(:any)', 'Configur\CfgUsuario::$1');
 
-$routes->match(['get', 'post'], '/CfgModulo/(:any)/(:any)', 'Config\CfgModulo::$1::$2');
+$routes->match(['get', 'post'], '/CfgModulo/(:any)/(:any)', 'Configur\CfgModulo::$1::$2');
 
 // $routes->get('/(:any)', '$1');
 // $routes->post('/(:any)/(:any)', '$1::$2');

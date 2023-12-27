@@ -60,7 +60,7 @@ class ConfigUsuarioModel extends Model
     {
         $logdb = new LogMonModel();
         $registro = $data['id'][0];
-        $logdb->insertLog($this->table, 'Alterado', $registro, $data['data']);
+        $logdb->insertLog($this->table, 'Alteração', $registro, $data['data']);
         return $data;
     }
 
