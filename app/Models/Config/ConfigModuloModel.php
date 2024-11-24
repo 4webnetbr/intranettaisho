@@ -2,6 +2,7 @@
 
 namespace App\Models\Config;
 
+use App\Libraries\MyCampo;
 use App\Models\LogMonModel;
 use CodeIgniter\Model;
 
@@ -9,11 +10,12 @@ class ConfigModuloModel extends Model
 {
     protected $DBGroup          = 'dbConfig';
     protected $table            = 'cfg_modulo';
+    protected $view             = 'cfg_modulo';
     protected $primaryKey       = 'mod_id';
     protected $useAutoIncremodt = true;
 
     protected $returnType       = 'array';
-    // protected $useSoftDeletes   = true;
+    protected $useSoftDeletes   = true;
 
     protected $allowedFields    = ['mod_id',
                                     'mod_nome',
@@ -103,4 +105,38 @@ class ConfigModuloModel extends Model
 
         return $this->builder()->get()->getResultArray();
     }
+
+    public function defCampos($dados = false)
+    {
+        $ret = [];
+        $mid            = new MyCampo('cfg_modulo', 'mod_id');
+        $mid->valor     = (isset($dados['mod_id'])) ? $dados['mod_id'] : '';
+        $ret['mod_id']   = $mid->crOculto();
+
+        $nome           =  new MyCampo('cfg_modulo', 'mod_nome');
+        $nome->valor    = (isset($dados['mod_nome'])) ? $dados['mod_nome'] : '';
+        $nome->obrigatorio = true;
+        $ret['mod_nome'] = $nome->crInput();
+
+        $icon           =  new MyCampo('cfg_modulo', 'mod_icone');
+        $icon->tipo     = 'icone';
+        $icon->valor    = (isset($dados['mod_icone'])) ? $dados['mod_icone'] : '';
+        $ret['mod_icon'] = $icon->crInput();
+
+        $cor           =  new MyCampo('cfg_mensagem','msg_cor');
+        $cor->valor    = '';
+        $cor->selecionado    = $this->valor;
+        $ret['mod_cor'] = $cor->crCorbst();
+
+        $opcat['A'] = 'Ativo';
+        $opcat['I'] = 'Inativo';
+
+        $ativ           = new MyCampo('cfg_modulo', 'mod_ativo');
+        $ativ->valor    = (isset($dados['mod_ativo'])) ? $dados['mod_ativo'] : 'A';
+        $ativ->selecionado    = $ativ->valor;
+        $ativ->opcoes   = $opcat;
+        $ret['mod_ativo'] = $ativ->cr2opcoes();
+
+        return $ret;
+    }    
 }

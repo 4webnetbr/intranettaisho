@@ -7,16 +7,21 @@
 <?=$this->section('menu');?>
   <?=view('strut/vw_menu');?>
 <?=$this->endSection();?>
+<?=$this->section('footer');?>
+  <?=view('strut/vw_rodape');?>
+<?=$this->endSection();?>
 
 <?=$this->section('content');?>
 <div id='content' class='container page-content bg-light m-0'>
   <div class="table-responsive col-12">
-    <table id="table" class="display compact table table-sm table-info table-striped table-hover table-borderless col-12">
-      <thead class="table-default col-12">
-        <tr>
+    <table id="table" class="display compact table table-sm table-info table-striped table-hover table-border cell-border col-12">
+      <thead class="table-default col-12 overflow-x-auto">
+        <tr class=' w-100'>
         <?
           for ($c = 0; $c < sizeof($colunas); $c++){
-            echo "<th class='text-center text-nowrap'><h5>$colunas[$c]</h5></th>";
+            echo "<th class='text-center text-nowrap'>
+                  <h5>$colunas[$c]</h5>                
+                  </th>";
           }
         ?>
         </tr>
@@ -37,6 +42,7 @@
 <script type="text/javascript" language="javascript" src="<?=base_url('assets/jscript/moment.min.js');?>"></script>
 <script type="text/javascript" language="javascript" src="<?=base_url('assets/jscript/datetime-moment.js');?>"></script>
 <script type="text/javascript" language="javascript" src="<?=base_url('assets/jscript/my_lista.js');?>"></script>
+
 
 <script>
   montaListaDados('table','<?=$url_lista;?>');

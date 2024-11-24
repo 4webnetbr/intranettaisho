@@ -23,13 +23,57 @@ class CommonModel extends Model
      *  
      * @param string $table 
      * @param mixed $data 
-     * @return array
+     * @return int
      */
-    public function insertReg($table, $data){
-        $insert_id = $this->db->insert($table, $data);
-        
+    public function insertReg($grupo, $table, $data){
+        $db = db_connect($grupo);
+        $builder = $db->table($table);
+        try {
+            $ins = $builder->insert($data);
+            $insert_id = $db->insertID();
+        } catch (\Throwable $th) {
+            $insert_id = $th;
+        }
         return $insert_id;
     }
+
+    /**
+     * updateReg
+     *
+     * Insere o Registro na Tabela informada
+     *  
+     * @param string $table 
+     * @param mixed $data 
+     * @return int
+     */
+    public function updateReg($grupo, $table, $chave, $data){
+        $db = db_connect($grupo);
+        $builder = $db->table($table);
+        $builder->where($chave);
+
+        $update_id = $builder->update($data);
+        // $sql = $this->db->getLastQuery();
+        // debug($sql);        
+        return $update_id;
+    }
+
+    /**
+     * deleteReg
+     *
+     * deleta o Registro na Tabela informada
+     *  
+     * @param string $table 
+     * @param mixed $data 
+     * @return bool
+     */
+    public function deleteReg($grupo, $tabela, $chave){
+        $db = db_connect($grupo);
+
+        $query = $db->query("DELETE FROM ".$tabela." WHERE ".$chave);
+        
+        return true;
+    }
+
 
     /**
      * getFieldsTable
@@ -66,6 +110,20 @@ class CommonModel extends Model
         $ins_id = $this->builder()->insert($sql_data);
         
         return $ins_id;
+    }
+
+    public function getExiste($banco, $table, $chave){
+        $db = db_connect($banco);
+        $builder = $db->table($table);
+        $builder->select('*');
+        $builder->where($chave);
+
+        $ret = $builder->get()->getResultArray();
+
+        // $sql = $this->db->getLastQuery();
+        // debug($sql);        
+        return $ret;
+
     }
 
     public function getPostsSearch($banco, $table, $fields, $limit, $start, $search, $col, $dir)

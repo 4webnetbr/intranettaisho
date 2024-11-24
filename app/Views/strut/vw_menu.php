@@ -1,5 +1,5 @@
 <!-- Section Menu -->
-<?php
+<?
 
 echo $this->section('menu');
 
@@ -17,7 +17,7 @@ if ($avatar != '') {
 <input type='hidden' id='controler' value='<?=strtolower($controler);?>' />
 <div id='show_user' class="card col-lg-2 col-6 border border-1 border-info shadow p-3 me-1 float-start" >
   <div class="card-header d-flex">
-    <?php
+    <?
     if ($avatar != '') {
         $image_user = "<img src='$avatar' class='rounded-circle m-auto card-img-top'/>";
     } else {
@@ -29,7 +29,7 @@ if ($avatar != '') {
   <div class="card-body">
     <h5 class="card-title"><?=$nomeus;?></h5>
     <p class="card-text"><?=session()->get('usu_perfil');?></p>
-    <?php
+    <?
         echo "<hr>";
     ?>
     <div class="form-check form-switch form-check-inline 
@@ -40,7 +40,7 @@ if ($avatar != '') {
                 onchange="mudamenuaberto()" />
       </div>
     </div>
-    <?php
+    <?
         echo anchor('CfgUsuario/edit_senha/' . session()->usu_id, 'Editar Meus Dados', 'class="form-control px-1 btn btn-outline-secondary w-100"');
         echo "<hr>";
         echo anchor(base_url('/login'), '<div class="icon-menu float-start me-2">
@@ -79,7 +79,7 @@ if ($avatar != '') {
         </div>
       </button>    
     </div>
-    <?php
+    <?
     foreach ($it_menu as $ke => $valu) {
       $opcao = $it_menu[$ke];
       if ($opcao['men_metodo'] != 'index' && ($opcao['men_hierarquia'] == '1' || $opcao['men_hierarquia'] == '4')) {
@@ -101,7 +101,7 @@ if ($avatar != '') {
           </div>
         </a>
         </div>
-      <?php
+      <?
         continue;
       } elseif ($opcao['men_hierarquia'] == '2') {
         // debug($opcao); 
@@ -124,7 +124,7 @@ if ($avatar != '') {
               </h2>
               <div id="collapse<?=$opcao['men_id'];?>" class="accordion-collapse collapse" aria-labelledby="head<?=$opcao['men_id'];?>" data-bs-parent="#accordion1">
                 <div class="accordion-body ms-1 py-1 px-0 h-auto bg-blue-claro">
-                <?php
+                <?
                   // $subopc = $opcao[$m];
                   // debug($opcao['niv1'], true);
                   foreach ($opcao['niv1'] as $key => $value) {
@@ -140,7 +140,7 @@ if ($avatar != '') {
                           <div class='align-items-start ms-2 men_nome py-0'><?=$subopc['men_etiqueta'];?></div>
                         </div>
                       </a>
-                    <?php
+                    <?
                     } elseif ($subopc['men_hierarquia'] == '3') {
                       $cont_accord++;
                       if (isset($subopc['niv2'])) {
@@ -159,7 +159,7 @@ if ($avatar != '') {
                             </h2>
                             <div id="collapse<?=$subopc['men_id'];?>" class="accordion-collapse submenu collapse " aria-labelledby="head<?=$subopc['men_id'];?>" data-bs-parent="#accordion<?=$cont_accord;?>">
                               <div class="accordion-body ms-2 py-1 px-0 h-auto bg-blue-claro">
-                              <?php
+                              <?
                                 foreach($subopc['niv2'] as $key2 => $value2) {
                                   $subsub = $subopc['niv2'][$key2];
                                   $onclic = base_url($subsub['tel_controler']);
@@ -179,7 +179,7 @@ if ($avatar != '') {
                             </div>
                           </div>
                         </div>
-                      <?php
+                      <?
                       }
                     }
                   }
@@ -187,10 +187,9 @@ if ($avatar != '') {
                 </div>
               </div>
             </div>
-          <?php
+          <?
           }
-        }?>
-    <?php
+        }
     }
     ?>
     </div>

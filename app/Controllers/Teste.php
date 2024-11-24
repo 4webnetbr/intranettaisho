@@ -1,38 +1,30 @@
-<?php
-defined('BASEPATH') or exit('No direct script access allowed');
-// Don't forget include/define REST_Controller path
-
-/**
- *
- * Controller Teste
- *
- * This controller for ...
- *
- * @package   CodeIgniter
- * @category  Controller CI
- * @author    Setiawan Jodi <jodisetiawan@fisip-untirta.ac.id>
- * @author    Raul Guerrero <r.g.c@me.com>
- * @link      https://github.com/setdjod/myci-extension/
- * @param     ...
- * @return    ...
- *
- */
-
-class Teste extends CI_Controller
-{
-    
-  public function __construct()
-  {
-    parent::__construct();
-  }
-
-  public function index()
-  {
-    // 
-  }
-
-}
-
-
-/* End of file Teste.php */
-/* Location: ./app/controllers/Teste.php */
+`NrItem` int(9) DEFAULT NULL,
+`CodProduto` int(13) DEFAULT NULL,
+`CodBarras` varchar(64) DEFAULT NULL,
+`DescProduto` varchar(120) DEFAULT NULL,
+`CodGrupo` int(9) DEFAULT NULL,
+`DescGrupo` varchar(120) DEFAULT NULL,
+`Unidade` varchar(5) DEFAULT NULL,
+`VlrUnitario` float(17,2) DEFAULT NULL,
+`Qtde` float(13,4) DEFAULT NULL,
+`SubTotal` float(17,2) DEFAULT NULL,
+`NrPromocao` int(9) DEFAULT NULL,
+`DescPromocao` varchar(60) DEFAULT NULL,
+`VlrAcrescimos` float(17,2) DEFAULT NULL,
+`CodTipoDesconto` int(9) DEFAULT NULL,
+`DescTipoDesconto` varchar(120) DEFAULT NULL,
+`VlrDescontos` float(17,2) DEFAULT NULL,
+`CodUsuarioDesconto` int(9) DEFAULT NULL,
+`NomeUsuarioDesconto` varchar(120) DEFAULT NULL,
+`VlrTotal` float(17,2) DEFAULT NULL,
+`VlrDescCupomRateio` float(17,2) DEFAULT NULL,
+`VlrTotalLiq` float(17,2) DEFAULT NULL,
+`CodUsuarioVendedor` int(9) DEFAULT NULL,
+`NomeUsuarioVendedor` varchar(60) DEFAULT NULL,
+`NrMesaComanda` int(9) DEFAULT NULL,
+`DataHoraLancamento` varchar(16) DEFAULT NULL,
+`CodUsuarioExclusao` int(9) DEFAULT NULL,
+`NomeUsuarioExclusao` varchar(60) DEFAULT NULL,
+`MotivoExclusao` varchar(255) DEFAULT NULL,
+`SituacaoItem` int(3) DEFAULT NULL,
+`DescSituacaoItem` varchar(60) DEFAULT NULL,

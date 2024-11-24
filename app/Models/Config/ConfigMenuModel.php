@@ -10,6 +10,7 @@ class ConfigMenuModel extends Model
     protected $DBGroup          = 'dbConfig';
 
     protected $table            = "cfg_menu";
+    protected $view             = "vw_cfg_menu_relac";
     protected $primaryKey       = "men_id";
     protected $useAutoIncrement = true;
 
@@ -145,14 +146,18 @@ class ConfigMenuModel extends Model
         $builder->select('*');
         if ($tipo_usu && $tipo_usu < 3) {
             $builder->where("men_tipo", $tipo_usu);
+            $builder->groupStart();
         }
         if ($perfil_id) {
-            $builder->groupStart();
             $builder->where("prf_id", null);
             $builder->orWhere("prf_id", $perfil_id);
+        }
+        if ($tipo_usu && $tipo_usu < 3) {
             $builder->groupEnd();
         }
         $builder->orderBy('men_order');
+        // $sql = $builder->getCompiledSelect();
+        // debug($sql,true);
         $ret = $builder->get()->getResultArray();
         // debug($this->db->getLastQuery(), false);
         return $ret;

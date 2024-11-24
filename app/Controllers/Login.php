@@ -36,7 +36,7 @@ class Login extends BaseController
         $login->obrigatorio = true;
         $login->hint    = 'Informe o Usuário';
         $login->size    = 30;
-        $login->tamanho  = 30;
+        $login->tamanho  = 40;
         $login->tipo_form = 'vertical';
         $this->usu_login = $login->create();
 
@@ -50,7 +50,7 @@ class Login extends BaseController
         $senha->obrigatorio = true;
         $senha->hint    = 'Informe a Senha';
         $senha->size    = 8;
-        $senha->tamanho   = 34;
+        $senha->tamanho   = 40;
         $senha->tipo_form = 'vertical';
         $this->usu_senha = $senha->create();
 
@@ -80,7 +80,7 @@ class Login extends BaseController
         if (session()->logged_in === true) {
             session()->destroy();
         }
-        $logo                   = base_url('assets/images/logo_header.jpg');
+        $logo                   = base_url('assets/images/logotaisho.png');
 
         $this->defCampos();
 
@@ -123,7 +123,7 @@ class Login extends BaseController
             } else {
                 $img_name       = 'usu_' . $log_config[0]['usu_id'] . '.jpg';
                 $sem_avat       = base_url('assets/images/sem_avatar.png');
-                $logo_def       = base_url('assets/images/logo_header.png');
+                $logo_def       = base_url('assets/images/logotaisho.png');
                 $icone          = base_url('assets/images/favicon.ico');
                 $path_ser       = FCPATH . 'assets/uploads/usuario/';
                 $img_path       = site_url('assets/uploads/usuario/');
@@ -146,6 +146,7 @@ class Login extends BaseController
                     'usu_perfil_id' => $log_config[0]['prf_id'],
                     'usu_perfil'    => $log_config[0]['prf_nome'],
                     'usu_dashboard' => $dash,
+                    'usu_empresa'   => $log_config[0]['usu_empresa'],
                     'usu_whats'     => isset($log_config[0]['usu_whats']) ? $log_config[0]['usu_whats'] : 'N',
                     'usu_avatar'    => $avatar,
                     'logo'          => $logo_def,
@@ -154,6 +155,7 @@ class Login extends BaseController
                     'ismobile'      => $mobile
                 ];
                 $session->set($newdata);
+                // debug($dash, true);
                 return redirect()->to('/' . $dash);
             }
         }

@@ -10,6 +10,7 @@ class ConfigPerfilModel extends Model
     protected $DBGroup          = 'dbConfig';
 
     protected $table      = 'cfg_perfil';
+    protected $view       = 'vw_cfg_perfil_item_relac';
     protected $primaryKey = 'prf_id';
     protected $useAutoIncrement = true;
 

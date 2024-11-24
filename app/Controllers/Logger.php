@@ -45,14 +45,16 @@ class Logger extends BaseController
                 $dad = [];
                 $dad['operacao']      = $document->log_operacao;
                 $dad['usua_alterou']  = $document->log_id_usuario;
-                $dad['data_alterou']  = data_br($document->log_data);
+                $dad['data_alterou']  = dataDbToBr($document->log_data);
                 $dad['dados'] = [];
                 $field = [];
-                foreach ($document->log_dados as $key => $value) {
-                    if (isset($campo_nome[$key])) {
-                        $field[$campo_nome[$key]] = $value;
+                if ($document->log_dados != null) {
+                    foreach ($document->log_dados as $key => $value) {
+                        if (isset($campo_nome[$key])) {
+                            $field[$campo_nome[$key]] = $value;
+                        }
+                        // debug($field);
                     }
-                    // debug($field);
                 }
                 array_push($dad['dados'], $field);
                 $dad['tabela']        = $tabela;
@@ -60,6 +62,7 @@ class Logger extends BaseController
                 array_push($dados, $dad);
             }
         }
+        asort($dados);
         $this->data['dados'] = $dados;
         // debug($dados);
 
