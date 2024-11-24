@@ -79,9 +79,13 @@ class MyCampo
         $this->tabela       = $tabela;
         $this->campo        = $campo;
 <<<<<<< HEAD
+<<<<<<< HEAD
         $this->naocolar     = false;
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+        $this->naocolar     = false;
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         // se for passado a tabela e o campo na criação, busca as propriedades no banco
         if ($tabela != '' && $campo != '') {
             $this->doBanco($tabela, $campo, $showchave);
@@ -306,6 +310,9 @@ class MyCampo
             $mb = 'm-0';
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $adireita = "";
         if(($this->tipo == 'quantia' || $this->tipo == 'moeda') && $this->dispForm != 'linha'){
             $adireita = "d-flex justify-content-end";
@@ -316,9 +323,12 @@ class MyCampo
             $classediv = $this->classediv;
         }
         $respf .= "<div id='ig_$this->id' class='row $colunas $classediv d-inline-flex me-1 $adireita'>";
+<<<<<<< HEAD
 =======
         $respf .= "<div id='ig_$this->id' class='row $colunas float-start d-inline-flex g-1 align-items-center $mb'>";
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $divaberta = true;
         if ($this->infotop != '') {
             $respf .= "<div class='text-info'><i class='fa-solid fa-bullhorn'></i> $this->infotop</div>";
@@ -345,6 +355,7 @@ class MyCampo
                 style='width: auto !important;'>";
         } elseif ($this->tipo == 'editor') {
 <<<<<<< HEAD
+<<<<<<< HEAD
             $respf .= "<div class='input-group mt-0 pe-0 '>";
         } elseif ($this->tipo == 'check') {
             $respf .= "<div class='input-group mt-0 pe-0 ' style='width: auto !important; '>";
@@ -353,6 +364,11 @@ class MyCampo
         } elseif ($this->tipo == 'check') {
             $respf .= "<div class='input-group mt-0' style='width: auto !important; '>";
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+            $respf .= "<div class='input-group mt-0 pe-0 '>";
+        } elseif ($this->tipo == 'check') {
+            $respf .= "<div class='input-group mt-0 pe-0 ' style='width: auto !important; '>";
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
         }
         $respf .= $groupant;
@@ -474,6 +490,7 @@ class MyCampo
             $resp .= $this->crLabel();
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
         $altu  = '35px';
         if (isset($this->alturashow)) {
             $altu  = $this->alturashow . 'px';
@@ -482,6 +499,11 @@ class MyCampo
         if (isset($this->alturashow)) {
             $altu  = $this->alturashow . 'rem';
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+        $altu  = '35px';
+        if (isset($this->alturashow)) {
+            $altu  = $this->alturashow . 'px';
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         }
         $larg = '100%';
         if (isset($this->largura)) {
@@ -489,11 +511,16 @@ class MyCampo
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
         $resp .= "<div class='border rounded bg-transparent input-group mb-lg-1 mb-2 overflow-auto form-control $this->classep'
 =======
         $resp .= "<div class='border rounded bg-gradient-secondary input-group mb-lg-1 mb-2 overflow-auto form-control'
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+
+        $resp .= "<div class='border rounded bg-transparent input-group mb-lg-1 mb-2 overflow-auto form-control $this->classep'
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                         style='width: $larg !important; height: $altu !important'>";
         $resp .= isset($this->valor) ? $this->valor : '';
         $resp .= "</div>";
@@ -828,6 +855,9 @@ class MyCampo
                 'maxlength'     => isset($this->maxLength) ? $this->maxLength : $this->size,
                 'class'         => "form-control $this->classep",
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                 'data-inicial'  => $this->valor,                
                 'data-nome'     => $this->campo,
             );
@@ -842,11 +872,14 @@ class MyCampo
                 $this->field['name'] = $this->nome;
                 $this->field['id'] = $this->id;
             }
+<<<<<<< HEAD
 =======
                 'data-inicial'  => $this->valor,
                 'data-nome'     => $this->campo,
             );
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
             switch ($this->tipo) {
                 case 'color':
@@ -863,22 +896,31 @@ class MyCampo
                     break;
                 case 'sonumero':
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     $this->field['type']      = 'text';
                     $this->field['onfocus']   = 'entrar_moeda(this)';
                     $this->field['onkeyup']   = 'mascara(this, \'mnum\')';
                     $this->field['onchange']  = 'mascara(this, \'mnum\')';
                     $this->field['pattern']   = '/[\d,.?!' . $this->size . '}/';
+<<<<<<< HEAD
 =======
                     $this->field['type']      = 'number';
                     $this->field['onkeyup']   = 'mascara(this, \'mnum\')';
                     $this->field['onchange']  = 'mascara(this, \'mnum\')';
                     $this->field['pattern']   = '/[\d,.?!' . $this->size . '}$/';
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     $this->field['style']     = 'text-align: right';
                     $this->field['aria-describedby'] = 'ig_' . $this->nome;
                     break;
                 case 'quantia':
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     $decimal = isset($this->decimal)?$this->decimal:3;
                     $this->field['type']      = 'text';
                     $this->field['onkeyup']   = 'mascara(this, \'mquantia\')';
@@ -897,6 +939,7 @@ class MyCampo
                     $this->field['onblur']    = $this->funcBlur;
                     $this->field['value']     = floatToQuantia($this->valor, $decimal);
                     // $this->field['pattern']   = "/[\d,.?!/]";
+<<<<<<< HEAD
 =======
                     $this->field['type']      = 'text';
                     $this->field['onkeyup']   = 'mascara(this, \'mquantia\')';
@@ -904,11 +947,16 @@ class MyCampo
                     $this->field['value']     = floatToQuantia($this->valor, $this->size);
                     $this->field['pattern']   = "/^([\d]*\,?[\d]{0," . $this->size . "})$/";
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     $this->field['style']     = 'text-align: right';
                     $this->field['aria-describedby'] = 'ig_' . $this->nome;
                     break;
                 case 'inteiro':
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     // $this->field['type']      = 'text';
                     $this->field['dir']       = 'rtl';
                     $this->field['min']       = $this->minimo;
@@ -926,6 +974,7 @@ class MyCampo
                     break;
                 case 'number':
                     // $this->field['type']      = 'text';
+<<<<<<< HEAD
 =======
                     $this->field['type']      = 'number';
                     $this->field['onkeyup']   = 'mascara(this, \'mnum\')';
@@ -937,6 +986,8 @@ class MyCampo
                 case 'number':
                     $this->field['type']      = 'number';
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     $this->field['dir']       = 'rtl';
                     $this->field['min']       = $this->minimo;
                     $this->field['max']       = $this->maximo;
@@ -944,20 +995,30 @@ class MyCampo
                     $this->field['onfocus']   = 'entrar_moeda(this)';
                     $this->field['style']     = 'text-align: right';
 <<<<<<< HEAD
+<<<<<<< HEAD
                     $this->field['class']     = $this->field['class'].' form-number';
                     $groupant = "<div class='input-group-text input-group-addon down-num $pe' data-refer='$this->id' id='dw_$this->nome'><i class='fas fa-minus'></i></div>";            
                     $grouppos .= "<div class='input-group-text input-group-append up-num $pe' data-refer='$this->id' id='up_$this->nome'><i class='fas fa-plus'></i></div>";
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+                    $this->field['class']     = $this->field['class'].' form-number';
+                    $groupant = "<div class='input-group-text input-group-addon down-num $pe' data-refer='$this->id' id='dw_$this->nome'><i class='fas fa-minus'></i></div>";            
+                    $grouppos .= "<div class='input-group-text input-group-append up-num $pe' data-refer='$this->id' id='up_$this->nome'><i class='fas fa-plus'></i></div>";
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     break;
                 case 'moeda':
                     $this->field['type']      = 'text';
                     $this->field['onkeyup']   = 'mascara(this, \'mvalor\')';
 <<<<<<< HEAD
+<<<<<<< HEAD
                     $this->field['pattern']   = "/^([\$]?)([0-9]*\,?[0-9]{0,".$this->decimal."})/";
 =======
                     $this->field['pattern']   = "/^([\$]?)([0-9]*\,?[0-9]{0,2})$/";
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+                    $this->field['pattern']   = "/^([\$]?)([0-9]*\,?[0-9]{0,".$this->decimal."})/";
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     $this->field['onchange']  = $this->funcChan;
                     $this->field['data-origin'] = floatToMoeda($this->valor);
                     $this->field['value']     = floatToMoeda($this->valor);
@@ -969,6 +1030,9 @@ class MyCampo
                     break;
                 case 'date':
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     if(isset($this->datamin)){
                         $this->field['min'] = $this->datamin;
                     };
@@ -983,9 +1047,12 @@ class MyCampo
                     if(isset($this->datamax)){
                         $this->field['max'] = $this->datamax;
                     };
+<<<<<<< HEAD
 =======
                 case 'datetime-local':
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     break;
                 case 'senha':
                     $groupant .= "<span class='input-group-text input-group-addon' 
@@ -1014,10 +1081,14 @@ class MyCampo
                     $this->field['data-original-title'] = 'Informe um E-mail válido!';
                     $this->field['title']     = 'Informe um E-mail válido!';
 <<<<<<< HEAD
+<<<<<<< HEAD
                     $grouppos .= "<span class='input-group-text input-group-append' id='ad_$this->nome'>
 =======
                     $grouppos .= "<span class='input-group-text' id='ad_$this->nome'>
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+                    $grouppos .= "<span class='input-group-text input-group-append' id='ad_$this->nome'>
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                             <i class='far fa-envelope-open' ></i></span>";
                     break;
                 case 'site':
@@ -1029,10 +1100,14 @@ class MyCampo
                     $this->field['data-original-title'] = 'Informe uma url válida!';
                     $this->field['title']     = 'Informe uma url válida!';
 <<<<<<< HEAD
+<<<<<<< HEAD
                     $grouppos .= "<span class='input-group-text input-group-append' id='ad_$this->nome'>
 =======
                     $grouppos .= "<span class='input-group-text' id='ad_$this->nome'>
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+                    $grouppos .= "<span class='input-group-text input-group-append' id='ad_$this->nome'>
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                                 <i class='far fa-link'></i></span>";
                     break;
                 case 'telefone':
@@ -1045,10 +1120,14 @@ class MyCampo
                     $this->field['data-original-title'] = 'Informe um Telefone válido! (99) 9999-9999';
                     $this->field['title'] = 'Informe um Telefone válido! (99) 9999-9999';
 <<<<<<< HEAD
+<<<<<<< HEAD
                     $grouppos .= "<span class='input-group-text input-group-append' id='ad_$this->nome'></span>
 =======
                     $grouppos .= "<span class='input-group-text' id='ad_$this->nome'></span>
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+                    $grouppos .= "<span class='input-group-text input-group-append' id='ad_$this->nome'></span>
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                                 <i class='fas fa-phone' ></i></span>";
                     break;
                 case 'celular':
@@ -1063,10 +1142,14 @@ class MyCampo
                     $this->field['data-original-title'] = 'Informe um Celular válido! (99) 99999-9999';
                     $this->field['title']     = 'Informe um Celular válido! (99) 99999-9999';
 <<<<<<< HEAD
+<<<<<<< HEAD
                     $grouppos .= "<span class='input-group-text input-group-append' id='ad_$this->nome'>
 =======
                     $grouppos .= "<span class='input-group-text' id='ad_$this->nome'>
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+                    $grouppos .= "<span class='input-group-text input-group-append' id='ad_$this->nome'>
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                                 <i class='fa fa-mobile-alt'></i></span>";
                     break;
                 case 'cnpj':
@@ -1074,9 +1157,13 @@ class MyCampo
                     $this->field['pattern']   = '/^\\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}/';
                     $this->field['onkeyup']   = 'mascara(this, \'mcnpj\')';
 <<<<<<< HEAD
+<<<<<<< HEAD
                     $this->field['onblur']    = $this->funcBlur;
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+                    $this->field['onblur']    = $this->funcBlur;
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     $this->field['style']     = 'text-align: right';
                     $this->field['aria-describedby'] = 'ad_' . $this->nome;
                     $this->field['data-original-title'] = 'Digite o CNPJ no formato 99.999.999/9999-99';
@@ -1087,10 +1174,14 @@ class MyCampo
                     $this->field['pattern']   = '/^\\d{3}\.\d{3}\.\d{3}\-\d{2}/';
                     $this->field['onkeyup']   = 'mascara(this, \'mcpf\')';
 <<<<<<< HEAD
+<<<<<<< HEAD
                     $this->field['onblur']    = $this->funcBlur;
 =======
                     $this->field['onblur']    = $this->field['onblur'] . ';ValidaCPF(this)';
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+                    $this->field['onblur']    = $this->funcBlur;
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     $this->field['style']     = 'text-align: right';
                     $this->field['aria-describedby'] = 'ad_' . $this->nome;
                     $this->field['data-original-title'] = 'Digite o CPF no formato 999.999.999-99';
@@ -1099,6 +1190,7 @@ class MyCampo
                 case 'cep':
                     $this->field['type']      = 'text';
 <<<<<<< HEAD
+<<<<<<< HEAD
                     $this->field['pattern']   = "\d{5}-?\d{3}";
                     $this->field['onkeyup']   = 'mascara(this, \'mcep\')';
                     $this->field['onblur']    = $this->funcBlur;
@@ -1106,6 +1198,11 @@ class MyCampo
                     $this->field['pattern']   = '/^\\d{5}\-\d{3}$/';
                     $this->field['onkeyup']   = 'mascara(this, \'mcep\')';
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+                    $this->field['pattern']   = "\d{5}-?\d{3}";
+                    $this->field['onkeyup']   = 'mascara(this, \'mcep\')';
+                    $this->field['onblur']    = $this->funcBlur;
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     $this->field['style']     = 'text-align: right';
                     $this->field['aria-describedby'] = 'ad_' . $this->nome;
                     $this->field['data-original-title'] = 'Digite o CEP no formato 99999-999';
@@ -1343,6 +1440,54 @@ class MyCampo
         // debug($this->selecionado, true);
 
         $campo = form_multiselect($this->field, $this->opcoes, $this->selecionado, $extras);
+<<<<<<< HEAD
+=======
+
+        $resp .= $this->fmtDisplay($campo);
+
+        return $resp;
+    }
+
+    /**
+     * crSelectIcone
+     * Campo de Seleção de Lista com ícone ao lado da opção
+     * @return string
+     */
+    public function crSelectIcone(): string
+    {
+        $this->tipo = 'select';
+        if(!isset($this->selecionado)){
+            $this->selecionado = $this->valor;
+        }
+
+        $resp = '';
+        if(isset($this->ordem) && strpos($this->nome, "[") == false){
+            $this->nome     = $this->nome."[".$this->ordem."]";
+            $this->id       = $this->id."[".$this->ordem."]";
+        }
+
+        $this->field = array(
+                'name'          => $this->nome,
+                'id'            => $this->id,
+                'class'         => ' form-control form-select selectpicker'
+        );
+        if (!isset($this->size) || $this->size == '') {
+            $this->size = -1;
+        }
+        $this->propriedades();
+        $this->field['placeholder'] = str_replace('Informe', 'Selecione', $this->field['placeholder']);
+
+        $campo = form_dropdown($this->field, $this->opcoes['texto'], $this->selecionado);
+
+        if(isset($this->opcoes['icone']) && count($this->opcoes['icone']) > 0 ){
+            $campo .= "<script>";
+            foreach($this->opcoes['icone'] as $key => $value ){
+                $opt = "#$this->id option[value=\"$key\"]";
+                $campo .= "jQuery('$opt').attr('data-content','".$this->opcoes['icone'][$key]."');";
+            }
+            $campo .= "</script>";
+        }
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
         $resp .= $this->fmtDisplay($campo);
 
@@ -1402,13 +1547,20 @@ class MyCampo
     public function crSelectIcone(): string
     {
         $this->tipo = 'select';
+        if(!isset($this->selecionado)){
+            $this->selecionado = $this->valor;
+        }
 
         $resp = '';
+        if(isset($this->ordem) && strpos($this->nome, "[") == false){
+            $this->nome     = $this->nome."[".$this->ordem."]";
+            $this->id       = $this->id."[".$this->ordem."]";
+        }
 
         $this->field = array(
                 'name'          => $this->nome,
                 'id'            => $this->id,
-                'class'         => ' form-control form-select selectpicker'
+                'class'         => " form-control form-select selectpicker $this->classep"
         );
         if (!isset($this->size) || $this->size == '') {
             $this->size = -1;
@@ -1477,6 +1629,9 @@ class MyCampo
     {
         $this->tipo = 'select';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         if(!isset($this->selecionado)){
             $this->selecionado = $this->valor;
         }
@@ -1486,10 +1641,13 @@ class MyCampo
             $this->nome     = $this->nome."[".$this->ordem."]";
             $this->id       = $this->id."[".$this->ordem."]";
         }
+<<<<<<< HEAD
 =======
 
         $resp = '';
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
         $this->field = array(
                 'type'          => 'color',
@@ -1505,6 +1663,9 @@ class MyCampo
         $this->field['placeholder'] = str_replace('Informe', 'Selecione', $this->field['placeholder']);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $cores["bg-primary"] = "";
         $cores['bg-secondary'] = "";
         $cores['bg-success'] = "";
@@ -1513,6 +1674,7 @@ class MyCampo
         $cores['bg-info'] = "";
         $cores['bg-dark'] = "";
         $cores['bg-white'] = "";
+<<<<<<< HEAD
 =======
         $cores["bg-primary"] = "Primária";
         $cores['bg-secondary'] = "Secundária";
@@ -1523,6 +1685,8 @@ class MyCampo
         $cores['bg-dark'] = "Preto";
         $cores['bg-white'] = "Branco";
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $campo = form_dropdown($this->field, $cores, $this->selecionado);
 
         $campo .= "<script>";

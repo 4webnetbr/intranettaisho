@@ -371,9 +371,13 @@ function montaListaColunas($data_lis, $chave, $dados, $nome, $detalhe = false)
         $edit = '';
         $exclui = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
         if (strpos($data_lis['permissao'], 'C')) { // mas tem acesso de consulta
 =======
         if ($data_lis['permissao'] == 'C') {
+=======
+        if (strpos($data_lis['permissao'], 'C')) { // mas tem acesso de consulta
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             $edit = anchor(
                 $data_lis['controler'] . '/show/' . $dat_i[$chave],
                 '<i class="far fa-eye"></i>',
@@ -381,6 +385,7 @@ function montaListaColunas($data_lis, $chave, $dados, $nome, $detalhe = false)
                     'class' => 'btn btn-outline-info btn-sm mx-1',
                     'data-mdb-toggle' => 'tooltip',
                     'data-mdb-placement' => 'top',
+<<<<<<< HEAD
                     'title' => 'Detalhes do Registro',
                 ]
             );
@@ -398,6 +403,12 @@ function montaListaColunas($data_lis, $chave, $dados, $nome, $detalhe = false)
                 ]
             );
         }
+=======
+                    'title' => 'Detalhes',
+                ]
+            );
+        }
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         if (strpos($data_lis['permissao'], 'E')) {
             if(isset($dat_i['cta_data']) && $dat_i['cta_data'] != date('Y-m-d')){
             } else if(isset($dat_i['ent_data']) && $dat_i['ent_data'] != date('Y-m-d')){
@@ -498,6 +509,9 @@ function montaListaColunas($data_lis, $chave, $dados, $nome, $detalhe = false)
                     dataDbToBr($retor[$fields[$f]]) . "</div>";
                 } else {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     $data = DateTime::createFromFormat('Y-m-d', $retor[$fields[$f]]);
                     if ($data && $data->format('Y-m-d') === $retor[$fields[$f]]) {
                         $retor[$fields[$f]] = "<div class='text-center'>" . dataDbToBr($retor[$fields[$f]]) .
@@ -514,6 +528,7 @@ function montaListaColunas($data_lis, $chave, $dados, $nome, $detalhe = false)
                                     $retor[$fields[$f]] = "<div class='text-end'>" .
                                     floatToMoeda($retor[$fields[$f]]) . "</div>";
                                 }
+<<<<<<< HEAD
 =======
                     // testa se o campo é numérico, se for alinha a direita
                     if (is_numeric($retor[$fields[$f]]) > 0) {
@@ -526,6 +541,8 @@ function montaListaColunas($data_lis, $chave, $dados, $nome, $detalhe = false)
                                 $retor[$fields[$f]] = "<div class='text-end'>" .
                                 floatToMoeda($retor[$fields[$f]]) . "</div>";
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                             }
                         }
                     }
@@ -537,9 +554,13 @@ function montaListaColunas($data_lis, $chave, $dados, $nome, $detalhe = false)
                 }
             }
 <<<<<<< HEAD
+<<<<<<< HEAD
     
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             array_push($res, $retor[$fields[$f]]);
         }
         // debug($res);

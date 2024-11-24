@@ -1,13 +1,19 @@
 <<<<<<< HEAD
 
+<<<<<<< HEAD
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 jQuery(document).ready(function () {
     carregamentos_iniciais();
 });
 
 function carregamentos_iniciais() {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     var start = moment().subtract(30, 'days');
     var end = moment();
 
@@ -64,8 +70,11 @@ function carregamentos_iniciais() {
     cb(start, end);
 
 
+<<<<<<< HEAD
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     var temNumero = /[0-9]/;
     var temMaiusc = /[A-Z]/;
     var temMinusc = /[a-z]/;
@@ -90,17 +99,24 @@ function carregamentos_iniciais() {
     jQuery('.password').on('keyup', function (e) {
         var passwordsInfo = jQuery('#pass-info');
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         passwordsInfo.show();
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         val = this.value;
         var valid = true;
         var text = '';
         if (val.length > 0) {
 <<<<<<< HEAD
+<<<<<<< HEAD
             passwordsInfo.show();
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+            passwordsInfo.show();
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             if (val.length >= 6) {
                 text += lino + tem + msg1 + '</span><br>';
             } else {
@@ -421,17 +437,23 @@ function carregamentos_iniciais() {
      */
     // if (jQuery(".selbusca")[0]){
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     jQuery('body').on('keydown', '.selbusca', function (event) {
         // jQuery(".selbusca").on('keydown', function () {
         elemen = jQuery(this)[0].children[0];
         if (elemen.tagName == 'SELECT') {
             jQuery(elemen).empty();
             jQuery(elemen).selectpicker('refresh');
+<<<<<<< HEAD
 =======
     jQuery(".selbusca").on('keydown', function () {
         elemen = jQuery(this)[0].children[0];
         if (elemen.tagName == 'SELECT') {
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             busca = elemen.getAttribute('data-busca');
             jQuery(elemen).selectpicker({
                 searchAutofocus: true,
@@ -479,6 +501,9 @@ function carregamentos_iniciais() {
             pai = elemen.getAttribute('data-pai');
             _chan_ant = jQuery('[name="' + pai + '"]').attr('onchange');
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             if (_chan_ant.substr(0, 16) != 'busca_dependente') {
                 if (_chan_ant != '' && _chan_ant != undefined) {
                     jQuery('[name="' + pai + '"]').attr('onchange', _chan_ant + ';' + funcao_busca);
@@ -487,6 +512,7 @@ function carregamentos_iniciais() {
                 }
                 jQuery('[name="' + pai + '"]').trigger('change');
             }
+<<<<<<< HEAD
 =======
             if (_chan_ant != '' && _chan_ant != undefined && _chan_ant.substr(0, 16) != 'busca_dependente') {
                 jQuery('[name="' + pai + '"]').attr('onchange', _chan_ant + ';' + funcao_busca);
@@ -495,6 +521,8 @@ function carregamentos_iniciais() {
             }
             jQuery('[name="' + pai + '"]').trigger('change');
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         }
     });;
 
@@ -608,11 +636,16 @@ function seleciona_item(id, texto, obj) {
 function exclui_campo(objdest, obj) {
     indice = parseInt(obj.getAttribute('data-index'));
 <<<<<<< HEAD
+<<<<<<< HEAD
     jQuery(obj).parents().eq(2).remove()
     jQuery("#form1").attr('data-alter', true);
 =======
     jQuery('table[data-index=' + indice + ']').remove();
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    jQuery(obj).parents().eq(2).remove()
+    jQuery("#form1").attr('data-alter', true);
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     acerta_botoes_rep(objdest);
 };;
 
@@ -794,6 +827,9 @@ function addCampo(url, objdest, obj) {
         url: url + '/' + proximo,
         success: function (retorno) {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             text = "<div class='row tableDiv " + (proximo % 2 === 0 ? "odd" : "even") + " table2 table-" + objdest + "' width='100 % ' data-index=" + proximo + " >";
             text += "<div class='col-11'>";
             // text = '<table class="table2 table-sm" data-index="' + proximo + '"><tbody><tr>';
@@ -802,12 +838,15 @@ function addCampo(url, objdest, obj) {
                 if (ind < retorno.length - 2) {
                     quebra = retorno[ind].indexOf("quebralinha");
                     oculto = retorno[ind].indexOf("hidden");
+<<<<<<< HEAD
 =======
             text = '<table class="table2 table-sm" data-index="' + proximo + '"><tbody><tr>';
             for (const ind in retorno) {
                 if (ind < retorno.length - 2) {
                     text += "<td class='d-initial h-auto align-baseline'>";
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     text += retorno[ind];
                 }
             }
@@ -817,6 +856,9 @@ function addCampo(url, objdest, obj) {
             text += retorno[retorno.length - 2];
             text += retorno[retorno.length - 1];
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             text += '</div>';
             text += "<div class='col-3 d-block float-end text-end'>";
             text += "<button name='bt_up[" + proximo + "]' type='button' id='bt_up[" + proximo + "]' class='btn btn-outline-info btn-sm bt-up mt-0 float-end' onclick='sobe_desce_item(this,\"sobe\",\"" + objdest + "\")' title='Acima' data-index='" + proximo + "'><i class='fa fa-arrow-up' aria-hidden='true'></i></button>";
@@ -824,12 +866,15 @@ function addCampo(url, objdest, obj) {
             text += '</div>';
             text += '</div>';
             text += '</div>';
+<<<<<<< HEAD
 =======
             text += "<button name='bt_up[" + proximo + "]' type='button' id='bt_up[" + proximo + "]' class='btn btn-outline-info btn-sm bt-up mt-4 float-end' onclick='sobe_desce_item(this,\"sobe\"," + secao + ")' title='Acima' data-index='" + proximo + "'><i class='fa fa-arrow-up' aria-hidden='true'></i></button>";
             text += "<button name='bt_down[" + proximo + "]' type='button' id='bt_down[" + proximo + "]' class='btn btn-outline-info btn-sm bt-down mt-4 float-end' onclick='sobe_desce_item(this,\"desce\"," + secao + ")' title='Abaixo' data-index='" + proximo + "'><i class='fa fa-arrow-down' aria-hidden='true'></i></button>";
             text += '<td>';
             text += '</tr></tbody></table>';
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             jQuery('#rep_' + objdest).append(text);
             jQuery('select').selectpicker();
             carregamentos_iniciais();
@@ -1022,6 +1067,9 @@ function sobe_desce_item(obj, sobedesce, repete, indtab = -1) {
         if (parseInt(this.getAttribute('data-index')) == nova_pos) {
             jQuery(this).attr('data-index', fim);
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             // jQuery(this).children().children().each(function (e) {
             // jQuery(this).children().each(function (e) {
             jQuery(this).each(function (e) {
@@ -1050,6 +1098,7 @@ function sobe_desce_item(obj, sobedesce, repete, indtab = -1) {
                     altera_index(divs, nova_pos, fim);
                 }
                 // });
+<<<<<<< HEAD
 =======
             jQuery(this).children().children().each(function (e) {
                 jQuery(this).children().each(function (e) {
@@ -1079,6 +1128,8 @@ function sobe_desce_item(obj, sobedesce, repete, indtab = -1) {
                     }
                 });
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             });
         }
     });
@@ -1087,6 +1138,9 @@ function sobe_desce_item(obj, sobedesce, repete, indtab = -1) {
         if (parseInt(this.getAttribute('data-index')) == atual) {
             jQuery(this).attr('data-index', nova_pos);
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             // jQuery(this).children().children().each(function (e) {
             // jQuery(this).children().each(function (e) {
             jQuery(this).each(function (e) {
@@ -1119,6 +1173,7 @@ function sobe_desce_item(obj, sobedesce, repete, indtab = -1) {
                     altera_index(divs, atual, nova_pos);
                 }
                 // });
+<<<<<<< HEAD
 =======
             jQuery(this).children().children().each(function (e) {
                 jQuery(this).children().each(function (e) {
@@ -1152,6 +1207,8 @@ function sobe_desce_item(obj, sobedesce, repete, indtab = -1) {
                     }
                 });
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             });
             destino = this;
         }
@@ -1161,6 +1218,9 @@ function sobe_desce_item(obj, sobedesce, repete, indtab = -1) {
         if (parseInt(this.getAttribute('data-index')) == fim) {
             jQuery(this).attr('data-index', atual);
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             // jQuery(this).children().children().each(function (e) {
             // jQuery(this).children().each(function (e) {
             jQuery(this).each(function (e) {
@@ -1189,6 +1249,7 @@ function sobe_desce_item(obj, sobedesce, repete, indtab = -1) {
                     altera_index(divs, fim, atual);
                 }
                 // });
+<<<<<<< HEAD
 =======
             jQuery(this).children().children().each(function (e) {
                 jQuery(this).children().each(function (e) {
@@ -1218,6 +1279,8 @@ function sobe_desce_item(obj, sobedesce, repete, indtab = -1) {
                     }
                 });
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             });
             origem = this;
         }
@@ -1292,6 +1355,9 @@ function altera_index(obj, ind_a, ind_n) {
  * 
  */
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 function acerta_botoes_rep(repete, pos = -1) {
     repetepos = repete;
     if (pos >= 0) {
@@ -1344,6 +1410,7 @@ function acerta_botoes_rep(repete, pos = -1) {
     jQuery(jQuery('#rep_' + repetepos + ' .bt-repete')[ultimo]).removeClass('d-none');
     jQuery(jQuery('#rep_' + repetepos + ' .bt-up')[0]).addClass('d-none');
     jQuery(jQuery('#rep_' + repetepos + ' .bt-down')[ultimo]).addClass('d-none');
+<<<<<<< HEAD
 =======
 function acerta_botoes_rep(repete) {
     visiveis = jQuery('#rep_' + repete).find('table').length;
@@ -1365,6 +1432,8 @@ function acerta_botoes_rep(repete) {
     jQuery(jQuery('.rep_' + repete + ' .bt-up')[0]).addClass('d-none');
     jQuery(jQuery('.rep_' + repete + ' .bt-down')[ultimo]).addClass('d-none');
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 };;
 
 /**
@@ -1418,10 +1487,14 @@ function busca_dependente(obj, id_dep, url_busca, selec) {
                 jQuery('[name="' + id_dep + '"]').children('option').remove();
                 jQuery.each(retorno, function (key, value) {
 <<<<<<< HEAD
+<<<<<<< HEAD
                     if (value.id == selec || retorno.length == 1) {
 =======
                     if (value.id == selec) {
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+                    if (value.id == selec || retorno.length == 1) {
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                         jQuery('[name="' + id_dep + '"]').append(jQuery("<option selected></option>").attr("value", value.id).text(value.text));
                     } else {
                         jQuery('[name="' + id_dep + '"]').append(jQuery("<option></option>").attr("value", value.id).text(value.text));
@@ -1430,12 +1503,18 @@ function busca_dependente(obj, id_dep, url_busca, selec) {
                 jQuery('[name="' + id_dep + '"]').selectpicker('destroy');
                 jQuery('[name="' + id_dep + '"]').selectpicker('deselectAll');
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                 if (retorno.length == 1) {
                     jQuery('[name="' + id_dep + '"]').selectpicker('val', retorno[0].id);
                     jQuery('[name="' + id_dep + '"]').trigger('change');
                 }
+<<<<<<< HEAD
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 jQuery(jqObj).children('option').remove();
@@ -1624,6 +1703,7 @@ function validaSenha(obj) {
 };;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // MUDA O TIPO DE PESSOA FÍSICA OU JURÍDICA taisho
 function muda_pessoa(obj) {
     if (jQuery("input[id^='" + obj + "']:checked").val() == 'F') {
@@ -1697,6 +1777,34 @@ function muda_pessoa(obj) {
         jQuery('#ig_cli_ie').addClass('d-inline-flex');
         jQuery('#cli_ie').attr('data-salva', 1);
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+// MUDA O TIPO DE PESSOA FÍSICA OU JURÍDICA taisho
+function muda_pessoa(obj) {
+    if (jQuery("input[id^='" + obj + "']:checked").val() == 'F') {
+        // CPF
+        jQuery('#ig_for_cnpj').removeClass('d-inline-flex');
+        jQuery('#ig_for_cnpj').addClass('d-none');
+        jQuery('#for_cnpj').attr('data-salva', 0);
+        jQuery('#ig_for_cpf').removeClass('d-none');
+        jQuery('#ig_for_cpf').addClass('d-inline-flex');
+        jQuery('#for_cpf').attr('data-salva', 1);
+        jQuery('#for_razao')[0].parentNode.parentNode.children[0].children[0].innerText = 'Nome';
+        jQuery('#for_fantasia')[0].parentNode.parentNode.children[0].children[0].innerText = 'Apelido';
+        jQuery('#for_razao').attr('placeholder', "Informe Nome");
+        jQuery('#for_fantasia').attr('placeholder', "Informe Apelido");
+    } else {
+        // CNPJ
+        jQuery('#ig_for_cpf').removeClass('d-inline-flex');
+        jQuery('#ig_for_cpf').addClass('d-none');
+        jQuery('#for_cpf').attr('data-salva', 0);
+        jQuery('#ig_for_cnpj').removeClass('d-none');
+        jQuery('#ig_for_cnpj').addClass('d-inline-flex');
+        jQuery('#for_cnpj').attr('data-salva', 1);
+        jQuery('#for_razao')[0].parentNode.parentNode.children[0].children[0].innerText = 'Razão Social';
+        jQuery('#for_fantasia')[0].parentNode.parentNode.children[0].children[0].innerText = 'Fantasia';
+        jQuery('#for_razao').attr('placeholder', "Informe Razão Social");
+        jQuery('#for_fantasia').attr('placeholder', "Informe Fantasia");
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     }
 }
 

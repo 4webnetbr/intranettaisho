@@ -34,6 +34,9 @@ Class CfgStatus extends BaseController
     public function index()
     {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $order          = new MyCampo();
         $order->nome    = 'bt_order';
         $order->id      = 'bt_order';
@@ -46,8 +49,11 @@ Class CfgStatus extends BaseController
         $this->bt_order = $order->crBotao();
         $this->data['botao'] = $this->bt_order;
 
+<<<<<<< HEAD
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $this->data['colunas'] = montaColunasLista($this->data, 'stt_id,');
         $this->data['url_lista'] = base_url($this->data['controler'] . '/lista');
         echo view('vw_lista', $this->data);
@@ -64,23 +70,32 @@ Class CfgStatus extends BaseController
         // if (!$status = cache('status')) {
             $campos = montaColunasCampos($this->data, 'stt_id');
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             $dados_stat = $this->status->getStatus();
             for($st=0;$st<count($dados_stat);$st++){
                 $dados_stat[$st]['stt_cor'] = fmtEtiquetaCorBst($dados_stat[$st]['stt_cor'],$dados_stat[$st]['stt_nome']);
             }
             $status = [
                 'data' => montaListaColunas($this->data, 'stt_id', $dados_stat, $campos[1]),
+<<<<<<< HEAD
 =======
             $dados_tela = $this->status->getMensagem();
             $status = [
                 'data' => montaListaColunas($this->data, 'stt_id', $dados_tela, $campos[1]),
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             ];
             cache()->save('status', $status, 60000);
         // }
         echo json_encode($status);
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     public function ordenar()
     {
         $lst_status     =  $this->status->getStatusOrdem();
@@ -91,8 +106,11 @@ Class CfgStatus extends BaseController
 
         echo view('vw_status_ordenar', $this->data);
     }
+<<<<<<< HEAD
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
     public function add($modal = false)
     {
@@ -101,6 +119,9 @@ Class CfgStatus extends BaseController
         $secao[0] = 'Dados Gerais';
         $campos[0][0] = $fields['stt_id'];
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $campos[0][count($campos[0])] = $fields['stt_nome'];
         $campos[0][count($campos[0])] = "vazio2";
         $campos[0][count($campos[0])] = $fields['mod_id'];
@@ -109,6 +130,7 @@ Class CfgStatus extends BaseController
         $campos[0][count($campos[0])] = $fields['stt_exclusao'];
         // $campos[0][count($campos[0])] = "vazio2";
         $campos[0][count($campos[0])] = $fields['stt_edicao'];
+<<<<<<< HEAD
 =======
         $campos[0][1] = $fields['stt_nome'];
         $campos[0][2] = "quebralinha";
@@ -118,6 +140,8 @@ Class CfgStatus extends BaseController
         $campos[0][6] = $fields['stt_edicao'];
         $campos[0][7] = $fields['stt_cor'];
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         
        
 		$this->data['secoes']     = $secao;
@@ -132,6 +156,9 @@ Class CfgStatus extends BaseController
         }
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     public function show($id){
         $this->edit($id, true);
     }
@@ -150,6 +177,7 @@ Class CfgStatus extends BaseController
         $campos[0][count($campos[0])] = $fields['stt_exclusao'];
         // $campos[0][count($campos[0])] = "vazio2";
         $campos[0][count($campos[0])] = $fields['stt_edicao'];
+<<<<<<< HEAD
 =======
 
     public function edit($id){
@@ -166,6 +194,8 @@ Class CfgStatus extends BaseController
         $campos[0][6] = $fields['stt_ordem'];
         $campos[0][7] = $fields['stt_ativo'];
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
 		$this->data['secoes']     = $secao;
         $this->data['campos']     = $campos;
@@ -184,11 +214,15 @@ Class CfgStatus extends BaseController
             $this->status->delete($id);
             $ret['erro'] = false;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             session()->setFlashdata('msg', 'Status Excluído com Sucesso');
         } catch (\CodeIgniter\Database\Exceptions\DatabaseException $e) {
             $ret['erro'] = true;
             $ret['msg']  = 'Não foi possível Excluir o Status, Verifique!<br><br>';
             $ret['msg'] .= 'Este Status possui relacionamentos em outros cadastros!';
+<<<<<<< HEAD
 =======
             session()->setFlashdata('stt', 'Status Excluído com Sucesso');
         } catch (\CodeIgniter\Database\Exceptions\DatabaseException $e) {
@@ -196,6 +230,8 @@ Class CfgStatus extends BaseController
             $ret['stt']  = 'Não foi possível Excluir o Status, Verifique!<br><br>';
             $ret['stt'] .= 'Este Status possui relacionamentos em outros cadastros!';
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         }
         echo json_encode($ret);
     }
@@ -211,16 +247,24 @@ Class CfgStatus extends BaseController
                 'stt_ativo' => 'I'
             ];
 <<<<<<< HEAD
+<<<<<<< HEAD
             //TODO CONSULTAR ESSE STATUS, NAS TABELAS DA TELA A QUAL ELE ESTA LIGADO, PARA VERIFICAR 
             //TODO SE EXISTE REGISTROS COM ESSE STATUS, CASO EXISTA, NÃO PERMITA INATIVAR E MOSTRA MENSAGEM
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+            //TODO CONSULTAR ESSE STATUS, NAS TABELAS DA TELA A QUAL ELE ESTA LIGADO, PARA VERIFICAR 
+            //TODO SE EXISTE REGISTROS COM ESSE STATUS, CASO EXISTA, NÃO PERMITA INATIVAR E MOSTRA MENSAGEM
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         }
         $ret = [];
         try {
             $this->status->update($id, $dad_atin);
             $ret['erro'] = false;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             session()->setFlashdata('msg', 'Status Alterado com Sucesso');
         } catch (\CodeIgniter\Database\Exceptions\DatabaseException $e) {
             $ret['erro'] = true;
@@ -278,6 +322,7 @@ Class CfgStatus extends BaseController
         } else {
             $ret['msg']  = 'Status gravado com Sucesso!!!';
             session()->setFlashdata('msg', $ret['msg']);
+<<<<<<< HEAD
 =======
             session()->setFlashdata('stt', 'Status Alterado com Sucesso');
         } catch (\CodeIgniter\Database\Exceptions\DatabaseException $e) {
@@ -315,13 +360,18 @@ Class CfgStatus extends BaseController
             $ret['stt']  = 'Status gravado com Sucesso!!!';
             session()->setFlashdata('stt', $ret['stt']);
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             $ret['url']  = site_url($this->data['controler']);
         }
         echo json_encode($ret);
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 }
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 }

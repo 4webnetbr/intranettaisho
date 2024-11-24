@@ -9,10 +9,14 @@ use CodeIgniter\Model;
 class ConfigMensagemModel extends Model
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
     protected $DBGroup          = 'dbConfig';
 =======
     protected $DBGroup          = 'default';
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    protected $DBGroup          = 'dbConfig';
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     protected $table            = 'cfg_mensagem';
     protected $view             = 'cfg_mensagem';
     protected $primaryKey       = 'msg_id';

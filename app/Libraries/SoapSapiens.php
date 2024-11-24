@@ -48,6 +48,7 @@ class SoapSapiens
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     public function empresasSapiens($funcao)
     {
@@ -75,6 +76,8 @@ class SoapSapiens
     }
 
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     public function depositosSapiens($funcao)
     {
         #Operação a ser executada

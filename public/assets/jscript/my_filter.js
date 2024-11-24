@@ -3,10 +3,14 @@
  * Processa a busca de Saldos de Estoque
  */
 <<<<<<< HEAD
+<<<<<<< HEAD
 function buscaSaldo() {
 =======
 function buscaSaldo(){
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+function buscaSaldo() {
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     var codDep = jQuery.trim(jQuery('#codDep').val());
     // var codlot = jQuery.trim(jQuery('#codLot').val());
     // if(codpro == ''){
@@ -21,10 +25,14 @@ function buscaSaldo(){
         dataType: 'json',
         url: urlBusca,
 <<<<<<< HEAD
+<<<<<<< HEAD
         data: { 'codDep': codDep },
 =======
         data: {'codDep': codDep},
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+        data: { 'codDep': codDep },
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         success: function (retorno) {
             // console.log(retorno);
             montaListaSaldo(retorno);
@@ -46,10 +54,14 @@ function montaListaSaldo(dados) {
         linha = linha + "<td class='align-middle'>" + item.DescProduto + "</td>";
         linha = linha + "<td class='align-middle'>" + item.lote + "</td>";
 <<<<<<< HEAD
+<<<<<<< HEAD
         linha = linha + "<td class='align-middle' data-sort='" + item.validadeord + "'>" + item.validade + "</td>";
 =======
         linha = linha + "<td class='align-middle' data-sort='"+ item.validadeord +"'>" + item.validade + "</td>";
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+        linha = linha + "<td class='align-middle' data-sort='" + item.validadeord + "'>" + item.validade + "</td>";
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         linha = linha + "<td class='align-middle text-end pe-4'>" + item.saldo + "</td>";
         linha = linha + "<td class='align-middle text-start'>" + item.und + "</td>";
         linha = linha + "</tr>";
@@ -61,6 +73,9 @@ function montaListaSaldo(dados) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 function dtResult(tabela) {
     // monta o Datable 
     var table = jQuery('#' + tabela).DataTable(
@@ -145,6 +160,7 @@ function dtResult(tabela) {
                 });
             },
         });
+<<<<<<< HEAD
 =======
 function dtResult(tabela)
 {
@@ -232,6 +248,8 @@ function dtResult(tabela)
         },
     });
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 }
 
 
@@ -242,6 +260,9 @@ function removeLinhas(idTabela, indice = 1) {
         jQuery("#" + idTabela).find("tr:gt(" + indice + ")").remove();
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     jQuery("#" + idTabela).DataTable().destroy();
 }
 
@@ -403,6 +424,9 @@ function carrega_compras(obj) {
         url = "/EstRelCompra/busca_dados?empresa=" + empresa + "&fornecedor=" + fornecedor + "&inicio=" + startDate + "&fim=" + endDate;
         montaListaDadosGrupo(tabela, url, 1);
     }
+<<<<<<< HEAD
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 }

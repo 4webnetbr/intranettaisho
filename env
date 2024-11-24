@@ -15,10 +15,14 @@
 #--------------------------------------------------------------------
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 CI_ENVIRONMENT = production
 =======
 CI_ENVIRONMENT = development
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+CI_ENVIRONMENT = production
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
 #--------------------------------------------------------------------
 # APP

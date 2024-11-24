@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 global = typeof window !== "undefined" ? window : this;
 
 jQuery(document).ready(function () {
@@ -21,9 +24,12 @@ jQuery(document).ready(function () {
     //     });
     // }, 1000);
 
+<<<<<<< HEAD
 =======
 jQuery(document).ready(function () {
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     jQuery(".div-img-etapa").mousedown(function (ev) {
         if (ev.which == 2) {
             urlimage = this.children[0].src;
@@ -92,11 +98,16 @@ jQuery(document).ready(function () {
             }
             if (tipo != 'normal') {
 <<<<<<< HEAD
+<<<<<<< HEAD
                 event.preventDefault()
                 // event.stopPropagation()
 =======
                 event.preventDefault(); // avoid to execute the actual submit of the form.
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+                event.preventDefault()
+                // event.stopPropagation()
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                 jQuery(".moeda").each(function () {
                     var valor = converteMoedaFloat(jQuery(this).val());
                     jQuery(this).val(valor);
@@ -105,12 +116,18 @@ jQuery(document).ready(function () {
 
                 var dadosForm = new FormData(this);
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                 jQuery(".moeda").each(function () {
                     var valor = converteFloatMoeda(jQuery(this).val());
                     jQuery(this).val(valor);
                 });
+<<<<<<< HEAD
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                 disabled.attr('disabled', 'disabled');
                 console.log(dadosForm.values);
                 var url = form.attr('action');
@@ -122,11 +139,15 @@ jQuery(document).ready(function () {
                     contentType: false,
                     dataType: 'json',
 <<<<<<< HEAD
+<<<<<<< HEAD
                     data: dadosForm,
 =======
                     // data: form.serialize(), // serializes the form's elements.
                     data: dadosForm, // serializes the form's elements.
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+                    data: dadosForm,
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     success: function (data) {
                         if (tipo != 'modal') {
                             desBloqueiaTela();
@@ -184,11 +205,16 @@ jQuery(document).ready(function () {
 function bloqueiaTela() {
     jQuery('#bloqueiaTela').removeClass('d-none');
 <<<<<<< HEAD
+<<<<<<< HEAD
     jQuery('#bloqueiaTela').addClass('d-block');
     // jQuery('#bloqueiaTela').css('display', 'block');
 =======
     jQuery('#bloqueiaTela').css('display', 'block');
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    jQuery('#bloqueiaTela').addClass('d-block');
+    // jQuery('#bloqueiaTela').css('display', 'block');
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 };;
 
 /**
@@ -197,6 +223,7 @@ function bloqueiaTela() {
  */
 function desBloqueiaTela() {
 <<<<<<< HEAD
+<<<<<<< HEAD
     jQuery('#bloqueiaTela').removeClass('d-block');
     jQuery('#bloqueiaTela').addClass('d-none');
     // jQuery('#bloqueiaTela').css('display', 'none');
@@ -204,6 +231,11 @@ function desBloqueiaTela() {
     jQuery('#bloqueiaTela').addClass('d-none');
     jQuery('#bloqueiaTela').css('display', 'none');
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    jQuery('#bloqueiaTela').removeClass('d-block');
+    jQuery('#bloqueiaTela').addClass('d-none');
+    // jQuery('#bloqueiaTela').css('display', 'none');
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 };;
 
 /** Função nova

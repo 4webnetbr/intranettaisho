@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 <?php 
 namespace App\Controllers\Config;
 
@@ -21,6 +24,7 @@ class CfgEmpresa extends BaseController {
     public $common;
     /**
      * Construtor da Classe
+<<<<<<< HEAD
 =======
 <?php
 
@@ -41,11 +45,16 @@ class CfgEmpresa extends BaseController
     /**
      * Construtor da Tela
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
      * construct
      */
     public function __construct()
     {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $this->data        = session()->getFlashdata('dados_tela');
         $this->permissao   = $this->data['permissao'];
         $this->empresa     = new ConfigEmpresaModel();
@@ -53,12 +62,15 @@ class CfgEmpresa extends BaseController
         // $this->endereco        = new EnderecoModel();
         $this->dicionario     = new ConfigDicDadosModel();
         $this->common        = new CommonModel();
+<<<<<<< HEAD
 =======
         $this->data      = session()->getFlashdata('dados_tela');
         $this->permissao = $this->data['permissao'];
         $this->empresa     = new ConfigEmpresaModel();
 
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         if ($this->data['erromsg'] != '') {
             $this->__erro();
         }
@@ -69,10 +81,14 @@ class CfgEmpresa extends BaseController
      * erro
      */
 <<<<<<< HEAD
+<<<<<<< HEAD
     function __erro()
 =======
     public function __erro()
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    function __erro()
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     {
         echo view('vw_semacesso', $this->data);
     }
@@ -84,12 +100,16 @@ class CfgEmpresa extends BaseController
     public function index()
     {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $this->data['colunas'] = montaColunasLista($this->data,'emp_id');
         $this->data['url_lista'] = base_url($this->data['controler'].'/lista');
         echo view('vw_lista', $this->data);
     }
 
     /**
+<<<<<<< HEAD
 =======
         $this->data['colunas'] = montaColunasLista($this->data, 'emp_codfil,');
         $this->data['url_lista'] = base_url($this->data['controler'] . '/lista');
@@ -98,6 +118,8 @@ class CfgEmpresa extends BaseController
     
         /**
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
      * Listagem
      * lista
      *
@@ -106,6 +128,9 @@ class CfgEmpresa extends BaseController
     public function lista()
     {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         // if(!$empresas = cache('empresas')) {
             $empresa = 1;
             $dados_empresa = $this->empresa->getEmpresa(false, $empresa);
@@ -175,6 +200,7 @@ class CfgEmpresa extends BaseController
         $this->data['campos'] = $campos;
         $this->data['destino'] = 'store';
 
+<<<<<<< HEAD
 =======
 
         if (!$empresas = cache('empresas')) {
@@ -207,6 +233,8 @@ class CfgEmpresa extends BaseController
         $this->data['campos']     = $campos;
         $this->data['destino']    = 'store';
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         // BUSCAR DADOS DO LOG
         $this->data['log'] = buscaLog('cfg_empresa', $id);
 
@@ -215,6 +243,9 @@ class CfgEmpresa extends BaseController
 
     /**
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
      * Exclusão
      * delete
      *
@@ -349,6 +380,7 @@ class CfgEmpresa extends BaseController
 }
 ?>
 
+<<<<<<< HEAD
 =======
      * integra
      */
@@ -370,3 +402,5 @@ class CfgEmpresa extends BaseController
     }
 }
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd

@@ -15,10 +15,14 @@
 <div id='content' class='container page-content bg-light m-0'>
   <div class="table-responsive col-12">
 <<<<<<< HEAD
+<<<<<<< HEAD
     <table id="table" class="display compact table table-sm table-info table-striped table-hover table-border cell-border col-12">
 =======
     <table id="table" class="display compact table table-sm table-info table-striped table-hover table-borderless col-12">
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    <table id="table" class="display compact table table-sm table-info table-striped table-hover table-border cell-border col-12">
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
       <thead class="table-default col-12 overflow-x-auto">
         <tr class=' w-100'>
         <?

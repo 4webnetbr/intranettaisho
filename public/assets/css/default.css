@@ -107,6 +107,9 @@ a:hover {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 .btn>i {
     /* font-size: medium; */
 }
@@ -146,8 +149,11 @@ a:hover {
 }
 
 
+<<<<<<< HEAD
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 .content {
     max-height: calc(100vh - 5rem);
     min-height: calc(100vh - 5rem);
@@ -160,12 +166,17 @@ a:hover {
     margin-left: 4rem;
     margin-right: 4rem;
 <<<<<<< HEAD
+<<<<<<< HEAD
     transition: all 0.3s linear;
     transform-origin: top bottom;
 =======
     transition: all 0.2s linear;
     transform-origin: left;
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    transition: all 0.3s linear;
+    transform-origin: top bottom;
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     transform-style: preserve-3D;
 }
 
@@ -178,20 +189,31 @@ a:hover {
     margin-left: 20rem;
     margin-right: 4rem;
 <<<<<<< HEAD
+<<<<<<< HEAD
     transition: all 0.3s linear;
     transform-origin: top bottom;
     transform-style: preserve-3D;
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    transition: all 0.3s linear;
+    transform-origin: top bottom;
+    transform-style: preserve-3D;
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 }
 
 .dataTable {
     width: 100% !important;
 <<<<<<< HEAD
+<<<<<<< HEAD
     /* transition: max-height 5s ease-out; */
     animation: showDtable 5s 5s 5s both;
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    /* transition: max-height 5s ease-out; */
+    animation: showDtable 5s 5s 5s both;
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 }
 
 .dataTables_scrollHead {
@@ -199,6 +221,9 @@ a:hover {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 div.dataTables_scrollBody>table,
 .dataTables_scrollBody {}
 
@@ -218,10 +243,13 @@ div.dataTables_scrollBody>table,
     transition: all 0.3s linear;
     transform-origin: top bottom;
     transform-style: preserve-3D;
+<<<<<<< HEAD
 =======
 .title.menuaberto {
     padding-left: 17rem !important;
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 }
 
 /* Fim das configurações do Layout menu aberto ou não */
@@ -459,11 +487,16 @@ table.dataTable.table>:not(caption)>*>* {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 table.dataTable.table-info>tbody>tr.odd,
 .tableDiv.odd {
 =======
 table.dataTable.table-info>tbody>tr.odd {
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+table.dataTable.table-info>tbody>tr.odd,
+.tableDiv.odd {
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     background-color: white !important;
     box-shadow: 0 0 0 0px #fff !important;
 }
@@ -473,12 +506,18 @@ table.dataTable.table-info>tbody>tr.even {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 .tableDiv.even {
     background-color: var(--bs-blue-light) !important;
 }
 
+<<<<<<< HEAD
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 table.dataTable.table-info>tbody>tr:hover,
 table.dataTable.table-striped>tbody>tr>*:hover {
     background-color: rgb(131 178 198) !important;
@@ -671,9 +710,13 @@ button.disabled {
 
 .table2 {
 <<<<<<< HEAD
+<<<<<<< HEAD
     transition: all ease 1s;
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    transition: all ease 1s;
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     border-bottom: 0.5px solid #ccc;
     width: 100%;
 }
@@ -743,6 +786,9 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 input[type="color"]::-webkit-color-swatch {
     border: none;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 }
 
 #stat_server {
@@ -839,6 +885,9 @@ div.even {
 
 .cell-border {
     border: 0.5px solid grey;
+<<<<<<< HEAD
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 }

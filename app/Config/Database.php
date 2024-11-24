@@ -31,6 +31,7 @@ class Database extends Config
         'username' => 'taisho_userdb',
         'password' => 'JePPiS@9wE9D6Qk#ZWtpIH',
         'database' => 'taisho_gerentedb',
+<<<<<<< HEAD
         'DBDriver' => 'MySQLi',
         'DBPrefix' => '',
         'pConnect' => false,
@@ -56,6 +57,8 @@ class Database extends Config
         'username' => 'taisho_userdb',
         'password' => 'JePPiS@9wE9D6Qk#ZWtpIH',
         'database' => 'taisho_configdb',
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         'DBDriver' => 'MySQLi',
         'DBPrefix' => '',
         'pConnect' => false,
@@ -78,6 +81,32 @@ class Database extends Config
         'hostname' => 'localhost',
         'username' => 'taisho_userdb',
         'password' => 'JePPiS@9wE9D6Qk#ZWtpIH',
+<<<<<<< HEAD
+=======
+        'database' => 'taisho_configdb',
+        'DBDriver' => 'MySQLi',
+        'DBPrefix' => '',
+        'pConnect' => false,
+        'DBDebug'  => true,
+        'charset'  => 'utf8',
+        'DBCollat' => 'utf8_general_ci',
+        'swapPre'  => '',
+        'encrypt'  => false,
+        'compress' => false,
+        'strictOn' => false,
+        'failover' => [],
+        'port'     => 3306,
+    ];
+
+    /**
+     * The config database connection.
+     */
+    public array $dbEstoque = [
+        'DSN'      => '',
+        'hostname' => 'localhost',
+        'username' => 'taisho_userdb',
+        'password' => 'JePPiS@9wE9D6Qk#ZWtpIH',
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         'database' => 'taisho_estoquedb',
         'DBDriver' => 'MySQLi',
         'DBPrefix' => '',
@@ -104,6 +133,32 @@ class Database extends Config
         'username' => 'taisho_userdb',
         'password' => 'JePPiS@9wE9D6Qk#ZWtpIH',
         'database' => 'taisho_rhdb',
+<<<<<<< HEAD
+=======
+        'DBDriver' => 'MySQLi',
+        'DBPrefix' => '',
+        'pConnect' => false,
+        'DBDebug'  => true,
+        'charset'  => 'utf8',
+        'DBCollat' => 'utf8_general_ci',
+        'swapPre'  => '',
+        'encrypt'  => false,
+        'compress' => false,
+        'strictOn' => false,
+        'failover' => [],
+        'port'     => 3306,
+    ];
+
+    /**
+     * The Delivery database connection.
+     */
+    public array $dbDelivery = [
+        'DSN'      => '',
+        'hostname' => 'localhost',
+        'username' => 'taisho_userdb',
+        'password' => 'JePPiS@9wE9D6Qk#ZWtpIH',
+        'database' => 'taisho_deliverydb',
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         'DBDriver' => 'MySQLi',
         'DBPrefix' => '',
         'pConnect' => false,

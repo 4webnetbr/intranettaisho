@@ -1,8 +1,12 @@
 <?php
 <<<<<<< HEAD
+<<<<<<< HEAD
 // ini_set('memory_limit', '512M');
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+// ini_set('memory_limit', '512M');
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 ini_set('soap.wsdl_cache_enabled', '0');
 
 ini_set('soap.wsdl_cache_ttl', '0');

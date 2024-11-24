@@ -110,6 +110,9 @@
                     $count = 0;
                     for ($c = 0; $c < sizeof($campos_se); $c++) {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                         $quebra = $campos_se[$c];
                         if($quebra == 'vazio2'){
                             $clear = 'clear: right;';
@@ -127,6 +130,7 @@
                             echo $campos_se[$c];
                         }
                         $count++;
+<<<<<<< HEAD
 =======
                         $quebra = false;
                         $quebra = str_contains($campos_se[$c], 'quebralinha');
@@ -136,6 +140,8 @@
                             echo $campos_se[$c];
                         }
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     }
                 }
                 $contrep++;
@@ -172,6 +178,7 @@
 
     <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <<<<<<< HEAD
+<<<<<<< HEAD
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
 =======
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" 
@@ -180,6 +187,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" />
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
     <script src="<?=base_url('assets/jscript/my_consulta.js');?>"></script>
     <script src="<?=base_url('assets/jscript/my_calc_compras.js');?>"></script>

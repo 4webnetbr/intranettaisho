@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 <?php 
 namespace App\Models\Estoqu;
 
@@ -9,6 +10,11 @@ namespace App\Models\Estoqu;
 
 use App\Libraries\MyCampo;
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+<?php 
+namespace App\Models\Estoqu;
+
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 use App\Models\LogMonModel;
 use CodeIgniter\Model;
 
@@ -16,6 +22,9 @@ class EstoquDepositoModel extends Model
 {
     protected $DBGroup          = 'dbEstoque';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
     protected $table            = 'est_deposito';
     protected $view             = 'vw_est_deposito_relac';
@@ -37,6 +46,7 @@ class EstoquDepositoModel extends Model
    
     // Callbacks
     protected $allowCallbacks = true;
+<<<<<<< HEAD
 =======
     protected $table            = 'est_sap_deposito';
     protected $view             = 'est_sap_deposito';
@@ -58,6 +68,8 @@ class EstoquDepositoModel extends Model
     protected $allowCallbacks = true;
 
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     protected $afterInsert   = ['depoisInsert'];
     protected $afterUpdate   = ['depoisUpdate'];
     protected $afterDelete   = ['depoisDelete'];
@@ -65,6 +77,9 @@ class EstoquDepositoModel extends Model
     protected $logdb;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 /**
      * This method saves the session "usu_id" value to "created_by" and "updated_by" array 
      * elements before the row is inserted into the database.
@@ -74,6 +89,7 @@ class EstoquDepositoModel extends Model
         $logdb = new LogMonModel(); 
         $registro = $data['id'];
         $log = $logdb->insertLog($this->table,'Incluído',$registro, $data['data']);
+<<<<<<< HEAD
 =======
     /**
      * This method saves the session "usu_id" value to "created_by" and "updated_by" array
@@ -86,11 +102,16 @@ class EstoquDepositoModel extends Model
         $registro = $data['id'];
         $log = $logdb->insertLog($this->table, 'Incluído', $registro, $data['data']);
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         return $data;
     }
 
     /**
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
      * This method saves the session "usu_id" value to "updated_by" array element before 
      * the row is inserted into the database.
      *
@@ -168,6 +189,7 @@ class EstoquDepositoModel extends Model
         return $ret;
     }                 
 }
+<<<<<<< HEAD
 ?>
 =======
      * This method saves the session "usu_id" value to "updated_by" array element before
@@ -244,3 +266,6 @@ class EstoquDepositoModel extends Model
 
 }
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+?>
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd

@@ -18,12 +18,17 @@ class CfgTela extends BaseController
     public $data = [];
     public $permissao = '';
 <<<<<<< HEAD
+<<<<<<< HEAD
     public $tela;
     public $telalista;
 =======
     public $Tela;
     public $TelaLista;
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    public $tela;
+    public $telalista;
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     public $dicionario;
     public $logs;
     public $usuario;
@@ -58,22 +63,31 @@ class CfgTela extends BaseController
         $this->data      = session()->getFlashdata('dados_tela');
         $this->permissao = $this->data['permissao'];
 <<<<<<< HEAD
+<<<<<<< HEAD
         $this->tela    = new ConfigTelaModel();
         $this->telalista    = new ConfigTelaListaModel();
 =======
         $this->Tela    = new ConfigTelaModel();
         $this->TelaLista    = new ConfigTelaListaModel();
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+        $this->tela    = new ConfigTelaModel();
+        $this->telalista    = new ConfigTelaListaModel();
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $this->dicionario = new ConfigDicDadosModel();
         $this->usuario   = new ConfigUsuarioModel();
         $this->modulo    = new ConfigModuloModel();
         $this->common    = new CommonModel();
+<<<<<<< HEAD
 <<<<<<< HEAD
         $this->model_atual = $this->tela;
 =======
         $this->dicionario     = new ConfigDicDadosModel();
         $this->model_atual = $this->Tela;
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+        $this->model_atual = $this->tela;
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
         if ($this->data['erromsg'] != '') {
             $this->__erro();
@@ -111,10 +125,14 @@ class CfgTela extends BaseController
         if (!$telas = cache('telas')) {
             $campos = montaColunasCampos($this->data, 'tel_id');
 <<<<<<< HEAD
+<<<<<<< HEAD
             $dados_tela = $this->tela->getTelaId();
 =======
             $dados_tela = $this->Tela->getTelaId();
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+            $dados_tela = $this->tela->getTelaId();
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             $telas = [
                 'data' => montaListaColunas($this->data, 'tel_id', $dados_tela, $campos[3]),
             ];
@@ -133,6 +151,9 @@ class CfgTela extends BaseController
     public function add()
     {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $this->model_atual = $this->tela;
 
         $fields = $this->tela->defCampos([], false, '', '');
@@ -146,6 +167,7 @@ class CfgTela extends BaseController
         $campos[0][5] = $fields['tel_cont'];
         $campos[0][6] = $fields['tel_mode'];
         $campos[0][7] = $fields['tel_desc'];
+<<<<<<< HEAD
 =======
         $this->model_atual = $this->Tela;
 
@@ -162,15 +184,21 @@ class CfgTela extends BaseController
         $campos[0][6] = $this->tel_mode;
         $campos[0][7] = $this->tel_desc;
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         // $campos[0][8] = $this->tel_tabela;
         // $campos[0][9] = $this->tel_view;
 
         $secao[1] = 'Regras Gerais';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $campos[1][0] = $fields['tel_regg'];
 
         $secao[2] = 'Regras do Cadastro';
         $campos[2][0] = $fields['tel_regc'];
+<<<<<<< HEAD
 =======
         $campos[1][0] = $this->tel_regg;
 
@@ -178,6 +206,8 @@ class CfgTela extends BaseController
         $campos[2][0] = $this->tel_regc;
 
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
         $this->data['secoes'] = $secao;
         $this->data['campos'] = $campos;
@@ -187,11 +217,17 @@ class CfgTela extends BaseController
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     public function show($id){
         $this->edit($id, true);
     }
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    public function show($id){
+        $this->edit($id, true);
+    }
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     /**
      * Edição
      * edit
@@ -200,16 +236,22 @@ class CfgTela extends BaseController
      * @return void
      */
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     public function edit($id, $show = false)
     {
         $dados_tela = $this->tela->getTelaId($id)[0];
         $this->model_atual = $this->tela;
+<<<<<<< HEAD
 =======
     public function edit($id)
     {
         $dados_tela = $this->Tela->getTelaId($id)[0];
         $this->model_atual = $this->Tela;
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         // debug($dados_tela['tel_model']);
         if (isset($dados_tela['tel_model']) && $dados_tela['tel_model'] != null) {
             $model = $dados_tela['tel_model'];
@@ -218,6 +260,9 @@ class CfgTela extends BaseController
             $this->model_atual = model($pasta . $model);
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $tabela = $this->model_atual->table;
         $view   = $this->model_atual->view;
         $fields = $this->tela->defCampos($dados_tela, $show, $tabela, $view);
@@ -281,6 +326,7 @@ class CfgTela extends BaseController
 
         $secao[6] = 'Código Fonte';
         $campos[6][0] = $fields['tel_codi'];
+<<<<<<< HEAD
 =======
         // debug($this->model_atual);
 
@@ -336,6 +382,8 @@ class CfgTela extends BaseController
         $secao[6] = 'Código Fonte';
         $campos[6][0] = $this->tel_codi;
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
         $this->data['desc_edicao'] = $dados_tela['tel_nome'];
 
@@ -359,6 +407,7 @@ class CfgTela extends BaseController
     public function addCampoLista($id, $ind)
     {
 <<<<<<< HEAD
+<<<<<<< HEAD
         $dados_tela = $this->tela->getTelaId($id)[0];
         // debug($dados_tela);
         $this->model_atual = $this->tela;
@@ -367,6 +416,11 @@ class CfgTela extends BaseController
         // debug($dados_tela);
         $this->model_atual = $this->Tela;
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+        $dados_tela = $this->tela->getTelaId($id)[0];
+        // debug($dados_tela);
+        $this->model_atual = $this->tela;
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         // debug($dados_tela['tel_model']);
         if (isset($dados_tela['tel_model']) && $dados_tela['tel_model'] != null) {
             $model = $dados_tela['tel_model'];
@@ -375,17 +429,23 @@ class CfgTela extends BaseController
             $this->model_atual = model($pasta . $model);
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $tabela = $this->model_atual->table;
         $view   = $this->model_atual->view;
         
         $lista['tel_id'] = $dados_tela['tel_id'];
 
         $this->defCamposLista($lista, $ind, false, $tabela, $view);
+<<<<<<< HEAD
 =======
         $lista['tel_id'] = $dados_tela['tel_id'];
 
         $this->defCamposLista($lista, $ind);
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
         $campo[0] = $this->lis_id;
         $campo[1] = $this->lis_campo;
@@ -409,10 +469,14 @@ class CfgTela extends BaseController
         $ret = [];
         try {
 <<<<<<< HEAD
+<<<<<<< HEAD
             $this->tela->delete($id);
 =======
             $this->Tela->delete($id);
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+            $this->tela->delete($id);
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             $ret['erro'] = false;
             session()->setFlashdata('msg', 'Tela Excluída com Sucesso');
         } catch (\CodeIgniter\Database\Exceptions\DatabaseException $e) {
@@ -431,12 +495,16 @@ class CfgTela extends BaseController
      * @return void
      */
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     
     public function defCamposLista($lista = '', $pos = 0, $show = false, $tabela = '', $view ='')
     {
         $campos_tab = $this->dicionario->getCampos($view);
         $campos_lis = array_column($campos_tab, 'NOME_COMPLETO', 'COLUMN_NAME');
         
+<<<<<<< HEAD
 =======
     public function defCampos($dados, $pos = 0)
     {
@@ -626,6 +694,8 @@ class CfgTela extends BaseController
         // debug($campos_lis, false);
 
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $id             = new MyCampo('cfg_tela_lista', 'lis_id');
         $id->nome       = $id->nome . "[$pos]";
         $id->id         = $id->id . "[$pos]";
@@ -641,9 +711,13 @@ class CfgTela extends BaseController
         $camp->dispForm        = '2col';
         $camp->classep        = 'semmb';
 <<<<<<< HEAD
+<<<<<<< HEAD
         $camp->leitura        = $show;
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+        $camp->leitura        = $show;
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $this->lis_campo      = $camp->crSelect();
 
         $rotu           = new MyCampo('cfg_tela_lista', 'lis_rotulo');
@@ -653,9 +727,13 @@ class CfgTela extends BaseController
         $rotu->dispForm        = '2col';
         $rotu->classep        = 'semmb';
 <<<<<<< HEAD
+<<<<<<< HEAD
         $rotu->leitura      = $show;
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+        $rotu->leitura      = $show;
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $this->lis_rotulo       = $rotu->crInput();
 
         $atrib['data-index'] = $pos;
@@ -712,22 +790,31 @@ class CfgTela extends BaseController
         ];
         // debug($dados_clas);
 <<<<<<< HEAD
+<<<<<<< HEAD
         if ($this->tela->save($dados_clas)) {
             $tel_id = $this->tela->getInsertID();
 =======
         if ($this->Tela->save($dados_clas)) {
             $tel_id = $this->Tela->getInsertID();
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+        if ($this->tela->save($dados_clas)) {
+            $tel_id = $this->tela->getInsertID();
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             if ($dados['tel_id'] != '') {
                 $tel_id = $dados['tel_id'];
             }
             if (isset($dados['lis_id'])) {
                 $data_atu = date('Y-m-d H:i');
 <<<<<<< HEAD
+<<<<<<< HEAD
                 $lis_exc = $this->telalista->excluiCampoLista($tel_id);
 =======
                 $lis_exc = $this->TelaLista->excluiCampoLista($tel_id);
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+                $lis_exc = $this->telalista->excluiCampoLista($tel_id);
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                 foreach ($dados['lis_id'] as $key => $value) {
                     $dados_lis = [
                         // 'lis_id'             => $dados['lis_id'][$lis],
@@ -737,10 +824,14 @@ class CfgTela extends BaseController
                         'lis_atualizado'     => $data_atu,
                     ];
 <<<<<<< HEAD
+<<<<<<< HEAD
                     $lis_id = $this->telalista->save($dados_lis);
 =======
                     $lis_id = $this->TelaLista->save($dados_lis);
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+                    $lis_id = $this->telalista->save($dados_lis);
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                     if (!$lis_id) {
                         $ret['erro'] = true;
                         $ret['msg'] = 'Não foi possível gravar os Campos da Listagem, Verifique!';

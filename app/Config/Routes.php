@@ -3,14 +3,20 @@
 namespace Config;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 use App\Controllers\Api\ApiConfig;
 use App\Controllers\Api\ApiEstoque;
 use App\Controllers\Config\CfgDicionario;
 use App\Controllers\Config\CfgEmpresa;
+<<<<<<< HEAD
 =======
 use App\Controllers\CfgEmpresa;
 use App\Controllers\Config\CfgDicionario;
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 use App\Controllers\Config\CfgFuncoes;
 use App\Controllers\Config\CfgMensagem;
 use App\Controllers\Config\CfgMenu;
@@ -21,6 +27,9 @@ use App\Controllers\Config\CfgTela;
 use App\Controllers\Config\CfgUsuario;
 use App\Controllers\Config\Home_config;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 use App\Controllers\Estoque\CfgApi;
 use App\Controllers\Estoque\EstCompra;
 use App\Controllers\Estoque\EstContagem;
@@ -52,10 +61,13 @@ use App\Controllers\Rh\RhQuadro;
 use App\Controllers\Rh\RhSetor;
 use App\Controllers\Rh\RhSolver;
 use App\Controllers\Rh\RhVale;
+<<<<<<< HEAD
 =======
 use App\Controllers\Estoque\Deposito;
 use App\Controllers\Estoque\Transacao;
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 use CodeIgniter\Config\Services;
 
 // Create a new instance of our RouteCollection class.
@@ -131,6 +143,9 @@ $routes->get('/CfgEmpresa/(:any)', 'Config\CfgEmpresa::$1');
 $routes->post('/CfgEmpresa/(:any)', 'Config\CfgEmpresa::$1');
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 $routes->get('/CfgApi', 'Config\CfgApi::index');
 $routes->get('/CfgApi/(:any)', 'Config\CfgApi::$1');
 $routes->post('/CfgApi/(:any)', 'Config\CfgApi::$1');
@@ -140,6 +155,7 @@ $routes->match(['get', 'post'], '/CfgModulo/(:any)/(:any)', 'Config\CfgModulo::$
 $routes->get('/Graph', 'Graph::index');
 $routes->get('/Graph/(:any)', 'Graph::$1');
 $routes->post('/Graph/(:any)', 'Graph::$1');
+<<<<<<< HEAD
 =======
 $routes->match(['get', 'post'], '/CfgModulo/(:any)/(:any)', 'Config\CfgModulo::$1::$2');
 
@@ -152,6 +168,8 @@ $routes->get('/Transacao', 'Estoque\Transacao::index');
 $routes->get('/Transacao/(:any)', 'Estoque\Transacao::$1');
 $routes->post('/Transacao/(:any)', 'Estoque\Transacao::$1');
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
 // $routes->get('/(:any)', '$1');
 // $routes->post('/(:any)/(:any)', '$1::$2');

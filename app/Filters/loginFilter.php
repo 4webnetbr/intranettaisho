@@ -37,6 +37,7 @@ class loginFilter implements FilterInterface
             }
             // d($metodo);
 <<<<<<< HEAD
+<<<<<<< HEAD
             
 =======
             // CARREGA MENSAGENS PARA O CACHE
@@ -46,6 +47,9 @@ class loginFilter implements FilterInterface
             
             session()->set($mensagens_cfg);
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+            
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             $perfil_usu             = session()->get('usu_perfil_id');
             $setor_usu              = session()->get('usu_setor_id');
             $tipo_usu               = session()->get('usu_tipo');

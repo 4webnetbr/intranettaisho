@@ -10,6 +10,9 @@ function montaListaDados(tabela, url) {
     jQuery.fn.dataTable.moment('DD/MM/YYYY HH:mm:ss');    //Formatação com Hora
     jQuery.fn.dataTable.moment('DD/MM/YYYY');    //Formatação sem Hora
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     if (table != undefined) {
         table.ajax.url(url).load(null, true);
     } else {
@@ -111,6 +114,7 @@ function montaListaDados(tabela, url) {
                             popoverTitle: 'Colunas'
                         },
                     ]
+<<<<<<< HEAD
                 },
                 "bSortCellsTop": true,
                 "pageLength": 50,
@@ -283,6 +287,39 @@ function montaListaDados(tabela, url) {
         });
 
 <<<<<<< HEAD
+=======
+                },
+                "bSortCellsTop": true,
+                "pageLength": 50,
+                "bPaginate": true,
+                // "sScrollX": "100vw",
+                "scrollY": 'calc(100vh - 15rem)',
+                "bProcessing": true,
+                "bScrollCollapse": true,
+                "deferRender": true,
+                "sDom": 'lftrBip',
+                "language": {
+                    "url": 'assets/jscript/datatables-lang/pt-BR.json',
+                },
+                "fnDrawCallback": function (oSettings) {
+                    jQuery('table#' + tabela + ' > tbody > tr').on("mouseover", function () {
+                        jQuery(this).children().find('.btn').addClass('hover');
+                    }).on('mouseleave', function () {
+                        jQuery(this).children().find('.btn').removeClass('hover');
+                    });
+                },
+            });
+
+        jQuery('#' + tabela).on('click', 'tbody tr td:not(".acao")', function () {
+            link = jQuery(this).parent().find('a')[0].href;
+            if (link != null) {
+                if (link.indexOf('edit/') > -1 || link.indexOf('show/') > -1) {
+                    redireciona(link);
+                }
+            }
+        });
+
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         table.on('draw', function () {
             jQuery('.buttons-colvis').removeClass('dropdown-toggle');
         });
@@ -858,6 +895,7 @@ function montaListaDadosGrupo(tabela, url, groupColumn = 0) {
         // }
     }
 }
+<<<<<<< HEAD
 =======
     table.on('draw', function () {
         jQuery('.buttons-colvis').removeClass('dropdown-toggle');
@@ -889,3 +927,5 @@ function montaListaDadosGrupo(tabela, url, groupColumn = 0) {
 //     }        
 // }
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd

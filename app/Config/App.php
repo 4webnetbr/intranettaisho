@@ -23,10 +23,14 @@ class App extends BaseConfig
      * environments.
      */
 <<<<<<< HEAD
+<<<<<<< HEAD
     public string $baseURL = 'https://intranet.taisho.com.br/';
 =======
     public string $baseURL = 'https://dev.ceqnep.com.br/';
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    public string $baseURL = 'https://intranet.taisho.com.br/';
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.

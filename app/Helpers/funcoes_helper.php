@@ -685,10 +685,14 @@ function buscaArquivos($pastaapp, $completo = true, $exceto = [])
     $dir = new DirectoryIterator($pastaapp);
     // array contendo os diretórios permitidos    
 <<<<<<< HEAD
+<<<<<<< HEAD
     $diretoriosPermitidos = array("app", "Controllers", "Estoque", "Filters", "Helpers", "Libraries", "Views", "Models", "Estoqu", "Rh","Rechum", "Config", "public", "assets", "jscript" );
 =======
     $diretoriosPermitidos = array("app", "Controllers", "Filters", "Helpers", "Libraries", "Views", "Models", "Config", "Estoque", "Estoqu", "public", "assets", "jscript" );
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    $diretoriosPermitidos = array("app", "Controllers", "Estoque", "Filters", "Helpers", "Libraries", "Views", "Models", "Estoqu", "Rh","Rechum", "Config", "public", "assets", "jscript" );
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     $arquivosPermitidos = array("php","js");
 
     $arquivos = [];
@@ -799,6 +803,9 @@ function fmtEtiquetaCorBst($cor){
     return $ret;
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
 /**
   * get_cloudfy_curl
@@ -1242,5 +1249,8 @@ function soma(...$args) {
 
     return $total;
 }
+<<<<<<< HEAD
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd

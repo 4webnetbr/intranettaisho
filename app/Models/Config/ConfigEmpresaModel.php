@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 <?php namespace App\Models\Config;
 
 =======
@@ -8,12 +9,19 @@ namespace App\Models\Config;
 
 use App\Libraries\MyCampo;
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+<?php namespace App\Models\Config;
+
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 use App\Models\LogMonModel;
 use CodeIgniter\Model;
 
 class ConfigEmpresaModel extends Model
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 	private $emp_user;
     protected $DBGroup          = 'dbConfig';
 
@@ -45,6 +53,7 @@ class ConfigEmpresaModel extends Model
    
     // Callbacks
     protected $allowCallbacks = true;
+<<<<<<< HEAD
 =======
     protected $DBGroup          = 'default';
     protected $table            = 'cfg_empresa';
@@ -68,6 +77,8 @@ class ConfigEmpresaModel extends Model
     protected $allowCallbacks = true;
 
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     protected $afterInsert   = ['depoisInsert'];
     protected $afterUpdate   = ['depoisUpdate'];
     protected $afterDelete   = ['depoisDelete'];
@@ -75,6 +86,9 @@ class ConfigEmpresaModel extends Model
     protected $logdb;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 /**
      * This method saves the session "usu_id" value to "created_by" and "updated_by" array 
      * elements before the row is inserted into the database.
@@ -84,6 +98,7 @@ class ConfigEmpresaModel extends Model
         $logdb = new LogMonModel(); 
         $registro = $data['id'];
         $log = $logdb->insertLog($this->table,'Incluído',$registro, $data['data']);
+<<<<<<< HEAD
 =======
     /**
      * This method saves the session "usu_id" value to "created_by" and "updated_by" array
@@ -96,11 +111,16 @@ class ConfigEmpresaModel extends Model
         $registro = $data['id'];
         $log = $logdb->insertLog($this->table, 'Incluído', $registro, $data['data']);
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         return $data;
     }
 
     /**
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
      * This method saves the session "usu_id" value to "updated_by" array element before 
      * the row is inserted into the database.
      *
@@ -386,6 +406,7 @@ class ConfigEmpresaModel extends Model
 		}
 
 	}
+<<<<<<< HEAD
 =======
      * This method saves the session "usu_id" value to "updated_by" array element before
      * the row is inserted into the database.
@@ -471,5 +492,7 @@ class ConfigEmpresaModel extends Model
         return $ret;
     }    
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
 }

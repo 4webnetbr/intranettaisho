@@ -1,8 +1,11 @@
 <?php
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 namespace App\Models\Config;
 
 use App\Libraries\MyCampo;
@@ -14,6 +17,7 @@ use CodeIgniter\Model;
 class ConfigStatusModel extends Model
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
     protected $DBGroup          = 'dbConfig';
     protected $table            = 'cfg_status';
     protected $view             = 'vw_cfg_status_relac';
@@ -22,24 +26,38 @@ class ConfigStatusModel extends Model
     protected $table            = 'cfg_status';
     protected $view             = 'cfg_status';
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    protected $DBGroup          = 'dbConfig';
+    protected $table            = 'cfg_status';
+    protected $view             = 'vw_cfg_status_relac';
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     protected $primaryKey       = 'stt_id';
     protected $useAutoIncremodt = true;
 
     protected $returnType       = 'array';
 <<<<<<< HEAD
+<<<<<<< HEAD
     protected $useSoftDeletes   = true;
 =======
     // protected $useSoftDeletes   = true;
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    protected $useSoftDeletes   = true;
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
 
     protected $allowedFields    = ['stt_id',
                                     'stt_nome',
                                     'stt_cor',
 <<<<<<< HEAD
+<<<<<<< HEAD
                                     'mod_id',
                                     'tel_id',
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+                                    'mod_id',
+                                    'tel_id',
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
                                     'stt_exclusao',
                                     'stt_edicao',
                                     'stt_ativo',
@@ -50,21 +68,29 @@ class ConfigStatusModel extends Model
 
     protected $validationRules = [
 <<<<<<< HEAD
+<<<<<<< HEAD
         'stt_nome' => 'required|min_length[5]|nome_status_existe[]',
 =======
         'stt_nome' => 'required|is_unique[cfg_status.stt_nome, stt_id,{stt_id}]',
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+        'stt_nome' => 'required|min_length[5]|nome_status_existe[]',
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     ];
 
     protected $validationMessages = [
         'stt_nome' => [
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
             'required' => 'O campo Nome é Obrigatório',
             'min_length' => 'O campo Nome exige pelo menos 5 Caracteres.',
             'nome_status_existe' => 'Já existe um Status, com esse Nome, para essa Tela'
         ],
     ];
 
+<<<<<<< HEAD
 =======
             'required' => 'O campo Título é Obrigatório',
             'is_unique' => 'Já existe uma Mensagem com o título informado!',
@@ -73,6 +99,8 @@ class ConfigStatusModel extends Model
 
 
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     // Callbacks
     protected $allowCallbacks = true;
 
@@ -122,6 +150,9 @@ class ConfigStatusModel extends Model
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     public function getStatus($stt_id = false)
     {
         $db = db_connect('dbConfig');
@@ -185,6 +216,7 @@ class ConfigStatusModel extends Model
         $ret = $builder->get()->getResultArray();
 
         return $ret;
+<<<<<<< HEAD
 =======
     public function getMensagem($stt_id = false)
     {
@@ -206,6 +238,8 @@ class ConfigStatusModel extends Model
 
         return $this->builder()->get()->getResultArray();
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     }
 
     public function defCampos($dados = false)
@@ -225,11 +259,15 @@ class ConfigStatusModel extends Model
         $moduloss = $modulo_mod->getModulo();
         $modulos = array_column($moduloss, 'mod_nome', 'mod_id');
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $modu               = new MyCampo('cfg_status', 'mod_id');
         $modu->valor        = (isset($dados['mod_id'])) ? $dados['mod_id'] : '';
         $modu->selecionado  = $modu->valor;
         $modu->opcoes       = $modulos;
         $modu->obrigatorio  = true;
+<<<<<<< HEAD
 =======
     
         $modu               = new MyCampo('cfg_status', 'mod_id');
@@ -238,16 +276,22 @@ class ConfigStatusModel extends Model
         $modu->selecionado  = $modu->valor;
         $modu->opcoes       = $modulos;
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $modu->largura      = 30;
         $modu->dispForm     = '2col';
         $ret['mod_id'] = $modu->crSelect();
     
         $telas_mod = new ConfigTelaModel();
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $telass = $telas_mod->getTelaId((isset($dados['tel_id'])) ? $dados['tel_id'] : false);
         $telas = array_column($telass, 'tel_nome', 'tel_id');
 
         $tela               = new MyCampo('cfg_status', 'tel_id');
+<<<<<<< HEAD
 =======
         $telass = $telas_mod->getTelaId();
         $telas = array_column($telass, 'tel_nome', 'tel_id');
@@ -255,20 +299,29 @@ class ConfigStatusModel extends Model
         $tela               = new MyCampo('cfg_status', 'tel_id');
         $tela->obrigatorio  = true;
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $tela->valor        = (isset($dados['tel_id'])) ? $dados['tel_id'] : '';
         $tela->selecionado  = $tela->valor;
         $tela->urlbusca     = base_url('buscas/busca_tela_modulo');
         $tela->opcoes       = $telas;
 <<<<<<< HEAD
+<<<<<<< HEAD
         $tela->obrigatorio  = true;
 =======
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+        $tela->obrigatorio  = true;
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $tela->largura      = 30;
         $tela->dispForm     = '2col';
         $tela->pai          = 'mod_id';
         $ret['tel_id']     = $tela->crDepende();
         
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $cor           =  new MyCampo('cfg_status','stt_cor');
         $cor->valor    = (isset($dados['stt_cor'])) ? $dados['stt_cor'] : '';
         $cor->selecionado  = $this->valor;
@@ -279,12 +332,15 @@ class ConfigStatusModel extends Model
 
         $opcex['S'] = 'Sim';
         $opcex['N'] = 'Não';
+<<<<<<< HEAD
 =======
 
         $opcex['S'] = 'Sim';
         $opcex['N'] = 'Não';
 
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $exclu           =  new MyCampo('cfg_status', 'stt_exclusao');
         $exclu->valor    = (isset($dados['stt_exclusao'])) ? $dados['stt_exclusao'] : 'S';
         $exclu->selecionado    = $exclu->valor;
@@ -301,6 +357,7 @@ class ConfigStatusModel extends Model
         $ret['stt_edicao'] = $edit->cr2opcoes();
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         $cor           =  new MyCampo('cfg_status','stt_cor');
         $cor->valor    = '';
@@ -309,6 +366,8 @@ class ConfigStatusModel extends Model
         $cor->dispForm     = '2col';
         $ret['stt_cor'] = $cor->crCorbst();
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         
 
         return $ret;

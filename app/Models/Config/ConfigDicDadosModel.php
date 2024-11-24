@@ -25,6 +25,7 @@ class ConfigDicDadosModel extends Model
                                 ];
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     public function getTabelas($nome_tabela = false, $grupo = 'default')
     {
         $this->DBGroup          = 'dbEstoque';
@@ -41,6 +42,11 @@ class ConfigDicDadosModel extends Model
         $this->DBGroup          = 'dbEstoque';
 
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+    public function getTabelas($nome_tabela = false, $grupo = 'default')
+    {
+        $this->DBGroup          = 'dbEstoque';
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $this->builder()
                 ->select(['table_schema','table_name','table_rows','table_comment']);
 
@@ -53,10 +59,14 @@ class ConfigDicDadosModel extends Model
         $ret = $this->builder()->get()->getResultArray();
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         $this->DBGroup          = 'dbRh';
 =======
         $this->DBGroup          = 'default';
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+        $this->DBGroup          = 'dbRh';
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         $this->builder()
                 ->select(['table_schema','table_name','table_rows','table_comment']);
 
@@ -104,6 +114,9 @@ class ConfigDicDadosModel extends Model
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
     public function getTabelaSearch($nome_tabela)
     {
         if(substr($nome_tabela,0,3) == 'est' || 
@@ -125,6 +138,7 @@ class ConfigDicDadosModel extends Model
             substr($nome_tabela,0,6) == 'vw_cfg') {
             $this->DBGroup          = 'dbConfig';
             $schema                 = 'taisho_configdb';
+<<<<<<< HEAD
 =======
     /**
      * Summary of getTabelaSearch
@@ -141,6 +155,8 @@ class ConfigDicDadosModel extends Model
             $this->DBGroup          = 'default';
             $schema                 = 'config_ceqweb_db';
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         }
         $array = ['table_name' => $nome_tabela . '%'];
         $this->builder()
@@ -163,6 +179,9 @@ class ConfigDicDadosModel extends Model
     public function getRelacionamentos($nome_tabela)
     {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         if(substr($nome_tabela,0,3) == 'est' || 
             substr($nome_tabela,0,6) == 'vw_est') {
             $this->DBGroup          = 'dbEstoque';
@@ -182,6 +201,7 @@ class ConfigDicDadosModel extends Model
             substr($nome_tabela,0,6) == 'vw_cfg') {
             $this->DBGroup          = 'dbConfig';
             $schema                 = 'taisho_configdb';
+<<<<<<< HEAD
 =======
         if(substr($nome_tabela,0,3) == 'est' || substr($nome_tabela,0,6) == 'vw_est') {
             $this->DBGroup          = 'dbEstoque';
@@ -190,6 +210,8 @@ class ConfigDicDadosModel extends Model
             $this->DBGroup          = 'default';
             $schema                 = 'config_ceqweb_db';
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         }
         $array = ['kc.table_name' => $nome_tabela];
         // $db = db_connect();
@@ -218,6 +240,9 @@ class ConfigDicDadosModel extends Model
     public function getCampos($nome_tabela)
     {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         // debug($nome_tabela);
         if(substr($nome_tabela,0,3) == 'est' || 
             substr($nome_tabela,0,6) == 'vw_est') {
@@ -256,6 +281,7 @@ class ConfigDicDadosModel extends Model
         $lq = $query = $db->getLastQuery();
         // debug($lq);
         // debug($ret);
+<<<<<<< HEAD
 =======
         if(substr($nome_tabela,0,3) == 'est' || substr($nome_tabela,0,6) == 'vw_est') {
             $this->DBGroup          = 'dbEstoque';
@@ -278,6 +304,8 @@ class ConfigDicDadosModel extends Model
 
         $ret = $builder->get()->getResultArray();
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         return $ret;
     }
 
@@ -291,6 +319,9 @@ class ConfigDicDadosModel extends Model
     public function getDetalhesCampo($nome_tabela, $nome_campo)
     {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         // debug($nome_tabela, $nome_campo);
         if(substr($nome_tabela,0,3) == 'est' || 
             substr($nome_tabela,0,6) == 'vw_est') {
@@ -325,6 +356,7 @@ class ConfigDicDadosModel extends Model
                             FROM information_schema.columns
                             WHERE TABLE_NAME = '".$nome_tabela."'
                             AND TABLE_SCHEMA = '".$schema."' ";
+<<<<<<< HEAD
         if (gettype($nome_campo) == 'array') {
             for($c=0;$c<count($nome_campo);$c++){
                 $nome_campo[$c] = "'".$nome_campo[$c]."'";
@@ -368,6 +400,23 @@ class ConfigDicDadosModel extends Model
 
         $ret = $builder->get()->getResultArray();
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+        if (gettype($nome_campo) == 'array') {
+            for($c=0;$c<count($nome_campo);$c++){
+                $nome_campo[$c] = "'".$nome_campo[$c]."'";
+            }
+            $campos = implode(",", $nome_campo);
+            $consulta .= "AND column_name IN (".$campos.") ";
+        } else {
+            $consulta .= "AND column_name = '".$nome_campo."' ";
+        }
+                        
+        $query = $db->query($consulta);
+        // $lq = $db->getLastQuery();
+        // debug($lq, true);
+        $ret = $query->getResultArray();
+        // debug($ret);
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         return $ret;
     }
 
@@ -380,6 +429,9 @@ class ConfigDicDadosModel extends Model
     public function getCampoChave($nome_tabela)
     {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         if(substr($nome_tabela,0,3) == 'est' || 
             substr($nome_tabela,0,6) == 'vw_est') {
             $this->DBGroup          = 'dbEstoque';
@@ -399,6 +451,7 @@ class ConfigDicDadosModel extends Model
             substr($nome_tabela,0,6) == 'vw_cfg') {
             $this->DBGroup          = 'dbConfig';
             $schema                 = 'taisho_configdb';
+<<<<<<< HEAD
 =======
         if(substr($nome_tabela,0,3) == 'est' || substr($nome_tabela,0,6) == 'vw_est') {
             $this->DBGroup          = 'dbEstoque';
@@ -407,6 +460,8 @@ class ConfigDicDadosModel extends Model
             $this->DBGroup          = 'default';
             $schema                 = 'config_ceqweb_db';
 >>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+=======
+>>>>>>> 31cffd33b9425f8976445a0ec535d45f55cf74cd
         }
         $array = ['table_name' => $nome_tabela];
         // $db = db_connect();
