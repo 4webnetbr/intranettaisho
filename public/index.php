@@ -1,4 +1,11 @@
 <?php
+<<<<<<< HEAD
+// ini_set('memory_limit', '512M');
+=======
+>>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+ini_set('soap.wsdl_cache_enabled', '0');
+
+ini_set('soap.wsdl_cache_ttl', '0');
 // Check PHP version.
 $minPhpVersion = '8.0'; // If you update this, don't forget to update `spark`.
 if (version_compare(PHP_VERSION, $minPhpVersion, '<')) {

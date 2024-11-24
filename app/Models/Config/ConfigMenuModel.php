@@ -7,9 +7,10 @@ use CodeIgniter\Model;
 
 class ConfigMenuModel extends Model
 {
-    protected $DBGroup          = 'dbConfig';
+    protected $DBGroup          = 'default';
 
     protected $table            = "cfg_menu";
+    protected $view             = "vw_cfg_menu_relac";
     protected $primaryKey       = "men_id";
     protected $useAutoIncrement = true;
 
@@ -80,7 +81,7 @@ class ConfigMenuModel extends Model
 
     public function getMenu($men_id = false)
     {
-        $db = db_connect('dbConfig');
+        $db = db_connect('default');
         $builder = $db->table('vw_cfg_menu_relac');
         $builder->select('*');
         if ($men_id) {
@@ -93,7 +94,7 @@ class ConfigMenuModel extends Model
 
     public function getMenuPai($men_id = false)
     {
-        $db = db_connect('dbConfig');
+        $db = db_connect('default');
         $builder = $db->table('vw_cfg_menu_relac menu');
         $builder->select('*');
         if ($men_id) {
@@ -108,7 +109,7 @@ class ConfigMenuModel extends Model
 
     public function getSubMenu($men_pai)
     {
-        $db = db_connect('dbConfig');
+        $db = db_connect('default');
         $builder = $db->table('vw_cfg_menu_relac menu');
         $builder->select('*');
         if ($men_pai) {
@@ -123,7 +124,7 @@ class ConfigMenuModel extends Model
 
     public function getRaizMenuPerfil($perfil_id = false)
     {
-        $db = db_connect('dbConfig');
+        $db = db_connect('default');
         $builder = $db->table('vw_cfg_menu_relac');
         $builder->select('*');
         $builder->wherein("men_hierarquia", [1,2]);
@@ -140,19 +141,23 @@ class ConfigMenuModel extends Model
      */
     public function getMenuCompleto($perfil_id = false, $tipo_usu = 1)
     {
-        $db = db_connect('dbConfig');
+        $db = db_connect('default');
         $builder = $db->table('vw_cfg_menu_perfil_item_relac');
         $builder->select('*');
         if ($tipo_usu && $tipo_usu < 3) {
             $builder->where("men_tipo", $tipo_usu);
+            $builder->groupStart();
         }
         if ($perfil_id) {
-            $builder->groupStart();
             $builder->where("prf_id", null);
             $builder->orWhere("prf_id", $perfil_id);
+        }
+        if ($tipo_usu && $tipo_usu < 3) {
             $builder->groupEnd();
         }
         $builder->orderBy('men_order');
+        // $sql = $builder->getCompiledSelect();
+        // debug($sql,true);
         $ret = $builder->get()->getResultArray();
         // debug($this->db->getLastQuery(), false);
         return $ret;
@@ -161,7 +166,7 @@ class ConfigMenuModel extends Model
 
     public function getPrimeiroNivel($menu_id, $perfil_id = false)
     {
-        $db = db_connect('dbConfig');
+        $db = db_connect('default');
         $builder = $db->table('vw_cfg_menu_relac menu');
         $builder->select('*');
         if ($perfil_id) {
@@ -183,7 +188,7 @@ class ConfigMenuModel extends Model
 
     public function getSegundoNivel($menu_id, $submenu, $perfil_id = false)
     {
-        $db = db_connect('dbConfig');
+        $db = db_connect('default');
         $builder = $db->table('vw_cfg_menu_relac menu');
         if ($perfil_id) {
             $builder->join('cfg_perfil_item pit', '(pit.tel_id = menu.tel_id OR menu.tel_id IS NULL) 

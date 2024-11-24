@@ -5,7 +5,7 @@ use CodeIgniter\Model;
 
 class ConfigTelaListaModel extends Model
 {
-    protected $DBGroup          = 'dbConfig';
+    protected $DBGroup          = 'default';
 
     protected $table            = 'cfg_tela_lista';
     protected $primaryKey       = 'lis_id';
@@ -83,7 +83,7 @@ class ConfigTelaListaModel extends Model
     public function getListagem($Telalista)
     {
         $clas = ['tel_id' => $Telalista];
-        $db = db_connect('dbConfig');
+        $db = db_connect('default');
         $builder = $db->table('cfg_tela_lista');
         $builder->select('*');
         $builder->where($clas);
@@ -104,7 +104,7 @@ class ConfigTelaListaModel extends Model
      */
     public function excluiCampoLista($Telalista)
     {
-        $db = db_connect('dbConfig');
+        $db = db_connect('default');
         $builder = $db->table('cfg_tela_lista');
         $builder->where("tel_id", $Telalista);
         // $builder->groupStart();

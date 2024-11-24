@@ -7,7 +7,7 @@ use CodeIgniter\Session\Handlers\FileHandler;
 
 class App extends BaseConfig
 {
-    /**
+    /** 
      * --------------------------------------------------------------------------
      * Base Site URL
      * --------------------------------------------------------------------------
@@ -22,7 +22,11 @@ class App extends BaseConfig
      * explicitly and never rely on auto-guessing, especially in production
      * environments.
      */
-    public string $baseURL = 'https://estoque.ceqnep.com.br/';
+<<<<<<< HEAD
+    public string $baseURL = 'https://intranet.taisho.com.br/';
+=======
+    public string $baseURL = 'https://dev.ceqnep.com.br/';
+>>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
 
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.
@@ -76,7 +80,7 @@ class App extends BaseConfig
      * strings (like currency markers, numbers, etc), that your program
      * should run under for this request.
      */
-    public string $defaultLocale = 'pt-br';
+    public string $defaultLocale = 'pt-BR';
 
     /**
      * --------------------------------------------------------------------------
@@ -101,7 +105,7 @@ class App extends BaseConfig
      *
      * @var string[]
      */
-    public array $supportedLocales = ['pt-br, en'];
+    public array $supportedLocales = ['pt-BR'];
 
     /**
      * --------------------------------------------------------------------------
@@ -173,7 +177,7 @@ class App extends BaseConfig
      *
      * @deprecated use Config\Session::$expiration instead.
      */
-    public int $sessionExpiration = 7200;
+    public int $sessionExpiration = 7200; // 2 horas
 
     /**
      * --------------------------------------------------------------------------

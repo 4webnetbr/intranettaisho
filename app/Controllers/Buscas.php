@@ -4,19 +4,41 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\Config\ConfigDicDadosModel;
+use App\Models\Config\ConfigEmpresaModel;
 use App\Models\Config\ConfigMenuModel;
 use App\Models\Config\ConfigModuloModel;
 use App\Models\Config\ConfigTelaModel;
 use App\Models\Config\ConfigUsuarioModel;
+use App\Models\Estoqu\EstoquContagemModel;
+use App\Models\Estoqu\EstoquDepositoModel;
+use App\Models\Estoqu\EstoquFornecedorModel;
+use App\Models\Estoqu\EstoquMarcaModel;
+use App\Models\Estoqu\EstoquProdutoModel;
+use App\Models\Rechum\RechumCargoModel;
+use App\Models\Rechum\RechumColaboradorModel;
+use App\Models\Rechum\RechumHoleriteModel;
+use App\Models\Rechum\RechumSetorModel;
+use App\Models\Rechum\RechumTurnoModel;
 
 class Buscas extends BaseController
 {
-    public $data = [];
+    public $data = []; 
     public $menu;
     public $modulo; 
     public $tela;
     public $usuario; 
     public $admDados;
+    public $empresa;
+    public $produto;
+    public $deposito;
+    public $fornecedor;
+    public $marca;
+    public $contagem;
+    public $turno;
+    public $setor;
+    public $colaborador;
+    public $holerite;
+    public $cargo;
 
 	public function __construct(){
 		$this->menu 		        = new ConfigMenuModel();
@@ -24,6 +46,16 @@ class Buscas extends BaseController
 		$this->tela 		        = new ConfigTelaModel();
         $this->usuario              = new ConfigUsuarioModel();
         $this->admDados             = new ConfigDicDadosModel();
+        $this->empresa              = new ConfigEmpresaModel();
+        $this->produto              = new EstoquProdutoModel();
+        $this->deposito              = new EstoquDepositoModel();
+        $this->fornecedor           = new EstoquFornecedorModel();
+        $this->marca                = new EstoquMarcaModel();
+        $this->contagem             = new EstoquContagemModel();
+        $this->cargo                = new RechumCargoModel();
+        $this->setor                = new RechumSetorModel();
+        $this->colaborador          = new RechumColaboradorModel();
+        $this->holerite             = new RechumHoleriteModel();
 	}
 
     public function busca_hierarquia(){
@@ -120,19 +152,39 @@ class Buscas extends BaseController
         exit;
     }
 
+    public function busca_tela_modulo() {
+        $ret    = [];
+        if ($_REQUEST['busca']) {
+            $termo              = $_REQUEST['busca'];
+            $telas = $this->tela->getTelaModulo($termo);
+            if(sizeof($telas) <= 0){
+                $ret[0]['id'] = '-1';
+                $ret[0]['text'] = 'Tela não encontrada...';
+            } else {
+                for ($c = 0;$c<sizeof($telas);$c++) {
+                    $ret[$c]['id']      = $telas[$c]['tel_id'];
+                    $ret[$c]['text']    = $telas[$c]['tel_nome'];
+                    $ret[$c]['icone']    = $telas[$c]['tel_icone'];
+                }
+            }
+        }
+        echo json_encode($ret);
+        exit;
+    }
+    
     public function busca_tela() {
         $ret    = [];
         if ($_REQUEST['busca']) {
             $termo              = $_REQUEST['busca'];
-            $class = $this->tela->getTelaSearch($termo);
-            if(sizeof($class) <= 0){
+            $telas = $this->tela->getTelaSearch($termo);
+            if(sizeof($telas) <= 0){
                 $ret[0]['id'] = '-1';
                 $ret[0]['text'] = 'Tela não encontrada...';
             } else {
-                for ($c = 0;$c<sizeof($class);$c++) {
-                    $ret[$c]['id']      = $class[$c]['tel_id'];
-                    $ret[$c]['text']    = $class[$c]['tel_nome'];
-                    $ret[$c]['icone']    = $class[$c]['tel_icone'];
+                for ($c = 0;$c<sizeof($telas);$c++) {
+                    $ret[$c]['id']      = $telas[$c]['tel_id'];
+                    $ret[$c]['text']    = $telas[$c]['tel_nome'];
+                    $ret[$c]['icone']    = $telas[$c]['tel_icone'];
                 }
             }
         }
@@ -192,6 +244,277 @@ class Buscas extends BaseController
         echo json_encode($ret);
     }
 
+    public function busca_produto(){
+        $ret    = [];
+        if ($_REQUEST['busca']) {
+            $termo              = $_REQUEST['busca'];
+            $produtos            = $this->produto->getProdutoSearch($termo);
+            if(sizeof($produtos) <= 0){
+                $ret[0]['id'] = '-1';
+                $ret[0]['text'] = 'Produto não encontrado...';
+            } else {
+                for ($c = 0;$c<sizeof($produtos);$c++) {
+                    $ret[$c]['id']      = $produtos[$c]['pro_id'];
+                    $ret[$c]['text']    = $produtos[$c]['pro_nome'];
+                }
+            }
+        }
+        echo json_encode($ret);
+        exit;
+    }
 
+    public function busca_deposito_empresa(){
+        $ret    = [];
+        if ($_REQUEST['busca']) {
+            $termo              = $_REQUEST['busca'];
+            $depositos            = $this->deposito->getDeposito(false, $termo);
+            if(sizeof($depositos) <= 0){
+                $ret[0]['id'] = '-1';
+                $ret[0]['text'] = 'Depósito não encontrado...';
+            } else {
+                for ($c = 0;$c<sizeof($depositos);$c++) {
+                    $ret[$c]['id']      = $depositos[$c]['dep_id'];
+                    $ret[$c]['text']    = $depositos[$c]['dep_nome'];
+                }
+            }
+        }
+        echo json_encode($ret);
+        exit;
+    }
 
+    public function busca_contagem_deposito(){
+        $ret    = [];
+        if ($_REQUEST['busca']) {
+            $termo              = $_REQUEST['busca'];
+            $contagem            = $this->contagem->getContagemDeposito($termo);
+            if(sizeof($contagem) <= 0){
+                $ret[0]['id'] = '-1';
+                $ret[0]['text'] = 'Contagem não encontrado...';
+            } else {
+                for ($c = 0;$c<sizeof($contagem);$c++) {
+                    $log = buscaLog('est_contagem', $contagem[$c]['cta_id']);
+                    // debug($log);
+
+                    $ret[$c]['id']      = $contagem[$c]['cta_id'];
+                    $ret[$c]['text']    = $contagem[$c]['cta_id'].' - '.dataDbToBr($contagem[$c]['cta_data']).' - '.$log['usua_alterou'];
+                }
+            }
+        }
+        echo json_encode($ret);
+        exit;
+    }
+
+	public function cnpjcpfcadastrado(){
+		$retorno = [];
+        $data = $_REQUEST;
+		$cnpjcpf = $data['cpfcnpf'];
+		$relacao = isset($data['relacao'])?$data['relacao']:10;
+        $temfornec = $this->fornecedor->getFornecedorCNPJ($cnpjcpf);
+		if($temfornec){
+			$retorno['tem']   = '1';
+            $retorno['id']    = $temfornec[0]['for_id'];
+		} else {
+			$retorno['tem']   = '0';
+		}
+		echo json_encode($retorno);
+		exit;
+	}
+
+	public function cpfcolabcadastrado(){
+		$retorno = [];
+        $data = $_REQUEST;
+		$cnpjcpf = $data['cpfcnpf'];
+        
+        $temcolabo = $this->colaborador->getCPF($cnpjcpf);
+		if($temcolabo){
+			$retorno['tem']   = '1';
+            $retorno['id']    = $temcolabo[0]['col_id'];
+		} else {
+			$retorno['tem']   = '0';
+		}
+		echo json_encode($retorno);
+		exit;
+	}
+    
+    public function buscaprodutomarca(){
+        $ret    = [];
+        if ($_REQUEST['marca']) {
+            $termo              = $_REQUEST['marca'];
+            $produtos            = $this->marca->getMarcaCod($termo);
+            if(sizeof($produtos) <= 0){
+                $ret['id'] = '-1';
+            } else {
+                $qtia = formataQuantia(isset($produtos[0]['mar_conversao'])?$produtos[0]['mar_conversao']:0);
+                $ret['id']      = $produtos[0]['pro_id'];
+                $ret['produto']      = $produtos[0]['pro_nome'];
+                $ret['marca']        = $produtos[0]['mar_nome'].' - '.$produtos[0]['mar_apresenta'];
+                $ret['conversao']    = $qtia['qtiv'];
+                $ret['und_marca']    = $produtos[0]['und_marca'];
+                $ret['und_produ']    = $produtos[0]['und_prod'];
+            }
+        }
+        echo json_encode($ret);
+        exit;
+    }
+
+    public function buscasaldoproduto(){
+        $ret    = [];
+        if ($_REQUEST['produto']) {
+            $prod              = $_REQUEST['produto'];
+            $depo              = $_REQUEST['deposito'];
+            $produtos            = $this->produto->getSaldos($depo, $prod);
+            if(sizeof($produtos) <= 0){
+                $ret['id'] = '-1';
+            } else {
+                $qtia = formataQuantia(isset($produtos[0]['saldo'])?$produtos[0]['saldo']:0);
+                $ret['saldo']    = $qtia['qtiv'];
+            }
+        }
+        echo json_encode($ret);
+        exit;
+    }
+
+    public function buscaproduto(){
+        $ret    = [];
+        if ($_REQUEST['id']) {
+            $termo              = $_REQUEST['id'];
+            $produtos            = $this->produto->getProduto($termo);
+            if(sizeof($produtos) <= 0){
+                $ret['id'] = '-1';
+            } else {
+                $ret['id']      = $produtos[0]['pro_id'];
+                $ret['produto']    = $produtos[0]['pro_nome'];
+                $ret['und_produ']    = $produtos[0]['und_id'];
+            }
+        }
+        echo json_encode($ret);
+        exit;
+    }
+
+    public function buscaFornecedor(){
+        $ret    = [];
+        if ($_REQUEST['busca']) {
+            $termo              = $_REQUEST['busca'];
+            $forneceds          = $this->fornecedor->getFornecedorSearch($termo);
+            if(sizeof($forneceds) <= 0){
+                $ret[0]['id'] = '-1';
+                $ret[0]['text'] = 'Fornecedor não encontrado...';
+            } else {
+                for ($c = 0;$c<sizeof($forneceds);$c++) {
+                    $ret[$c]['id']      = $forneceds[$c]['for_id'];
+                    $ret[$c]['text']    = $forneceds[$c]['for_razao'].' - '.$forneceds[$c]['for_fantasia'];
+                }
+            }
+        }
+        echo json_encode($ret);
+        exit;
+    }
+
+    public function buscaTurno(){
+        $ret    = [];
+        if ($_REQUEST['busca']) {
+            $termo              = $_REQUEST['busca'];
+            $turnos            = $this->turno->getTurnoEmp($termo);
+            if(sizeof($turnos) <= 0){
+                $ret[0]['id'] = '-1';
+                $ret[0]['text'] = 'Turno não encontrado...';
+            } else {
+                for ($c = 0;$c<sizeof($turnos);$c++) {
+                    $ret[$c]['id']      = $turnos[$c]['tur_id'];
+                    $ret[$c]['text']    = $turnos[$c]['tur_nome'];
+                }
+            }
+        }
+        echo json_encode($ret);
+        exit;
+    }
+
+    public function buscaSetor(){
+        $ret    = [];
+        if ($_REQUEST['busca']) {
+            $termo              = $_REQUEST['busca'];
+            $setors            = $this->setor->getSetor();
+            if(sizeof($setors) <= 0){
+                $ret[0]['id'] = '-1';
+                $ret[0]['text'] = 'Setor não encontrado...';
+            } else {
+                for ($c = 0;$c<sizeof($setors);$c++) {
+                    $ret[$c]['id']      = $setors[$c]['set_id'];
+                    $ret[$c]['text']    = $setors[$c]['set_nome'];
+                }
+            }
+        }
+        echo json_encode($ret);
+        exit;
+    }
+
+    public function buscaCargos(){
+        $ret    = [];
+        if ($_REQUEST['busca']) {
+            $termo              = $_REQUEST['busca'];
+            $cargos            = $this->cargo->getCargo(false, $termo);
+            if(sizeof($cargos) <= 0){
+                $ret[0]['id'] = '-1';
+                $ret[0]['text'] = 'Cargo não encontrado...';
+            } else {
+                for ($c = 0;$c<sizeof($cargos);$c++) {
+                    $ret[$c]['id']      = $cargos[$c]['cag_id'];
+                    $ret[$c]['text']    = $cargos[$c]['cag_nome'];
+                }
+            }
+        }
+        echo json_encode($ret);
+        exit;
+    }
+
+    public function verificaSessao(){
+        $ret['sessao'] = true; 
+        $sessao = session();
+        $ret['dados'] =  (array)$sessao;
+        if ($sessao->logged_in != true) {
+            $ret['sessao'] = false; 
+            $ret['url'] = site_url('login');
+        }
+        echo json_encode($ret);
+        exit;
+    }
+
+    public function buscaCompetencia(){
+        $ret    = [];
+        if ($_REQUEST['busca']) {
+            $termo              = $_REQUEST['busca'];
+            $competencias            = $this->holerite->getCompetencia($termo);
+            if(sizeof($competencias) <= 0){
+                $ret[0]['id'] = '-1';
+                $ret[0]['text'] = 'Sem dados...';
+            } else {
+                for ($c = 0;$c<sizeof($competencias);$c++) {
+                    $ret[$c]['id']      = $competencias[$c]['competencia'];
+                    $ret[$c]['text']    = $competencias[$c]['competencia'];
+                }
+            }
+        }
+        echo json_encode($ret);
+        exit;
+    }
+
+    public function buscaColaborador(){
+        $ret    = [];
+        if ($_REQUEST['busca']) {
+            $termo              = $_REQUEST['busca'];
+            $colaboradores            = $this->colaborador->getColaborador(false, $termo);
+            if(sizeof($colaboradores) <= 0){
+                $ret[0]['id'] = '-1';
+                $ret[0]['text'] = 'Sem dados...';
+            } else {
+                for ($c = 0;$c<sizeof($colaboradores);$c++) {
+                    $ret[$c]['id']      = $colaboradores[$c]['col_id'];
+                    $ret[$c]['text']    = $colaboradores[$c]['col_nome'];
+                }
+            }
+        }
+        echo json_encode($ret);
+        exit;
+    }
+    
 }

@@ -1,0 +1,30 @@
+[27-Apr-2024 01:45:51 UTC] PHP Fatal error:  Uncaught Error: Undefined constant "ENVIRONMENT" in /home/taisho/gerente/vendor/codeigniter4/framework/system/Common.php:777
+Stack trace:
+#0 /home/taisho/gerente/vendor/codeigniter4/framework/system/Debug/Exceptions.php(140): log_message()
+#1 [internal function]: CodeIgniter\Debug\Exceptions->exceptionHandler()
+#2 {main}
+  thrown in /home/taisho/gerente/vendor/codeigniter4/framework/system/Common.php on line 777
+[27-Apr-2024 04:23:18 UTC] PHP Fatal error:  Uncaught Error: Undefined constant "ENVIRONMENT" in /home/taisho/gerente/vendor/codeigniter4/framework/system/Common.php:777
+Stack trace:
+#0 /home/taisho/gerente/vendor/codeigniter4/framework/system/Debug/Exceptions.php(140): log_message()
+#1 [internal function]: CodeIgniter\Debug\Exceptions->exceptionHandler()
+#2 {main}
+  thrown in /home/taisho/gerente/vendor/codeigniter4/framework/system/Common.php on line 777
+[27-Apr-2024 07:17:07 UTC] PHP Fatal error:  Uncaught Error: Undefined constant "ENVIRONMENT" in /home/taisho/gerente/vendor/codeigniter4/framework/system/Common.php:777
+Stack trace:
+#0 /home/taisho/gerente/vendor/codeigniter4/framework/system/Debug/Exceptions.php(140): log_message()
+#1 [internal function]: CodeIgniter\Debug\Exceptions->exceptionHandler()
+#2 {main}
+  thrown in /home/taisho/gerente/vendor/codeigniter4/framework/system/Common.php on line 777
+[27-Apr-2024 20:26:43 UTC] PHP Fatal error:  Uncaught Error: Undefined constant "ENVIRONMENT" in /home/taisho/gerente/vendor/codeigniter4/framework/system/Common.php:777
+Stack trace:
+#0 /home/taisho/gerente/vendor/codeigniter4/framework/system/Debug/Exceptions.php(140): log_message()
+#1 [internal function]: CodeIgniter\Debug\Exceptions->exceptionHandler()
+#2 {main}
+  thrown in /home/taisho/gerente/vendor/codeigniter4/framework/system/Common.php on line 777
+[27-Apr-2024 20:26:43 UTC] PHP Fatal error:  Uncaught Error: Undefined constant "ENVIRONMENT" in /home/taisho/gerente/vendor/codeigniter4/framework/system/Common.php:777
+Stack trace:
+#0 /home/taisho/gerente/vendor/codeigniter4/framework/system/Debug/Exceptions.php(140): log_message()
+#1 [internal function]: CodeIgniter\Debug\Exceptions->exceptionHandler()
+#2 {main}
+  thrown in /home/taisho/gerente/vendor/codeigniter4/framework/system/Common.php on line 777

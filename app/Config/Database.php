@@ -22,14 +22,40 @@ class Database extends Config
     public string $defaultGroup = 'default';
 
     /**
+<<<<<<< HEAD
      * The default database connection.
      */
     public array $default = [
         'DSN'      => '',
         'hostname' => 'localhost',
-        'username' => 'estoque_user',
-        'password' => 'n3hoUV3LwAIyE2gv8C55',
-        'database' => 'estoque_db',
+        'username' => 'taisho_userdb',
+        'password' => 'JePPiS@9wE9D6Qk#ZWtpIH',
+        'database' => 'taisho_gerentedb',
+        'DBDriver' => 'MySQLi',
+        'DBPrefix' => '',
+        'pConnect' => false,
+        'DBDebug'  => true,
+        'charset'  => 'utf8',
+        'DBCollat' => 'utf8_general_ci',
+        'swapPre'  => '',
+        'encrypt'  => false,
+        'compress' => false,
+        'strictOn' => false,
+        'failover' => [],
+        'port'     => 3306,
+    ];
+
+    /**
+=======
+>>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+     * The config database connection.
+     */
+    public array $default = [
+        'DSN'      => '',
+        'hostname' => 'localhost',
+        'username' => 'taisho_userdb',
+        'password' => 'JePPiS@9wE9D6Qk#ZWtpIH',
+        'database' => 'taisho_configdb',
         'DBDriver' => 'MySQLi',
         'DBPrefix' => '',
         'pConnect' => false,
@@ -47,12 +73,37 @@ class Database extends Config
     /**
      * The config database connection.
      */
-    public array $dbConfig = [
+    public array $dbEstoque = [
         'DSN'      => '',
         'hostname' => 'localhost',
-        'username' => 'estoque_user',
-        'password' => 'n3hoUV3LwAIyE2gv8C55',
-        'database' => 'config_ceqweb_db',
+        'username' => 'taisho_userdb',
+        'password' => 'JePPiS@9wE9D6Qk#ZWtpIH',
+        'database' => 'taisho_estoquedb',
+        'DBDriver' => 'MySQLi',
+        'DBPrefix' => '',
+        'pConnect' => false,
+        'DBDebug'  => true,
+        // 'charset'  => 'utf8mb4', // UTF-8 para caracteres especiais
+        // 'DBCollat' => 'utf8mb4_general_ci',
+        'charset'  => 'utf8',
+        'DBCollat' => 'utf8_general_ci',
+        'swapPre'  => '',
+        'encrypt'  => false,
+        'compress' => false,
+        'strictOn' => false,
+        'failover' => [],
+        'port'     => 3306,
+    ];
+
+    /**
+     * The config database connection.
+     */
+    public array $dbRh = [
+        'DSN'      => '',
+        'hostname' => 'localhost',
+        'username' => 'taisho_userdb',
+        'password' => 'JePPiS@9wE9D6Qk#ZWtpIH',
+        'database' => 'taisho_rhdb',
         'DBDriver' => 'MySQLi',
         'DBPrefix' => '',
         'pConnect' => false,
@@ -66,6 +117,53 @@ class Database extends Config
         'failover' => [],
         'port'     => 3306,
     ];
+
+    /**
+     * The Delivery database connection.
+     */
+    public array $dbDelivery = [
+        'DSN'      => '',
+        'hostname' => 'localhost',
+        'username' => 'taisho_userdb',
+        'password' => 'JePPiS@9wE9D6Qk#ZWtpIH',
+        'database' => 'taisho_deliverydb',
+        'DBDriver' => 'MySQLi',
+        'DBPrefix' => '',
+        'pConnect' => false,
+        'DBDebug'  => true,
+        'charset'  => 'utf8',
+        'DBCollat' => 'utf8_general_ci',
+        'swapPre'  => '',
+        'encrypt'  => false,
+        'compress' => false,
+        'strictOn' => false,
+        'failover' => [],
+        'port'     => 3306,
+    ];
+
+    /**
+     * The default database connection.
+     */
+    public array $dbEstoque = [
+        'DSN'      => '',
+        'hostname' => 'localhost', 
+        'username' => 'estoque_user',
+        'password' => 'n3hoUV3LwAIyE2gv8C55',
+        'database' => 'estoque_db',
+        'DBDriver' => 'MySQLi',
+        'DBPrefix' => '',
+        'pConnect' => false,
+        'DBDebug'  => true,
+        'charset'  => 'utf8',
+        'DBCollat' => 'utf8_general_ci',
+        'swapPre'  => '',
+        'encrypt'  => false,
+        'compress' => false,
+        'strictOn' => false,
+        'failover' => [],
+        'port'     => 3306,
+    ];
+
 
     /**
      * This database connection is used when

@@ -5,25 +5,27 @@ namespace App\Models\Config;
 use App\Models\LogMonModel;
 use CodeIgniter\Model;
 
-class ConfigUsuarioModel extends Model
+class ConfigUsuarioModel extends Model 
 {
-    protected $DBGroup          = 'dbConfig';
+    protected $DBGroup          = 'default';
 
     protected $table            = 'cfg_usuario';
+    protected $view             = 'vw_cfg_usuario_relac';
     protected $primaryKey       = 'usu_id';
     protected $useAutoIncrement = true;
 
     protected $returnType       = 'array';
     protected $useSoftDeletes   = true;
 
-    protected $allowedFields    = ['usu_id',
+    protected $allowedFields    = ['usu_id', 
                                     'usu_nome',
                                     'usu_login',
                                     'usu_senha',
                                     'usu_email',
                                     'prf_id',
                                     'usu_status',
-                                    'usu_dashboard'
+                                    'usu_dashboard',
+                                    'usu_empresa'
                                     ];
 
     protected $deletedField  = 'usu_excluido';
@@ -86,7 +88,7 @@ class ConfigUsuarioModel extends Model
      */
     public function usuLogonConfig($data)
     {
-        $db = db_connect('dbConfig');
+        $db = db_connect('default');
         $builder = $db->table('vw_cfg_usuario_relac');
         $builder->select('*');
         $builder->where($data);
@@ -106,7 +108,7 @@ class ConfigUsuarioModel extends Model
      */
     public function getUsuarioId($id = false)
     {
-        $db = db_connect('dbConfig');
+        $db = db_connect('default');
         $builder = $db->table('vw_cfg_usuario_relac');
         $builder->select('*');
         if ($id) {
@@ -129,7 +131,7 @@ class ConfigUsuarioModel extends Model
     public function getUsuarioSearch($termo)
     {
         $array = ['usu_nome' => $termo . '%'];
-        $db = db_connect('dbConfig');
+        $db = db_connect('default');
         $builder = $db->table('vw_cfg_usuario_relac');
         $builder->select('*');
         $builder->like($array);

@@ -1,5 +1,13 @@
 <?php
+// require('vendor/autoload.php');
 
+use App\Libraries\Campos;
+use App\Models\Config\ConfigDicDadosModel;
+use App\Models\Config\ConfigMenuModel;
+use App\Models\Config\ConfigPerfilItemModel;
+use App\Models\Config\ConfigTelaListaModel;
+use App\Models\Config\ConfigTelaModel;
+use WebSocket\Client;
 /**
  * The goal of this file is to allow developers a location
  * where they can overwrite core procedural functions and
@@ -14,12 +22,6 @@
  * @see: https://codeigniter4.github.io/CodeIgniter4/
  */
 
-use App\Libraries\Campos;
-use App\Models\Config\ConfigDicDadosModel;
-use App\Models\Config\ConfigMenuModel;
-use App\Models\Config\ConfigPerfilItemModel;
-use App\Models\Config\ConfigTelaListaModel;
-use App\Models\Config\ConfigTelaModel;
 
 /**
  * montaMenu
@@ -39,6 +41,7 @@ function montaMenu($perfil_usu, $tipo_usu, $ordenacao = false)
     $niv1 = -1;
     $niv2 = -1;
     $niv_atual  = 0;
+    // debug(count($retorno), true);
     for ($m = 0; $m < count($retorno); $m++) {
         $opc_menu = $retorno[$m];
         if ($opc_menu['men_hierarquia'] == '1') { //Raiz
@@ -82,8 +85,10 @@ function montaMenu($perfil_usu, $tipo_usu, $ordenacao = false)
                     $ret_menu[$opc]['niv1'][$niv1] = $opc_menu;
                     $niv1++;
                 } else {
-                    $ret_menu[$opc] = $opc_menu;
-                    $opc++;
+                    if($ret_menu[$opc - 1] != $opc_menu){
+                        $ret_menu[$opc] = $opc_menu;
+                        $opc++;
+                    }
                 }
             } else {
                 if (isset($retorno[$m + 1]['men_hierarquia']) && $retorno[$m + 1]['men_hierarquia'] != '4') {
@@ -92,23 +97,29 @@ function montaMenu($perfil_usu, $tipo_usu, $ordenacao = false)
             }
         }
     }
-    if (!$ordenacao) {
         // debug($ret_menu, true);
+        $opc_menu = '';
         for ($m = count($ret_menu) - 1; $m >= 0; $m--) {
-            $opc_menu = $ret_menu[$m];
-            if ($opc_menu['men_hierarquia'] == '2') {
-                if (!isset($opc_menu['niv1']) || count($opc_menu['niv1']) == 0) {
-                    unset($ret_menu[$m]);
-                } else {
-                    for ($s = count($opc_menu['niv1']) - 1; $s >= 0; $s--) {
-                        $opc_sub = $opc_menu['niv1'][$s];
-                        if ($opc_sub['men_hierarquia'] == '3') {
-                            if (
-                                !array_key_exists('niv2', $opc_sub)
-                                || !isset($opc_sub['niv2'])
-                                || count($opc_sub['niv2']) == 0
-                            ) {
-                                unset($ret_menu[$m]['niv1'][$s]);
+            // debug($opc_menu);
+            // debug($ret_menu[$m]);
+            if($opc_menu == $ret_menu[$m]){
+                unset($ret_menu[$m]);
+            } else {
+                $opc_menu = $ret_menu[$m];
+                if ($opc_menu['men_hierarquia'] == '2') {
+                    if (!isset($opc_menu['niv1']) || count($opc_menu['niv1']) == 0) {
+                        unset($ret_menu[$m]);
+                    } else {
+                        for ($s = count($opc_menu['niv1']) - 1; $s >= 0; $s--) {
+                            $opc_sub = $opc_menu['niv1'][$s];
+                            if ($opc_sub['men_hierarquia'] == '3') {
+                                if (
+                                    !array_key_exists('niv2', $opc_sub)
+                                    || !isset($opc_sub['niv2'])
+                                    || count($opc_sub['niv2']) == 0
+                                ) {
+                                    unset($ret_menu[$m]['niv1'][$s]);
+                                }
                             }
                         }
                     }
@@ -127,7 +138,6 @@ function montaMenu($perfil_usu, $tipo_usu, $ordenacao = false)
         }
         $arr = array_values($ret_menu);
         $ret_menu = $arr;
-    }
     return $ret_menu;
 }
 
@@ -264,11 +274,11 @@ function montaLista($data_lis, $chave, $dados, $nome)
 
             $data = DateTime::createFromFormat('Y-m-d H:i:s', $retor[$fields[$f]]);
             if ($data && $data->format('Y-m-d H:i:s') === $retor[$fields[$f]]) {
-                $retor[$fields[$f]] = "<div class='text-center'>" . data_br($retor[$fields[$f]]) . "</div>";
+                $retor[$fields[$f]] = "<div class='text-center'>" . dataDbToBr($retor[$fields[$f]]) . "</div>";
             } else {
                 $data = DateTime::createFromFormat('Y-m-d', $retor[$fields[$f]]);
                 if ($data && $data->format('Y-m-d') === $retor[$fields[$f]]) {
-                    $retor[$fields[$f]] = "<div class='text-center'>" . data_br($retor[$fields[$f]]) . "</div>";
+                    $retor[$fields[$f]] = "<div class='text-center'>" . dataDbToBr($retor[$fields[$f]]) . "</div>";
                 } else {
                     // testa se o campo é numérico, se for alinha a direita
                     if (floatval($retor[$fields[$f]]) > 0) {
@@ -292,12 +302,15 @@ function montaLista($data_lis, $chave, $dados, $nome)
     return $result;
 }
 
-function montaColunasLista($data_lis, $chave)
+function montaColunasLista($data_lis, $chave, $detalhe = false)
 {
     $telaLista    = new ConfigTelaListaModel();
 
     $lista = $telaLista->getListagem($data_lis['tel_id']);
     $arr_campos = array_column($lista, 'lis_rotulo');
+    if($detalhe){
+        array_unshift($arr_campos, ' ');
+    }
     array_unshift($arr_campos, $chave);
     array_push($arr_campos, "Ação");
 
@@ -305,24 +318,32 @@ function montaColunasLista($data_lis, $chave)
     return $arr_campos;
 }
 
-function montaColunasCampos($data_lis, $chave)
+function montaColunasCampos($data_lis, $chave, $detalhe = false)
 {
     $telaLista    = new ConfigTelaListaModel();
 
     $lista = $telaLista->getListagem($data_lis['tel_id']);
     $arr_campos = array_column($lista, 'lis_campo');
+    if($detalhe){
+        array_unshift($arr_campos, $detalhe);
+    }
     array_unshift($arr_campos, $chave);
     // debug($arr_campos);
     return $arr_campos;
 }
 
 
-function montaListaColunas($data_lis, $chave, $dados, $nome)
+function montaListaColunas($data_lis, $chave, $dados, $nome, $detalhe = false)
 {
     $telaLista = new ConfigTelaListaModel();
 
     $lista = $telaLista->getListagem($data_lis['tel_id']);
     $fields = array_column($lista, 'lis_campo');
+    // Mostra o botão de exclusão por padrão
+    $exclusao = isset($data_lis['exclusao'])?$data_lis['exclusao']:true;
+    if($detalhe){
+        array_unshift($fields, 'd');
+    }
     array_unshift($fields, $chave);
     array_push($fields, 'acao');
     // debug($fields);
@@ -332,7 +353,13 @@ function montaListaColunas($data_lis, $chave, $dados, $nome)
         $temativo = false;
         $ativo = false;
         $inativa = '';
-        // VERIFICA SE TEM UM CAMPO DE ATIVO INATIVO
+        $podeinativar = true;
+        if(isset($dat_i['stt_exclusao'])){
+            if(trim($dat_i['stt_exclusao']) == 'N'){
+                $podeinativar = false;
+            }
+        }
+    // VERIFICA SE TEM UM CAMPO DE ATIVO INATIVO
         foreach ($dat_i as $key => $value) {
             if (substr($key, -5) == 'ativo') {
                 $temativo = true;
@@ -343,33 +370,66 @@ function montaListaColunas($data_lis, $chave, $dados, $nome)
         }
         $edit = '';
         $exclui = '';
-        if (strpbrk($data_lis['permissao'], 'E')) {
+<<<<<<< HEAD
+        if (strpos($data_lis['permissao'], 'C')) { // mas tem acesso de consulta
+=======
+        if ($data_lis['permissao'] == 'C') {
             $edit = anchor(
-                $data_lis['controler'] . '/edit/' . $dat_i[$chave],
-                '<i class="far fa-edit"></i>',
+                $data_lis['controler'] . '/show/' . $dat_i[$chave],
+                '<i class="far fa-eye"></i>',
                 [
-                    'class' => 'btn btn-outline-warning btn-sm border-0 mx-0 fs-0',
+                    'class' => 'btn btn-outline-info btn-sm mx-1',
                     'data-mdb-toggle' => 'tooltip',
                     'data-mdb-placement' => 'top',
-                    'title' => 'Alterar este Registro',
+                    'title' => 'Detalhes do Registro',
                 ]
             );
         }
+        if (strpbrk($data_lis['permissao'], 'E')) {
+>>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
+            $edit = anchor(
+                $data_lis['controler'] . '/show/' . $dat_i[$chave],
+                '<i class="far fa-eye"></i>',
+                [
+                    'class' => 'btn btn-outline-info btn-sm mx-1',
+                    'data-mdb-toggle' => 'tooltip',
+                    'data-mdb-placement' => 'top',
+                    'title' => 'Detalhes',
+                ]
+            );
+        }
+        if (strpos($data_lis['permissao'], 'E')) {
+            if(isset($dat_i['cta_data']) && $dat_i['cta_data'] != date('Y-m-d')){
+            } else if(isset($dat_i['ent_data']) && $dat_i['ent_data'] != date('Y-m-d')){
+            } else if(isset($dat_i['sai_data']) && $dat_i['sai_data'] != date('Y-m-d')){
+            } else {
+                $edit = anchor(
+                    $data_lis['controler'] . '/edit/' . $dat_i[$chave],
+                    '<i class="far fa-edit"></i>',
+                    [
+                        'class' => 'btn btn-outline-warning btn-sm border-0 mx-0 fs-0',
+                        'data-mdb-toggle' => 'tooltip',
+                        'data-mdb-placement' => 'top',
+                        'title' => 'Alterar',
+                    ]
+                );
+            }
+        }
         if ($temativo) {
-            if (strpbrk($data_lis['permissao'], 'X')) {
+            if ($podeinativar && strpos($data_lis['permissao'], 'X')) {
                 $url_ati = $data_lis['controler'] . '/ativinativ/' . $dat_i[$chave] . '/1' ;
                 $url_ina = $data_lis['controler'] . '/ativinativ/' . $dat_i[$chave] . '/0' ;
                 $inativa =
                     "<button class='btn btn-outline-secondary btn-sm border-0 mx-0 fs-0' data-mdb-toggle='tooltip' 
-                    data-mdb-placement='top' title='Ativar este Registro' onclick='ativInativ(\"" .
+                    data-mdb-placement='top' title='Ativar' onclick='ativInativ(\"" .
                     $url_ati .
                     "\",\"" .
                     $dat_i[$nome] .
                     "\",false)'><i class='fa-solid fa-toggle-off fa-rotate-270'></i></button>";
                 if ($ativo) {
                     $inativa =
-                    "<button class='btn btn-outline-primary btn-sm border-0 mx-0 fs-0' data-mdb-toggle='tooltip' 
-                    data-mdb-placement='top' title='Inativar este Registro' onclick='ativInativ(\"" .
+                    "<button class='btn btn-outline-success btn-sm border-0 mx-0 fs-0' data-mdb-toggle='tooltip' 
+                    data-mdb-placement='top' title='Inativar' onclick='ativInativ(\"" .
                     $url_ina .
                     "\",\"" .
                     $dat_i[$nome] .
@@ -377,24 +437,27 @@ function montaListaColunas($data_lis, $chave, $dados, $nome)
                 }
             }
         }
-        if (strpbrk($data_lis['permissao'], 'X')) {
-            $url_del =
-            $data_lis['controler'] . '/delete/' . $dat_i[$chave];
-            $exclui =
-                "<button class='btn btn-outline-danger btn-sm border-0 mx-0 fs-0' data-mdb-toggle='tooltip' 
-                    data-mdb-placement='top' title='Excluir este Registro' onclick='excluir(\"" .
-                $url_del .
-                "\",\"" .
-                $dat_i[$nome] .
-                "\")'><i class='far fa-trash-alt'></i></button>";
+        if (strpos($data_lis['permissao'], 'X')) {
+            if($podeinativar && $exclusao) {
+                if(isset($dat_i['cta_data']) && $dat_i['cta_data'] != date('Y-m-d')){
+                    $exclui = '';
+                } else if(isset($dat_i['ent_data']) && $dat_i['ent_data'] != date('Y-m-d')){
+                    $exclui = '';
+                } else if(isset($dat_i['sai_data']) && $dat_i['sai_data'] != date('Y-m-d')){
+                    $exclui = '';
+                } else {
+                    $url_del =
+                    $data_lis['controler'] . '/delete/' . $dat_i[$chave];
+                    $exclui =
+                        "<button class='btn btn-outline-danger btn-sm border-0 mx-0 fs-0' data-mdb-toggle='tooltip' 
+                            data-mdb-placement='top' title='Excluir' onclick='excluir(\"" .
+                        $url_del .
+                        "\",\"" .
+                        $dat_i[$nome] .
+                        "\")'><i class='far fa-trash-alt'></i></button>";
+                }
+            }
         }
-
-        // se for a tela de telas
-        // if ($chave == 'tel_id') {
-        //     $dados[$p]['tel_nome'] = "<i class='" . $dat_i['mod_icone'] . "'></i> " .
-        //     $dat_i['mod_nome'] . "  <i class='fa fa-arrow-right-long'></i>  <i class='" .
-        //     $dat_i['tel_icone'] . "'></i> " . $dat_i['tel_nome'];
-        // }
 
         // se for a tela de menus
         if ($chave == 'men_id') {
@@ -419,26 +482,42 @@ function montaListaColunas($data_lis, $chave, $dados, $nome)
         $retor = $dados[$p];
         $res = [];
         for ($f = 0; $f < count($fields); $f++) {
-            // debug($fields, false);
             // testa se o campo é uma data
             if (strlen($fields[$f]) > 100) {
                 $fields[$f] = strip_tags($fields[$f]);
             }
-
-            $data = DateTime::createFromFormat('Y-m-d H:i:s', $retor[$fields[$f]]);
-            if ($data && $data->format('Y-m-d H:i:s') === $retor[$fields[$f]]) {
-                $retor[$fields[$f]] = "<div class='text-center'>" .
-                data_br($retor[$fields[$f]]) . "</div>";
-            } else {
-                $data = DateTime::createFromFormat('Y-m-d', $retor[$fields[$f]]);
-                if ($data && $data->format('Y-m-d') === $retor[$fields[$f]]) {
-                    $retor[$fields[$f]] = "<div class='text-center'>" . data_br($retor[$fields[$f]]) .
-                    "</div>";
+            // debug($fields[$f], false);
+            if($fields[$f] === 'stt_nome'){
+                $retor[$fields[$f]] = fmtEtiquetaCorBst($retor['stt_cor'],$retor[$fields[$f]]);
+            }
+            // var_dump($retor[$fields[$f]]);
+            if(strlen($retor[$fields[$f]]) < 15){
+                $data = DateTime::createFromFormat('Y-m-d H:i:s', $retor[$fields[$f]]);
+                if ($data && $data->format('Y-m-d H:i:s') === $retor[$fields[$f]]) {
+                    $retor[$fields[$f]] = "<div class='text-center'>" .
+                    dataDbToBr($retor[$fields[$f]]) . "</div>";
                 } else {
+<<<<<<< HEAD
+                    $data = DateTime::createFromFormat('Y-m-d', $retor[$fields[$f]]);
+                    if ($data && $data->format('Y-m-d') === $retor[$fields[$f]]) {
+                        $retor[$fields[$f]] = "<div class='text-center'>" . dataDbToBr($retor[$fields[$f]]) .
+                        "</div>";
+                    } else {
+                        // testa se o campo é numérico, se for alinha a direita
+                        if (is_numeric($retor[$fields[$f]]) > 0) {
+                            $partes = explode('.', $retor[$fields[$f]]);
+                            if (isset($partes[1]) && trim($partes[1]) != '') {
+                                if (strlen($partes[1]) > 2) {
+                                    $retor[$fields[$f]] = "<div class='text-end'>" .
+                                    floatToQuantia($retor[$fields[$f]], 3) . "</div>";
+                                } else {
+                                    $retor[$fields[$f]] = "<div class='text-end'>" .
+                                    floatToMoeda($retor[$fields[$f]]) . "</div>";
+                                }
+=======
                     // testa se o campo é numérico, se for alinha a direita
-                    if (floatval($retor[$fields[$f]]) > 0) {
+                    if (is_numeric($retor[$fields[$f]]) > 0) {
                         $partes = explode('.', $retor[$fields[$f]]);
-                        // debug($partes,false);
                         if (isset($partes[1]) && trim($partes[1]) != '') {
                             if (strlen($partes[1]) > 2) {
                                 $retor[$fields[$f]] = "<div class='text-end'>" .
@@ -446,16 +525,109 @@ function montaListaColunas($data_lis, $chave, $dados, $nome)
                             } else {
                                 $retor[$fields[$f]] = "<div class='text-end'>" .
                                 floatToMoeda($retor[$fields[$f]]) . "</div>";
+>>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
                             }
                         }
                     }
                 }
             }
+            if(str_contains($fields[$f],'msg_cor')){
+                if(strlen($retor[$fields[$f]]) > 1){
+                    $retor[$fields[$f]] = fmtEtiquetaCorBst($retor[$fields[$f]]);
+                }
+            }
+<<<<<<< HEAD
+    
+=======
+>>>>>>> 574b0475ba5dde3449b30249cc4ba8e410e8fcd7
             array_push($res, $retor[$fields[$f]]);
         }
         // debug($res);
         array_push($result, $res);
     }
+    // debug($result);
+    return $result;
+}
+
+function montaListaEditColunas($colunas, $chave, $dados, $nome, $detalhe = false)
+{
+    $fields = $colunas;
+    // debug($fields);
+    $result = [];
+    for ($p = 0; $p < sizeof($dados); $p++) {
+        $dat_i = $dados[$p];
+        $temativo = false;
+        $ativo = false;
+        $inativa = '';
+        $podeinativar = true;
+        if(isset($dat_i['stt_exclusao'])){
+            if(trim($dat_i['stt_exclusao']) == 'N'){
+                $podeinativar = false;
+            }
+        }
+    // VERIFICA SE TEM UM CAMPO DE ATIVO INATIVO
+        foreach ($dat_i as $key => $value) {
+            if (substr($key, -5) == 'ativo') {
+                $temativo = true;
+                if ($value == 'A') {
+                    $ativo = true;
+                }
+            }
+        }
+        $edit = '';
+        $exclui = '';
+        $dados[$p]['acao'] = $edit . ' ' . $exclui . ' ' . $inativa;
+        $retor = $dados[$p];
+        $res = [];
+        for ($f = 0; $f < count($fields); $f++) {
+            // testa se o campo é uma data
+            if (strlen($fields[$f]) > 100) {
+                $fields[$f] = strip_tags($fields[$f]);
+            }
+            // debug($fields[$f], false);
+            if($fields[$f] === 'stt_nome'){
+                $retor[$fields[$f]] = fmtEtiquetaCorBst($retor['stt_cor'],$retor[$fields[$f]]);
+            }
+            // var_dump($retor[$fields[$f]]);
+            if(strlen($retor[$fields[$f]]) < 20){
+                $data = DateTime::createFromFormat('Y-m-d H:i:s', $retor[$fields[$f]]);
+                if ($data && $data->format('Y-m-d H:i:s') === $retor[$fields[$f]]) {
+                    $retor[$fields[$f]] = "<div class='text-center'>" .
+                    dataDbToBr($retor[$fields[$f]]) . "</div>";
+                } else {
+                    $data = DateTime::createFromFormat('Y-m-d', $retor[$fields[$f]]);
+                    if ($data && $data->format('Y-m-d') === $retor[$fields[$f]]) {
+                        $retor[$fields[$f]] = "<div class='text-center'>" . dataDbToBr($retor[$fields[$f]]) .
+                        "</div>";
+                    } else {
+                        // testa se o campo é numérico, se for alinha a direita
+                        if (is_numeric($retor[$fields[$f]]) > 0) {
+                            $partes = explode('.', $retor[$fields[$f]]);
+                            if (isset($partes[1]) && trim($partes[1]) != '') {
+                                if (strlen($partes[1]) > 2) {
+                                    $retor[$fields[$f]] = "<div class='text-end'>" .
+                                    floatToQuantia($retor[$fields[$f]], 3) . "</div>";
+                                } else {
+                                    $retor[$fields[$f]] = "<div class='text-end'>" .
+                                    floatToMoeda($retor[$fields[$f]]) . "</div>";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if(str_contains($fields[$f],'msg_cor')){
+                if(strlen($retor[$fields[$f]]) > 1){
+                    $retor[$fields[$f]] = fmtEtiquetaCorBst($retor[$fields[$f]]);
+                }
+            }
+    
+            array_push($res, $retor[$fields[$f]]);
+        }
+        // debug($res);
+        array_push($result, $res);
+    }
+    // debug($result);
     return $result;
 }
 
@@ -521,3 +693,20 @@ function monta_filtro($data_lis, $dados_base)
     // debug($filtros);
     return $filtros;
 }
+
+function envia_msg_ws($controler, $mensagem, $tipo = 'Servidor', $usuario = 0, $id = 0){
+    $client = new Client("wss://estoque.ceqnep.com.br/ws");
+    if($client){
+        log_message('info','Conectou ao Servidor');
+        $msg['msg'] = $mensagem;
+        $msg['controler'] = $controler;
+        $msg['tipo'] = $tipo;
+        $msg['usuario'] = $usuario;
+        $msg['id'] = $id;
+        // debug($msg);
+        $client->send(json_encode($msg));
+        log_message('info','Enviou Mensagem '.$msg['msg']);
+    }
+    // $client->close();
+    return;
+}    

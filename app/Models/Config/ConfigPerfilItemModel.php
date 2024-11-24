@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class ConfigPerfilItemModel extends Model
 {
-    protected $DBGroup          = 'dbConfig';
+    protected $DBGroup          = 'default';
 
     protected $table      = 'cfg_perfil_item';
     protected $primaryKey = 'pit_id';
@@ -29,7 +29,7 @@ class ConfigPerfilItemModel extends Model
 
     public function getItemPerfil($perfil)
     {
-        $db = db_connect('dbConfig');
+        $db = db_connect('default');
         $builder = $db->table('vw_cfg_perfil_item_relac');
         $builder->select('*');
         if ($perfil) {
@@ -42,16 +42,18 @@ class ConfigPerfilItemModel extends Model
 
     public function getItemPerfilClasse($perfil, $classe)
     {
-        $db = db_connect('dbConfig');
+        $db = db_connect('default');
         $builder = $db->table('vw_cfg_perfil_item_relac');
         $builder->select('*');
-        $builder->where('prf_id', $perfil);
+        if($perfil != 0){
+            $builder->where('prf_id', $perfil);
+        }
         $builder->groupStart();
         $builder->where('tel_nome', $classe);
         $builder->orWhere('tel_id', $classe);
         $builder->groupEnd();
         $ret = $builder->get()->getResultArray();
-        // d($this->db->getLastQuery());
+        // debug($this->db->getLastQuery());
         return $ret;
     }
 }

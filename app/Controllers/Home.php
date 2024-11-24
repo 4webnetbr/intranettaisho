@@ -125,9 +125,9 @@ class Home extends BaseController
                         }
                         $rots['rot_id']             = $emrota[$rt]['rot_id'];
                         $rots['rot_status']         = $emrota[$rt]['rot_status'];
-                        $rots['rot_data_criacao']   = data_br($emrota[$rt]['rot_data_criacao']);
-                        $rots['rot_data_saida']     = data_br($emrota[$rt]['rot_data_saida']);
-                        $rots['rot_data_final']     = data_br($emrota[$rt]['rot_data_final']);
+                        $rots['rot_data_criacao']   = dataDbToBr($emrota[$rt]['rot_data_criacao']);
+                        $rots['rot_data_saida']     = dataDbToBr($emrota[$rt]['rot_data_saida']);
+                        $rots['rot_data_final']     = dataDbToBr($emrota[$rt]['rot_data_final']);
                         $rots['rot_desc_status']     = $emrota[$rt]['rot_desc_status'];
                         $rots['mtb_cpf']            = $emrota[$rt]['mtb_cpf'];
                         $rots['mtb_nome']           = $emrota[$rt]['mtb_nome'];
@@ -136,9 +136,9 @@ class Home extends BaseController
                         $ct_pp = 0;
                         $rots['pedidos'][$ct_pp]['ped_id'] = $emrota[$rt]['ped_id'];
                         $rots['pedidos'][$ct_pp]['ped_numero'] = $emrota[$rt]['ped_numero'];
-                        $rots['pedidos'][$ct_pp]['pcp_inicio'] = data_br($emrota[$rt]['pcp_inicio']);
-                        $rots['pedidos'][$ct_pp]['pcp_final'] = data_br($emrota[$rt]['pcp_final']);
-                        $rots['pedidos'][$ct_pp]['ped_data'] = data_br($emrota[$rt]['ped_data']);
+                        $rots['pedidos'][$ct_pp]['pcp_inicio'] = dataDbToBr($emrota[$rt]['pcp_inicio']);
+                        $rots['pedidos'][$ct_pp]['pcp_final'] = dataDbToBr($emrota[$rt]['pcp_final']);
+                        $rots['pedidos'][$ct_pp]['ped_data'] = dataDbToBr($emrota[$rt]['ped_data']);
                         $rots['pedidos'][$ct_pp]['ped_hora'] = $emrota[$rt]['ped_hora'];
                         $rots['pedidos'][$ct_pp]['ped_valor_taxa'] = $emrota[$rt]['ped_valor_taxa'];
                         $rots['pedidos'][$ct_pp]['ped_status'] = $emrota[$rt]['ped_status'];
@@ -154,9 +154,9 @@ class Home extends BaseController
                         $ct_pp++;
                         $rots['pedidos'][$ct_pp]['ped_id'] = $emrota[$rt]['ped_id'];
                         $rots['pedidos'][$ct_pp]['ped_numero'] = $emrota[$rt]['ped_numero'];
-                        $rots['pedidos'][$ct_pp]['pcp_inicio'] = data_br($emrota[$rt]['pcp_inicio']);
-                        $rots['pedidos'][$ct_pp]['pcp_final'] = data_br($emrota[$rt]['pcp_final']);
-                        $rots['pedidos'][$ct_pp]['ped_data'] = data_br($emrota[$rt]['ped_data']);
+                        $rots['pedidos'][$ct_pp]['pcp_inicio'] = dataDbToBr($emrota[$rt]['pcp_inicio']);
+                        $rots['pedidos'][$ct_pp]['pcp_final'] = dataDbToBr($emrota[$rt]['pcp_final']);
+                        $rots['pedidos'][$ct_pp]['ped_data'] = dataDbToBr($emrota[$rt]['ped_data']);
                         $rots['pedidos'][$ct_pp]['ped_hora'] = $emrota[$rt]['ped_hora'];
                         $rots['pedidos'][$ct_pp]['ped_valor_taxa'] = $emrota[$rt]['ped_valor_taxa'];
                         $rots['pedidos'][$ct_pp]['ped_status'] = $emrota[$rt]['ped_status'];
