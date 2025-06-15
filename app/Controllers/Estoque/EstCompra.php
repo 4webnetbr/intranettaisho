@@ -13,7 +13,6 @@ use App\Models\Estoqu\EstoquPedidoModel;
 use App\Models\Estoqu\EstoquProdutoModel;
 use App\Models\Estoqu\EstoquUndMedidaModel;
 use DateTime;
-
 class EstCompra extends BaseController
 {
     public $data = [];
