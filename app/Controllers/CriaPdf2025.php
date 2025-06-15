@@ -38,8 +38,6 @@ class CriaPdf2025 extends BaseController
             $this->pdf->SetTitle(formata_texto('Pedido de Compra Nº: ' . $compra['com_id']));
             // $this->pdf->SetFooterCenter(formata_texto('Orçamento Nº: '.$orcam['orc_numanoversao'].' - '.$orcam['orc_ac']));
             $this->pdf->Add_Page('P', 'A4', 0);
-            // // $this->pdf->SetFillColor(220,230,241);
-            // // $this->pdf->SetFont('Arial','B',14);
             $dataem = dataDbToBr($compra['com_data']);
             $this->pdf->EtiqTexto('Pedido de Compra:', '', 'Arial', 11, 6, 0, 1, 0, 'L');
             $this->pdf->EtiqTexto('Emitido em:  ', '', 'Arial', 11, 6, 0, 0, 1, 'R');
