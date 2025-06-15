@@ -1,68 +1,65 @@
-# CodeIgniter 4 Application Starter
+# Intranet Taisho
 
-## What is CodeIgniter?
+Sistema interno desenvolvido para centralizar processos, controle de estoque e rotinas administrativas internas da rede Taisho.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+> Este repositório é utilizado exclusivamente como **repositório de código-fonte e controle de versão** (backup). O código **não é utilizado para deploy automático**.
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+---
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+## ⚙️ Tecnologias utilizadas
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+- PHP 8+
+- CodeIgniter 4
+- HTML5 + CSS3
+- Bootstrap
+- JavaScript (jQuery)
+- MariaDB / MySQL
+- Git + GitLens (VSCode)
 
-## Installation & updates
+---
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+## 📁 Estrutura principal do projeto
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+app/ # Controladores, Models e Views
+public/ # Front controller (index.php) e assets públicos
+docs/ # Documentação auxiliar
+tests/ # Scripts de testes
+writable/ # Diretórios temporários (cache, logs, sessões, uploads)
 
-## Setup
+yaml
+Copiar
+Editar
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+---
 
-## Important Change with index.php
+## 💾 Uso do Git
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+O Git é utilizado como:
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+- **Backup** regular das alterações
+- Histórico de versões do projeto
+- Comparação de mudanças com auxílio do **GitLens**
 
-**Please** read the user guide for a better explanation of how CI4 works!
+Todos os commits são feitos diretamente na branch `main`.
 
-## Repository Management
+---
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+## 🏷️ Versionamento
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+Tags são utilizadas para marcar versões ou estados importantes do sistema:
 
-## Server Requirements
+```bash
+git tag -a v2025.06.15 -m "Backup com estrutura atualizada da Intranet"
+git push origin v2025.06.15
 
-PHP version 8.1 or higher is required, with the following extensions installed:
+🔒 Observação
+Este repositório é privado. Não contém credenciais ou dados sensíveis.
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+👨‍💻 Autor
+Douglas Ferreira
+Analista de Sistemas – 4webnetbr
+github.com/4webnetbr
 
-> [!WARNING]
-> The end of life date for PHP 7.4 was November 28, 2022.
-> The end of life date for PHP 8.0 was November 26, 2023.
-> If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> The end of life date for PHP 8.1 will be November 25, 2024.
 
-Additionally, make sure that the following extensions are enabled in your PHP:
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+

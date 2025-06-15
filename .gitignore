@@ -125,3 +125,20 @@ nb-configuration.xml
 /phpunit*.xml
 /.phpunit.*.cache
 
+#-------------------------
+# Complementos sugeridos
+#-------------------------
+
+# Arquivos temporários de edição
+*.bak
+*.tmp
+*.temp
+*.swp
+
+# Node.js (caso use futuramente)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Composer lock (opcional)
+composer.lock
