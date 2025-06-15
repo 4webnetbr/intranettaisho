@@ -1,4 +1,7 @@
-<?php namespace App\Models;
+<?php
+
+namespace App\Models;
+
 use CodeIgniter\Model;
 
 class CommonModel extends Model
@@ -8,14 +11,15 @@ class CommonModel extends Model
     protected $useAutoIncremodt = true;
 
     protected $returnType       = 'array';
-    protected $allowedFields    = ['log_id',
-                                    'log_tabela',
-                                    'log_operacao',
-                                    'log_id_registro',
-                                    'log_id_usuario',
-                                    'log_data'
-                                ];
-                                
+    protected $allowedFields    = [
+        'log_id',
+        'log_tabela',
+        'log_operacao',
+        'log_id_registro',
+        'log_id_usuario',
+        'log_data'
+    ];
+
     /**
      * insertReg
      *
@@ -23,13 +27,60 @@ class CommonModel extends Model
      *  
      * @param string $table 
      * @param mixed $data 
-     * @return array
+     * @return int
      */
-    public function insertReg($table, $data){
-        $insert_id = $this->db->insert($table, $data);
-        
+    public function insertReg($grupo, $table, $data)
+    {
+        $db = db_connect($grupo);
+        $builder = $db->table($table);
+        try {
+            $ins = $builder->insert($data);
+            $insert_id = $db->insertID();
+        } catch (\Throwable $th) {
+            $insert_id = $th;
+        }
         return $insert_id;
     }
+
+    /**
+     * updateReg
+     *
+     * Insere o Registro na Tabela informada
+     *  
+     * @param string $table 
+     * @param mixed $data 
+     * @return int
+     */
+    public function updateReg($grupo, $table, $chave, $data)
+    {
+        $db = db_connect($grupo);
+        $builder = $db->table($table);
+        $builder->where($chave);
+
+        $update_id = $builder->update($data);
+        // $sql = $this->db->getLastQuery();
+        // debug($sql);        
+        return $update_id;
+    }
+
+    /**
+     * deleteReg
+     *
+     * deleta o Registro na Tabela informada
+     *  
+     * @param string $table 
+     * @param mixed $data 
+     * @return bool
+     */
+    public function deleteReg($grupo, $tabela, $chave)
+    {
+        $db = db_connect($grupo);
+
+        $query = $db->query("DELETE FROM " . $tabela . " WHERE " . $chave);
+
+        return true;
+    }
+
 
     /**
      * getFieldsTable
@@ -39,9 +90,10 @@ class CommonModel extends Model
      * @param mixed $table 
      * @return array
      */
-    public function getFieldsTable($table){
-        $fields = $this->db->getFieldData($table);     
-        
+    public function getFieldsTable($table)
+    {
+        $fields = $this->db->getFieldData($table);
+
         return $fields;
     }
 
@@ -55,7 +107,8 @@ class CommonModel extends Model
      * @param int    $registro
      * @return int
      */
-    public function insertLog($tabela, $operacao, $registro){
+    public function insertLog($tabela, $operacao, $registro)
+    {
         $sql_data = [
             'log_tabela'        => $tabela,
             'log_operacao'      => $operacao,
@@ -64,8 +117,22 @@ class CommonModel extends Model
             'log_data'          => date('Y-m-d H:i:s')
         ];
         $ins_id = $this->builder()->insert($sql_data);
-        
+
         return $ins_id;
+    }
+
+    public function getExiste($banco, $table, $chave)
+    {
+        $db = db_connect($banco);
+        $builder = $db->table($table);
+        $builder->select('*');
+        $builder->where($chave);
+
+        $ret = $builder->get()->getResultArray();
+
+        // $sql = $this->db->getLastQuery();
+        // debug($sql);        
+        return $ret;
     }
 
     public function getPostsSearch($banco, $table, $fields, $limit, $start, $search, $col, $dir)
@@ -100,5 +167,4 @@ class CommonModel extends Model
 
         return $ret;
     }
-
 }

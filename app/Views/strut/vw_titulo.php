@@ -7,7 +7,7 @@ if (!isset($desc_edicao)) {
   $heig = '3rem';
   $desc_edicao  = '';
 }
-// if (!isset($desc_metodo)){
+if (!isset($desc_metodo)){
   if ($metodo == 'index' || $metodo == '') {
     $ajuda = $regras_gerais;
     $desc_metodo = '';
@@ -21,19 +21,20 @@ if (!isset($desc_edicao)) {
     $ajuda = $regras_cadastro;
     $desc_metodo = 'Consulta de ';
   }
+  $desc_metodo = $desc_metodo . " " . $title;
   if (strlen($ajuda) > 5) {
     $mostra_ajuda = true;
   }
-// }
+}
 ?>
-<div id='title' class='title col-12 px-lg-4 px-1 bg-white '>
+<div id='title' class='title col-12 px-lg-4 px-1 bg-danger-subtle '>
   <div class='titulo col-lg-6 col-7 float-start text-nowrap'>
     <div class='d-block float-start col-1'  style='font-size: calc(1.275rem + 1.1vw);margin-top: -.3rem;'>
       <?=$icone;?>
     </div>
     <div class='d-inline-flex float-start col-11'>
       <?="<span id='legenda' style='font-size:calc(1.3rem + 0.3vw);line-height: " . $heig . "'>" .
-      $desc_metodo . " " . $title . "</span>";?>
+      $desc_metodo . "</span>";?>
     </div>
     <?
     if ($desc_edicao != '') {?>
@@ -52,7 +53,7 @@ if (!isset($desc_edicao)) {
     }
   // echo $metodo;
     if ($metodo == 'index'|| $metodo == ''){
-      if (strlen($bt_add) > 2 && strpbrk($permissao, 'A')){?>
+      if (strlen($bt_add) > 2 && strpos($permissao, 'A')){?>
         <button id="bt_add" class="btn btn-outline-primary bt-manut btn-sm mb-2 float-end add" 
             data-mdb-toggle="tooltip"
             data-mdb-placement="top" 
@@ -64,7 +65,7 @@ if (!isset($desc_edicao)) {
             <div class="align-items-start txt-bt-manut d-none"><?=$bt_add;?></div>
         </button>
   <?  }
-    } elseif ($metodo == 'filtro' || $metodo == 'show' ){?>
+    } elseif ($metodo == 'filtro' || $metodo == 'show' || $destino == '' ){?>
         <button id="bt_voltar" class="btn btn-outline-info bt-manut btn-sm mb-2 float-end" 
           data-mdb-toggle="tooltip"
           data-mdb-placement="top" 
@@ -76,7 +77,7 @@ if (!isset($desc_edicao)) {
           <div class="align-items-start txt-bt-manut">Voltar</div>
         </button>
   <?
-    } elseif ((strpbrk($permissao, 'A') || strpbrk($permissao, 'E')) && $erromsg == ''){?>
+    } elseif (($metodo == 'add' || $metodo == 'edit') && (strpos($permissao, 'A') || strpos($permissao, 'E')) && $erromsg == '' && $destino != ''){?>
         <button id="bt_cancelar" class="btn btn-outline-secondary bt-manut btn-sm mb-2 ms-1 float-end" 
           data-mdb-toggle="tooltip"
           data-mdb-placement="top" 

@@ -8,4 +8,14 @@ if (isset($log['operacao']) && $log['operacao'] != '') {
   </div>
 <?
 }?>
+<div id="stat_server" class="spinner-grow spinner-grow-sm " role="status" title="Servidor Conectado" onclick="executa_php()"></div>
+</div>
+<script>
+    function executa_php() { 
+        redirec_blank('/Utils/executa_php');
+        setInterval(function () {
+          location.reload();
+        }, 2000);
+    }
+  </script>
 <?=$this->endSection();?>

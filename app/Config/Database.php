@@ -27,9 +27,9 @@ class Database extends Config
     public array $default = [
         'DSN'      => '',
         'hostname' => 'localhost',
-        'username' => 'estoque_user',
-        'password' => 'n3hoUV3LwAIyE2gv8C55',
-        'database' => 'estoque_db',
+        'username' => 'taisho_userdb',
+        'password' => 'JePPiS@9wE9D6Qk#ZWtpIH',
+        'database' => 'taisho_gerentedb',
         'DBDriver' => 'MySQLi',
         'DBPrefix' => '',
         'pConnect' => false,
@@ -50,9 +50,78 @@ class Database extends Config
     public array $dbConfig = [
         'DSN'      => '',
         'hostname' => 'localhost',
-        'username' => 'estoque_user',
-        'password' => 'n3hoUV3LwAIyE2gv8C55',
-        'database' => 'config_ceqweb_db',
+        'username' => 'taisho_userdb',
+        'password' => 'JePPiS@9wE9D6Qk#ZWtpIH',
+        'database' => 'taisho_configdb',
+        'DBDriver' => 'MySQLi',
+        'DBPrefix' => '',
+        'pConnect' => false,
+        'DBDebug'  => true,
+        'charset'  => 'utf8',
+        'DBCollat' => 'utf8_general_ci',
+        'swapPre'  => '',
+        'encrypt'  => false,
+        'compress' => false,
+        'strictOn' => false,
+        'failover' => [],
+        'port'     => 3306,
+    ];
+
+    /**
+     * The config database connection.
+     */
+    public array $dbEstoque = [
+        'DSN'      => '',
+        'hostname' => 'localhost',
+        'username' => 'taisho_userdb',
+        'password' => 'JePPiS@9wE9D6Qk#ZWtpIH',
+        'database' => 'taisho_estoquedb',
+        'DBDriver' => 'MySQLi',
+        'DBPrefix' => '',
+        'pConnect' => false,
+        'DBDebug'  => true,
+        'charset'  => 'utf8',
+        'DBCollat' => 'utf8_general_ci',
+        'swapPre'  => '',
+        'encrypt'  => false,
+        'compress' => false,
+        'strictOn' => false,
+        'failover' => [],
+        'port'     => 3306,
+    ];
+
+    /**
+     * The config database connection.
+     */
+    public array $dbRh = [
+        'DSN'      => '',
+        'hostname' => 'localhost',
+        'username' => 'taisho_userdb',
+        'password' => 'JePPiS@9wE9D6Qk#ZWtpIH',
+        'database' => 'taisho_rhdb',
+        'DBDriver' => 'MySQLi',
+        'DBPrefix' => '',
+        'pConnect' => false,
+        'DBDebug'  => true,
+        'charset'  => 'utf8',
+        'DBCollat' => 'utf8_general_ci',
+        'swapPre'  => '',
+        'encrypt'  => false,
+        'compress' => false,
+        'strictOn' => false,
+        'failover' => [],
+        'port'     => 3306,
+    ];
+
+    /**
+     * The Delivery database connection.
+     */
+    public array $dbDelivery = [
+        'DSN'      => '',
+        'hostname' => 'localhost',
+        'username' => 'taisho_userdb',
+        'password' => 'JePPiS@9wE9D6Qk#ZWtpIH',
+        'database' => 'taisho_deliverydb',
         'DBDriver' => 'MySQLi',
         'DBPrefix' => '',
         'pConnect' => false,

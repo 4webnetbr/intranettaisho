@@ -21,7 +21,7 @@ class Filters extends BaseConfig
         'honeypot'      => Honeypot::class,
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
-		'loginFilter'	=> \App\Filters\loginFilter::class,
+        'loginFilter'    => \App\Filters\loginFilter::class,
     ];
 
     /**
@@ -29,22 +29,39 @@ class Filters extends BaseConfig
      * applied before and after every request.
      */
     public array $globals = [
-		'before' => [
-			'loginFilter' => [
-				'except' => [
-					'server',
-					'server/*',
-					'login',
-					'login/*',
-					'buscas/*',
-					'common/*',
-					'util/*',
-					'assets/*',
-				]
-			],
-			// 'honeypot',
-			// 'csrf',
-		],
+        'before' => [
+            'loginFilter' => [
+                'except' => [
+                    'server',
+                    'server/*',
+                    'login',
+                    'login/*',
+                    'buscas/*',
+                    'common/*',
+                    'util/*',
+                    'auth/*',
+                    'apiconfig/*',
+                    'apiestoque/*',
+                    'assets/*',
+                    'integracfy',
+                    'integracfy/*',
+                    'integracfyantes',
+                    'integracfyantes/*',
+                    'integraopinae',
+                    'integraopinae/*',
+                    'graph',
+                    'graph/*',
+                    'table',
+                    'table/*',
+                    'estcotforn',
+                    'estcotforn/*',
+                    'criapdf2025',
+                    'criapdf2025/*'
+                ]
+            ],
+            // 'honeypot',
+            // 'csrf',
+        ],
         'after' => [
             'toolbar',
             // 'honeypot',

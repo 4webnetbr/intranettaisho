@@ -357,13 +357,13 @@ select.selectpicker {
 .bootstrap-select.show-tick .dropdown-menu .selected span.check-mark {
   position: absolute;
   display: inline-block;
-  right: 15px;
+  left: 10px;
   top: 5px;
 }
 .bootstrap-select.show-tick .dropdown-menu li a span.text {
-  margin-right: 34px;
+  margin-left: 30px;
 }
-.bootstrap-select .bs-ok-default:after {
+.bootstrap-select .bs-ok-default:before {
   content: '';
   display: block;
   width: 0.5em;
