@@ -213,6 +213,7 @@ class EstCotacao extends BaseController
             $dados_compr[$dc]['d'] = '';
         }
 
+        
         $cotac = montaListaColunas($this->data, 'cot_id', $dados_compr, $campos[1], true);
         for ($cp = 0; $cp < count($cotac); $cp++) {
             $cont = $cotac[$cp];
