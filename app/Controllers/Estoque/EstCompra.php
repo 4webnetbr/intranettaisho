@@ -39,7 +39,6 @@ class EstCompra extends BaseController
     public $marca;
     public $bt_dup;
 
-
     /**
      * Construtor da Classe
      * construct
@@ -150,7 +149,6 @@ class EstCompra extends BaseController
         ];
         // cache()->save('compr', $compr, 60000);
         // }
-
         echo json_encode($compr);
     }
 
