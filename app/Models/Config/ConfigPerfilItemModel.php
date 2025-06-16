@@ -45,13 +45,15 @@ class ConfigPerfilItemModel extends Model
         $db = db_connect('dbConfig');
         $builder = $db->table('vw_cfg_perfil_item_relac');
         $builder->select('*');
-        $builder->where('prf_id', $perfil);
+        if($perfil != 0){
+            $builder->where('prf_id', $perfil);
+        }
         $builder->groupStart();
         $builder->where('tel_nome', $classe);
         $builder->orWhere('tel_id', $classe);
         $builder->groupEnd();
         $ret = $builder->get()->getResultArray();
-        // d($this->db->getLastQuery());
+        // debug($this->db->getLastQuery());
         return $ret;
     }
 }

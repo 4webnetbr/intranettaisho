@@ -572,6 +572,7 @@ class Campos
             $resp .= $this->crlabel();
         }
         $largura = $this->tamanho.'ch';
+        $maximo  = $this->maximo.'ch';
         if (session()->ismobile) {
             $largura = '';
         }
@@ -579,7 +580,8 @@ class Campos
         if ($this->tipo == 'cpf') {
             $hasvalid = ' has-validation';
         }
-        $resp .= "<div class='input-group mb-lg-1 mb-2 $hasvalid' style='width: auto !important; max-width: $largura !important;'>";
+        $resp .= "<div class='input-group mb-2 p-0 $hasvalid' style='width: auto !important; min-width: $largura !important; max-width: $maximo !important;'>";
+        // $resp .= "<div class='input-group mb-lg-1 mb-2 $hasvalid' style='width: auto !important; max-width: $largura !important;'>";
         $field = array(
             'type'  		=> $this->tipo,
             'name'  		=> $this->nome,
@@ -828,7 +830,7 @@ class Campos
         }
         $resp .= form_input($field);
         if ($this->tipo == 'password' || $this->tipo == 'senha') {
-            // $resp .= "<span name='show_password' class='input-group-text bi bi-eye-slash-fill show_password' id='ada_$this->nome' data-field='$this->nome'></span>";
+            $resp .= "<span name='show_password' class='input-group-text bi bi-eye-slash-fill show_password' id='ada_$this->nome' data-field='$this->nome'></span>";
         }
         if ($this->obrigatorio) {
             $resp .= "<div class='invalid-feedback'>";

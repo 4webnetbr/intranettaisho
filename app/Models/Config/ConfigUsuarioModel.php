@@ -5,11 +5,12 @@ namespace App\Models\Config;
 use App\Models\LogMonModel;
 use CodeIgniter\Model;
 
-class ConfigUsuarioModel extends Model
+class ConfigUsuarioModel extends Model 
 {
     protected $DBGroup          = 'dbConfig';
 
     protected $table            = 'cfg_usuario';
+    protected $view             = 'vw_cfg_usuario_relac';
     protected $primaryKey       = 'usu_id';
     protected $useAutoIncrement = true;
 
@@ -23,7 +24,8 @@ class ConfigUsuarioModel extends Model
                                     'usu_email',
                                     'prf_id',
                                     'usu_status',
-                                    'usu_dashboard'
+                                    'usu_dashboard',
+                                    'usu_empresa'
                                     ];
 
     protected $deletedField  = 'usu_excluido';

@@ -1,5 +1,8 @@
 <?php
   header("Set-Cookie: cross-site-cookie=whatever; SameSite=Strict;");
+  if(!isset($title)){
+    $title = $controler;
+  }
 ?>
 
 <!DOCTYPE html>
@@ -7,7 +10,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Estoque -::- CeqNep</title>
+    <title><?=APP_NAME?></title>
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/x-icon">
 
   <!-- Google Font: Source Sans Pro -->
@@ -36,7 +39,7 @@
   <!-- JQUERY -->
     <script src="<?=base_url('assets/jscript/jquery-3.6.3.js');?>"></script>
   <!-- Scripts personalizados -->
-    <script src="https://kit.fontawesome.com/eb647d7482.js" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/dcd9f31768.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js" integrity="sha512-oVbWSv2O4y1UzvExJMHaHcaib4wsBMS5tEP3/YkMP6GmkwRJAa79Jwsv+Y/w7w2Vb/98/Xhvck10LyJweB8Jsw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script src="<?=base_url('assets/jscript/my_default.js');?>"></script>

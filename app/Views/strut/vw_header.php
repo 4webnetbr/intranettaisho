@@ -1,6 +1,6 @@
 <!-- Section Header -->
 <?=$this->section('header');?>
-  <div class="row cols-12 bg-blue-dark h-100">
+  <div class="row cols-12 bg-gradient h-100">
     <div id='sistema' class='col-lg-2 col-4 m-auto p-1 text-center'>
       <a href="<?=site_url();?>" class='d-inline-block w-50'>
         <img src='<?=session()->logo.'?noc='.time();?>' class="img-thumbnail" />
