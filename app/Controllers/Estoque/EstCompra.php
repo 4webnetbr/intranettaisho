@@ -572,8 +572,9 @@ class EstCompra extends BaseController
             foreach ($dados['compras']['itens'] as $pedidoArray) {
                 foreach ($pedidoArray as $produtoArray) {
                     foreach ($produtoArray as $marcaArray) {
+                        // debug($marcaArray['marca']);
                         $mar_id  = $this->marca->getMarca($marcaArray['marca']);
-
+                        // debug($mar_id);
                         $dados_pro = [
                             'com_id'        => $com_id,
                             'pro_id'        => $marcaArray['produto'],
