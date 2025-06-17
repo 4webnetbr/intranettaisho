@@ -336,7 +336,7 @@ class EstFornecedor extends BaseController
         $ret = [];
         $dados = $this->request->getPost();
         if ($dados['for_pessoa'] == 'F') {
-            $cnpj = $dados['for_cpj'];
+            $cnpj = $dados['for_cpf'];
         } else {
             $cnpj = $dados['for_cnpj'];
         }
