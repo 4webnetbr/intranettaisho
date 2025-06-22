@@ -22,6 +22,7 @@ class Filters extends BaseConfig
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
         'loginFilter'    => \App\Filters\loginFilter::class,
+        'limpezaAuto'   => \App\Filters\LimpezaAutomatica::class,
     ];
 
     /**
@@ -59,6 +60,7 @@ class Filters extends BaseConfig
                     'criapdf2025/*'
                 ]
             ],
+            'limpezaAuto',
             // 'honeypot',
             // 'csrf',
         ],
