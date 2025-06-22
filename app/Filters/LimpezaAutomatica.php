@@ -20,7 +20,7 @@ class LimpezaAutomatica implements FilterInterface
         $this->limparArquivosVelhos(WRITEPATH . 'logs', 7);
 
         // Limpa sessions com +1 dia
-        $this->limparArquivosVelhos(WRITEPATH . 'session', 2);
+        $this->limparArquivosVelhos(WRITEPATH . 'session', 1);
 
         // Marca que já rodou hoje
         $this->registrarExecucao();
