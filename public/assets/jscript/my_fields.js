@@ -3279,3 +3279,38 @@ function checkRadioButtons(obj) {
     }
   }
 }
+
+function buscarProdutoPorCodBarras() {
+  const codigoBarras = jQuery("#mar_codigo")
+    .val()
+    .replace(/[^0-9]/g, "");
+
+  if (codigoBarras.length !== 13) {
+    boxAlert("Código de barras inválido. Deve conter 13 dígitos.", true, "");
+    return;
+  }
+
+  jQuery.ajax({
+    url: window.location.origin + "/buscas/buscacodbar",
+    type: "POST",
+    data: { codigo: codigoBarras },
+    dataType: "json",
+    success: function (res) {
+      if (res.erro) {
+        boxAlert(res.erro, true, "");
+        return;
+      }
+
+      // Aqui você pode usar os dados retornados como quiser
+      console.log("Produto encontrado:", res);
+
+      // Exemplo de uso:
+      jQuery("#nome_produto").val(res.nome);
+      jQuery("#marca_produto").val(res.marca);
+      jQuery("#apresentacao_produto").val(res.apresentacao);
+    },
+    error: function () {
+      boxAlert("Erro ao consultar o código de barras.", true, "");
+    },
+  });
+}

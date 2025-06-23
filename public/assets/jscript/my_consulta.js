@@ -715,7 +715,7 @@ function carrega_lista_cotacao_ant(obj, url, nome) {
   });
 }
 
-function carrega_lista_cotacao(obj, url, nome) {
+function carrega_lista_cotacao_marca(obj, url, nome) {
   bloqueiaTela();
   //   $fixo.html("").hide();
   //   var tabela = " tb_" + nome;
@@ -839,6 +839,189 @@ function carrega_lista_cotacao(obj, url, nome) {
             "</div>";
           linha +=
             '          <div class="d-inline-flex float-start col-2">' +
+            element["cof_id_" + f] +
+            element["cof_validade_" + f] +
+            "</div>";
+          linha +=
+            '          <div class="d-inline-flex float-start col-2">' +
+            element["cof_preco_" + f] +
+            "</div>";
+          linha +=
+            '          <div class="d-inline-flex float-start col-2">' +
+            element["com_quantia_" + f] +
+            "</div>";
+          linha +=
+            '          <div class="d-inline-flex float-start col-2">' +
+            element["com_previsao_" + f] +
+            "</div>";
+          linha += "</div>";
+        }
+      }
+      linha += "</div>";
+      linha += "</div>";
+      linha += "</div>";
+      jQuery("#accProdutos").html(linha);
+      jQuery(".selectpicker").selectpicker();
+      jQuery("#divTable").scrollTop(0);
+      itens_compra = [];
+      jQuery("#itens_tabela_compra").html("");
+
+      desBloqueiaTela();
+      const container = document.getElementById("divTable");
+
+      document.querySelectorAll(".accordion-button").forEach((button) => {
+        button.addEventListener("click", function () {
+          const targetCollapse = document.querySelector(this.dataset.bsTarget);
+
+          targetCollapse.addEventListener(
+            "shown.bs.collapse",
+            function () {
+              const item = targetCollapse.closest(".accordion-item");
+
+              // Calcula a posição do item em relação ao container
+              const offsetTop = item.offsetTop - 60;
+
+              // Scrolla o container para que o item fique no topo
+              container.scrollTo({
+                top: offsetTop,
+                behavior: "smooth",
+              });
+            },
+            { once: true }
+          );
+        });
+      });
+    },
+  });
+}
+
+function carrega_lista_cotacao(obj, url, nome) {
+  bloqueiaTela();
+  //   $fixo.html("").hide();
+  //   var tabela = " tb_" + nome;
+
+  param = jQuery("#empresa").val();
+  param2 = jQuery("#grc_id").val();
+
+  url = url + "?param=" + param + "&param2=" + param2;
+
+  jQuery.ajax({
+    type: "POST",
+    async: true,
+    dataType: "json",
+    url: url,
+    success: function (itens) {
+      prod = "";
+      linha = "";
+
+      for (let it = 0; it < itens.length; it++) {
+        const element = itens[it];
+        iddiv = element.pro_id;
+        if (element.pro_nome != prod) {
+          if (prod != "") {
+            linha += "</div>";
+            linha += "</div>";
+            linha += "</div>";
+            linha += "</div>";
+            linha += "</div>";
+          }
+          marca = "";
+          prod = element.pro_nome;
+          linha += '<div class="accordion-item">';
+          linha +=
+            '  <h2 class="accordion-header border border-botton-1" id="heading' +
+            iddiv +
+            '">';
+          linha +=
+            '      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse' +
+            iddiv +
+            '" aria-expanded="true" aria-controls="collapse' +
+            iddiv +
+            '">';
+          linha +=
+            '          <div class="col-4"><b>Produto</b><br>' +
+            element.pro_nome +
+            "</div>";
+          linha +=
+            '          <div class="col-2"><b>Data Solic</b><br>' +
+            element.ped_datains +
+            "</div>";
+          linha +=
+            '          <div class="col-2"><b>Quantia</b><br>' +
+            element.ped_qtia +
+            "</div>";
+          linha +=
+            '          <div class="col-2"><b>Sugestão</b><br>' +
+            element.ped_sugestao +
+            "</div>";
+          linha +=
+            '          <div class="col-2"><b>Und.</b><br>' +
+            element.und_sigla +
+            "</div>";
+          linha += "      </button>";
+          linha += "  </h2>";
+          linha +=
+            '  <div id="collapse' +
+            iddiv +
+            '" class="accordion-collapse collapse" aria-labelledby="heading' +
+            iddiv +
+            '" data-bs-parent="#accProdutos">';
+          linha +=
+            '      <div class="accordion-body p-1"  style="max-height:50vh; height:50vh; overflow-y: auto">';
+          linha += '      <div class="d-block float-start col-12 p-0 ">';
+          linha +=
+            '          <div class="d-inline-flex float-start col-3 fw-bold"><div class="col-12 text-center">Fornecedor</div></div>';
+          linha +=
+            '          <div class="d-inline-flex float-start col-2 fw-bold"><div class="col-12 text-center">Marca:</div></div>';
+          linha +=
+            '          <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">Validade</div></div>';
+          linha +=
+            '          <div class="d-inline-flex float-start col-2 fw-bold"><div class="col-12 text-center">Preço</div></div>';
+          linha +=
+            '          <div class="d-inline-flex float-start col-2 fw-bold"><div class="col-12 text-center">Quantia</div></div>';
+          linha +=
+            '          <div class="d-inline-flex float-start col-2 fw-bold"><div class="col-12 text-center">Prev. Entrega</div></div>';
+          linha += "      </div>";
+          linha +=
+            '      <div class="d-block float-start col-12 p-0" style="max-height:45vh; overflow-y: auto">';
+        }
+        for (f = 1; f < 11; f++) {
+          // if (marca != element.mar_id) {
+          //   if (marca != "") {
+          //     linha += "      </div>";
+          //     linha += "      </div>";
+          //   }
+          //   let classeParOuImpar = it % 2 === 0 ? "odd" : "even";
+          //   linha +=
+          //     '      <div class="d-block float-start col-12 p-0 border border-1 ' +
+          //     classeParOuImpar +
+          //     '">';
+          //   linha +=
+          //     '          <div class="d-block float-start col-1 fw-bold text-vertical fs-3" style="height: 50%; width:auto;">' +
+          //     element.mar_nome +
+          //     "<br>" +
+          //     element.mar_apresenta +
+          //     "</div>";
+          //   linha += '      <div class="d-block float-start col-12 p-0">';
+          //   marca = element.mar_id;
+          // }
+          linha += '      <div class="d-block float-start col-12 p-0">';
+          linha +=
+            '          <div class="d-inline-flex float-start col-3">' +
+            f +
+            " " +
+            element["pro_id_" + f] +
+            element["ped_id_" + f] +
+            element["cot_id_" + f] +
+            element["cop_id_" + f] +
+            element["for_id_" + f] +
+            "</div>";
+          linha +=
+            '          <div class="d-inline-flex float-start col-2">' +
+            element["mar_id_" + f] +
+            "</div>";
+          linha +=
+            '          <div class="d-inline-flex float-start col-1">' +
             element["cof_id_" + f] +
             element["cof_validade_" + f] +
             "</div>";

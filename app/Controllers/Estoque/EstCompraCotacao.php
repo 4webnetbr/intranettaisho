@@ -9,6 +9,7 @@ use App\Models\Config\ConfigEmpresaModel;
 use App\Models\Estoqu\EstoquCompraModel;
 use App\Models\Estoqu\EstoquFornecedorModel;
 use App\Models\Estoqu\EstoquGrupoCompraModel;
+use App\Models\Estoqu\EstoquMarcaModel;
 use App\Models\Estoqu\EstoquPedidoModel;
 use App\Models\Estoqu\EstoquProdutoModel;
 use App\Models\Estoqu\EstoquUndMedidaModel;
@@ -23,6 +24,7 @@ class EstCompraCotacao extends BaseController
     public $empresa;
     public $pedido;
     public $produto;
+    public $marca;
     public $grupocompra;
     public $dash_empresa;
     public $for_id;
@@ -71,6 +73,7 @@ class EstCompraCotacao extends BaseController
         $this->empresa       = new ConfigEmpresaModel();
         $this->pedido       = new EstoquPedidoModel();
         $this->produto       = new EstoquProdutoModel();
+        $this->marca       = new EstoquMarcaModel();
         $this->grupocompra  = new EstoquGrupoCompraModel();
         $this->unidades     = new EstoquUndMedidaModel();
         $this->data['scripts'] = 'my_consulta';
@@ -295,10 +298,10 @@ class EstCompraCotacao extends BaseController
         // $this->data['camposedit']   = $camposedit;
         $this->data['destino']         = '';
         $this->data['script']       = "<script>carrega_lista_cotacao('empresa', '" . $this->data['url_lista'] . "','" . $this->data['nome'] . "');</script>";
-        echo view('vw_add_compra_cotacao', $this->data);
+        echo view('vw_add_compra_cotacao_10', $this->data);
     }
 
-    public function listaadd()
+    public function listaaddantes()
     {
         $param = $_REQUEST['param'];
         $param2 = $_REQUEST['param2'];
@@ -340,6 +343,55 @@ class EstCompraCotacao extends BaseController
                 $ret[$dc]["cop_id_$i"]       = $this->cop_id;
                 $ret[$dc]["pro_id_$i"]       = $this->pro_id;
                 $ret[$dc]["mar_id_$i"]       = $this->mar_id;
+                $ret[$dc]["cof_id_$i"]       = $this->{"cof_id_$i"};
+            }
+        }
+
+        echo json_encode($ret);
+    }
+
+    public function listaadd()
+    {
+        $param = $_REQUEST['param'];
+        $param2 = $_REQUEST['param2'];
+
+        if ($param == 'undefined') {
+            $param = false;
+        }
+
+        $empresas = explode(',', $param);
+        $produtos = $this->pedido->getCotacaoProdutos($empresas[0], $param2);
+        // debug($produtos);
+        $ret = [];
+
+        foreach ($produtos as $dc => $prod) {
+            $ret[$dc] = [
+                'ped_id'        => $prod['ped_id'],
+                'pro_id'        => $prod['pro_id'],
+                'pro_nome'      => $prod['pro_nome'],
+                'ped_datains'   => dataDbToBr($prod['ped_datains']),
+                'ped_qtia'      => $prod['ped_qtia'],
+                'ped_sugestao'  => $prod['ped_sugestao'],
+                'und_sigla'     => $prod['und_sigla'],
+                // 'mar_id'        => $prod['mar_id'],
+                // 'mar_nome'      => $prod['mar_nome'],
+                // 'mar_apresenta' => $prod['mar_apresenta'],
+            ];
+
+            // Itera de 1 a 10 fornecedores
+            for ($i = 1; $i <= 10; $i++) {
+                $this->def_campos_forn($prod, $i, $dc);
+
+                $ret[$dc]["for_id_$i"]       = $this->{"for_id_$i"};
+                $ret[$dc]["cof_preco_$i"]    = $this->{"cof_preco_$i"};
+                $ret[$dc]["cof_validade_$i"] = $this->{"cof_validade_$i"};
+                $ret[$dc]["com_quantia_$i"]  = $this->cop_quantia;
+                $ret[$dc]["com_previsao_$i"] = $this->com_previsao;
+                $ret[$dc]["ped_id_$i"]       = $this->ped_id;
+                $ret[$dc]["cot_id_$i"]       = $this->cot_id;
+                $ret[$dc]["cop_id_$i"]       = $this->cop_id;
+                $ret[$dc]["pro_id_$i"]       = $this->pro_id;
+                $ret[$dc]["mar_id_$i"]       = $this->{"mar_id_$i"};
                 $ret[$dc]["cof_id_$i"]       = $this->{"cof_id_$i"};
             }
         }
@@ -490,18 +542,37 @@ class EstCompraCotacao extends BaseController
         $proco->valor = isset($dados['cop_id']) ? $dados['cop_id'] : '';
         $this->cop_id = $proco->crOculto();
 
-        $marca = new MyCampo('est_cotacao_fornec', 'mar_id');
-        $marca->ordem = $ord;
-        $marca->attrdata = $attr;
-        $marca->valor = isset($dados['mar_id']) ? $dados['mar_id'] : '';
-        $this->mar_id = $marca->crOculto();
-
         $proid = new MyCampo('est_pedido', 'pro_id');
         $proid->ordem = $ord;
         $proid->attrdata = $attr;
         $proid->valor = $dados['pro_id'];
         $this->pro_id = $proid->crOculto();
 
+
+
+        $marcs = [];
+        $chave = "mar_id_{$ord}";
+        if(isset($dados[$chave]) && $dados[$chave] != null){
+            $dados_mar = $this->marca->getMarca($dados[$chave]);
+        } else {
+            $dados_mar = $this->marca->getMarcaProd($dados['pro_id']);
+        }
+        $marcs = array_column($dados_mar, 'mar_nomecodbar', 'mar_id');
+        
+        $marc = new MyCampo('est_cotacao_fornec', 'mar_id');
+        $marc->valor = $marc->selecionado  = isset($dados[$chave]) ? $dados[$chave] : '';
+        $marc->ordem                = $ord;
+        $marc->attrdata             = $attr;
+        $marc->label                = '';
+        $marc->opcoes               = $marcs;
+        $marc->largura              = 30;
+        $marc->dispForm             = 'col-12';
+        // $marc->classep              = 'text-truncate';
+        $marc->leitura              = false;
+        if (isset($dados[$chave]) && $dados[$chave] != null) {
+            $marc->leitura = true;
+        }
+        $this->{$chave}             = $marc->crSelect();
 
         $fornec = [];
         $chave = "for_id_{$ord}";
@@ -512,7 +583,6 @@ class EstCompraCotacao extends BaseController
         }
 
         $busca = base_url('Buscas/buscaFornecedor');
-
         $forn                       = new MyCampo('est_cotacao_fornec', 'for_id');
         $forn->valor = $forn->selecionado  = isset($dados[$chave]) ? $dados[$chave] : '';
         $forn->ordem                = $ord;

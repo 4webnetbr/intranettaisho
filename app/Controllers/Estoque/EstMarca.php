@@ -247,6 +247,7 @@ class EstMarca extends BaseController {
         $codi->obrigatorio          = true;
         $codi->valor                = isset($dados['mar_codigo'])? $dados['mar_codigo']: '';
         $codi->leitura               = $show;
+        $codi->funcBlur             = 'buscarProdutoPorCodBarras()';
         $this->mar_codigo           = $codi->crInput();
 
         $medi                       = new MyCampo('est_marca','mar_apresenta');

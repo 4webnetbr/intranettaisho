@@ -1374,7 +1374,8 @@ class MyCampo
         $this->field = array(
             'name'          => $this->nome,
             'id'            => $this->id,
-            'class'         => " form-control form-select selectpicker $this->classep"
+            'class'         => " form-control form-select selectpicker $this->classep",
+            'data-dropup-auto' => 'false'
         );
         if (!isset($this->size) || $this->size == '') {
             $this->size = -1;

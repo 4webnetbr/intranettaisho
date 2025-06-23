@@ -57,6 +57,7 @@ class Buscas extends BaseController
         $this->setor                = new RechumSetorModel();
         $this->colaborador          = new RechumColaboradorModel();
         $this->holerite             = new RechumHoleriteModel();
+        helper('funcoes_helper');
     }
 
     public function busca_hierarquia()
@@ -556,5 +557,14 @@ class Buscas extends BaseController
         }
         echo json_encode($ret);
         exit;
+    }
+
+    public function buscaCodbar()
+    {
+        $codigo = $this->request->getPost('codigo');
+
+        $retorno = buscarProdutoOpenFoodFacts($codigo);
+
+        echo json_encode($retorno);
     }
 }

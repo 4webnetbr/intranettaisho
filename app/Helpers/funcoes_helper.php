@@ -1292,3 +1292,121 @@ function isValidDate($date, $format = 'Y-m-d')
     // Verifica se a data corresponde ao formato especificado
     return $dateTime && $dateTime->format($format) === $date;
 }
+
+
+function validarEAN13($codigo)
+{
+    $codigo = preg_replace('/[^0-9]/', '', $codigo);
+
+    if (strlen($codigo) !== 13) {
+        return false;
+    }
+
+    $soma = 0;
+    for ($i = 0; $i < 12; $i++) {
+        $digito = (int)$codigo[$i];
+        $soma += ($i % 2 === 0) ? $digito : $digito * 3;
+    }
+
+    $dvCalculado = (10 - ($soma % 10)) % 10;
+    $dvInformado = (int)$codigo[12];
+
+    return $dvCalculado === $dvInformado;
+}
+
+function traduzirEmbalagem($packaging)
+{
+    $mapa = [
+        'bag' => 'Saco',
+        'bar' => 'Barra',
+        'bottle' => 'Garrafa',
+        'box' => 'Caixa',
+        'bucket' => 'Balde',
+        'can' => 'Lata',
+        'carton' => 'Cartucho',
+        'case' => 'Estojo',
+        'container' => 'Recipiente',
+        'cup' => 'Copo',
+        'dispenser' => 'Dispenser',
+        'drum' => 'Tambor',
+        'film' => 'Filme',
+        'flask' => 'Frasco',
+        'flow-pack' => 'Embalagem Flow-Pack',
+        'glass' => 'Vidro',
+        'jar' => 'Pote',
+        'jug' => 'Jarro',
+        'net' => 'Rede',
+        'package' => 'Embalagem',
+        'pack' => 'Pacote',
+        'pail' => 'Balde',
+        'paper' => 'Papel',
+        'plastic' => 'Plástico',
+        'pot' => 'Pote',
+        'pouch' => 'Bolsa',
+        'roll' => 'Rolo',
+        'sachet' => 'Sachê',
+        'sleeve' => 'Manga',
+        'stick' => 'Bastão',
+        'strip' => 'Tira',
+        'tablet' => 'Comprimido',
+        'tray' => 'Bandeja',
+        'tube' => 'Tubo',
+        'tub' => 'Pote Grande',
+        'wrapper' => 'Invólucro',
+        'vacuum-pack' => 'Embalagem a Vácuo',
+        'skin' => 'Pele Protetora',
+        'tin' => 'Lata',
+        'envelope' => 'Envelope',
+        'multilayer' => 'Multicamadas',
+        'aerosol' => 'Aerossol',
+        'spray' => 'Spray',
+        'canister' => 'Recipiente de Pressão',
+    ];
+
+    $traduzida = [];
+
+    foreach (explode(',', $packaging) as $item) {
+        $item = trim($item);
+        $traduzida[] = $mapa[$item] ?? ucfirst($item);
+    }
+
+    return implode(', ', $traduzida);
+}
+
+function buscarProdutoOpenFoodFacts($codigoBarras)
+{
+    $codigoBarras = preg_replace('/[^0-9]/', '', $codigoBarras);
+
+    if (!validarEAN13($codigoBarras)) {
+        return ['erro' => 'Código de barras inválido (formato ou dígito verificador errado).'];
+    }
+
+    $url = "https://world.openfoodfacts.org/api/v0/product/{$codigoBarras}.json";
+    $resposta = @file_get_contents($url);
+
+    if ($resposta === false) {
+        return ['erro' => 'Erro ao consultar a API do Open Food Facts.'];
+    }
+
+    $dados = json_decode($resposta, true);
+
+    if ($dados['status'] === 0) {
+        return ['erro' => 'Produto não encontrado na base do Open Food Facts.'];
+    }
+
+    $produto = $dados['product'];
+
+    $quantidade = $produto['quantity'] ?? '';
+    $embalagemTraduzida = isset($produto['packaging']) ? traduzirEmbalagem($produto['packaging']) : '';
+
+    return [
+        'nome' => $produto['product_name'] ?? 'Sem nome',
+        'marca' => $produto['brands'] ?? 'Sem marca',
+        'quantidade' => $quantidade,
+        'embalagem' => $embalagemTraduzida ?: 'Sem info',
+        'apresentacao' => trim($quantidade . ' ' . $embalagemTraduzida),
+        'imagem' => $produto['image_url'] ?? null,
+        'categorias' => $produto['categories_tags'] ?? [],
+        'origem' => $produto['countries_tags'] ?? [],
+    ];
+}

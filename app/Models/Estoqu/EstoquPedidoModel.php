@@ -246,7 +246,8 @@ class EstoquPedidoModel extends Model
             $empresa           = explode(',', session()->get('usu_empresa'));
         }
         $db = db_connect('dbEstoque');
-        $builder = $db->table("vw_pedidos_com_cotacoes");
+        // $builder = $db->table("vw_pedidos_com_cotacoes");
+        $builder = $db->table("vw_produtos_cotados");
         $builder->select("*");
         // if ($ped_id) {
         //     $builder->where("pro.ped_id", $ped_id);
