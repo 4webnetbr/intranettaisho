@@ -77,7 +77,7 @@ class EstMarca extends BaseController {
 
             $dados_marcas = $this->marca->getMarca();
             // debug($dados_marcas);
-            for ($dm=0; $dm < count($dados_marcas) ; $dm++) { 
+            for ($dm=0; $dm < count($dados_marcas); $dm++) { 
                 // $dados_compr[$dc]['d'] = '';
                 $qtia = formataQuantia($dados_marcas[$dm]['mar_conversao']);
                 $dados_marcas[$dm]['mar_conversao'] = $qtia['qtia'];
@@ -106,14 +106,18 @@ class EstMarca extends BaseController {
         $this->def_campos();
 
         $secao[0] = 'Dados Gerais';
-        $campos[0][0] = $this->mar_id;
-        $campos[0][1] = $this->mar_codigo;
-        $campos[0][2] = $this->pro_id;
-        $campos[0][3] = $this->und_id;
-        $campos[0][4] = $this->mar_nome;
-        $campos[0][5] = $this->unm_id;
-        $campos[0][6] = $this->mar_apresenta;
-        $campos[0][7] = $this->mar_conversao;
+        $campos[0][0] = "<div class='col-6 float-start'>";
+        $campos[0][1] = $this->mar_id;
+        $campos[0][2] = $this->mar_codigo;
+        $campos[0][3] = $this->pro_id;
+        $campos[0][4] = $this->und_id;
+        $campos[0][5] = $this->mar_nome;
+        $campos[0][6] = $this->unm_id;
+        $campos[0][7] = $this->mar_apresenta;
+        $campos[0][8] = $this->mar_conversao;
+        $campos[0][9] = "</div>";
+        $campos[0][10] = "<div id='dados_produto' class='col-6 float-start'>";
+        $campos[0][11] = "</div>";
 
         $this->data['secoes'] = $secao;
         $this->data['campos'] = $campos;
@@ -150,14 +154,18 @@ class EstMarca extends BaseController {
         // debug($dados_marca);
         $this->def_campos($dados_marca, 0, $show);
         $secao[0] = 'Dados Gerais';
-        $campos[0][0] = $this->mar_id;
-        $campos[0][1] = $this->mar_codigo;
-        $campos[0][2] = $this->pro_id;
-        $campos[0][3] = $this->und_id;
-        $campos[0][4] = $this->mar_nome;
-        $campos[0][5] = $this->unm_id;
-        $campos[0][6] = $this->mar_apresenta;
-        $campos[0][7] = $this->mar_conversao;
+        $campos[0][0] = "<div class='col-6 float-start'>";
+        $campos[0][1] = $this->mar_id;
+        $campos[0][2] = $this->mar_codigo;
+        $campos[0][3] = $this->pro_id;
+        $campos[0][4] = $this->und_id;
+        $campos[0][5] = $this->mar_nome;
+        $campos[0][6] = $this->unm_id;
+        $campos[0][7] = $this->mar_apresenta;
+        $campos[0][8] = $this->mar_conversao;
+        $campos[0][9] = "</div>";
+        $campos[0][10] = "<div id='dados_produto' class='col-6 float-start'>";
+        $campos[0][11] = "</div>";
 
         $this->data['secoes'] = $secao;
         $this->data['campos'] = $campos;

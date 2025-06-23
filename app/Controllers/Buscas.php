@@ -563,7 +563,7 @@ class Buscas extends BaseController
     {
         $codigo = $this->request->getPost('codigo');
 
-        $retorno = buscarProdutoOpenFoodFacts($codigo);
+        $retorno = buscarProdutoMultiFonte($codigo);
 
         echo json_encode($retorno);
     }

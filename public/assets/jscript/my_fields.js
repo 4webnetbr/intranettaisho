@@ -3285,32 +3285,54 @@ function buscarProdutoPorCodBarras() {
     .val()
     .replace(/[^0-9]/g, "");
 
-  if (codigoBarras.length !== 13) {
-    boxAlert("Código de barras inválido. Deve conter 13 dígitos.", true, "");
-    return;
+  if (codigoBarras.length > 10) {
+    if (codigoBarras.length !== 13) {
+      boxAlert("Código de barras inválido. Deve conter 13 dígitos.", true, "");
+      return;
+    }
+
+    jQuery.ajax({
+      url: window.location.origin + "/buscas/buscacodbar",
+      type: "POST",
+      data: { codigo: codigoBarras },
+      dataType: "json",
+      success: function (res) {
+        if (res.erro) {
+          boxAlert(res.erro, true, "");
+          return;
+        }
+
+        // Aqui você pode usar os dados retornados como quiser
+        console.log("Produto encontrado:", res);
+
+        if (jQuery("#mar_nome").val() == "") {
+          jQuery("#mar_nome").val(res.marca);
+        }
+        if (jQuery("#mar_apresenta").val() == "") {
+          jQuery("#mar_apresenta").val(res.apresentacao);
+        }
+
+        text = "";
+        if (res.fonte != "") {
+          text += "<b>Fonte: </b>" + res.fonte + "<br>";
+          text += "<b>Produto: </b>" + res.nome + "<br>";
+          text += "<b>Marca: </b>" + res.marca + "<br>";
+          text += "<b>Apresentação: </b>" + res.apresentacao + "<br>";
+          if (res.imagem != null) {
+            text += '<img src="' + res.imagem + '" /><br>';
+          }
+        } else {
+          text += "<b>Produto" + res.nome + "</b><br>";
+        }
+        jQuery("#dados_produto").html(text);
+        // // Exemplo de uso:
+        // jQuery("#nome_produto").val(res.nome);
+        // jQuery("#marca_produto").val(res.marca);
+        // jQuery("#apresentacao_produto").val(res.apresentacao);
+      },
+      error: function () {
+        boxAlert("Erro ao consultar o código de barras.", true, "");
+      },
+    });
   }
-
-  jQuery.ajax({
-    url: window.location.origin + "/buscas/buscacodbar",
-    type: "POST",
-    data: { codigo: codigoBarras },
-    dataType: "json",
-    success: function (res) {
-      if (res.erro) {
-        boxAlert(res.erro, true, "");
-        return;
-      }
-
-      // Aqui você pode usar os dados retornados como quiser
-      console.log("Produto encontrado:", res);
-
-      // Exemplo de uso:
-      jQuery("#nome_produto").val(res.nome);
-      jQuery("#marca_produto").val(res.marca);
-      jQuery("#apresentacao_produto").val(res.apresentacao);
-    },
-    error: function () {
-      boxAlert("Erro ao consultar o código de barras.", true, "");
-    },
-  });
 }
