@@ -956,7 +956,7 @@ function carrega_lista_cotacao(obj, url, nome) {
             "</div>";
           linha +=
             '          <div class="col-2"><b>Und.</b><br>' +
-            element.und_sigla +
+            element.und_compra +
             "</div>";
           linha += "      </button>";
           linha += "  </h2>";
@@ -976,9 +976,15 @@ function carrega_lista_cotacao(obj, url, nome) {
           linha +=
             '          <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">Validade</div></div>';
           linha +=
-            '          <div class="d-inline-flex float-start col-2 fw-bold"><div class="col-12 text-center">Preço</div></div>';
+            '          <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">R$ ' +
+            element.und_consumo +
+            "</div></div>";
           linha +=
-            '          <div class="d-inline-flex float-start col-2 fw-bold"><div class="col-12 text-center">Quantia</div></div>';
+            '          <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">R$ ' +
+            element.und_compra +
+            "</div></div>";
+          linha +=
+            '          <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">Quantia</div></div>';
           linha +=
             '          <div class="d-inline-flex float-start col-2 fw-bold"><div class="col-12 text-center">Prev. Entrega</div></div>';
           linha += "      </div>";
@@ -1021,22 +1027,36 @@ function carrega_lista_cotacao(obj, url, nome) {
             element["mar_id_" + f] +
             "</div>";
           linha +=
-            '          <div class="d-inline-flex float-start col-1">' +
+            '          <div class="d-inline-flex float-start col-1 me-3">' +
             element["cof_id_" + f] +
             element["cof_validade_" + f] +
             "</div>";
           linha +=
-            '          <div class="d-inline-flex float-start col-2">' +
+            '          <div class="d-inline-flex float-start col-1 me-3">' +
             element["cof_preco_" + f] +
             "</div>";
           linha +=
-            '          <div class="d-inline-flex float-start col-2">' +
+            '          <div class="d-inline-flex float-start col-1 me-3">' +
+            element["cof_precoundcompra_" + f] +
+            "</div>";
+          linha +=
+            '          <div class="d-inline-flex float-start col-1 me-3">' +
             element["com_quantia_" + f] +
             "</div>";
           linha +=
             '          <div class="d-inline-flex float-start col-2">' +
             element["com_previsao_" + f] +
             "</div>";
+          if (
+            element["cof_observacao_" + f] != "" &&
+            element["cof_observacao_" + f] != null
+          ) {
+            linha +=
+              '          <div class="d-inline-flex float-start col-12 px-5 mb-3">' +
+              "Obs.: " +
+              element["cof_observacao_" + f] +
+              "</div>";
+          }
           linha += "</div>";
         }
       }

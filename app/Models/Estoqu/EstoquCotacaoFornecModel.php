@@ -25,8 +25,10 @@ class EstoquCotacaoFornecModel extends Model
         'mar_id',
         'for_id',
         'cof_preco',
+        'cof_precoundcompra',
         'cof_validade',
-
+        'cof_previsao',
+        'cof_observacao',
     ];
 
 

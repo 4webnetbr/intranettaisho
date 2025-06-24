@@ -2830,7 +2830,7 @@ function gravaCotacao(obj) {
   indice = obj.getAttribute("data-ordemcot");
   preco = converteMoedaFloat(
     jQuery(
-      "#cof_preco\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
+      "#cof_precoundcompra\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
     ).val()
   );
   if (parseFloat(preco) === 0) {
@@ -2842,16 +2842,19 @@ function gravaCotacao(obj) {
   valid = jQuery(
     "#cof_validade\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
   ).val();
-  if (cofid != "" && valid === "") {
-    return;
-  }
   forid = jQuery(
     "#for_id\\[" + ordem + "\\][data-ordemcot='" + indice + "'] :selected"
+  ).val();
+  marid = jQuery(
+    "#mar_id\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
   ).val();
   if (forid === null || forid === "") {
     boxAlert("Informe o Fornecedor", false, "", true, 1, false, "Atenção");
     obj.value = 0;
     // jQuery("#for_id\\[" + ordem + "\\]").focus();
+  } else if (marid === null || marid === "") {
+    boxAlert("Informe a Marca", false, "", true, 1, false, "Atenção");
+    obj.value = 0;
   } else {
     valid = jQuery(
       "#cof_validade\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
@@ -2862,12 +2865,14 @@ function gravaCotacao(obj) {
     proid = jQuery(
       "#pro_id\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
     ).val();
-    marid = jQuery(
-      "#mar_id\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
-    ).val();
     copid = jQuery(
       "#ctp_id\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
     ).val();
+    preco = converteMoedaFloat(
+      jQuery(
+        "#cof_preco\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
+      ).val()
+    );
     url = window.location.origin + "/EstCotacao/storeforn";
     jQuery.ajax({
       type: "POST",
@@ -2881,6 +2886,7 @@ function gravaCotacao(obj) {
         produto: proid,
         marca: marid,
         preco: preco,
+        precocompra: precocompra,
         cop_id: copid,
         cof_id: cofid,
       },
@@ -2913,178 +2919,136 @@ function gravaCotacao(obj) {
   }
 }
 
-let itens_compra = [];
+if (typeof itens_compra === "undefined") {
+  var itens_compra = [];
+}
 function gravaPreCompra(obj) {
-  ordem = obj.getAttribute("data-index");
-  indice = obj.getAttribute("data-ordemcot");
-  preco = converteMoedaFloat(
-    jQuery(
-      "#cof_preco\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
-    ).val()
+  const ordem = obj.getAttribute("data-index");
+  const indice = obj.getAttribute("data-ordemcot");
+  const preco = converteMoedaFloat(
+    jQuery(`#cof_precoundcompra\\[${ordem}\\][data-ordemcot='${indice}']`).val()
   );
-  quantia = parseFloat(
-    jQuery("#ped_qtia\\[" + ordem + "\\][data-ordemcot='" + indice + "']").val()
+  const quantia = parseFloat(
+    jQuery(`#ped_qtia\\[${ordem}\\][data-ordemcot='${indice}']`).val()
   );
-  if (parseFloat(preco) === 0) {
-    return;
-  }
-  forid = jQuery(
-    "#for_id\\[" + ordem + "\\][data-ordemcot='" + indice + "'] :selected"
+
+  if (preco === 0) return;
+
+  const forid = jQuery(
+    `#for_id\\[${ordem}\\][data-ordemcot='${indice}'] :selected`
   ).val();
-  if (forid === null || forid === "") {
+  if (!forid) {
     boxAlert("Informe o Fornecedor", false, "", true, 1, false, "Atenção");
     obj.value = 0;
-    // jQuery("#for_id\\[" + ordem + "\\]").focus();
-  } else {
-    pedid = jQuery(
-      "#ped_id\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
-    ).val();
-    proid = jQuery(
-      "#pro_id\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
-    ).val();
-    marid = jQuery(
-      "#mar_id\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
-    ).val();
-    previsao = jQuery(
-      "#com_previsao\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
-    ).val();
-    total = converteFloatMoeda(preco * quantia);
+    return;
+  }
 
-    var existe =
-      (itens_compra[forid] &&
-        itens_compra[forid]["itens"] &&
-        itens_compra[forid]["itens"][pedid] &&
-        itens_compra[forid]["itens"][pedid][proid] &&
-        itens_compra[forid]["itens"][pedid][proid][marid]) ||
-      undefined;
+  const pedid = jQuery(
+    `#ped_id\\[${ordem}\\][data-ordemcot='${indice}']`
+  ).val();
+  const proid = jQuery(
+    `#pro_id\\[${ordem}\\][data-ordemcot='${indice}']`
+  ).val();
+  const marid = jQuery(
+    `#mar_id\\[${ordem}\\][data-ordemcot='${indice}']`
+  ).val();
+  const previsao = jQuery(
+    `#com_previsao\\[${ordem}\\][data-ordemcot='${indice}']`
+  ).val();
+  const total = converteFloatMoeda(preco * quantia);
 
-    if (existe === undefined) {
-      fornome = jQuery(
-        "#for_id\\[" + ordem + "\\][data-ordemcot='" + indice + "'] :selected"
-      ).text();
-      minimo = 0;
-      url = window.location.origin + "/Buscas/buscaDadosFornecedor";
-      var datarr = new Array();
-      datarr[0] = {};
-      datarr[0].valor = forid;
-      jQuery.ajax({
-        type: "POST",
-        async: false,
-        dataType: "json",
-        url: url,
-        data: { campo: datarr },
-        success: function (retorno) {
-          minimo = retorno["for_minimo"] ?? 0;
-        },
-      });
-      if (!itens_compra[forid])
-        itens_compra[forid] = {
-          forid: forid,
-          nome: fornome,
-          minimo: minimo,
-          itens: [],
-        };
-      if (!itens_compra[forid]["itens"][pedid])
-        itens_compra[forid]["itens"][pedid] = {};
-      if (!itens_compra[forid]["itens"][pedid][proid])
-        itens_compra[forid]["itens"][pedid][proid] = {};
-      if (!itens_compra[forid]["itens"][pedid][proid][marid])
-        itens_compra[forid]["itens"][pedid][proid][marid] = {};
+  const itemExists =
+    itens_compra?.[forid]?.itens?.[pedid]?.[proid]?.[marid] !== undefined;
 
-      itens_compra[forid]["itens"][pedid][proid][marid] = {
-        ordem: ordem,
-        indice: indice,
-        pedido: pedid,
-        produto: proid,
-        marca: marid,
-        quantia: quantia,
-        previsao: previsao,
-        valor: preco,
-        total: total,
-      };
-    } else {
-      if (quantia === 0) {
-        // Verifica se a estrutura existe antes de tentar apagar
-        if (itens_compra?.[forid]?.itens?.[pedid]?.[proid]?.[marid]) {
-          delete itens_compra[forid].itens[pedid][proid][marid];
+  if (quantia === 0) {
+    if (!itemExists) return; // Se não existe, não faz nada
 
-          // Se não houver mais marcas para o produto
-          if (
-            Object.keys(itens_compra[forid].itens[pedid][proid]).length === 0
-          ) {
-            delete itens_compra[forid].itens[pedid][proid];
-          }
+    // Remove o item
+    delete itens_compra[forid].itens[pedid][proid][marid];
 
-          // Se não houver mais produtos no pedido
-          if (Object.keys(itens_compra[forid].itens[pedid]).length === 0) {
-            delete itens_compra[forid].itens[pedid];
-          }
-
-          // Se não houver mais pedidos no fornecedor
-          if (Object.keys(itens_compra[forid].itens).length === 0) {
-            delete itens_compra[forid].itens;
-            delete itens_compra[forid];
-          }
-
-          // Se o fornecedor ficou vazio
-          // if (Object.keys(itens_compra[forid]).length === 0) {
-          // }
-        }
-      } else {
-        total = converteFloatMoeda(preco * quantia);
-        itens_compra[forid]["itens"][pedid][proid][marid] = {
-          ordem: ordem,
-          indice: indice,
-          pedido: pedid,
-          produto: proid,
-          marca: marid,
-          quantia: quantia,
-          previsao: previsao,
-          valor: preco,
-          total: total,
-        };
-      }
+    if (Object.keys(itens_compra[forid].itens[pedid][proid]).length === 0)
+      delete itens_compra[forid].itens[pedid][proid];
+    if (Object.keys(itens_compra[forid].itens[pedid]).length === 0)
+      delete itens_compra[forid].itens[pedid];
+    if (Object.keys(itens_compra[forid].itens).length === 0) {
+      delete itens_compra[forid].itens;
+      delete itens_compra[forid];
     }
-    jQuery("#itens_tabela_compra").html("");
-    itens_compra.forEach((element) => {
-      itens = Object.keys(element["itens"]).length;
-      forid = element["forid"];
-      total = somarValores(itens_compra[forid]);
-      total = converteFloatMoeda(total);
-      minimo = converteFloatMoeda(element["minimo"]);
-      linha = "";
-      linha += "<tr>";
-      linha += "<td style='text-align:left'>" + element["nome"] + "</td>";
-      linha += "<td>" + itens + "</td>";
-      linha += "<td style='text-align:right'>" + total + "</td>";
-      linha += "<td style='text-align:right'>" + minimo + "</td>";
-      if (converteMoedaFloat(total) > parseFloat(element["minimo"])) {
-        // Montagem do botão
-        // linha += `<td><button class='btn btn-success' data-element='${JSON.stringify(element).replace(/'/g, '&#39;')}' onclick='gravaCompraCot(this)'>Gerar Pedido</button></td>`;
-        let safeElement = structuredClone(element); // clona para não afetar o original
 
-        // Força a estrutura de 'itens' a ser um objeto com chaves string
-        safeElement["itens"] = Object.entries(safeElement["itens"]).reduce(
-          (obj, [k, v]) => {
-            obj[String(k)] = v;
-            return obj;
-          },
-          {}
-        );
+    return;
+  }
 
-        linha += `<td><button class='btn btn-success' data-element='${JSON.stringify(
-          safeElement
-        ).replace(
-          /'/g,
-          "&#39;"
-        )}' onclick='gravaCompraCot(this)'>Gerar Pedido</button></td>`;
-        // linha += "<td><button class='btn btn-success' onclick='gravaCompraCot(" + element + ")'>Gerar Pedido</button>   </td>";
-      } else {
-        linha += "<td>   </td>";
-      }
-      linha += "</tr>";
-      jQuery("#itens_tabela_compra").append(linha);
+  if (!itemExists) {
+    const fornome = jQuery(
+      `#for_id\\[${ordem}\\][data-ordemcot='${indice}'] :selected`
+    ).text();
+    let minimo = 0;
+
+    jQuery.ajax({
+      type: "POST",
+      async: false,
+      dataType: "json",
+      url: `${window.location.origin}/Buscas/buscaDadosFornecedor`,
+      data: { campo: [{ valor: forid }] },
+      success: (retorno) => {
+        minimo = retorno["for_minimo"] ?? 0;
+      },
     });
+
+    if (!itens_compra[forid]) {
+      itens_compra[forid] = { forid, nome: fornome, minimo, itens: {} };
+    }
+
+    itens_compra[forid].itens[pedid] = itens_compra[forid].itens[pedid] || {};
+    itens_compra[forid].itens[pedid][proid] =
+      itens_compra[forid].itens[pedid][proid] || {};
+  }
+
+  // Atualiza ou insere item
+  itens_compra[forid].itens[pedid][proid][marid] = {
+    ordem,
+    indice,
+    pedido: pedid,
+    produto: proid,
+    marca: marid,
+    quantia,
+    previsao,
+    valor: preco,
+    total,
+  };
+
+  // Atualiza tabela de itens
+  jQuery("#itens_tabela_compra").html("");
+  for (const fornecedor of Object.values(itens_compra)) {
+    const itensCount = Object.keys(fornecedor.itens).length;
+    const totalFornecedor = converteFloatMoeda(
+      somarValores(itens_compra[fornecedor.forid])
+    );
+    const minimo = converteFloatMoeda(fornecedor.minimo);
+
+    let linha = `<tr>
+      <td style='text-align:left'>${fornecedor.nome}</td>
+      <td>${itensCount}</td>
+      <td style='text-align:right'>${totalFornecedor}</td>
+      <td style='text-align:right'>${minimo}</td>`;
+
+    if (converteMoedaFloat(totalFornecedor) > parseFloat(fornecedor.minimo)) {
+      const safeElement = structuredClone(fornecedor);
+      safeElement.itens = Object.fromEntries(
+        Object.entries(safeElement.itens).map(([k, v]) => [String(k), v])
+      );
+      linha += `<td><button class='btn btn-success' data-element='${JSON.stringify(
+        safeElement
+      ).replace(
+        /'/g,
+        "&#39;"
+      )}' onclick='gravaCompraCot(this)'>Gerar Pedido</button></td>`;
+    } else {
+      linha += "<td></td>";
+    }
+
+    linha += "</tr>";
+    jQuery("#itens_tabela_compra").append(linha);
   }
 }
 
@@ -3107,9 +3071,51 @@ function somarValores(fornecedor) {
 
 function gravaCompraCot(obj) {
   const element = JSON.parse(obj.getAttribute("data-element"));
-  console.log(element);
-  empr = jQuery("#empresa").val();
-  url = "/EstCompra/storecot";
+
+  // Remove itens com quantia = 0
+  for (let pedido in element.itens) {
+    for (let produto in element.itens[pedido]) {
+      for (let marca in element.itens[pedido][produto]) {
+        const item = element.itens[pedido][produto][marca];
+        if (item.quantia === 0) {
+          delete element.itens[pedido][produto][marca];
+        }
+      }
+
+      if (Object.keys(element.itens[pedido][produto]).length === 0) {
+        delete element.itens[pedido][produto];
+      }
+    }
+
+    if (Object.keys(element.itens[pedido]).length === 0) {
+      delete element.itens[pedido];
+    }
+  }
+
+  // Verifica se algum item tem mar_id vazio ou nulo
+  for (let pedido in element.itens) {
+    for (let produto in element.itens[pedido]) {
+      for (let marca in element.itens[pedido][produto]) {
+        const item = element.itens[pedido][produto][marca];
+        if (!item.marca) {
+          boxAlert(
+            `Produto sem marca selecionada.`,
+            false,
+            "",
+            true,
+            1,
+            false,
+            "Atenção"
+          );
+          return;
+        }
+      }
+    }
+  }
+
+  const empr = jQuery("#empresa").val();
+  const url = "/EstCompraCotacao/storecot";
+
   jQuery.ajax({
     type: "POST",
     async: true,
@@ -3124,127 +3130,44 @@ function gravaCompraCot(obj) {
           for (let produto in element.itens[pedido]) {
             for (let marca in element.itens[pedido][produto]) {
               const item = element.itens[pedido][produto][marca];
-              console.log("Ordem:", item.ordem, "Índice:", item.indice);
-              jQuery(
-                "#for_id\\[" +
-                  item.ordem +
-                  "\\][data-ordemcot='" +
-                  item.indice +
-                  "']"
-              ).attr("disabled", "disabled");
-              jQuery(
-                "#for_id\\[" +
-                  item.ordem +
-                  "\\][data-ordemcot='" +
-                  item.indice +
-                  "']"
-              ).attr("readonly", "readonly");
-              jQuery(
-                "#cof_id\\[" +
-                  item.ordem +
-                  "\\][data-ordemcot='" +
-                  item.indice +
-                  "']"
-              ).val(retorno.ok);
-              jQuery(
-                "#for_id\\[" +
-                  item.ordem +
-                  "\\][data-ordemcot='" +
-                  item.indice +
-                  "']"
-              )
+
+              const seletor = (id) =>
+                `#${id}\\[${item.ordem}\\][data-ordemcot='${item.indice}']`;
+
+              jQuery(seletor("for_id")).attr({
+                disabled: true,
+                readonly: true,
+              });
+              jQuery(seletor("cof_id")).val(retorno.ok);
+              jQuery(seletor("for_id"))
                 .next("button")
                 .attr("aria-disabled", "true")
                 .addClass("disabled");
-              jQuery(
-                "#cof_preco\\[" +
-                  item.ordem +
-                  "\\][data-ordemcot='" +
-                  item.indice +
-                  "']"
-              ).attr("disabled", "disabled");
-              jQuery(
-                "#cof_preco\\[" +
-                  item.ordem +
-                  "\\][data-ordemcot='" +
-                  item.indice +
-                  "']"
-              ).attr("readonly", "readonly");
-              jQuery(
-                "#ped_qtia\\[" +
-                  item.ordem +
-                  "\\][data-ordemcot='" +
-                  item.indice +
-                  "']"
-              ).attr("disabled", "disabled");
-              jQuery(
-                "#ped_qtia\\[" +
-                  item.ordem +
-                  "\\][data-ordemcot='" +
-                  item.indice +
-                  "']"
-              ).attr("readonly", "readonly");
-              jQuery(
-                "#com_previsao\\[" +
-                  item.ordem +
-                  "\\][data-ordemcot='" +
-                  item.indice +
-                  "']"
-              ).attr("disabled", "disabled");
-              jQuery(
-                "#com_previsao\\[" +
-                  item.ordem +
-                  "\\][data-ordemcot='" +
-                  item.indice +
-                  "']"
-              ).attr("readonly", "readonly");
-              jQuery(
-                "#cof_validade\\[" +
-                  item.ordem +
-                  "\\][data-ordemcot='" +
-                  item.indice +
-                  "']"
-              ).attr("disabled", "disabled");
-              jQuery(
-                "#cof_validade\\[" +
-                  item.ordem +
-                  "\\][data-ordemcot='" +
-                  item.indice +
-                  "']"
-              ).attr("readonly", "readonly");
-              let div = jQuery(
-                "#cof_validade\\[" +
-                  item.ordem +
-                  "\\][data-ordemcot='" +
-                  item.indice +
-                  "']"
-              )
-                .parents()
-                .eq(3); // sobe 3 níveis: 0 -> pai, 1 -> avô, 2 -> bisavô
 
-              // let div = jQuery(
-              //   "#cof_validade\\[" +
-              //     item.ordem +
-              //     "\\][data-ordemcot='" +
-              //     item.indice +
-              //     "']"
-              // ).closest("div");
-              div.addClass("tdComprado");
+              [
+                "cof_preco",
+                "cof_precoundcompra",
+                "ped_qtia",
+                "com_previsao",
+                "cof_validade",
+              ].forEach((field) => {
+                jQuery(seletor(field)).attr({ disabled: true, readonly: true });
+              });
+
+              jQuery(seletor("cof_validade"))
+                .parents()
+                .eq(3)
+                .addClass("tdComprado");
               jQuery(obj).text("Comprado").prop("disabled", true);
-              let url =
-                window.location.origin +
-                "/CriaPdf2025/PedidoCompra/" +
-                retorno.com_id;
-              redirec_blank(url);
+
+              const pdfUrl = `${window.location.origin}/CriaPdf2025/PedidoCompra/${retorno.com_id}`;
+              redirec_blank(pdfUrl);
             }
           }
         }
+
         jQuery(".toast-body").html(retorno.msg);
-        jQuery(".toast").toast({
-          delay: 3000,
-          animation: true,
-        });
-        jQuery(".toast").toast("show");
+        jQuery(".toast").toast({ delay: 3000, animation: true }).toast("show");
       }
     },
   });
@@ -3315,11 +3238,12 @@ function buscarProdutoPorCodBarras() {
         text = "";
         if (res.fonte != "") {
           text += "<b>Fonte: </b>" + res.fonte + "<br>";
-          text += "<b>Produto: </b>" + res.nome + "<br>";
+          text += "<b>Produto: </b>" + res.descricao + "<br>";
           text += "<b>Marca: </b>" + res.marca + "<br>";
           text += "<b>Apresentação: </b>" + res.apresentacao + "<br>";
           if (res.imagem != null) {
-            text += '<img src="' + res.imagem + '" /><br>';
+            text +=
+              '<img src="' + res.imagem + '" style="max-width:90%" /><br>';
           }
         } else {
           text += "<b>Produto" + res.nome + "</b><br>";

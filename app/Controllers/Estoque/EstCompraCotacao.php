@@ -372,7 +372,9 @@ class EstCompraCotacao extends BaseController
                 'ped_datains'   => dataDbToBr($prod['ped_datains']),
                 'ped_qtia'      => $prod['ped_qtia'],
                 'ped_sugestao'  => $prod['ped_sugestao'],
-                'und_sigla'     => $prod['und_sigla'],
+                // 'und_sigla'     => $prod['und_sigla'],
+                'und_consumo'       => $prod['und_sigla'],
+                'und_compra'       => $prod['und_sigla_compra'],
                 // 'mar_id'        => $prod['mar_id'],
                 // 'mar_nome'      => $prod['mar_nome'],
                 // 'mar_apresenta' => $prod['mar_apresenta'],
@@ -382,8 +384,10 @@ class EstCompraCotacao extends BaseController
             for ($i = 1; $i <= 10; $i++) {
                 $this->def_campos_forn($prod, $i, $dc);
 
+                
                 $ret[$dc]["for_id_$i"]       = $this->{"for_id_$i"};
                 $ret[$dc]["cof_preco_$i"]    = $this->{"cof_preco_$i"};
+                $ret[$dc]["cof_precoundcompra_$i"]    = $this->{"cof_precoundcompra_$i"};
                 $ret[$dc]["cof_validade_$i"] = $this->{"cof_validade_$i"};
                 $ret[$dc]["com_quantia_$i"]  = $this->cop_quantia;
                 $ret[$dc]["com_previsao_$i"] = $this->com_previsao;
@@ -393,6 +397,7 @@ class EstCompraCotacao extends BaseController
                 $ret[$dc]["pro_id_$i"]       = $this->pro_id;
                 $ret[$dc]["mar_id_$i"]       = $this->{"mar_id_$i"};
                 $ret[$dc]["cof_id_$i"]       = $this->{"cof_id_$i"};
+                $ret[$dc]["cof_observacao_$i"]       = $prod["cof_observacao_$i"];
             }
         }
 
@@ -552,7 +557,7 @@ class EstCompraCotacao extends BaseController
 
         $marcs = [];
         $chave = "mar_id_{$ord}";
-        if(isset($dados[$chave]) && $dados[$chave] != null){
+        if(isset($dados[$chave]) && $dados[$chave] != null && $dados[$chave] != 0){
             $dados_mar = $this->marca->getMarca($dados[$chave]);
         } else {
             $dados_mar = $this->marca->getMarcaProd($dados['pro_id']);
@@ -560,16 +565,16 @@ class EstCompraCotacao extends BaseController
         $marcs = array_column($dados_mar, 'mar_nomecodbar', 'mar_id');
         
         $marc = new MyCampo('est_cotacao_fornec', 'mar_id');
-        $marc->valor = $marc->selecionado  = isset($dados[$chave]) ? $dados[$chave] : '';
+        $marc->valor                = $marc->selecionado  = isset($dados[$chave]) ? $dados[$chave] : '';
         $marc->ordem                = $ord;
         $marc->attrdata             = $attr;
         $marc->label                = '';
         $marc->opcoes               = $marcs;
         $marc->largura              = 30;
         $marc->dispForm             = 'col-12';
-        // $marc->classep              = 'text-truncate';
+        $marc->classep              = 'text-nowrap';
         $marc->leitura              = false;
-        if (isset($dados[$chave]) && $dados[$chave] != null) {
+        if (isset($dados[$chave]) && $dados[$chave] != null && $dados[$chave] != 0) {
             $marc->leitura = true;
         }
         $this->{$chave}             = $marc->crSelect();
@@ -630,9 +635,23 @@ class EstCompraCotacao extends BaseController
         }
         $this->{$chave}            = $val->crInput();
 
+        $chave = "cof_precoundcompra_{$ord}";
+        $val                        = new MyCampo('est_cotacao_fornec', 'cof_precoundcompra');
+        $val->label                 = '';
+        $val->ordem                 = $ord;
+        $val->attrdata = $attr;
+        $val->largura               = 20;
+        $val->valor                 = isset($dados[$chave]) ? $dados[$chave] : '0';
+        $val->dispForm              = 'col-12';
+        $val->funcBlur              = 'gravaCotacao(this)';
+        $val->place                 = '';
+        if (isset($dados[$chave]) && $dados[$chave] != null) {
+            $val->leitura = true;
+        }
+        $this->{$chave}            = $val->crInput();
+
         $chave = "cof_validade_{$ord}";
         $val                        = new MyCampo('est_cotacao_fornec', 'cof_validade');
-        // $val->label                 = '';
         $val->ordem                 = $ord;
         $val->label                 = '';
         $val->attrdata = $attr;
@@ -653,16 +672,32 @@ class EstCompraCotacao extends BaseController
         }
         $this->{$chave}            = $val->crInput();
 
-        $previsao = new DateTime("+2 days");
+        $previsao = new DateTime("+1 days");
+        $chave = "cof_previsao_{$ord}";
+        if(isset($dados[$chave]) && $dados[$chave] != ''){
+            $previsao = new DateTime("+".$dados[$chave]." days");
+        }
         $pre                        = new MyCampo('est_compra', 'com_previsao');
         $pre->valor                 = isset($dados['com_previsao']) ? $dados['com_previsao'] : $previsao->format('Y-m-d');
         $pre->ordem                 = $ord;
         $pre->label                 = '';
-        $pre->attrdata = $attr;
+        $pre->attrdata              = $attr;
         $pre->largura               = 30;
         $pre->dispForm              = 'col-12 justify-content-center';
         $val->classediv              = 'text-center';
         $this->com_previsao         = $pre->crInput();
+
+        $chave = "cof_observacao_{$ord}";
+        $obs                        = new MyCampo('est_cotacao_fornec', 'cof_observacao');
+        $obs->label                 = '';
+        $obs->ordem                 = $ord;
+        $obs->attrdata = $attr;
+        $obs->largura               = 20;
+        $obs->valor                 = isset($dados[$chave]) ? $dados[$chave] : '0';
+        $obs->dispForm              = 'col-12';
+        $obs->place                 = '';
+        $obs->leitura               = true;
+        $this->{$chave}             = $val->crInput();
     }
 
     /**
@@ -882,6 +917,104 @@ class EstCompraCotacao extends BaseController
         $tot->valor                 = $dados['cop_total'];
         $tot->leitura               = true;
         $this->cop_total            = $tot->crInput();
+    }
+
+    /**
+     * Gravação
+     * store
+     *
+     * @return void
+     */
+    public function storecot()
+    {
+        $ret = ['erro' => false];
+        $dados = $this->request->getPost();
+        $erros = [];
+        $totalGeral = 0;
+
+        // Verificação mínima de campos obrigatórios
+        if (empty($dados['compras']['itens'])) {
+            $ret['erro'] = true;
+            $ret['msg'] = 'Dados incompletos enviados.';
+            return $this->response->setJSON($ret);
+        }
+
+        // Somar o total de todos os itens
+        foreach ($dados['compras']['itens'] as $pedido) {
+            foreach ($pedido as $produto) {
+                foreach ($produto as $marca) {
+                    $valor = moedaToFloat($marca['total']); // Ex: "R$ 10,50" → 10.50
+                    $totalGeral += floatval($valor);
+                }
+            }
+        }
+        // Dados da compra
+        $dados_com = [
+            'com_data'     => date('Y-m-d'),
+            'emp_id'       => isset($dados['emp_id']) ? $dados['emp_id'] : $dados['empresa'],
+            'for_id'       => $dados['compras']['forid'],
+            'com_valor'    => $totalGeral,
+        ];
+
+        if ($this->compra->save($dados_com)) {
+            $com_id = $this->compra->getInsertID();
+            $data_atu = date('Y-m-d H:i:s');
+            $erroGravacao = false;
+
+            foreach ($dados['compras']['itens'] as $pedidoArray) {
+                foreach ($pedidoArray as $produtoArray) {
+                    foreach ($produtoArray as $marcaArray) {
+                        // debug($marcaArray['marca']);
+                        $mar_id  = $this->marca->getMarca($marcaArray['marca']);
+                        // debug($mar_id);
+                        $dados_pro = [
+                            'com_id'        => $com_id,
+                            'pro_id'        => $marcaArray['produto'],
+                            'ped_id'        => $marcaArray['pedido'],
+                            'mar_id'        => $marcaArray['marca'],
+                            'und_id'        => $mar_id[0]['und_marca'],
+                            'cop_quantia'   => $marcaArray['quantia'],
+                            'cop_previsao'  => $marcaArray['previsao'],
+                            'cop_valor'     => moedaToFloat($marcaArray['valor']),
+                            'cop_total'     => moedaToFloat($marcaArray['total']),
+                            'cop_atualizado' => $data_atu
+                        ];
+                        // debug($dados_pro);
+
+                        $cop_id = $this->common->insertReg('dbEstoque', 'est_compra_produto', $dados_pro);
+                        // debug($cop_id);
+
+                        if (!is_int($cop_id) || $cop_id <= 0) {
+                            $ret['erro'] = true;
+                            $ret['msg'] = 'Não foi possível gravar os produtos. Verifique!';
+                            $erroGravacao = true;
+                            break 3; // Sai de todos os loops aninhados
+                        }
+
+                        // Atualiza o pedido (fora do IF para não repetir em loop sem necessidade)
+                        $this->pedido->save([
+                            'ped_id' => $marcaArray['pedido'],
+                            'ped_status' => 'C',
+                        ]);
+                    }
+                }
+            }
+
+            if (!$erroGravacao) {
+                $ret['erro'] = false;
+                $ret['com_id'] = $com_id;
+                $ret['cop_id'] = $cop_id;
+                $ret['msg'] = 'Compra gravada com Sucesso!';
+            }
+        } else {
+            $ret['erro'] = true;
+            $ret['msg'] = 'Não foi possível gravar a Compra. Verifique!<br>';
+            foreach ($this->compra->errors() as $erro) {
+                $ret['msg'] .= $erro . '<br>';
+            }
+        }
+
+        return $this->response->setJSON($ret);
     }
 
     /**

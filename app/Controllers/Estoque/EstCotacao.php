@@ -573,7 +573,7 @@ class EstCotacao extends BaseController
         $ret = [];
         $dados = $this->request->getPost();
         // debug($dados);
-
+        $precocompra = isset($dados['precocompra']) && floatval(str_replace(',', '.', $dados['precocompra'])) > 0?str_replace(',', '.', $dados['precocompra']):str_replace(',', '.', $dados['preco']);
         $cofDados = [
             'cot_id'       => $dados['cotacao'],
             'cop_id'       => $dados['cop_id'],
@@ -581,7 +581,9 @@ class EstCotacao extends BaseController
             'mar_id'       => $dados['marca'],
             'for_id'       => $dados['for_id'],
             'cof_preco'    => str_replace(',', '.', $dados['preco']),
+            'cof_precoundcompra'    => $precocompra,
             'cof_validade' => $dados['validade'],
+            'cof_previsao' => 1,
         ];
         if ($dados['cof_id'] != '') {
             $ret['ok'] = $this->cotacao_fornec->update($dados['cof_id'], $cofDados);

@@ -1373,136 +1373,182 @@ function traduzirEmbalagem($packaging)
     return implode(', ', $traduzida);
 }
 
-function buscarProdutoMultiFonte($codigoBarras)
-{
-    $codigoBarras = preg_replace('/[^0-9]/', '', $codigoBarras);
+function obterTokenGs1() {
+    $clientId     = '60af91e4-4543-447b-aeb9-e22b76ac2af7';
+    $clientSecret = 'd863f5cc-09e8-465a-8c31-d723db188136';
+    $username     = 'douglas@4web.net.br';
+    $password     = 'Nkb@2e00';
 
-    if (!validarEAN13($codigoBarras)) {
-        return ['erro' => 'Código de barras inválido (formato ou dígito verificador errado).'];
-    }
+    $url = 'https://api.gs1br.org/oauth/access-token';
 
-    // === 5. produto.xyz ===
-    $urlProdutoXYZ = "https://produto.xyz/v1/gtin/{$codigoBarras}";
-    $resXYZ = @file_get_contents($urlProdutoXYZ);
-    if ($resXYZ) {
-        $dados = json_decode($resXYZ, true);
-        if (isset($dados['Product']['name'])) {
-            return [
-                'fonte' => 'produto.xyz',
-                'nome' => $dados['Product']['name'] ?? 'Sem nome',
-                'marca' => $dados['Product']['manufacturer'] ?? 'Sem marca',
-                'quantidade' => '',
-                'embalagem' => 'Sem info',
-                'apresentacao' => $dados['Product']['name'] ?? '',
-                'imagem' => null,
-                'categorias' => [$dados['Product']['category'] ?? ''],
-                'origem' => [],
-            ];
-        }
-    }
+    // $body = json_encode([
+    //     'grant_type' => 'password',
+    //     'username'   => $username,
+    //     'password'   => $password,
+    // ]);
 
-    // === 1. Cosmos ===
-    $urlCosmos = "https://api.cosmos.bluesoft.com.br/gtins/{$codigoBarras}.json";
-    $headers = [
-        "Content-Type: application/json",
-        "X-Cosmos-Token: f2ILLVIInz49t4bUZnUZdw"
+    $body = [
+        "grant_type" => "password",
+        "username" => "douglas@4web.net.br",
+        "password" => "Nkb@2e00"
     ];
 
-    $curl = curl_init($urlCosmos);
-    curl_setopt($curl, CURLOPT_USERAGENT, 'Cosmos-API-Request');
-    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_FAILONERROR, true);
-    $resCosmos = curl_exec($curl);
-    curl_close($curl);
+    $headers = [
+        'Content-Type: application/json',
+        'Accept: application/json',
+    ];
 
-    if ($resCosmos) {
-        $dados = json_decode($resCosmos, true);
-        if (isset($dados['description'])) {
-            return [
-                'fonte' => 'Cosmos',
-                'nome' => $dados['description'] ?? 'Sem nome',
-                'marca' => $dados['brand']['name'] ?? 'Sem marca',
-                'quantidade' => $dados['net_weight'] ? $dados['net_weight'] . ' g' : '',
-                'embalagem' => 'Sem info',
-                'apresentacao' => $dados['net_weight'] ? $dados['net_weight'] . ' g' : '',
-                'imagem' => $dados['thumbnail'] ?? null,
-                'categorias' => [$dados['gpc']['description'] ?? ''],
-                'origem' => [],
-            ];
-        }
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => $body,
+        CURLOPT_USERPWD        => "$clientId:$clientSecret", // faz o Basic Auth corretamente
+        CURLOPT_HTTPHEADER     => $headers,
+    ]);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
+    curl_close($ch);
+
+    echo "<pre>";
+    echo "Status HTTP: $httpCode\n";
+    echo "Resposta:\n$response\n";
+    if ($curlError) echo "CURL ERRO: $curlError\n";
+    echo "</pre>";
+
+    $json = json_decode($response, true);
+    return $json['access_token'] ?? null;
+}
+
+
+function buscarProdutoMultiFonte($gtin) {
+    // === 1. GS1 Brasil ===
+    // $token = obterTokenGs1();
+    // if ($token) {
+    //     $url = "https://api-hml.gs1br.org/cnp/gtin/$gtin";
+    //     $ch = curl_init($url);
+    //     curl_setopt_array($ch, [
+    //         CURLOPT_RETURNTRANSFER => true,
+    //         CURLOPT_HTTPHEADER     => [
+    //             "Authorization: Bearer $token",
+    //             "Accept: application/json"
+    //         ]
+    //     ]);
+    //     $res = curl_exec($ch);
+    //     curl_close($ch);
+    //     $json = json_decode($res, true);
+
+    //     if (!empty($json['gtin'])) {
+    //         return [
+    //             'codigo'     => $json['gtin'],
+    //             'marca'      => $json['marca'] ?? '',
+    //             'descricao'  => $json['descricao'] ?? '',
+    //             'imagem'     => $json['imagem_url'] ?? '',
+    //             'apresentacao'  => $json['quantidade_itens_conteudo'] ?? '',
+    //             'fonte'      => 'GS1 Brasil'
+    //         ];
+    //     }
+    // }
+
+    // === 2. Cosmos ===
+    $tokenCosmos = 'f2ILLVIInz49t4bUZnUZdw';
+    $url = "https://api.cosmos.bluesoft.com.br/gtins/{$gtin}.json";
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            "Content-Type: application/json",
+            "X-Cosmos-Token: $tokenCosmos"
+        ]
+    ]);
+    $res = curl_exec($ch);
+    curl_close($ch);
+    $data = json_decode($res, true);
+
+    if (!empty($data['gtin'])) {
+        return [
+            'codigo'     => $data['gtin'],
+            'marca'      => $data['brand']['name'] ?? '',
+            'descricao'  => $data['description'] ?? '',
+            'imagem'     => $data['thumbnail'] ?? '',
+            'apresentacao'  => $data['net_weight'] . 'g',
+            'fonte'      => 'Cosmos'
+        ];
     }
 
-    // === 2. Open Food Facts ===
-    $urlOFF = "https://world.openfoodfacts.org/api/v0/product/{$codigoBarras}.json";
-    $resOFF = @file_get_contents($urlOFF);
-    if ($resOFF) {
-        $dados = json_decode($resOFF, true);
-        if ($dados['status'] === 1) {
-            $produto = $dados['product'];
-            $quantidade = $produto['quantity'] ?? '';
-            $embalagemTraduzida = isset($produto['packaging']) ? traduzirEmbalagem($produto['packaging']) : '';
+    // === 3. Open Food Facts ===
+    $url = "https://world.openfoodfacts.org/api/v0/product/{$gtin}.json";
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true]);
+    $res = curl_exec($ch);
+    curl_close($ch);
+    $json = json_decode($res, true);
 
-            return [
-                'fonte' => 'Open Food Facts',
-                'nome' => $produto['product_name'] ?? 'Sem nome',
-                'marca' => isset($produto['brands']) && trim($produto['brands']) !== ''
-                    ? explode(',', $produto['brands'])[0]
-                    : 'Sem marca',
-                'quantidade' => $quantidade,
-                'embalagem' => $embalagemTraduzida ?: 'Sem info',
-                'apresentacao' => trim($quantidade . ' ' . $embalagemTraduzida),
-                'imagem' => $produto['image_url'] ?? null,
-                'categorias' => $produto['categories_tags'] ?? [],
-                'origem' => $produto['countries_tags'] ?? [],
-            ];
+    if (!empty($json['product']['product_name'])) {
+        $produto = $json['product'];
+        $mapa = [
+            'bottle' => 'Garrafa', 'box' => 'Caixa', 'can' => 'Lata',
+            'jar' => 'Pote', 'pack' => 'Pacote', 'plastic' => 'Plástico',
+            'glass' => 'Vidro', 'sachet' => 'Sachê', 'bag' => 'Saco',
+            'carton' => 'Cartucho', 'tube' => 'Tubo', 'tray' => 'Bandeja', 'pot' => 'Pote'
+        ];
+
+        $embalagem = '';
+        if (!empty($produto['packaging'])) {
+            $itens = explode(',', strtolower($produto['packaging']));
+            $traduzidos = array_map(fn($i) => $mapa[trim($i)] ?? ucfirst(trim($i)), $itens);
+            $embalagem = implode(', ', array_unique($traduzidos));
         }
-    }
 
-    // === 3. UPCItemDB ===
-    $urlUPC = "https://api.upcitemdb.com/prod/trial/lookup?upc={$codigoBarras}";
-    $resUPC = @file_get_contents($urlUPC);
-    if ($resUPC) {
-        $dados = json_decode($resUPC, true);
-        if (isset($dados['items'][0])) {
-            $item = $dados['items'][0];
-
-            return [
-                'fonte' => 'UPCItemDB',
-                'nome' => $item['title'] ?? 'Sem nome',
-                'marca' => $item['brand'] ?? 'Sem marca',
-                'quantidade' => $item['size'] ?? '',
-                'embalagem' => 'Sem info',
-                'apresentacao' => $item['size'] ?? '',
-                'imagem' => $item['images'][0] ?? null,
-                'categorias' => [$item['category'] ?? ''],
-                'origem' => [],
-            ];
-        }
+        return [
+            'codigo'     => $gtin,
+            'marca'      => $produto['brands'] ?? '',
+            'descricao'  => $produto['product_name'] ?? '',
+            'imagem'     => $produto['image_url'] ?? '',
+            'apresentacao'  => $embalagem,
+            'fonte'      => 'OpenFoodFacts'
+        ];
     }
 
     // === 4. EANData ===
-    $apiKey = '1AD225326858CC60';
-    $urlEAN = "https://eandata.com/feed/?v=3&key={$apiKey}&mode=live&find={$codigoBarras}";
-    $resEAN = @file_get_contents($urlEAN);
-    if ($resEAN) {
-        $dados = json_decode($resEAN, true);
-        if (isset($dados['product']['attributes'])) {
-            $produto = $dados['product']['attributes'];
+    $tokenEAN = '1AD225326858CC60';
+    $url = "https://eandata.com/feed/?v=3&keycode=$tokenEAN&mode=json&find=$gtin";
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true]);
+    $res = curl_exec($ch);
+    curl_close($ch);
+    $json = json_decode($res, true);
 
-            return [
-                'fonte' => 'EANData',
-                'nome' => $produto['product'] ?? 'Sem nome',
-                'marca' => $produto['brand'] ?? 'Sem marca',
-                'quantidade' => '',
-                'embalagem' => 'Sem info',
-                'apresentacao' => $produto['product'] ?? '',
-                'imagem' => null,
-                'categorias' => [],
-                'origem' => [],
-            ];
-        }
+    if (!empty($json['product']['attributes']['product'])) {
+        return [
+            'codigo'     => $gtin,
+            'marca'      => $json['product']['attributes']['manufacturer'] ?? '',
+            'descricao'  => $json['product']['attributes']['product'] ?? '',
+            'imagem'     => $json['product']['images'][0] ?? '',
+            'apresentacao'  => '',
+            'fonte'      => 'EANData'
+        ];
+    }
+
+    // === 5. Produto.xyz ===
+    $url = "https://produto.xyz/v1/gtin/$gtin";
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true]);
+    $res = curl_exec($ch);
+    curl_close($ch);
+    $json = json_decode($res, true);
+
+    if (!empty($json['Product']['gtin'])) {
+        return [
+            'codigo'     => $json['Product']['gtin'],
+            'marca'      => $json['Product']['manufacturer'] ?? '',
+            'descricao'  => $json['Product']['name'] ?? '',
+            'imagem'     => '',
+            'apresentacao'  => '',
+            'fonte'      => 'Produto.xyz'
+        ];
     }
 
     return [
@@ -1519,50 +1565,3 @@ function buscarProdutoMultiFonte($codigoBarras)
 }
 
 
-function obterTokenGs1() {
-    $clientId     = '60af91e4-4543-447b-aeb9-e22b76ac2af7';
-    $clientSecret = 'd863f5cc-09e8-465a-8c31-d723db188136';
-    $username     = 'douglas@4web.net.br';
-    $password     = 'Nkb@2e00';
-
-    // URL do ambiente de homologação (substitua por produção se necessário)
-    $url = 'https://api-hml.gs1br.org/oauth/access-token';
-
-    // Monta o Authorization Basic em base64
-    $basicAuth = base64_encode("$clientId:$clientSecret");
-
-    // Dados do body
-    $body = json_encode([
-        'grant_type' => 'password',
-        'username'   => $username,
-        'password'   => $password
-    ]);
-
-    // Inicializa o cURL
-    $ch = curl_init($url);
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => $body,
-        CURLOPT_HTTPHEADER     => [
-            "Authorization: Basic $basicAuth",
-            "Content-Type: application/json",
-            "Accept: application/json"
-        ],
-    ]);
-
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $error    = curl_error($ch);
-    curl_close($ch);
-
-    if ($httpCode === 200) {
-        $json = json_decode($response, true);
-        return $json['access_token'] ?? null;
-    }
-
-    echo "Erro ao obter token. HTTP $httpCode\n";
-    echo "Resposta: $response\n";
-    echo "Erro CURL: $error\n";
-    return null;
-}

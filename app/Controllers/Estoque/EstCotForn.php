@@ -79,7 +79,7 @@ class EstCotForn extends BaseController
 
         $secao[0]  = 'Cotação';
         $campos[0] = $this->cot_id;
-        $campos[1] = "<h3>Cotação " . $cotacao[0]['cot_nome'] . "</h3>";
+        $campos[1] = "<h3>Cotação " . $cotacao[0]['cot_nome'] . " - <span class='text-danger'> Encerra em: ".dataDbToBr($cotacao[0]['cot_prazo'])."</span></h3>";
         if ($cotacao[0]['cot_status'] == 'A') {
             $campos[2] = "<h4>Informe o CNPJ, os preços e data de validade de cada produto</h4>";
             $campos[3] = "<div class='text-italic fs-7 text-danger'>** As quantias se referem ao Total que será comprado, podendo ser porcionadas nas diversas Unidades Taisho</div>";
@@ -156,16 +156,21 @@ class EstCotForn extends BaseController
         }
         $cotacao = $this->cotacao->getCotacaoProd($cotacao);
 
-$campos[0] = 'cot_id';
-$campos[1] = 'cop_id';
-$campos[2] = 'pro_id';
-$campos[3] = 'pro_nome';
-$campos[4] = 'mar_nome';
-$campos[5] = 'mar_apresenta';
-$campos[6] = 'und_sigla';
-$campos[7] = 'ctp_quantia';
-$campos[8] = 'cof_preco';
-$campos[9] = 'cof_validade';
+        $campos = [];
+        $campos[count($campos)] = 'cot_id';
+        $campos[count($campos)] = 'cop_id';
+        $campos[count($campos)] = 'pro_id';
+        $campos[count($campos)] = 'pro_nome';
+        $campos[count($campos)] = 'mar_nome';
+        // $campos[count($campos)] = 'mar_apresenta';
+        $campos[count($campos)] = 'und_sigla';
+        $campos[count($campos)] = 'und_sigla_compra';
+        $campos[count($campos)] = 'ctp_quantia';
+        $campos[count($campos)] = 'cof_preco';
+        $campos[count($campos)] = 'cof_precoundcompra';
+        $campos[count($campos)] = 'cof_validade';
+        $campos[count($campos)] = 'cof_previsao';
+        $campos[count($campos)] = 'cof_observacao';
 
         $dados_cotac = [];
         for ($dc = 0; $dc < count($cotacao); $dc++) {
@@ -177,14 +182,18 @@ $campos[9] = 'cof_validade';
             $dados_cotac[$dc]['pro_nome']    = $prod['pro_nome'];
             $dados_cotac[$dc]['mar_id']      = $prod['mar_id'];
             $dados_cotac[$dc]['mar_nome']    = $prod['mar_nome'] ?? 'SEM MARCA';
-            $dados_cotac[$dc]['mar_apresenta']    = $prod['mar_apresenta'] ?? '';
+            // $dados_cotac[$dc]['mar_apresenta']    = $prod['mar_apresenta'] ?? '';
             $dados_cotac[$dc]['und_sigla']    = $prod['und_sigla'];
-            $dados_cotac[$dc]['ctp_quantia']    = "<div class='text-start'>" .$prod['ctp_quantia']."</div>";
+            $dados_cotac[$dc]['und_sigla_compra']    = $prod['und_sigla_compra'];
+            $dados_cotac[$dc]['ctp_quantia']    = "<div class='text-start'>" .formataQuantia($prod['ctp_quantia'])['qtis']."</div>";
 
             $this->def_campos_prod($prod, $dc, $fornecedor);
 
-            $dados_cotac[$dc]['cof_preco'] = $this->pro_id . ' ' . $this->mar_id . ' ' . $this->ctp_id . ' ' . $this->cof_preco;
-            $dados_cotac[$dc]['cof_validade'] = $this->cof_validade;
+            $dados_cotac[$dc]['cof_preco'] = $this->cof_preco;
+            $dados_cotac[$dc]['cof_precoundcompra'] = $this->cof_precoundcompra;
+            $dados_cotac[$dc]['cof_validade'] = $this->pro_id . ' ' . $this->mar_id . ' ' . $this->ctp_id . ' ' .$this->cof_validade;
+            $dados_cotac[$dc]['cof_previsao'] = $this->cof_previsao;
+            $dados_cotac[$dc]['cof_observacao'] = $this->cof_observacao;
         }
         // debug($dados_cotac);
         $cotac = [
@@ -228,11 +237,13 @@ $campos[9] = 'cof_validade';
         $this->mar_id = $marid->crOculto();
 
         $preco = 0;
+        $precocompra = 0;
         $validade = '';
         if ($fornecedor) {
             $dfor = $this->cotacao->getCotacaoForn($dados['cot_id'], $fornecedor, $dados['pro_id'], $dados['mar_id']);
             if (count($dfor) > 0) {
                 $preco = $dfor[0]['cof_preco'];
+                $precocompra = $dfor[0]['cof_precoundcompra'];
                 $validade = $dfor[0]['cof_validade'];
             }
         }
@@ -246,6 +257,15 @@ $campos[9] = 'cof_validade';
         $prec->place                 = '';
         $this->cof_preco          = $prec->crInput();
 
+        $pruc                        = new MyCampo('est_cotacao_fornec', 'cof_precoundcompra');
+        $pruc->label                 = '';
+        $pruc->ordem                 = $ord;
+        $pruc->largura               = 20;
+        $pruc->valor                 = $precocompra;
+        $pruc->dispForm              = 'inte';
+        $pruc->place                 = '';
+        $this->cof_precoundcompra          = $pruc->crInput();
+
         $vali                        = new MyCampo('est_cotacao_fornec', 'cof_validade');
         $vali->label                 = '';
         $vali->ordem                 = $ord;
@@ -254,6 +274,26 @@ $campos[9] = 'cof_validade';
         $vali->dispForm              = 'inte';
         $vali->place                 = '';
         $this->cof_validade          = $vali->crInput();
+
+        $prev                        = new MyCampo('est_cotacao_fornec', 'cof_previsao');
+        $prev->label                 = '';
+        $prev->ordem                 = $ord;
+        $prev->largura               = 20;
+        $prev->valor                 = isset($dados['cof_previsao']) ? $dados['cof_previsao'] : '1';
+        $prev->dispForm              = 'inte';
+        $prev->place                 = '';
+        $this->cof_previsao          = $prev->crInput();
+
+        $obsv                        = new MyCampo('est_cotacao_fornec', 'cof_observacao');
+        $obsv->label                 = '';
+        $obsv->ordem                 = $ord;
+        $obsv->largura               = 200;
+        $obsv->colunas               = 200;
+        $obsv->linhas                = 1;
+        $obsv->valor                 = isset($dados['cof_observacao']) ? $dados['cof_observacao'] : '';
+        $obsv->dispForm              = 'col-12';
+        $obsv->place                 = '';
+        $this->cof_observacao          = $obsv->crTexto();
     }
 
 
@@ -287,8 +327,14 @@ $campos[9] = 'cof_validade';
             $cop_id = $dados['ctp_id'][$key];
             $pro_id = $dados['pro_id'][$key];
             $mar_id = $dados['mar_id'][$key];
-            $preco  = str_replace(',', '.', $dados['cof_preco'][$key]);
+            $preco  = str_replace(',', '.', $dados['cof_precoundcompra'][$key]);
+            $precocompra  = str_replace(',', '.', $dados['cof_precoundcompra'][$key]);
+            if(isset($dados['cof_preco'])){
+                $preco  = str_replace(',', '.', $dados['cof_preco'][$key]);
+            }
             $validade = $dados['cof_validade'][$key];
+            $previsao = $dados['cof_previsao'][$key];
+            $observacao = $dados['cof_observacao'][$key];
 
 
             $cofDados[] = [
@@ -298,7 +344,10 @@ $campos[9] = 'cof_validade';
                 'mar_id'       => $mar_id,
                 'for_id'       => $for_id,
                 'cof_preco'    => $preco,
+                'cof_precoundcompra'    => $precocompra,
                 'cof_validade' => $validade,
+                'cof_previsao' => $previsao,
+                'cof_observacao' => $observacao,
             ];
         }
 
