@@ -2654,7 +2654,7 @@ function gravaCotforn(obj) {
   let dados = {};
   let valido = false;
 
-  jQuery('input[name^="cof_preco"]').each(function (index) {
+  jQuery('input[name^="cof_precoundcompra"]').each(function (index) {
     const preco = parseFloat(jQuery(this).val()) || 0;
     if (preco > 0) {
       valido = true;
@@ -2669,7 +2669,8 @@ function gravaCotforn(obj) {
       dados[`ctp_id[${index}]`] = jQuery(
         `input[name="ctp_id[${index}]"]`
       ).val();
-      dados[`cof_preco[${index}]`] = preco;
+      dados[`cof_preco[${index}]`] = dados[`cof_preco[${index}]`];
+      dados[`cof_precoundcompra[${index}]`] = preco;
       dados[`cof_validade[${index}]`] = jQuery(
         `input[name="cof_validade[${index}]"]`
       ).val();

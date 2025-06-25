@@ -239,12 +239,17 @@ class EstCotForn extends BaseController
         $preco = 0;
         $precocompra = 0;
         $validade = '';
+        $previsao = 1;
+        $observacao = '';
         if ($fornecedor) {
             $dfor = $this->cotacao->getCotacaoForn($dados['cot_id'], $fornecedor, $dados['pro_id'], $dados['mar_id']);
+            // debug($dfor);
             if (count($dfor) > 0) {
                 $preco = $dfor[0]['cof_preco'];
                 $precocompra = $dfor[0]['cof_precoundcompra'];
                 $validade = $dfor[0]['cof_validade'];
+                $previsao = $dfor[0]['cof_previsao'];
+                $observacao = $dfor[0]['cof_observacao'];
             }
         }
 
@@ -279,7 +284,7 @@ class EstCotForn extends BaseController
         $prev->label                 = '';
         $prev->ordem                 = $ord;
         $prev->largura               = 20;
-        $prev->valor                 = isset($dados['cof_previsao']) ? $dados['cof_previsao'] : '1';
+        $prev->valor                 = $previsao;
         $prev->dispForm              = 'inte';
         $prev->place                 = '';
         $this->cof_previsao          = $prev->crInput();
@@ -290,7 +295,7 @@ class EstCotForn extends BaseController
         $obsv->largura               = 200;
         $obsv->colunas               = 200;
         $obsv->linhas                = 1;
-        $obsv->valor                 = isset($dados['cof_observacao']) ? $dados['cof_observacao'] : '';
+        $obsv->valor                 = $observacao;
         $obsv->dispForm              = 'col-12';
         $obsv->place                 = '';
         $this->cof_observacao          = $obsv->crTexto();
@@ -307,6 +312,7 @@ class EstCotForn extends BaseController
     {
         $ret = [];
         $dados = $this->request->getPost();
+        // debug($dados, true);
 
         // try {
         $for_id = $dados['for_id'] ?? null;

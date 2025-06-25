@@ -135,6 +135,8 @@ class EstRecebimento extends BaseController
         foreach ($dados_compr as &$com) {
             // Verificar se o log já está disponível para esse ana_id
             $com['com_usuario'] = $log[$com['com_id']]['usua_alterou'] ?? '';
+            $com['cop_previsao'] = ($com['cop_previsao'] != null)?$com['cop_previsao']:$com['com_previsao']; 
+            $com['com_previsao'] = ($com['com_previsao'] != null)?$com['com_previsao']:$com['cop_previsao']; 
             // $dados_compr[$dc]['d'] = '';
             // $com = $dados_compr[$dc];
             // $log = buscaLog('est_compra', $com['com_id']);
