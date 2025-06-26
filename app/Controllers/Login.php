@@ -147,6 +147,7 @@ class Login extends BaseController
                     'usu_perfil'    => $log_config[0]['prf_nome'],
                     'usu_dashboard' => $dash,
                     'usu_empresa'   => $log_config[0]['usu_empresa'],
+                    'usu_deposito'  => $log_config[0]['usu_deposito'],
                     'usu_whats'     => isset($log_config[0]['usu_whats']) ? $log_config[0]['usu_whats'] : 'N',
                     'usu_avatar'    => $avatar,
                     'logo'          => $logo_def,

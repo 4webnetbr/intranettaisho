@@ -4,7 +4,7 @@ namespace App\Models\Estoqu;
 use App\Models\LogMonModel;
 use CodeIgniter\Model;
 
-class EstoquDepositoModel extends Model
+class EstoquDeposito extends Model
 {
     protected $DBGroup          = 'default';
 
@@ -76,27 +76,26 @@ class EstoquDepositoModel extends Model
      *
      * Retorna os dados da Linha, pelo ID informado
      * 
-     * @param bool $id 
+     * @param mixed $emp_id 
      * @return array
      */
-    public function getDeposito($und_id = false, $emp_id = false)
+    public function getDeposito($emp_id = false)
     {
-        $db = db_connect();
-        $builder = $db->table('est_deposito');
-        $builder->select('*'); 
-        if($und_id){
-            $builder->where("und_id", $und_id);
-        }
-        if($emp_id){
-            $builder->wherein("emp_id", $emp_id);
-        }
-        $builder->where("und_excluido", null);
-        $builder->orderBy("und_sigla");
-        $ret = $builder->get()->getResultArray();
+        debug($emp_id, true);
+        // $db = db_connect();
+        // $builder = $db->table('est_deposito');
+        // $builder->select('*'); 
+        // if($emp_id){
+        //     $builder->wherein("emp_id", $emp_id);
+        // }
+        // $builder->where("dep_excluido", null);
+        // $builder->orderBy("dep_nome");
 
-        // debug($this->db->getLastQuery(), false);
+        // $ret = $builder->get()->getResultArray();
+
+        // // debug($this->db->getLastQuery(), false);
         
-        return $ret;
+        // return $ret;
 
     }                 
 

@@ -137,11 +137,6 @@ class EstRecebimento extends BaseController
             $com['com_usuario'] = $log[$com['com_id']]['usua_alterou'] ?? '';
             $com['cop_previsao'] = ($com['cop_previsao'] != null)?$com['cop_previsao']:$com['com_previsao']; 
             $com['com_previsao'] = ($com['com_previsao'] != null)?$com['com_previsao']:$com['cop_previsao']; 
-            // $dados_compr[$dc]['d'] = '';
-            // $com = $dados_compr[$dc];
-            // $log = buscaLog('est_compra', $com['com_id']);
-            // $dados_compr[$dc]['com_usuario'] = $log['usua_alterou'];
-            // $ana['usu_nome'] = $log[$ana['ana_id']]['usua_alterou'] ?? '';
             $qtia = formataQuantia(isset($com['cop_quantia']) ? $com['cop_quantia'] : 0);
             $com['cop_quantia'] = $qtia['qtia'];
         }
@@ -164,7 +159,7 @@ class EstRecebimento extends BaseController
      */
     public function edit($id, $show = false)
     {
-        $dados_ent = $this->compra->getCompra($id)[0];
+        $dados_ent = $this->compra->getCompraProd($id)[0];
         $this->def_campos($dados_ent, true);
         $this->def_campos_pro($dados_ent, 0, $show);
 
@@ -205,6 +200,7 @@ class EstRecebimento extends BaseController
      */
     public function def_campos_pro($dados = false, $pos = 0, $show = false)
     {
+        debug($dados);
         $id = new MyCampo('est_entrada_produto', 'enp_id');
         $id->nome = "enp_id[$pos]";
         $id->id = "enp_id[$pos]";
@@ -228,7 +224,7 @@ class EstRecebimento extends BaseController
         $pro->id                = "pro_id[$pos]";
         $pro->valor             = isset($dados['pro_id']) ? $dados['pro_id'] : '';
         $pro->repete            = true;
-        $pro->leitura      = $show;
+        $pro->leitura           = $show;
         $this->pro_id           = $pro->crOculto();
 
         $prn                        = new MyCampo('est_produto', 'pro_nome');
@@ -306,10 +302,10 @@ class EstRecebimento extends BaseController
         $qti->valor                 = isset($dados['enp_quantia']) ? $dados['enp_quantia'] : '';
         $qti->largura               = 25;
         $qti->maximo                = 999999;
-        $qti->funcBlur              = "calculaTotal(this,'enp_quantia', 'enp_valor', 'enp_total')";
+        // $qti->funcBlur              = "calculaTotal(this,'enp_quantia', 'enp_valor', 'enp_total')";
         $qti->dispForm              = 'col-2';
-        $qti->leitura      = $show;
-        $qti->place             = "";
+        $qti->leitura               = $show;
+        $qti->place                 = "";
         $this->enp_quantia          = $qti->crInput();
 
         $sal                        = new MyCampo('est_entrada_produto', 'enp_quantia');
@@ -333,7 +329,7 @@ class EstRecebimento extends BaseController
         // debug($dados['enp_valor']);
         $val->valor                 = isset($dados['enp_valor']) ? $dados['enp_valor'] : '';
         // $val->largura               = 15;
-        $val->funcBlur              = "calculaTotal(this,'enp_quantia', 'enp_valor', 'enp_total')";
+        // $val->funcBlur              = "calculaTotal(this,'enp_quantia', 'enp_valor', 'enp_total')";
         $val->dispForm              = 'col-3';
         $val->leitura      = $show;
         $val->place             = "";
@@ -347,8 +343,8 @@ class EstRecebimento extends BaseController
         $tot->valor                 = isset($dados['enp_total']) ? $dados['enp_total'] : '';
         // $tot->largura               = 15;
         $tot->dispForm              = 'col-3';
-        $tot->leitura      = $show;
-        $tot->place             = "";
+        $tot->leitura               = $show;
+        $tot->place                 = "";
         $this->enp_total            = $tot->crInput();
     }
 
@@ -406,20 +402,19 @@ class EstRecebimento extends BaseController
         $this->emp_id               = $emp->crSelect();
 
         $depos = [];
-        if ($dados) {
+        $depositos           = explode(',', session()->get('usu_deposito'));
             $deposito       = new EstoquDepositoModel();
-            $dados_dep      = $deposito->getDeposito(false, $dados['emp_id']);
+            $dados_dep      = $deposito->getDeposito($depositos, $dados['emp_id']);
             $depos = array_column($dados_dep, 'dep_nome', 'dep_id');
-        }
-
+        // }
         $dep                        = new MyCampo('est_entrada', 'dep_id');
-        $dep->valor = $dep->selecionado = isset($dados['dep_id']) ? $dados['dep_id'] : '';
+        $dep->valor = $dep->selecionado = isset($dados['dep_id']) ? $dados['dep_id'] : array_key_first($depos);
         $dep->obrigatorio           = true;
         $dep->opcoes                = $depos;
         $dep->largura               = 50;
         $dep->urlbusca              = base_url('buscas/busca_deposito_empresa');
         $dep->pai                   = 'emp_id';
-        $dep->leitura      = false;
+        $dep->leitura               = false;
         $this->dep_id               = $dep->crDepende();
 
         $comp               = new MyCampo('est_entrada', 'com_id');

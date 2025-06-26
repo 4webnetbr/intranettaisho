@@ -1283,11 +1283,13 @@ class MyCampo
         }
 
         $this->field = array(
-            'name'          => $this->nome,
-            'id'            => $this->id,
+            'name'          => $this->nome. '[]',
+            'id'            => $this->id. '[]',
             'data-busca'    => $this->urlbusca,
             'data-pai'      => $this->pai,
             'onfocus'       => "testa_dep('" . $this->pai . "')",
+            'multiple'      => 'multiple',
+            'data-live-search' => "true",
             'class'         => 'selectpicker form-control form-select dependente show-tick'
         );
 
@@ -1296,12 +1298,12 @@ class MyCampo
         }
         $this->propriedades();
 
-        if ($this->place != '') {
-            $this->opcoes = array(''  => 'Escolha ' . $this->place) + $this->opcoes;
-        }
+        // if ($this->place != '') {
+        //     $this->opcoes = array(''  => 'Escolha ' . $this->place) + $this->opcoes;
+        // }
         $extras = 'data-actions-box="true"; data-size="5"; data-selected-text-format="count > 3"';
 
-        $campo = form_multiselect($this->field, $this->opcoes, $this->selecionado);
+        $campo = form_multiselect($this->field, $this->opcoes, $this->selecionado, $extras);
 
         $resp .= $this->fmtDisplay($campo);
 

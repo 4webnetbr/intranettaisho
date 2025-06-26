@@ -266,7 +266,7 @@ class CfgUsuario extends BaseController
         }
         $this->usu_empresa   = $empres->crMultiple();
 
-        $depositos           = array_column($this->deposito->getDeposito(false, (isset($dados['usu_empresa']))?explode(",",$dados['usu_empresa']):false),'dep_nome','dep_id');
+        $depositos           = array_column($this->deposito->getDeposito(false, (isset($dados['usu_empresa']))?explode(",",$dados['usu_empresa']):false),'dep_completo','dep_id');
 		$depos             =  new MyCampo('cfg_usuario','usu_deposito');
         $depos->obrigatorio = true;
         $depos->classep    = 'selectpicker';
@@ -286,6 +286,8 @@ class CfgUsuario extends BaseController
         $dados = $this->request->getPost();
         $empresas = implode(",",$dados['usu_empresa']);
         $dados['usu_empresa'] = $empresas;
+        $depositos = implode(",",$dados['usu_deposito']);
+        $dados['usu_deposito'] = $depositos;
         if (isset($dados['usu_senha'])) {
             if ($dados['usu_senha'] == '') {
                 unset($dados['usu_senha']);

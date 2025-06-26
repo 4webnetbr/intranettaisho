@@ -620,7 +620,7 @@ div.msgprocessando>div:last-child>div {
 }
 
 .inner.show {
-    max-height: 20vh !important;
+    max-height: 15vh !important;
 }
 
 .bootstrap-select>.dropdown-toggle {

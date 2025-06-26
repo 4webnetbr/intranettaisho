@@ -25,7 +25,8 @@ class ConfigUsuarioModel extends Model
                                     'prf_id',
                                     'usu_status',
                                     'usu_dashboard',
-                                    'usu_empresa'
+                                    'usu_empresa',
+                                    'usu_deposito'
                                     ];
 
     protected $deletedField  = 'usu_excluido';

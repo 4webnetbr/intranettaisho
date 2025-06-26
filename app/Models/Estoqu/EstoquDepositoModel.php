@@ -84,7 +84,11 @@ class EstoquDepositoModel extends Model
         $builder = $db->table('vw_est_deposito_relac');
         $builder->select('*'); 
         if($dep_id){
-            $builder->where("dep_id", $dep_id);
+            if(gettype($dep_id) == 'array'){
+                $builder->whereIn("dep_id", $dep_id);
+            } else {
+                $builder->where("dep_id", $dep_id);
+            }
         }
         if($emp_id){
             if(gettype($emp_id) == 'array'){
