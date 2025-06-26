@@ -152,7 +152,8 @@ class EstoquMarcaModel extends Model
         $builder = $db->table('vw_est_marcas_relac');
         $builder->select('*');
         if ($codigo) {
-            $builder->where("mar_codigo", $codigo);
+            $codigo12 = substr($codigo, 0, 12); // Pegando os 12 primeiros dígitos de $codigo
+            $builder->where("LEFT(mar_codigo, 12)", $codigo12);
         }
         $builder->orderBy("pro_nome");
         $ret = $builder->get()->getResultArray();

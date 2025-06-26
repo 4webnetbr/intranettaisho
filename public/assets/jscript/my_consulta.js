@@ -345,12 +345,18 @@ function buscaProdutoMarca(obj, tipo = 0) {
       data: { marca: valor },
       success: function (retorno) {
         if (retorno.id == -1) {
-          jQuery("#pro_id\\[" + ordem + "\\]").val("");
-          jQuery("#pro_nome\\[" + ordem + "\\]").val("");
-          jQuery("#mar_nome\\[" + ordem + "\\]").val("");
-          jQuery("#conversao\\[" + ordem + "\\]").val("");
-          jQuery("#unm_id\\[" + ordem + "\\]").selectpicker("val", -1);
-          jQuery("#und_id\\[" + ordem + "\\]").selectpicker("val", -1);
+          // jQuery("#pro_id\\[" + ordem + "\\]").val("");
+          // jQuery("#pro_nome\\[" + ordem + "\\]").val("");
+          // jQuery("#mar_nome\\[" + ordem + "\\]").val("");
+          // jQuery("#conversao\\[" + ordem + "\\]").val("");
+          // jQuery("#unm_id\\[" + ordem + "\\]").selectpicker("val", -1);
+          // jQuery("#und_id\\[" + ordem + "\\]").selectpicker("val", -1);
+          // jQuery("#pro_id").val("");
+          // jQuery("#pro_nome").val("");
+          jQuery("#mar_nome").val("");
+          jQuery("#enp_conversao").val("");
+          jQuery("#unm_id").selectpicker("val", -1);
+          // jQuery("#und_id").selectpicker("val", -1);
           // abrir cadastro de marca modal
           openModal(window.location.origin + "/EstMarca/add/modal=true");
         } else {
@@ -358,24 +364,33 @@ function buscaProdutoMarca(obj, tipo = 0) {
           if (tipo == 1) {
             compara = comparaProduto(
               retorno.id,
-              jQuery("#pro_id\\[" + ordem + "\\]").val(),
+              // jQuery("#pro_id\\[" + ordem + "\\]").val(),
+              jQuery("#pro_id").val(),
               retorno.produto,
-              jQuery("#pro_nome\\[" + ordem + "\\]").val()
+              // jQuery("#pro_nome\\[" + ordem + "\\]").val()
+              jQuery("#pro_nome").val()
             );
           }
           if (compara) {
-            jQuery("#pro_id\\[" + ordem + "\\]").val(retorno.id);
-            jQuery("#pro_nome\\[" + ordem + "\\]").val(retorno.produto);
-            jQuery("#mar_nome\\[" + ordem + "\\]").val(retorno.marca);
-            jQuery("#conversao\\[" + ordem + "\\]").val(retorno.conversao);
-            jQuery("#unm_id\\[" + ordem + "\\]").selectpicker(
-              "val",
-              retorno.und_marca
-            );
-            jQuery("#und_id\\[" + ordem + "\\]").selectpicker(
-              "val",
-              retorno.und_produ
-            );
+            // jQuery("#pro_id\\[" + ordem + "\\]").val(retorno.id);
+            // jQuery("#pro_nome\\[" + ordem + "\\]").val(retorno.produto);
+            // jQuery("#mar_nome\\[" + ordem + "\\]").val(retorno.marca);
+            // jQuery("#conversao\\[" + ordem + "\\]").val(retorno.conversao);
+            // jQuery("#unm_id\\[" + ordem + "\\]").selectpicker(
+            //   "val",
+            //   retorno.und_marca
+            // );
+            // jQuery("#und_id\\[" + ordem + "\\]").selectpicker(
+            //   "val",
+            //   retorno.und_produ
+            // );
+            // jQuery("#pro_id").val(retorno.id);
+            // jQuery("#pro_nome").val(retorno.produto);
+            jQuery("#mar_nome").val(retorno.marca);
+            jQuery("#enp_conversao").val(retorno.conversao);
+            jQuery("#unm_id").selectpicker("val", retorno.und_marca);
+            jQuery("#bt_salvar").trigger("click");
+            // jQuery("#und_id").selectpicker("val", retorno.und_produ);
           }
         }
       },

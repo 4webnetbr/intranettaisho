@@ -243,4 +243,53 @@ class EstoquCompraModel extends Model
 
         return $ret;
     }
+
+    /**
+     * getCompra
+     *
+     * Retorna os dados da Linha, pelo ID informado
+     * 
+     * @param bool $id 
+     * @return array
+     */
+    public function getCompraVsEntrada($com_id)
+    {
+        $db = db_connect('dbEstoque');
+        $builder = $db->table('vw_compras_vs_entradas');
+        $builder->select("*");
+        $builder->where("com_id", $com_id);
+        $ret = $builder->get()->getResultArray();
+
+        // debug($this->db->getLastQuery(), false);
+
+        return $ret;
+    }
+
+    /**
+     * getCompra
+     *
+     * Retorna os dados da Linha, pelo ID informado
+     * 
+     * @param bool $id 
+     * @return array
+     */
+    public function getCompraProdPendente($pro_id = false, $empresa = false)
+    {
+        $db = db_connect('dbEstoque');
+        $builder = $db->table('vw_compras_produtos_pendentes');
+        $builder->select("*");
+        if ($pro_id) {
+            $builder->where("com_id", $pro_id);
+        }
+        if ($empresa) {
+            $builder->where("emp_id", $empresa);
+        }
+        $builder->where("com_status", 'P');
+        $builder->orderBy("com_data DESC");
+        $ret = $builder->get()->getResultArray();
+
+        // debug($this->db->getLastQuery(), false);
+
+        return $ret;
+    }
 }

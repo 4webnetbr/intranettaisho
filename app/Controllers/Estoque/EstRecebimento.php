@@ -127,7 +127,7 @@ class EstRecebimento extends BaseController
         }
         // $campos = montaColunasCampos($this->data, 'com_id');
         // debug($campos, true);
-        $dados_compr = $this->compra->getCompraLista(false, $param);
+        $dados_compr = $this->compra->getCompraProdPendente(false, $param);
         $com_ids_assoc = array_column($dados_compr, 'com_id');
         $log = buscaLogTabela('est_compra', $com_ids_assoc);
         // $this->data['edicao'] = false;
@@ -165,28 +165,29 @@ class EstRecebimento extends BaseController
 
         $secao[0] = 'Dados Gerais';
         $campos[0][0] = $this->ent_id;
+        $campos[0][count($campos[0])] = $this->mar_codigo;
         $campos[0][count($campos[0])] = $this->ent_data;
         $campos[0][count($campos[0])] = $this->emp_id;
         $campos[0][count($campos[0])] = $this->dep_id;
         $campos[0][count($campos[0])] = $this->for_id;
         $campos[0][count($campos[0])] = $this->com_id;
         $campos[0][count($campos[0])] = $this->enp_id;
-        $campos[0][count($campos[0])] = $this->mar_codigo;
-        $campos[0][count($campos[0])] = $this->enp_saldo;
         $campos[0][count($campos[0])] = $this->pro_id;
         $campos[0][count($campos[0])] = $this->pro_nome;
         $campos[0][count($campos[0])] = $this->und_id;
-        $campos[0][count($campos[0])] = $this->mar_nome;
-        $campos[0][count($campos[0])] = $this->unm_id;
         $campos[0][count($campos[0])] = $this->enp_quantia;
         $campos[0][count($campos[0])] = $this->enp_valor;
         $campos[0][count($campos[0])] = $this->enp_total;
+        // $campos[0][count($campos[0])] = $this->enp_saldo;
+        $campos[0][count($campos[0])] = $this->mar_nome;
+        $campos[0][count($campos[0])] = $this->unm_id;
         $campos[0][count($campos[0])] = $this->enp_conversao;
 
         $this->data['secoes'] = $secao;
         $this->data['campos'] = $campos;
         $this->data['desc_metodo'] = 'Recebimento de Produto';
         $this->data['destino'] = 'store';
+        $this->data['script'] = "<script>jQuery('#mar_codigo').focus();</script>";
 
         echo view('vw_edicao', $this->data);
     }
@@ -200,41 +201,41 @@ class EstRecebimento extends BaseController
      */
     public function def_campos_pro($dados = false, $pos = 0, $show = false)
     {
-        debug($dados);
+        // debug($dados);
         $id = new MyCampo('est_entrada_produto', 'enp_id');
-        $id->nome = "enp_id[$pos]";
-        $id->id = "enp_id[$pos]";
+        $id->nome = "enp_id";
+        $id->id = "enp_id";
         $id->valor = isset($dados['enp_id']) ? $dados['enp_id'] : '';
-        $id->repete            = true;
+        // $id->repete            = true;
         $this->enp_id = $id->crOculto();
 
         $mcd                    = new MyCampo('est_entrada_produto', 'mar_codigo');
-        $mcd->id = $mcd->nome   = "mar_codigo[$pos]";
-        $mcd->ordem             = $pos;
+        // $mcd->id = $mcd->nome   = "mar_codigo";
+        // $mcd->ordem             = $pos;
         $mcd->valor             = isset($dados['mar_codigo']) ? $dados['mar_codigo'] : '';
-        $mcd->funcBlur          = "buscaProdutoMarca(this, 1); buscaSaldoProduto(this,'enp_saldo')";
-        $mcd->dispForm          = "col-4";
+        $mcd->funcBlur          = "buscaProdutoMarca(this, 1)";
+        // $mcd->dispForm          = "col-4";
         $mcd->leitura           = $show;
         $mcd->naocolar          = false;
         $this->mar_codigo       = $mcd->crInput();
 
         $pro                    = new MyCampo('est_entrada_produto', 'pro_id');
-        $pro->nome              = "pro_id[$pos]";
-        $pro->ordem             = $pos;
-        $pro->id                = "pro_id[$pos]";
+        // $pro->nome              = "pro_id";
+        // $pro->ordem             = $pos;
+        // $pro->id                = "pro_id";
         $pro->valor             = isset($dados['pro_id']) ? $dados['pro_id'] : '';
-        $pro->repete            = true;
+        // $pro->repete            = true;
         $pro->leitura           = $show;
         $this->pro_id           = $pro->crOculto();
 
         $prn                        = new MyCampo('est_produto', 'pro_nome');
-        $prn->id = $prn->nome       = "pro_nome[$pos]";
+        // $prn->id = $prn->nome       = "pro_nome[$pos]";
         $prn->valor                 = isset($dados['pro_nome']) ? $dados['pro_nome'] : '';
-        $prn->ordem                 = $pos;
-        $prn->repete                = true;
+        // $prn->ordem                 = $pos;
+        // $prn->repete                = true;
         $prn->leitura               = true;
         $prn->largura               = 40;
-        $prn->dispForm              = 'col-4';
+        // $prn->dispForm              = 'col-4';
         $prn->place             = "";
         $this->pro_nome             = $prn->crInput();
 
@@ -243,38 +244,38 @@ class EstRecebimento extends BaseController
         $opc_und                    = array_column($lst_unds, 'und_completa', 'und_id');
 
         $und                        = new MyCampo('est_entrada_produto', 'und_id');
-        $und->id = $und->nome       = "und_id[$pos]";
+        // $und->id = $und->nome       = "und_id[$pos]";
         $und->label                 = 'Und Prod';
-        $und->ordem                 = $pos;
-        $und->repete                = true;
+        // $und->ordem                 = $pos;
+        // $und->repete                = true;
         $und->leitura               = true;
         $und->valor = $und->selecionado  = isset($dados['und_id']) ? $dados['und_id'] : '';
-        $und->largura               = 15;
-        $und->dispForm              = 'col-2';
+        $und->largura               = 30;
+        // $und->dispForm              = 'col-2';
         $und->classep               = ' text-nowrap';
         $und->opcoes                = $opc_und;
         $und->place             = "";
         $this->und_id               = $und->crSelect();
 
         $mar                        = new MyCampo('est_marca', 'mar_nome');
-        $mar->id = $mar->nome       = "mar_nome[$pos]";
+        // $mar->id = $mar->nome       = "mar_nome[$pos]";
         $mar->valor                 = isset($dados['mar_nome']) ? $dados['mar_nome'] . ' - ' . $dados['mar_apresenta'] : '';
-        $mar->ordem                 = $pos;
+        // $mar->ordem                 = $pos;
         $mar->leitura               = true;
         $mar->largura               = 30;
-        $mar->dispForm              = 'col-3';
+        $mar->dispForm              = 'col-3 d-none';
         $mar->place                 = "";
         $this->mar_nome             = $mar->crInput();
 
         $unm                        = new MyCampo('est_entrada_produto', 'und_id');
-        $unm->id = $unm->nome       = "unm_id[$pos]";
+        // $unm->id = $unm->nome       = "unm_id[$pos]";
         $unm->label                 = 'Und Marca';
-        $unm->ordem                 = $pos;
-        $unm->repete                = true;
+        // $unm->ordem                 = $pos;
+        // $unm->repete                = true;
         $unm->leitura               = true;
         $unm->valor = $unm->selecionado  = isset($dados['unm_id']) ? $dados['unm_id'] : '';
         $unm->largura               = 15;
-        $unm->dispForm              = 'col-2';
+        $unm->dispForm              = 'col-2 d-none';
         $unm->classep               = ' text-nowrap';
         $unm->opcoes                = $opc_und;
         $unm->place             = "";
@@ -283,28 +284,30 @@ class EstRecebimento extends BaseController
 
         $conv = formataQuantia(isset($dados['enp_conversao']) ? $dados['enp_conversao'] : 0);
         $con                        = new MyCampo('est_entrada_produto', 'enp_conversao');
-        $con->id = $con->nome       = "conversao[$pos]";
+        // $con->id = $con->nome       = "conversao[$pos]";
         $con->label                 = 'Fator de Conversão';
-        $con->ordem                 = $pos;
+        // $con->ordem                 = $pos;
         $con->valor                 = $conv['qtiv'];
         $con->decimal               = $conv['dec'];
-        $con->repete                = true;
+        // $con->repete                = true;
         $con->leitura               = true;
-        $con->dispForm              = 'col-4';
+        $con->dispForm              = 'col-4 d-none';
         $this->enp_conversao        = $con->crInput();
 
 
         $qti                        = new MyCampo('est_entrada_produto', 'enp_quantia');
-        $qti->id = $qti->nome       = "enp_quantia[$pos]";
-        $qti->ordem                 = $pos;
-        $qti->repete                = true;
-        $qti->obrigatorio           = true;
-        $qti->valor                 = isset($dados['enp_quantia']) ? $dados['enp_quantia'] : '';
-        $qti->largura               = 25;
+        // $qti->id = $qti->nome       = "enp_quantia[$pos]";
+        // $qti->ordem                 = $pos;
+        // $qti->repete                = true;
+        // $qti->obrigatorio           = true;
+        $quantia = formataQuantia($dados['cop_quantia'])['qtiv'];
+        $qti->valor                 = $quantia;
+        $qti->tipo                  = 'text';
+        $qti->largura               = 30;
         $qti->maximo                = 999999;
         // $qti->funcBlur              = "calculaTotal(this,'enp_quantia', 'enp_valor', 'enp_total')";
-        $qti->dispForm              = 'col-2';
-        $qti->leitura               = $show;
+        // $qti->dispForm              = 'col-12';
+        $qti->leitura               = true;
         $qti->place                 = "";
         $this->enp_quantia          = $qti->crInput();
 
@@ -312,38 +315,37 @@ class EstRecebimento extends BaseController
         $sal->id = $sal->nome       = "enp_saldo[$pos]";
         $sal->tipo                 = 'sonumero';
         $sal->label                 = 'Saldo';
-        $sal->ordem                 = $pos;
+        // $sal->ordem                 = $pos;
         $sal->valor                 = isset($dados['enp_saldo']) ? $dados['enp_saldo'] : "";
-        $sal->largura               = 15;
-        $sal->dispForm              = 'col-8';
+        $sal->largura               = 30;
+        $sal->dispForm              = 'col-12 d-none';
         $sal->leitura               = true;
         $sal->place             = "";
         $this->enp_saldo            = $sal->crInput();
 
 
         $val                        = new MyCampo('est_entrada_produto', 'enp_valor');
-        $val->id = $val->nome       = "enp_valor[$pos]";
-        $val->ordem                 = $pos;
-        $val->repete                = true;
-        $val->obrigatorio           = true;
+        // $val->id = $val->nome       = "enp_valor[$pos]";
+        // $val->ordem                 = $pos;
+        // $val->repete                = true;
+        // $val->obrigatorio           = true;
         // debug($dados['enp_valor']);
-        $val->valor                 = isset($dados['enp_valor']) ? $dados['enp_valor'] : '';
-        // $val->largura               = 15;
+        $val->valor                 = isset($dados['cop_valor']) ? $dados['cop_valor'] : '';
+        $val->largura               = 30;
         // $val->funcBlur              = "calculaTotal(this,'enp_quantia', 'enp_valor', 'enp_total')";
-        $val->dispForm              = 'col-3';
-        $val->leitura      = $show;
-        $val->place             = "";
+        // $val->dispForm              = 'col-12';
+        $val->leitura               = true;
+        $val->place                 = "";
         $this->enp_valor            = $val->crInput();
 
         $tot                        = new MyCampo('est_entrada_produto', 'enp_total');
-        $tot->id = $tot->nome       = "enp_total[$pos]";
-        $tot->ordem                 = $pos;
-        $tot->repete                = true;
+        // $tot->id = $tot->nome       = "enp_total[$pos]";
+        // $tot->ordem                 = $pos;
+        // $tot->repete                = true;
         $tot->leitura               = true;
-        $tot->valor                 = isset($dados['enp_total']) ? $dados['enp_total'] : '';
-        // $tot->largura               = 15;
-        $tot->dispForm              = 'col-3';
-        $tot->leitura               = $show;
+        $tot->valor                 = isset($dados['cop_total']) ? $dados['cop_total'] : '';
+        $tot->largura               = 30;
+        // $tot->dispForm              = 'col-12';
         $tot->place                 = "";
         $this->enp_total            = $tot->crInput();
     }
@@ -398,14 +400,18 @@ class EstRecebimento extends BaseController
         $emp->obrigatorio           = true;
         $emp->opcoes                = $opc_emp;
         $emp->largura               = 50;
-        $emp->leitura      = $show;
+        $emp->leitura               = $show;
         $this->emp_id               = $emp->crSelect();
 
         $depos = [];
         $depositos           = explode(',', session()->get('usu_deposito'));
-            $deposito       = new EstoquDepositoModel();
+        $deposito       = new EstoquDepositoModel();
+        if($deposito != ''){
             $dados_dep      = $deposito->getDeposito($depositos, $dados['emp_id']);
-            $depos = array_column($dados_dep, 'dep_nome', 'dep_id');
+        } else {
+            $dados_dep      = $deposito->getDeposito(false, $dados['emp_id']);
+        }
+        $depos = array_column($dados_dep, 'dep_nome', 'dep_id');
         // }
         $dep                        = new MyCampo('est_entrada', 'dep_id');
         $dep->valor = $dep->selecionado = isset($dados['dep_id']) ? $dados['dep_id'] : array_key_first($depos);
@@ -434,6 +440,7 @@ class EstRecebimento extends BaseController
         $ret['erro'] = false;
         $erros = [];
         $dados = $this->request->getPost();
+        // debug($dados, true);
         $contagem = new EstoquContagemModel();
         $ultimo   = $contagem->getUltimaContagem($dados['dep_id']);
         if ($ultimo) {
@@ -443,25 +450,30 @@ class EstRecebimento extends BaseController
             }
         }
         if (!$ret['erro']) {
-            $total_ent = 0;
-            if (isset($dados['pro_id']) && count($dados['pro_id']) > 0) {
-                foreach ($dados['pro_id'] as $key => $value) {
-                    $total_ent += floatval(moedaToFloat($dados['enp_total'][$key]));
-                }
-            } else {
-                $ret['erro'] = true;
-                $ret['msg'] = 'É necessário informar pelo menos 1 Produto, Verifique!';
-            }
+            $total_ent = floatval(moedaToFloat($dados['enp_total']));
         }
+        // if (!$ret['erro']) {
+        //     $total_ent = 0;
+        //     if (isset($dados['pro_id']) && count($dados['pro_id']) > 0) {
+        //         foreach ($dados['pro_id'] as $key => $value) {
+        //             $total_ent += floatval(moedaToFloat($dados['enp_total'][$key]));
+        //         }
+        //     } else {
+        //         $ret['erro'] = true;
+        //         $ret['msg'] = 'É necessário informar pelo menos 1 Produto, Verifique!';
+        //     }
+        // }
         if (!$ret['erro']) {
-            foreach ($dados['pro_id'] as $key => $value) {
-                $fck = str_replace(',', '.', $dados['conversao'][$key]);
+            // foreach ($dados['pro_id'] as $key => $value) {
+                // $fck = str_replace(',', '.', $dados['conversao'][$key]);
+                $fck = str_replace(',', '.', $dados['enp_conversao']);
                 if ((float)$fck <= 0) {
                     $ret['erro'] = true;
-                    $ret['msg'] = 'O Fator de Conversão do Produto ' . $dados['pro_nome'][$key] . ' Não pode zer ZERO(0), Verifique!';
-                    break;
+                    // $ret['msg'] = 'O Fator de Conversão do Produto ' . $dados['pro_nome'][$key] . ' Não pode zer ZERO(0), Verifique!';
+                    $ret['msg'] = 'O Fator de Conversão do Produto ' . $dados['pro_nome'] . ' Não pode zer ZERO(0), Verifique!';
+                    // break;
                 }
-            }
+            // }
         }
         if (!$ret['erro']) {
             $dados_cta = [
@@ -481,20 +493,45 @@ class EstRecebimento extends BaseController
                 if (isset($dados['pro_id'])) {
                     $data_atu = date('Y-m-d H:i:s');
                     $cta_exc = $this->common->deleteReg('dbEstoque', 'est_entrada_produto', "ent_id = " . $ent_id);
-                    foreach ($dados['pro_id'] as $key => $value) {
+                    // foreach ($dados['pro_id'] as $key => $value) {
+                    //     // $qtiaconv = $dados['enp_quantia'][$key] * floatval($dados['enp_conversao'][$key]);
+                    //     $valor = moedaToFloat($dados['enp_valor'][$key]);
+                    //     $total = moedaToFloat($dados['enp_total'][$key]);
+                    //     // debug($valor);
+                    //     // debug($total,true);
+                    //     $dados_pro = [
+                    //         'ent_id'    => $ent_id,
+                    //         'mar_codigo'    => $dados['mar_codigo'][$key],
+                    //         'pro_id'    => $dados['pro_id'][$key],
+                    //         'und_id'    => $dados['und_id'][$key],
+                    //         'enp_quantia'   => $dados['enp_quantia'][$key],
+                    //         'enp_valor'   => $valor,
+                    //         'enp_conversao'   => str_replace(',', '.', $dados['conversao'][$key]),
+                    //         'enp_total'   => $total,
+                    //         'enp_atualizado' => $data_atu
+                    //     ];
+                    //     try {
+                    //         $salva = $this->common->insertReg('dbEstoque', 'est_entrada_produto', $dados_pro);
+                    //     } catch (\Throwable $th) {
+                    //         $ret['erro'] = true;
+                    //         $ret['msg'] = 'Não foi possível gravar os produtos, Verifique!';
+                    //         break;
+                    //     }
+                    // }
+                    // foreach ($dados['pro_id'] as $key => $value) {
                         // $qtiaconv = $dados['enp_quantia'][$key] * floatval($dados['enp_conversao'][$key]);
-                        $valor = moedaToFloat($dados['enp_valor'][$key]);
-                        $total = moedaToFloat($dados['enp_total'][$key]);
+                        $valor = moedaToFloat($dados['enp_valor']);
+                        $total = moedaToFloat($dados['enp_total']);
                         // debug($valor);
                         // debug($total,true);
                         $dados_pro = [
                             'ent_id'    => $ent_id,
-                            'mar_codigo'    => $dados['mar_codigo'][$key],
-                            'pro_id'    => $dados['pro_id'][$key],
-                            'und_id'    => $dados['und_id'][$key],
-                            'enp_quantia'   => $dados['enp_quantia'][$key],
+                            'mar_codigo'    => $dados['mar_codigo'],
+                            'pro_id'    => $dados['pro_id'],
+                            'und_id'    => $dados['und_id'],
+                            'enp_quantia'   => $dados['enp_quantia'],
                             'enp_valor'   => $valor,
-                            'enp_conversao'   => str_replace(',', '.', $dados['conversao'][$key]),
+                            'enp_conversao'   => str_replace(',', '.', $dados['enp_conversao']),
                             'enp_total'   => $total,
                             'enp_atualizado' => $data_atu
                         ];
@@ -503,16 +540,18 @@ class EstRecebimento extends BaseController
                         } catch (\Throwable $th) {
                             $ret['erro'] = true;
                             $ret['msg'] = 'Não foi possível gravar os produtos, Verifique!';
-                            break;
                         }
-                    }
+                    // }
                 }
                 // atualiza a Compra como Recebida
-                $dados_com = [
-                    'com_id'    => $dados['com_id'],
-                    'com_status'    => 'R',
-                ];
-                $this->compra->save($dados_com);
+                $completo = $this->compra->getCompraVsEntrada($dados['com_id'])[0];
+                if($completo['entrada_completa'] == 1){
+                    $dados_com = [
+                        'com_id'    => $dados['com_id'],
+                        'com_status'    => 'R',
+                    ];
+                    $this->compra->save($dados_com);
+                }
                 $ret['erro'] = false;
                 $ret['msg'] = 'Recebimento gravado com Sucesso!!!';
                 session()->setFlashdata('msg', $ret['msg']);

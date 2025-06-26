@@ -561,11 +561,14 @@ class ApiEstoque extends Auth
                 }
 
                 if ($compra != null) {
-                    $dados_com = [
-                        'com_id'     => $compra,
-                        'com_status' => 'R',
-                    ];
-                    $this->compra->save($dados_com);
+                    $completo = $this->compra->getCompraVsEntrada($compra)[0];
+                    if($completo['entrada_completa'] == 1){
+                        $dados_com = [
+                            'com_id'    => $compra,
+                            'com_status'    => 'R',
+                        ];
+                        $this->compra->save($dados_com);
+                    }
                 }
 
                 $db->transComplete(); // <<< FINALIZA TRANSACAO
