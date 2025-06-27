@@ -389,7 +389,6 @@ function buscaProdutoMarca(obj, tipo = 0) {
             jQuery("#mar_nome").val(retorno.marca);
             jQuery("#enp_conversao").val(retorno.conversao);
             jQuery("#unm_id").selectpicker("val", retorno.und_marca);
-            jQuery("#bt_salvar").trigger("click");
             // jQuery("#und_id").selectpicker("val", retorno.und_produ);
           }
         }

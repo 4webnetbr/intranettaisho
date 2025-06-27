@@ -546,7 +546,7 @@ class EstRecebimento extends BaseController
                             'mar_codigo'    => $dados['mar_codigo'],
                             'pro_id'    => $dados['pro_id'],
                             'und_id'    => $dados['und_id'],
-                            'enp_quantia'   => $dados['enp_quantia'],
+                            'enp_quantia'   => str_replace(',', '.',$dados['enp_quantia']),
                             'enp_valor'   => $valor,
                             'enp_conversao'   => str_replace(',', '.', $dados['enp_conversao']),
                             'enp_total'   => $total,
