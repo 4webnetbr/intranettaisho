@@ -138,9 +138,10 @@ class EstCompraCotacao extends BaseController
 
         $dados_grc = $this->grupocompra->getGrupocompra();
         $grucs = array_column($dados_grc, 'grc_nome', 'grc_id');
+        $grucs = ['0' => ':: Todos ::'] + $grucs;
 
         $grc                        = new MyCampo('est_produto', 'grc_id');
-        $grc->valor = $grc->selecionado = '1';
+        $grc->valor = $grc->selecionado = '0';
         $grc->label                 = 'Grupo';
         $grc->opcoes                = $grucs;
         $grc->largura               = 40;
@@ -358,6 +359,9 @@ class EstCompraCotacao extends BaseController
         if ($param == 'undefined') {
             $param = false;
         }
+        if ($param2 == 'undefined' || $param2 == -1 || $param2 == 0) {
+            $param2 = false;
+        }
 
         $empresas = explode(',', $param);
         $produtos = $this->pedido->getCotacaoProdutos($empresas[0], $param2);
@@ -368,6 +372,7 @@ class EstCompraCotacao extends BaseController
             $ret[$dc] = [
                 'ped_id'        => $prod['ped_id'],
                 'pro_id'        => $prod['pro_id'],
+                'grc_nome'      => $prod['grc_nome'],
                 'pro_nome'      => $prod['pro_nome'],
                 'ped_datains'   => dataDbToBr($prod['ped_datains']),
                 'ped_qtia'      => $prod['ped_qtia'],

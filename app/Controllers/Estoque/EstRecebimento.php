@@ -11,6 +11,7 @@ use App\Models\Estoqu\EstoquContagemModel;
 use App\Models\Estoqu\EstoquDepositoModel;
 use App\Models\Estoqu\EstoquEntradaModel;
 use App\Models\Estoqu\EstoquFornecedorModel;
+use App\Models\Estoqu\EstoquMarcaModel;
 use App\Models\Estoqu\EstoquPedidoModel;
 use App\Models\Estoqu\EstoquProdutoModel;
 use App\Models\Estoqu\EstoquUndMedidaModel;
@@ -21,6 +22,7 @@ class EstRecebimento extends BaseController
     public $data = [];
     public $permissao = '';
     public $compra;
+    public $marca;
     public $entrada;
     public $common;
     public $empresa;
@@ -55,6 +57,7 @@ class EstRecebimento extends BaseController
         $this->empresa       = new ConfigEmpresaModel();
         $this->pedido       = new EstoquPedidoModel();
         $this->produto       = new EstoquProdutoModel();
+        $this->marca       = new EstoquMarcaModel();
 
         if ($this->data['erromsg'] != '') {
             $this->__erro();
@@ -187,7 +190,7 @@ class EstRecebimento extends BaseController
         $this->data['campos'] = $campos;
         $this->data['desc_metodo'] = 'Recebimento de Produto';
         $this->data['destino'] = 'store';
-        $this->data['script'] = "<script>jQuery('#mar_codigo').focus();</script>";
+        $this->data['script'] = "<script>jQuery('#mar_codigo').focus();jQuery('#enp_quantia').focus();</script>";
 
         echo view('vw_edicao', $this->data);
     }
@@ -209,14 +212,24 @@ class EstRecebimento extends BaseController
         // $id->repete            = true;
         $this->enp_id = $id->crOculto();
 
+        if($dados['gru_controlaestoque'] == 'N'){ // busca a marca, traz preenchida e pede a quantidade
+            $marcax = $this->marca->getMarcaProd($dados['pro_id']);
+            if($marcax){
+                $marcax = $marcax[0];
+            }
+        }
+ 
         $mcd                    = new MyCampo('est_entrada_produto', 'mar_codigo');
-        // $mcd->id = $mcd->nome   = "mar_codigo";
-        // $mcd->ordem             = $pos;
-        $mcd->valor             = isset($dados['mar_codigo']) ? $dados['mar_codigo'] : '';
         $mcd->funcBlur          = "buscaProdutoMarca(this, 1)";
         // $mcd->dispForm          = "col-4";
-        $mcd->leitura           = $show;
         $mcd->naocolar          = false;
+        $mcd->leitura           = $show;
+        $mcd->valor             = isset($dados['mar_codigo']) ? $dados['mar_codigo'] : '';
+        if($dados['gru_controlaestoque'] == 'N'){ // busca a marca, traz preenchida e pede a quantidade
+            $mcd->leitura           = true;
+            $mcd->valor             = $marcax['mar_codigo'];
+            $dados['enp_conversao'] = $marcax['mar_conversao'];
+        }
         $this->mar_codigo       = $mcd->crInput();
 
         $pro                    = new MyCampo('est_entrada_produto', 'pro_id');
@@ -305,9 +318,13 @@ class EstRecebimento extends BaseController
         $qti->tipo                  = 'text';
         $qti->largura               = 30;
         $qti->maximo                = 999999;
-        // $qti->funcBlur              = "calculaTotal(this,'enp_quantia', 'enp_valor', 'enp_total')";
-        // $qti->dispForm              = 'col-12';
         $qti->leitura               = true;
+        if($dados['gru_controlaestoque'] == 'N'){ // busca a marca, traz preenchida e pede a quantidade
+            $qti->leitura               = false;
+            $qti->funcBlur              = "calculaTotal(this,'enp_quantia', 'enp_valor', 'enp_total');";
+            $qti->valor                 = '';
+        }
+        // $qti->dispForm              = 'col-12';
         $qti->place                 = "";
         $this->enp_quantia          = $qti->crInput();
 

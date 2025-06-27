@@ -954,6 +954,10 @@ function carrega_lista_cotacao(obj, url, nome) {
             iddiv +
             '">';
           linha +=
+            '          <div class="col-2"><b>Grupo</b><br>' +
+            element.grc_nome +
+            "</div>";
+          linha +=
             '          <div class="col-4"><b>Produto</b><br>' +
             element.pro_nome +
             "</div>";
@@ -962,11 +966,11 @@ function carrega_lista_cotacao(obj, url, nome) {
             element.ped_datains +
             "</div>";
           linha +=
-            '          <div class="col-2"><b>Quantia</b><br>' +
+            '          <div class="col-1"><b>Quantia</b><br>' +
             element.ped_qtia +
             "</div>";
           linha +=
-            '          <div class="col-2"><b>Sugestão</b><br>' +
+            '          <div class="col-1"><b>Sugestão</b><br>' +
             element.ped_sugestao +
             "</div>";
           linha +=

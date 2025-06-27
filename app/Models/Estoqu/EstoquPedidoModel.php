@@ -262,7 +262,7 @@ class EstoquPedidoModel extends Model
         if ($grc_id) {
             $builder->where("grc_id", $grc_id);
         }
-        // $builder->orderBy("pro_nome");
+        $builder->orderBy("grc_nome, pro_nome");
         $ret = $builder->get()->getResultArray();
         // debug($db->getLastQuery(), true);
 
