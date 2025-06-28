@@ -334,6 +334,8 @@ function busca_dados_material(orig, obj, url, base) {
 
 function buscaProdutoMarca(obj, tipo = 0) {
   valor = obj.value;
+  id = obj.id;
+  fim = extrairComEscape(id);
   if (valor != "") {
     ordem = obj.getAttribute("data-index");
     url = window.location.origin + "/buscas/buscaprodutomarca";
@@ -353,9 +355,9 @@ function buscaProdutoMarca(obj, tipo = 0) {
           // jQuery("#und_id\\[" + ordem + "\\]").selectpicker("val", -1);
           // jQuery("#pro_id").val("");
           // jQuery("#pro_nome").val("");
-          jQuery("#mar_nome").val("");
-          jQuery("#enp_conversao").val("");
-          jQuery("#unm_id").selectpicker("val", -1);
+          jQuery("#mar_nome" + fim).val("");
+          jQuery("#enp_conversao" + fim).val("");
+          jQuery("#unm_id" + fim).selectpicker("val", -1);
           // jQuery("#und_id").selectpicker("val", -1);
           // abrir cadastro de marca modal
           openModal(window.location.origin + "/EstMarca/add/modal=true");
@@ -372,23 +374,18 @@ function buscaProdutoMarca(obj, tipo = 0) {
             );
           }
           if (compara) {
-            // jQuery("#pro_id\\[" + ordem + "\\]").val(retorno.id);
-            // jQuery("#pro_nome\\[" + ordem + "\\]").val(retorno.produto);
             // jQuery("#mar_nome\\[" + ordem + "\\]").val(retorno.marca);
-            // jQuery("#conversao\\[" + ordem + "\\]").val(retorno.conversao);
             // jQuery("#unm_id\\[" + ordem + "\\]").selectpicker(
             //   "val",
             //   retorno.und_marca
             // );
-            // jQuery("#und_id\\[" + ordem + "\\]").selectpicker(
-            //   "val",
-            //   retorno.und_produ
-            // );
-            // jQuery("#pro_id").val(retorno.id);
-            // jQuery("#pro_nome").val(retorno.produto);
-            jQuery("#mar_nome").val(retorno.marca);
-            jQuery("#enp_conversao").val(retorno.conversao);
-            jQuery("#unm_id").selectpicker("val", retorno.und_marca);
+            jQuery("#pro_id" + fim).val(retorno.id);
+            jQuery("#pro_nome" + fim).val(retorno.produto);
+            jQuery("#mar_nome" + fim).val(retorno.marca);
+            jQuery("#enp_conversao" + fim).val(retorno.conversao);
+            jQuery("#conversao" + fim).val(retorno.conversao);
+            jQuery("#unm_id" + fim).selectpicker("val", retorno.und_marca);
+            jQuery("#und_id" + fim).selectpicker("val", retorno.und_produ);
             // jQuery("#und_id").selectpicker("val", retorno.und_produ);
           }
         }
@@ -1114,4 +1111,9 @@ function carrega_lista_cotacao(obj, url, nome) {
       });
     },
   });
+}
+
+function extrairComEscape(id) {
+  const match = id.match(/\[(\d+)\]/);
+  return match ? `\\[${match[1]}\\]` : "";
 }

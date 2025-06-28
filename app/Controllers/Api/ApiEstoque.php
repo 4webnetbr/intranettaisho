@@ -135,7 +135,7 @@ class ApiEstoque extends Auth
                 $empresa       = $this->request->getVar('empresa');
                 // $deposito       = $this->request->getVar('deposito');
 
-                $compras       =  $this->compra->getCompraLista(false, $empresa);
+                $compras       =  $this->compra->getCompraProdPendente(false, $empresa);
 
                 // echo $this->api->getLastQuery();
                 $prods      = [];
