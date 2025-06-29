@@ -172,6 +172,16 @@ class ApiEstoque extends Auth
                     $prods[$d]['qtia']          = (string) formataQuantia($chave['cop_quantia'])['qtis'];
                     $prods[$d]['valor']          = floatToMoeda($chave['cop_valor']);
                     $prods[$d]['total']          = floatToMoeda($chave['cop_total']);
+
+                    $prods[$d]['codbar']          = '';
+                    $produto = $this->compra->getCompraProd($chave['com_id'], $chave['pro_id'])[0];
+                    if($produto['gru_controlaestoque'] == 'N'){ // busca a marca, traz preenchida e pede a quantidade
+                        $marcax = $this->marca->getMarcaProd($chave['pro_id']);
+                        // debug($marcax);
+                        if($marcax){
+                            $prods[$d]['codbar']          = $marcax[0]['mar_codigo'];
+                        }
+                    }
                 }
                 log_message('info', 'Resultado: ' . json_encode($prods) . ' Função: getCompra');
                 return $this->respond($prods, 200);
