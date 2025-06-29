@@ -168,7 +168,7 @@ class ApiEstoque extends Auth
                     $prods[$d]['for_nome']      = $chave['for_razao'];
                     $prods[$d]['comid']        = $chave['com_id'];
                     $prods[$d]['datacompra']      = dataDbToBr($chave['com_data']);
-                    $prods[$d]['entrega']      = dataDbToBr($chave['com_previsao']);
+                    $prods[$d]['entrega']      = isset($chave['cop_previsao'])?dataDbToBr($chave['cop_previsao']):dataDbToBr($chave['com_previsao']);
                     $prods[$d]['qtia']          = (string) formataQuantia($chave['cop_quantia'])['qtis'];
                     $prods[$d]['valor']          = floatToMoeda($chave['cop_valor']);
                     $prods[$d]['total']          = floatToMoeda($chave['cop_total']);
