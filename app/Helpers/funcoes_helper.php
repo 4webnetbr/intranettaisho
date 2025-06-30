@@ -1129,28 +1129,31 @@ function contarDiasDaSemana($inicio, $fim, $diaDaSemana)
 
 function formataQuantia($qtia)
 {
-    // debug('formataQuantia ');
-    // debug('Recebeu '.$qtia);
+    // Garantir que ',' seja substituído por '.' para formatação numérica
+    $qtia = str_replace(',', '.', $qtia);
+
+    // Garantir que é float
+    $qtia = (float) $qtia;
+
     $ret = [];
-    if (fmod((float)$qtia, 1) == 0) { // NÃO TEM DECIMAIS
-        // debug(intval($qtia));
+
+    if (fmod($qtia, 1) == 0) { // NÃO TEM DECIMAIS
         $ret['qtiv'] = str_replace('.', '', intval($qtia));
         $qtia = number_format($qtia, 3, '.', '');
         $ret['qtia'] = "<div class='text-end'>" . (int)$qtia . "</div>";
         $ret['qtis'] = (int)$qtia;
         $ret['dec'] = 0;
     } else { // tem decimais
-        // verificar quantas casas decimais
         $qtia = number_format($qtia, 3, '.', '');
         $decimalPart = explode('.', (string)$qtia)[1];
-        // debug('decimal '.$decimalPart);
+
         $ret['qtiv'] = $qtia;
-        if (fmod($decimalPart, 100) == 0) { // se o resto da divisão por 100 for 0
+
+        if (fmod((int)$decimalPart, 100) == 0) {
             $ret['qtia'] = "<div class='text-end'>" . number_format($qtia, 1, ',', '') . "</div>";
             $ret['qtis'] = number_format($qtia, 1, '.', '');
             $ret['dec'] = 1;
-        } else if (fmod($decimalPart, 10) == 0) { // se o resto da divisão por 10 for 0
-            // debug('qtia '.$qtia);
+        } else if (fmod((int)$decimalPart, 10) == 0) {
             $ret['qtia'] = "<div class='text-end'>" . number_format($qtia, 2, ',', '') . "</div>";
             $ret['qtis'] = number_format($qtia, 2, '.', '');
             $ret['dec'] = 2;
@@ -1160,7 +1163,7 @@ function formataQuantia($qtia)
             $ret['dec'] = 3;
         }
     }
-    // debug($ret);
+
     return $ret;
 }
 

@@ -698,3 +698,211 @@ function isValidDate(dateString) {
   let date = new Date(dateString);
   return !isNaN(date.getTime());
 }
+
+async function permiteNotificacao() {
+  if (!("Notification" in window)) {
+    console.warn("Este navegador não suporta notificações.");
+    return false;
+  }
+
+  if (Notification.permission === "granted") {
+    return true;
+  }
+
+  if (Notification.permission === "denied") {
+    console.warn("As notificações estão bloqueadas pelo usuário.");
+    return false;
+  }
+
+  try {
+    const permissao = await Notification.requestPermission();
+    if (permissao === "granted") {
+      return true;
+    } else {
+      console.log("O usuário negou a permissão de notificações.");
+      return false;
+    }
+  } catch (erro) {
+    console.error("Erro ao solicitar permissão de notificações:", erro);
+    return false;
+  }
+}
+
+async function showNotification(texto) {
+  const permitido = await permiteNotificacao();
+
+  if (permitido) {
+    const options = {
+      body: texto,
+      dir: "ltr",
+      icon: "/assets/images/alert.png",
+    };
+
+    new Notification("Nova Notificação", options);
+  }
+}
+
+function verificaNotificacao() {
+  var usuarioatual = jQuery("#usu_id").val();
+  if (usuarioatual != "") {
+    var url = "/Notifica/verNotifica";
+    let dados = { usuario: usuarioatual };
+    retornoAjax = false;
+    executaAjax(url, "json", dados);
+    if (retornoAjax) {
+      if (retornoAjax.novo > 0) {
+        jQuery("#bt_notifica").removeClass("btn-outline-light");
+        jQuery("#bt_notifica").removeClass("disabled");
+        jQuery("#bt_notifica").addClass("btn-outline-warning");
+
+        jQuery("#badgenotif").removeClass("d-none");
+
+        jQuery("#show_notifica").html(retornoAjax.html);
+        jQuery("#badgenotif").html(retornoAjax.novo);
+      } else {
+        jQuery("#bt_notifica").removeClass("btn-outline-warning");
+
+        jQuery("#bt_notifica").addClass("btn-outline-light");
+        jQuery("#bt_notifica").addClass("disabled");
+
+        jQuery("#badgenotif").addClass("d-none");
+
+        jQuery("#show_notifica").html("");
+        jQuery("#badgenotif").html("");
+        // jQuery('#show_notifica').removeClass('show');
+      }
+    }
+  }
+}
+
+function viuNotifica($id) {
+  var url = "/Notifica/viuNotifica";
+  var dados = { id: $id };
+  retornoAjax = false;
+  executaAjax(url, "json", dados);
+  if (retornoAjax) {
+    verificaNotificacao();
+  }
+}
+
+/**
+ * executaAjax
+ * Executa uma requisição ajax, e retorna o resultado pra quem chamou, ou executa a função informada
+ * @param {string} urldest - URL de destino
+ * @param {string} tipo - Tipo de Retorno (html, json)
+ * @param {array} dados - dados a serem informados
+ * @return {Object} retorno
+ */
+function executaAjax(urldest, tipo = "json", dados = {}, funcao = "") {
+  bloqueiaTela();
+  var options = {};
+  if (dados.entries != undefined) {
+    options = {
+      method: "POST",
+      url: urldest,
+      data: dados,
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+      processData: false,
+      contentType: false,
+      async: false,
+      dataType: tipo,
+      beforeSend: function () {
+        bloqueiaTela();
+      },
+      complete: function () {
+        desBloqueiaTela();
+      },
+    };
+  } else {
+    options = {
+      method: "POST",
+      cache: false,
+      url: urldest,
+      data: dados,
+      async: false,
+      dataType: tipo,
+      beforeSend: function () {
+        bloqueiaTela();
+      },
+      complete: function () {
+        desBloqueiaTela();
+      },
+    };
+  }
+  var request = jQuery.ajax(options);
+
+  request.done(function (retorno) {
+    retornoAjax = retorno;
+    if (typeof window[funcao] === "function") {
+      window[funcao];
+    }
+  });
+  request.fail(function (jqXHR, textStatus) {
+    retornoAjax = false;
+    if (jqXHR.responseJSON != undefined) {
+      msgerro =
+        "Erro <br> Código " +
+        jqXHR.responseJSON.code +
+        "<br> Arquivo: " +
+        jqXHR.responseJSON.file +
+        "<br> Linha: " +
+        jqXHR.responseJSON.line +
+        "<br> Mensagem: " +
+        jqXHR.responseJSON.message;
+    } else {
+      msgerro = jqXHR.responseText;
+    }
+    boxAlert(msgerro, true, "", false, 3, false);
+  });
+  return retornoAjax;
+}
+
+/**
+ * executaAjax
+ * Executa uma requisição ajax, e retorna o resultado pra quem chamou, ou executa a função informada
+ * @param {string} urldest - URL de destino
+ * @param {string} tipo - Tipo de Retorno (html, json)
+ * @param {array} dados - dados a serem informados
+ * @return {Object} retorno
+ */
+function executaAjaxWait(urldest, tipo = "json", dados = {}, funcao = "") {
+  executandoAjax = true;
+  // Bloqueia a tela
+  bloqueiaTela();
+
+  return new Promise((resolve, reject) => {
+    jQuery.ajax({
+      method: "POST",
+      cache: false,
+      url: urldest,
+      data: dados,
+      dataType: tipo,
+      success: function (retorno) {
+        resolve(retorno);
+      },
+      error: function (jqXHR, textStatus) {
+        let msgerro;
+        if (jqXHR.responseJSON !== undefined) {
+          msgerro =
+            "Erro <br> Código " +
+            jqXHR.responseJSON.code +
+            "<br> Arquivo: " +
+            jqXHR.responseJSON.file +
+            "<br> Linha: " +
+            jqXHR.responseJSON.line +
+            "<br> Mensagem: " +
+            jqXHR.responseJSON.message;
+        } else {
+          msgerro = jqXHR.responseText;
+        }
+        boxAlert(msgerro, true, "", false, 3, false);
+        reject(false);
+      },
+      complete: function () {
+        // Desbloqueia a tela após a conclusão
+        executandoAjax = false;
+        desBloqueiaTela();
+      },
+    });
+  });
+}

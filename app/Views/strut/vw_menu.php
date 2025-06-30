@@ -6,6 +6,8 @@ echo $this->section('menu');
 $url_sair = base_url('/login');
 $avatar = session()->get('usu_avatar');
 $nomeus = session()->get('usu_nome');
+$idusua = session()->get('usu_id'); 
+
 $cont_accord = 1;
 $accordraiz = false;
 if ($avatar != '') {
@@ -15,6 +17,7 @@ if ($avatar != '') {
 }
 ?>
 <input type='hidden' id='controler' value='<?=strtolower($controler);?>' />
+<input type='hidden' id='usu_id' value='<?=$idusua;?>' />
 <div id='show_user' class="card col-lg-2 col-6 border border-1 border-info shadow p-3 me-1 float-start" >
   <div class="card-header d-flex">
     <?

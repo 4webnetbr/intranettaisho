@@ -514,6 +514,18 @@ class ApiEstoque extends Auth
                 session()->set('usu_nome', $user[0]['usu_nome']);
                 log_message('info', 'Usuário: ' . $usuario . ' Função: gravaentrada');
 
+                $key = $this->request->getHeaderLine('Idempotency-Key');
+
+                if (!$key) {
+                    return $this->fail('Idempotency key required', 400);
+                }
+
+                $cache = cache();
+
+                if ($cache->get($key)) {
+                    return $this->respond(['message' => 'Duplicate request ignored'], 200);
+                }
+
                 $empresa    = $this->request->getVar('empresa');
                 $deposito   = $this->request->getVar('deposito');
                 $codbar     = $this->request->getVar('codbar');
@@ -550,6 +562,9 @@ class ApiEstoque extends Auth
                 $ent_id = $this->entrada->getInsertID();
                 $data_atu = date('Y-m-d H:i:s');
 
+                $quantia = formataQuantia($quantia)['qtiv'];
+                $convers = formataQuantia($convers)['qtiv'];
+
                 $dados_pro = [
                     'ent_id'         => $ent_id,
                     'mar_codigo'     => $codbar,
@@ -581,12 +596,29 @@ class ApiEstoque extends Auth
                     }
                 }
 
+                // verifica se o código de barras existe
+                $existecodbar = $this->marca->getMarcaCod($codbar);
+                if(count($existecodbar) == 0){ // codbar não existe, insere a marca
+                    $dados_mar = [
+                        'pro_id'         => $produto,
+                        'mar_codigo'         => $codbar,
+                        'mar_nome'         => 'Marca não cadastrada',
+                        'und_id'         => '',
+                        'mar_apresenta'         => '',
+                        'mar_conversao'         => $convers,
+                    ];
+                    // debug($dados_mar,true);
+                    $salvar = $this->marca->save($dados_mar);
+                }
+
                 $db->transComplete(); // <<< FINALIZA TRANSACAO
 
                 if ($db->transStatus() === false) {
                     return $this->respond(['success' => false, 'message' => 'Erro na transação'], 500);
                 }
 
+                $cache->save($key, true, 300);
+                
                 log_message('info', 'Entrada gravada com sucesso Função: gravaentrada');
                 return $this->respond(['success' => true, 'id_entrada' => $ent_id], 200);
             } else {

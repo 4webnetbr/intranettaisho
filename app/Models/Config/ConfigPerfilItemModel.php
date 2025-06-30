@@ -56,4 +56,27 @@ class ConfigPerfilItemModel extends Model
         // debug($this->db->getLastQuery());
         return $ret;
     }
+
+    public function getPermissaoTelaUsuario($tela = false, $perfil = false, $usuario = false, $controler = false){
+        if(!$tela && !$usuario && !$perfil && !$controler){
+            return false;
+        }
+        $db = db_connect();
+        $builder = $db->table('vw_permissao_tela_usuarios');
+        $builder->select('*'); 
+        if($tela)
+            $builder->where('tel_nome', $tela);
+        if($perfil)
+            $builder->where('pit_perfil_id', $perfil);
+        if($usuario)
+            $builder->where('usu_id', $usuario);
+        if($controler)
+            $builder->where('tel_controler', $controler);
+        
+        $ret = $builder->get()->getResultArray();
+        // debug($this->db->getLastQuery());        
+        // log_message('info','SQL '.$this->db->getLastQuery());
+
+        return $ret;
+    }
 }
