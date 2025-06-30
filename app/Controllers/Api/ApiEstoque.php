@@ -194,6 +194,83 @@ class ApiEstoque extends Auth
     }
 
     /**
+     * getCompra
+     * Retorna as Compras dos produtos da empresa informada no parametro
+     * @return void
+     */
+    public function getCompraFornec()
+    {
+        if ($this->request->header('Authorization') != null) {
+            $token = $this->request->header('Authorization')->getValue();
+            if ($this->validateToken($token) == true) {
+                $token      = $this->request->header('Authorization')->getValue();
+                $inform     = get_object_vars($this->validateToken($token));
+                $dados      = get_object_vars($inform['data']);
+                $usuario    = $dados['id'];
+                log_message('info', 'Usuário: ' . $usuario . ' Função: getCompraFornec');
+
+                $empresa       = $this->request->getVar('empresa');
+                $fornecedor       = $this->request->getVar('fornecedor');
+                // $deposito       = $this->request->getVar('deposito');
+
+                $compras       =  $this->compra->getCompraProdPendente(false, $empresa, $fornecedor);
+
+                // echo $this->api->getLastQuery();
+                $prods      = [];
+                for ($d = 0; $d < sizeof($compras); $d++) {
+                    $chave = $compras[$d];
+                    $prods[$d]['proid']        = $chave['pro_id'];
+                    $prods[$d]['pronome']      = $chave['pro_nome'];
+                    $prods[$d]['undsigla']     = $chave['und_sigla'];
+                    log_message('info', 'Produto: ' . $chave['pro_nome'] . ' Função: getCompraFornec');
+                    log_message('info', 'Und: ' . $chave['und_sigla'] . ' Função: getCompraFornec');
+                    $minimo = $chave['mmi_minimo'] ?? 0;
+                    $maximo = $chave['mmi_maximo'] ?? 0;
+                    if ($chave['und_id'] != $chave['und_id_compra']) {
+                        $conv = $this->unidades->getConversaoDePara($chave['und_id_compra'], $chave['und_id']);
+                        if (count($conv) > 0) {
+                            $expressao = $minimo . ' ' . $conv[0]['cvs_operador'] . ' ' . $conv[0]['cvs_fator'];
+                            log_message('info', 'exp minimo: ' . $expressao . ' Função: getCompraFornec');
+                            eval('$minimo = ' . $expressao . ';');
+                            log_message('info', 'minimo: ' . $minimo . ' Função: getCompra');
+                            $expressao = $maximo . ' ' . $conv[0]['cvs_operador'] . ' ' . $conv[0]['cvs_fator'];
+                            log_message('info', 'exp maximo: ' . $expressao . ' Função: getCompraFornec');
+                            eval('$maximo = ' . $expressao . ';');
+                            log_message('info', 'maximo: ' . $maximo . ' Função: getCompraFornec');
+                        }
+                    }
+                    $prods[$d]['minimo']         = (string) formataQuantia($minimo)['qtis'];
+                    $prods[$d]['maximo']         = (string) formataQuantia($maximo)['qtis'];
+                    $prods[$d]['saldo']         = "0";
+                    $prods[$d]['for_id']        = $chave['for_id'];
+                    $prods[$d]['for_nome']      = $chave['for_razao'];
+                    $prods[$d]['comid']        = $chave['com_id'];
+                    $prods[$d]['datacompra']      = dataDbToBr($chave['com_data']);
+                    $prods[$d]['entrega']      = isset($chave['cop_previsao'])?dataDbToBr($chave['cop_previsao']):dataDbToBr($chave['com_previsao']);
+                    $prods[$d]['qtia']          = (string) formataQuantia($chave['cop_quantia'])['qtis'];
+                    $prods[$d]['valor']          = floatToMoeda($chave['cop_valor']);
+                    $prods[$d]['total']          = floatToMoeda($chave['cop_total']);
+
+                    $prods[$d]['codbar']          = '';
+                    $produto = $this->compra->getCompraProd($chave['com_id'], $chave['pro_id'])[0];
+                    if($produto['gru_controlaestoque'] == 'N'){ // busca a marca, traz preenchida e pede a quantidade
+                        $marcax = $this->marca->getMarcaProd($chave['pro_id']);
+                        // debug($marcax);
+                        if($marcax){
+                            $prods[$d]['codbar']          = $marcax[0]['mar_codigo'];
+                        }
+                    }
+                }
+                log_message('info', 'Resultado: ' . json_encode($prods) . ' Função: getCompraFornec');
+                return $this->respond($prods, 200);
+            } else {
+                return $this->respond(['message' => 'Token Inválido'], 401);
+            }
+        } else {
+            return $this->respond(['message' => 'Não Autorizado'], 401);
+        }
+    }
+    /**
      * getmarcacodbar
      * Retorna os dados do produto e da marca pelo cõdigo de barras informado
      * @return void
@@ -618,7 +695,7 @@ class ApiEstoque extends Auth
                 }
 
                 $cache->save($key, true, 300);
-                
+
                 log_message('info', 'Entrada gravada com sucesso Função: gravaentrada');
                 return $this->respond(['success' => true, 'id_entrada' => $ent_id], 200);
             } else {

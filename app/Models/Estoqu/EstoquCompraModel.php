@@ -273,7 +273,7 @@ class EstoquCompraModel extends Model
      * @param bool $id 
      * @return array
      */
-    public function getCompraProdPendente($pro_id = false, $empresa = false)
+    public function getCompraProdPendente($pro_id = false, $empresa = false, $fornecedor = false)
     {
         $db = db_connect('dbEstoque');
         $builder = $db->table('vw_compras_produtos_pendentes');
@@ -283,6 +283,9 @@ class EstoquCompraModel extends Model
         }
         if ($empresa) {
             $builder->where("emp_id", $empresa);
+        }
+        if ($fornecedor) {
+            $builder->where("for_id", $fornecedor);
         }
         $builder->where("com_status", 'P');
         $builder->orderBy("com_data DESC");
