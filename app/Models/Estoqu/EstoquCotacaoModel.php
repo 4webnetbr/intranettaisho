@@ -233,6 +233,19 @@ class EstoquCotacaoModel extends Model
         return $ret;
     }
 
+
+    public function getCotacoesProdutosBatch($cotIds)
+    {
+        $db = db_connect('dbEstoque');
+        $builder = $db->table('vw_est_cotacao_produto_relac cp');
+        $builder->select('cp.*');
+        $builder->whereIn('cp.cot_id', $cotIds);
+        $ret = $builder->get()->getResultArray();
+        // debug($this->db->getLastQuery(),false);
+        
+        return $ret;
+    }
+
     /**
      * getRelCotacao
      *
@@ -244,7 +257,7 @@ class EstoquCotacaoModel extends Model
     public function getRelCotacao($for_id = false,$emp_id = false,$inicio = false,$fim = false)
     {
         $db = db_connect('dbEstoque');
-        $builder = $db->table('vw_est_cotacaos_produto_relac');
+        $builder = $db->table('vw_est_cotacao_produto_relac');
         $builder->select('*');
         if ($for_id) {
             $builder->where("for_id",$for_id);

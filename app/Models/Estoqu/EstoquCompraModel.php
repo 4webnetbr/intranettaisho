@@ -167,6 +167,30 @@ class EstoquCompraModel extends Model
     }
 
     /**
+     * getCompraProd
+     *
+     * Retorna os dados da Linha, pelo ID informado
+     * 
+     * @param bool $id 
+     * @return array
+     */
+    public function getCompraCop($cop_id = false)
+    {
+        $db = db_connect('dbEstoque');
+        $builder = $db->table('vw_est_compras_produto_relac');
+        $builder->select('*');
+        if ($cop_id) {
+            $builder->where("cop_id", $cop_id);
+        }
+        $builder->orderBy("com_data");
+        $ret = $builder->get()->getResultArray();
+
+        // debug($this->db->getLastQuery(), false);
+
+        return $ret;
+    }
+
+    /**
      * getCompraCod
      *
      * Retorna os dados da Linha, pelo ID informado

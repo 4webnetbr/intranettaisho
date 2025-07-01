@@ -144,7 +144,7 @@ class EstRecebimento extends BaseController
             $com['cop_quantia'] = $qtia['qtia'];
         }
         $compr = [
-            'data' => montaListaColunas($this->data, 'com_id', $dados_compr, 'pro_nome'),
+            'data' => montaListaColunas($this->data, 'cop_id', $dados_compr, 'pro_nome'),
         ];
         // cache()->save('compr', $compr, 60000);
         // }
@@ -162,7 +162,7 @@ class EstRecebimento extends BaseController
      */
     public function edit($id, $show = false)
     {
-        $dados_ent = $this->compra->getCompraProd($id)[0];
+        $dados_ent = $this->compra->getCompraCop($id)[0];
         $this->def_campos($dados_ent, true);
         $this->def_campos_pro($dados_ent, 0, $show);
 

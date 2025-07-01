@@ -187,56 +187,127 @@ class EstCotacao extends BaseController
      *
      * @return void
      */
+    // public function lista_prod()
+    // {
+    //     // if (!$compr = cache('compr')) {
+    //     $campos = montaColunasCampos($this->data, 'cot_id', 'd');
+    //     // debug($campos, true);
+        // $dados_compr = $this->cotacao->getCotacao();
+    //     // $this->data['edicao'] = false;
+    //     $agora = date('Y-m-d H:i:s');
+    //     for ($dc = 0; $dc < count($dados_compr); $dc++) {
+    //         // $dados_compr[$dc]['d'] = '';
+    //         $com = $dados_compr[$dc];
+    //         $log = buscaLog('est_cotacao', $com['cot_id']);
+    //         $dados_compr[$dc]['cot_usuario'] = $log['usua_alterou'];
+    //         $stt = ($dados_compr[$dc]['cot_status'] == 'A') ? 'Aberta' : 'Fechada';
+    //         $dados_compr[$dc]['cot_prazo']  = dataDbToBr($com['cot_prazo']);
+    //         $dados_compr[$dc]['cot_status'] = $stt;
+    //         if ($stt == 'Aberta') {
+    //             $chave = (($com['cot_id'] + 9523) * 4 * 12);
+    //             $url = base_url('EstCotForn/cotac/' . $chave);
+    //             $dados_compr[$dc]['cot_link'] = "<a href='" . $url . "'  target='_blank'>" . $url . "</a>";
+    //         }
+    //         $dados_compr[$dc]['d'] = '';
+    //     }
+
+    //     $cotac = montaListaColunas($this->data, 'cot_id', $dados_compr, $campos[1], true);
+        // for ($cp = 0; $cp < count($cotac); $cp++) {
+        //     $cont = $cotac[$cp];
+        //     $cotac[$cp]['col_details'] = [
+        //         'tit' => ['Produto', 'Qtia', 'Und'],
+        //         'tam' => ['col-5', 'col-2', 'col-2'],
+        //         'cam' => ['pro_nome', 'ctp_quantia', 'und_sigla'],
+        //     ];
+        //     $dados_prods = $this->cotacao->getCotacaoProd($cont[0]);
+        //     $prod = '';
+        //     $ct =0;
+        //     for ($p = 0; $p < count($dados_prods); $p++) {
+        //         if($prod != $dados_prods[$p]['pro_id']){
+        //             $qtia = formataQuantia(isset($dados_prods[$p]['ctp_quantia']) ? $dados_prods[$p]['ctp_quantia'] : 0);
+        //             $dados_prods[$p]['ctp_quantia'] = $qtia['qtia'];
+        //             $cotac[$cp]['details'][$ct] = $dados_prods[$p];
+        //             $prod = $dados_prods[$p]['pro_id'];
+        //             $ct++;
+        //         }
+        //     }
+        // }
+    //     $cotacao['data'] = $cotac;
+    //     // }
+    //     // debug($compr, true);
+    //     echo json_encode($cotacao);
+    // }
     public function lista_prod()
     {
-        // if (!$compr = cache('compr')) {
+        // Monta campos e pega cotações
         $campos = montaColunasCampos($this->data, 'cot_id', 'd');
-        // debug($campos, true);
         $dados_compr = $this->cotacao->getCotacao();
-        // $this->data['edicao'] = false;
-        $agora = date('Y-m-d H:i:s');
-        for ($dc = 0; $dc < count($dados_compr); $dc++) {
-            // $dados_compr[$dc]['d'] = '';
-            $com = $dados_compr[$dc];
-            $log = buscaLog('est_cotacao', $com['cot_id']);
-            $dados_compr[$dc]['cot_usuario'] = $log['usua_alterou'];
-            $stt = ($dados_compr[$dc]['cot_status'] == 'A') ? 'Aberta' : 'Fechada';
-            $dados_compr[$dc]['cot_prazo']  = dataDbToBr($com['cot_prazo']);
-            $dados_compr[$dc]['cot_status'] = $stt;
-            if ($stt == 'Aberta') {
-                $chave = (($com['cot_id'] + 9523) * 4 * 12);
-                $url = base_url('EstCotForn/cotac/' . $chave);
-                $dados_compr[$dc]['cot_link'] = "<a href='" . $url . "'  target='_blank'>" . $url . "</a>";
-            }
-            $dados_compr[$dc]['d'] = '';
+
+        if (empty($dados_compr)) {
+            echo json_encode(['data' => []]);
+            return;
         }
 
+        // Coletar todos os IDs das cotações
+        $cotIds = array_column($dados_compr, 'cot_id');
+
+        // Buscar logs em lote
+        $logs = buscaLogBatch('est_cotacao', $cotIds);
+        // debug($logs);
+        $logsMap = [];
+        foreach ($logs as $log) {
+            $logsMap[$log['registro']] = $log['usua_alterou'];
+        }
+
+        // Buscar produtos em lote
+        $produtos = $this->cotacao->getCotacoesProdutosBatch($cotIds);
+        $prodMap = [];
+        foreach ($produtos as $prod) {
+            // debug($prod);
+            $prodMap[$prod['cot_id']][] = $prod;
+        }
+
+        // Processar dados principais
+        foreach ($dados_compr as &$cot) {
+            $cot['cot_usuario'] = $logsMap[$cot['cot_id']] ?? '---';
+            $cot['cot_prazo'] = dataDbToBr($cot['cot_prazo']);
+            $cot['cot_status'] = $cot['cot_status'] === 'A' ? 'Aberta' : 'Fechada';
+            $cot['d'] = '';
+            if ($cot['cot_status'] === 'Aberta') {
+                $chave = (($cot['cot_id'] + 9523) * 4 * 12);
+                $url = base_url('EstCotForn/cotac/' . $chave);
+                $cot['cot_link'] = "<a href='{$url}' target='_blank'>{$url}</a>";
+            }
+        }
+
+        // Montar lista para visualização
         $cotac = montaListaColunas($this->data, 'cot_id', $dados_compr, $campos[1], true);
-        for ($cp = 0; $cp < count($cotac); $cp++) {
-            $cont = $cotac[$cp];
-            $cotac[$cp]['col_details'] = [
+
+        foreach ($cotac as &$cont) {
+            $cotId = $cont[0];
+            $cont['col_details'] = [
                 'tit' => ['Produto', 'Qtia', 'Und'],
                 'tam' => ['col-5', 'col-2', 'col-2'],
                 'cam' => ['pro_nome', 'ctp_quantia', 'und_sigla'],
             ];
-            $dados_prods = $this->cotacao->getCotacaoProd($cont[0]);
-            $prod = '';
-            $ct =0;
-            for ($p = 0; $p < count($dados_prods); $p++) {
-                if($prod != $dados_prods[$p]['pro_id']){
-                    $qtia = formataQuantia(isset($dados_prods[$p]['ctp_quantia']) ? $dados_prods[$p]['ctp_quantia'] : 0);
-                    $dados_prods[$p]['ctp_quantia'] = $qtia['qtia'];
-                    $cotac[$cp]['details'][$ct] = $dados_prods[$p];
-                    $prod = $dados_prods[$p]['pro_id'];
-                    $ct++;
-                }
+
+            $ct = 0;
+            $produtosCot = $prodMap[$cotId] ?? [];
+            $prodInseridos = [];
+
+            foreach ($produtosCot as $p) {
+                if (in_array($p['pro_id'], $prodInseridos)) continue;
+
+                $qtia = formataQuantia($p['ctp_quantia'] ?? 0);
+                $p['ctp_quantia'] = $qtia['qtia'];
+                $cont['details'][$ct++] = $p;
+                $prodInseridos[] = $p['pro_id'];
             }
         }
-        $cotacao['data'] = $cotac;
-        // }
-        // debug($compr, true);
-        echo json_encode($cotacao);
+
+        echo json_encode(['data' => $cotac]);
     }
+
 
     /**
      * Inclusão

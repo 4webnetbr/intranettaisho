@@ -187,118 +187,210 @@ class EstPedido extends BaseController
         echo view('vw_edicao', $this->data);
     }
 
+    // public function listaadd($empresa = false)
+    // {
+    //     $param = $_REQUEST['param'];
+    //     if ($param == 'undefined') {
+    //         $param = false;
+    //     }
+    //     $empresas           = explode(',', $param);
+    //     $produtos =  $this->produto->getProdutoPedido(false, $empresas[0]);
+    //     // debug($produtos);
+
+    //     $campos[0] = 'pro_id';
+    //     $campos[count($campos)] = 'gru_nome';
+    //     $campos[count($campos)] = 'pro_nome';
+    //     $campos[count($campos)] = 'minmax';
+    //     $campos[count($campos)] = 'saldo';
+    //     $campos[count($campos)] = 'sugestao';
+    //     $campos[count($campos)] = 'ped_qtia';
+    //     $campos[count($campos)] = 'und_sigla';
+    //     $campos[count($campos)] = 'ped_justifica';
+    //     $campos[count($campos)] = 'ped_data';
+
+    //     $dados_pedid = [];
+    //     $ctdp = 0;
+    //     for ($dc = 0; $dc < count($produtos); $dc++) {
+    //         $prod = $produtos[$dc];
+    //         // debug($prod);
+    //         $saldo = $prod['saldo'];
+    //         $consumo = $prod['con_consumo'];
+    //         $duracao = $prod['con_duracao'];
+    //         $tempore = $prod['con_tporeposicao'];
+    //         $fcc     = ($prod['pro_fcc'] > 0) ? $prod['pro_fcc'] : 1;
+    //         $saldo   = $prod['saldo'];
+    //         // $saldo   = $saldo / $fcc;
+    //         $sugestao = 0;
+    //         $indice = 0;
+    //         $minimo = $prod['mmi_minimo'] ?? 0;
+    //         $maximo = $prod['mmi_maximo'] ?? 0;
+    //         if ($maximo === 0) {
+    //             $hoje = new DateTime();
+    //             // Obtém o dia da semana atual (1 = Segunda, ..., 7 = Domingo)
+    //             $diaSemanaAtual = $hoje->format('N');
+    //             // Define o número do dia da semana desejado (quinta-feira = 4)
+    //             $quintaFeira = 4;
+    //             // Calcula quantos dias faltam para a próxima quinta-feira
+    //             $diasFaltando = ($quintaFeira - $diaSemanaAtual + 7) % 7;
+    //             // Se hoje for quinta-feira, a próxima será em 7 dias
+    //             $diasFaltando = $diasFaltando == 0 ? 7 : $diasFaltando;
+
+    //             if ($consumo > 0 || $duracao > 0) {
+    //                 if ($consumo > 0) {
+    //                     $indice = $consumo / 7;
+    //                 } else {
+    //                     $consumo = 0;
+    //                 }
+    //                 if ($duracao > 0) {
+    //                     $indduracao = 1 / $duracao;
+    //                     if ($indduracao > $consumo) {
+    //                         $indice = $indduracao;
+    //                     }
+    //                 }
+    //                 $indice     = $indice / $fcc;
+    //                 $sugestao   = ($indice * $tempore) - $saldo;
+    //                 $maximo     = ($indice * $tempore);
+    //                 $minimo     = ($indice * $diasFaltando);
+    //             }
+    //             $sugestao = $sugestao / $fcc;
+    //             if ($sugestao < 0) {
+    //                 $sugestao = 0;
+    //             }
+    //         } else {
+    //             $sugestao   = $maximo - $saldo;
+    //             $sugestao = $sugestao / $fcc;
+    //             if ($sugestao < 0) {
+    //                 $sugestao = 0;
+    //             }
+    //             $minimo = ceil($minimo / $fcc);
+    //             $maximo = ceil($maximo / $fcc);
+    //             $saldo  = ceil($saldo / $fcc);
+    //         }
+    //         $sugestao = ceil($sugestao);
+
+    //         // if ($sugestao > 0) {
+    //         // debug($prod);
+    //         $dados_pedid[$ctdp]['sugestao']    = formataQuantia(intval($sugestao), 3)['qtiv'];
+
+    //         $dados_pedid[$ctdp]['pro_id']      = $prod['pro_id'];
+    //         $dados_pedid[$ctdp]['gru_nome']    = $prod['gru_nome'];
+    //         $dados_pedid[$ctdp]['pro_nome']    = $prod['pro_nome'];
+    //         $dados_pedid[$ctdp]['minmax']      = "<div class='text-start d-inline-flex'>" . ceil($minimo) . "</div> - <div class='text-end d-inline-flex'>" . ceil($maximo) . "</div>";
+    //         $dados_pedid[$ctdp]['saldo']       = formataQuantia($saldo, 2)['qtia'];
+    //         $dados_pedid[$ctdp]['und_sigla']   = $prod['und_sigla_compra'];
+    //         $dados_pedid[$ctdp]['ped_data']    = "<div id='ped_data[$dc]'>" . dataDbToBr($prod['ped_data']) . "</div>";
+    //         $dados_pedid[$ctdp]['ped_id']      = $prod['ped_id'];
+    //         $dados_pedid[$ctdp]['ped_qtia']    = $prod['ped_qtia'];
+    //         $dados_pedid[$ctdp]['und_id']      = $prod['und_id_compra'];
+    //         $dados_pedid[$ctdp]['ped_justifica']      = $prod['ped_justifica'];
+    //         $dados_pedid[$ctdp]['gru_controlaestoque']      = $prod['gru_controlaestoque'];
+
+    //         $this->def_campos_prod($dados_pedid[$ctdp], $ctdp);
+
+    //         $dados_pedid[$ctdp]['sugestao']    = $this->sugestao;
+    //         $dados_pedid[$ctdp]['ped_qtia'] = $this->ped_id . ' ' . $this->pro_id . ' ' . $this->und_id . ' ' . $this->ped_qtia;
+    //         $dados_pedid[$ctdp]['ped_justifica']    = $this->ped_justifica . ' ' . $this->gru_controlaestoque;
+    //         $ctdp++;
+    //         // }
+    //     }
+    //     $pedid = [
+    //         'data' => montaListaEditColunas($campos, 'pro_id', $dados_pedid, $campos[1]),
+    //     ];
+    //     // debug($pedid, true);
+    //     // cache()->save('pedid', $pedid, 60000);
+    //     // }
+
+    //     echo json_encode($pedid);
+    // }
+
     public function listaadd($empresa = false)
     {
-        $param = $_REQUEST['param'];
-        if ($param == 'undefined') {
+        $param = $_REQUEST['param'] ?? false;
+        if ($param === 'undefined') {
             $param = false;
         }
-        $empresas           = explode(',', $param);
-        $produtos =  $this->produto->getProdutoPedido(false, $empresas[0]);
-        // debug($produtos);
 
-        $campos[0] = 'pro_id';
-        $campos[count($campos)] = 'gru_nome';
-        $campos[count($campos)] = 'pro_nome';
-        $campos[count($campos)] = 'minmax';
-        $campos[count($campos)] = 'saldo';
-        $campos[count($campos)] = 'sugestao';
-        $campos[count($campos)] = 'ped_qtia';
-        $campos[count($campos)] = 'und_sigla';
-        $campos[count($campos)] = 'ped_justifica';
-        $campos[count($campos)] = 'ped_data';
+        $empresas = explode(',', $param);
+        $produtos = $this->produto->getProdutoPedido(false, $empresas[0]);
+
+        $campos = [
+            'pro_id', 'gru_nome', 'pro_nome', 'minmax', 'saldo',
+            'sugestao', 'ped_qtia', 'und_sigla', 'ped_justifica', 'ped_data'
+        ];
 
         $dados_pedid = [];
-        $ctdp = 0;
-        for ($dc = 0; $dc < count($produtos); $dc++) {
-            $prod = $produtos[$dc];
-            // debug($prod);
-            $saldo = $prod['saldo'];
-            $consumo = $prod['con_consumo'];
-            $duracao = $prod['con_duracao'];
-            $tempore = $prod['con_tporeposicao'];
-            $fcc     = ($prod['pro_fcc'] > 0) ? $prod['pro_fcc'] : 1;
-            $saldo   = $prod['saldo'];
-            // $saldo   = $saldo / $fcc;
-            $sugestao = 0;
+
+        foreach ($produtos as $i => $prod) {
+            $saldo     = $prod['saldo'];
+            $consumo   = $prod['con_consumo'];
+            $duracao   = $prod['con_duracao'];
+            $reposicao = $prod['con_tporeposicao'];
+            $fcc       = max($prod['pro_fcc'], 1); // nunca 0
+            $minimo    = $prod['mmi_minimo'] ?? 0;
+            $maximo    = $prod['mmi_maximo'] ?? 0;
+
             $indice = 0;
-            $minimo = $prod['mmi_minimo'] ?? 0;
-            $maximo = $prod['mmi_maximo'] ?? 0;
+            $sugestao = 0;
+
             if ($maximo === 0) {
                 $hoje = new DateTime();
-                // Obtém o dia da semana atual (1 = Segunda, ..., 7 = Domingo)
                 $diaSemanaAtual = $hoje->format('N');
-                // Define o número do dia da semana desejado (quinta-feira = 4)
-                $quintaFeira = 4;
-                // Calcula quantos dias faltam para a próxima quinta-feira
-                $diasFaltando = ($quintaFeira - $diaSemanaAtual + 7) % 7;
-                // Se hoje for quinta-feira, a próxima será em 7 dias
-                $diasFaltando = $diasFaltando == 0 ? 7 : $diasFaltando;
+                $diasFaltando = (4 - $diaSemanaAtual + 7) % 7;
+                $diasFaltando = $diasFaltando === 0 ? 7 : $diasFaltando;
 
                 if ($consumo > 0 || $duracao > 0) {
-                    if ($consumo > 0) {
-                        $indice = $consumo / 7;
-                    } else {
-                        $consumo = 0;
-                    }
-                    if ($duracao > 0) {
-                        $indduracao = 1 / $duracao;
-                        if ($indduracao > $consumo) {
-                            $indice = $indduracao;
-                        }
-                    }
-                    $indice     = $indice / $fcc;
-                    $sugestao   = ($indice * $tempore) - $saldo;
-                    $maximo     = ($indice * $tempore);
-                    $minimo     = ($indice * $diasFaltando);
+                    $indice = ($consumo > 0) ? ($consumo / 7) : 0;
+                    $indDur = ($duracao > 0) ? (1 / $duracao) : 0;
+                    $indice = max($indice, $indDur);
+                    $indice /= $fcc;
+
+                    $sugestao = ($indice * $reposicao) - $saldo;
+                    $maximo = $indice * $reposicao;
+                    $minimo = $indice * $diasFaltando;
                 }
-                $sugestao = $sugestao / $fcc;
-                if ($sugestao < 0) {
-                    $sugestao = 0;
-                }
+
+                $sugestao = max(0, $sugestao / $fcc);
             } else {
-                $sugestao   = $maximo - $saldo;
-                $sugestao = $sugestao / $fcc;
-                if ($sugestao < 0) {
-                    $sugestao = 0;
-                }
-                $minimo = ceil($minimo / $fcc);
-                $maximo = ceil($maximo / $fcc);
-                $saldo  = ceil($saldo / $fcc);
+                $sugestao = max(0, ($maximo - $saldo) / $fcc);
+                $minimo   = ceil($minimo / $fcc);
+                $maximo   = ceil($maximo / $fcc);
+                $saldo    = ceil($saldo / $fcc);
             }
+
             $sugestao = ceil($sugestao);
 
-            // if ($sugestao > 0) {
-            // debug($prod);
-            $dados_pedid[$ctdp]['sugestao']    = formataQuantia(intval($sugestao), 3)['qtiv'];
+            $dados = [
+                'pro_id'      => $prod['pro_id'],
+                'gru_nome'    => $prod['gru_nome'],
+                'pro_nome'    => $prod['pro_nome'],
+                'minmax'      => "<div class='text-start d-inline-flex'>" . ceil($minimo) . "</div> - <div class='text-end d-inline-flex'>" . ceil($maximo) . "</div>",
+                'saldo'       => formataQuantia($saldo, 2)['qtia'],
+                'sugestao'    => formataQuantia((int)$sugestao, 3)['qtiv'],
+                'und_sigla'   => $prod['und_sigla_compra'],
+                'ped_data'    => "<div id='ped_data[$i]'>" . dataDbToBr($prod['ped_data']) . "</div>",
+                'ped_id'      => $prod['ped_id'],
+                'ped_qtia'    => $prod['ped_qtia'],
+                'und_id'      => $prod['und_id_compra'],
+                'ped_justifica' => $prod['ped_justifica'],
+                'gru_controlaestoque' => $prod['gru_controlaestoque'],
+            ];
 
-            $dados_pedid[$ctdp]['pro_id']      = $prod['pro_id'];
-            $dados_pedid[$ctdp]['gru_nome']    = $prod['gru_nome'];
-            $dados_pedid[$ctdp]['pro_nome']    = $prod['pro_nome'];
-            $dados_pedid[$ctdp]['minmax']      = "<div class='text-start d-inline-flex'>" . ceil($minimo) . "</div> - <div class='text-end d-inline-flex'>" . ceil($maximo) . "</div>";
-            $dados_pedid[$ctdp]['saldo']       = formataQuantia($saldo, 2)['qtia'];
-            $dados_pedid[$ctdp]['und_sigla']   = $prod['und_sigla_compra'];
-            $dados_pedid[$ctdp]['ped_data']    = "<div id='ped_data[$dc]'>" . dataDbToBr($prod['ped_data']) . "</div>";
-            $dados_pedid[$ctdp]['ped_id']      = $prod['ped_id'];
-            $dados_pedid[$ctdp]['ped_qtia']    = $prod['ped_qtia'];
-            $dados_pedid[$ctdp]['und_id']      = $prod['und_id_compra'];
-            $dados_pedid[$ctdp]['ped_justifica']      = $prod['ped_justifica'];
-            $dados_pedid[$ctdp]['gru_controlaestoque']      = $prod['gru_controlaestoque'];
+            // Campos adicionais manipulados por lógica externa
+            $this->def_campos_prod($dados, $i);
 
-            $this->def_campos_prod($dados_pedid[$ctdp], $ctdp);
+            // Evite sobrescrever 'sugestao' com string depois de formatar!
+            $dados['sugestao'] = $this->sugestao;
 
-            $dados_pedid[$ctdp]['sugestao']    = $this->sugestao;
-            $dados_pedid[$ctdp]['ped_qtia'] = $this->ped_id . ' ' . $this->pro_id . ' ' . $this->und_id . ' ' . $this->ped_qtia;
-            $dados_pedid[$ctdp]['ped_justifica']    = $this->ped_justifica . ' ' . $this->gru_controlaestoque;
-            $ctdp++;
-            // }
+            // Se necessário, concatene para exibição mas armazene valores separados!
+            $dados['ped_qtia'] = "{$this->ped_id} {$this->pro_id} {$this->und_id} {$this->ped_qtia}";
+            $dados['ped_justifica'] = "{$this->ped_justifica} {$this->gru_controlaestoque}";
+
+            $dados_pedid[] = $dados;
         }
+
         $pedid = [
-            'data' => montaListaEditColunas($campos, 'pro_id', $dados_pedid, $campos[1]),
+            'data' => montaListaEditColunas($campos, 'pro_id', $dados_pedid, 'gru_nome')
         ];
-        // debug($pedid, true);
-        // cache()->save('pedid', $pedid, 60000);
-        // }
 
         echo json_encode($pedid);
     }

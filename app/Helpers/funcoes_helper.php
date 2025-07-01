@@ -579,6 +579,35 @@ function buscaLog($tabela, $registro)
  * @param mixed $registro
  * @return array
  */
+function buscaLogBatch($tabela, $registros)
+{
+    $logs = new \App\Models\LogMonModel();
+    $logList = $logs->get_logs_lastvarios($tabela, $registros);
+    // debug($logList);
+    $dados = [];
+
+    foreach ($logList as $log) {
+        $registro = $log->last_record->log_id_registro;
+        $dados[$registro] = [
+            'operacao'     => $log->last_record->log_operacao,
+            'usua_alterou' => $log->last_record->log_id_usuario,
+            'data_alterou' => dataDbToBr($log->last_record->log_data),
+            'tabela'       => $tabela,
+            'registro'     => $registro,
+        ];
+    }
+
+    return $dados;
+}
+
+/**
+ * buscaLog
+ * Retorna os Logs do Registro da Tabela informados
+ *
+ * @param mixed $tabela
+ * @param mixed $registro
+ * @return array
+ */
 function buscaLogTabela($tabela, $registros)
 {
     $logs      = new LogMonModel();

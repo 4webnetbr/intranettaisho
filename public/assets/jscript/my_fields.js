@@ -2669,7 +2669,8 @@ function gravaCotforn(obj) {
       dados[`ctp_id[${index}]`] = jQuery(
         `input[name="ctp_id[${index}]"]`
       ).val();
-      dados[`cof_preco[${index}]`] = dados[`cof_preco[${index}]`];
+      const precoun = jQuery(`input[name="cof_preco[${index}]"]`).val();
+      dados[`cof_preco[${index}]`] = precoun ?? preco;
       dados[`cof_precoundcompra[${index}]`] = preco;
       dados[`cof_validade[${index}]`] = jQuery(
         `input[name="cof_validade[${index}]"]`
