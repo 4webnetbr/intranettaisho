@@ -2830,12 +2830,12 @@ function geraCotacao() {
 function gravaCotacao(obj) {
   ordem = obj.getAttribute("data-index");
   indice = obj.getAttribute("data-ordemcot");
-  preco = converteMoedaFloat(
+  precocompra = converteMoedaFloat(
     jQuery(
       "#cof_precoundcompra\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
     ).val()
   );
-  if (parseFloat(preco) === 0) {
+  if (parseFloat(precocompra) === 0) {
     return;
   }
   cofid = jQuery(
@@ -2875,6 +2875,9 @@ function gravaCotacao(obj) {
         "#cof_preco\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
       ).val()
     );
+    if (preco == 0.0) {
+      preco = precocompra;
+    }
     url = window.location.origin + "/EstCotacao/storeforn";
     jQuery.ajax({
       type: "POST",

@@ -453,7 +453,7 @@ class EstCompraCotacao extends BaseController
                 $campos[1][$c][count($campos[1][$c])]   = $this->com_id . ' ' . $this->cop_id . ' ' . $this->ped_id . ' ' . $this->und_id . ' ' . $this->cop_quantia;
                 $campos[1][$c][count($campos[1][$c])]   = $this->cop_valor;
                 $campos[1][$c][count($campos[1][$c])]   = $this->cop_total;
-                $campos[1][$c][count($campos[1][$c])]   = $this->com_previsao;
+                $campos[1][$c][count($campos[1][$c])]   = $this->cop_previsao;
                 $campos[1][$c][count($campos[1][$c])]   = '';
                 $campos[1][$c][count($campos[1][$c])]   = '';
             }
@@ -487,15 +487,18 @@ class EstCompraCotacao extends BaseController
             for ($pr = 0; $pr < count($dados_pro) ; $pr++) {
                 array_push($pedido, $dados_pro[$pr]['ped_id']);
             }
-
+            // debug($pedido, true);
             $this->compra->delete($id);
             $com_exc = $this->common->deleteReg('dbEstoque', 'est_compra_produto', "com_id = " . $id);
+
             for ($pd = 0; $pd < count($pedido) ; $pd++) {
-                $dados_ped = [
-                    'ped_id' => $pedido[$pd],
-                    'ped_status' => 'P',
-                ];
-                $this->pedido->save($dados_ped);
+                if($pedido[$pd] != ''){
+                    $dados_ped = [
+                        'ped_id' => $pedido[$pd],
+                        'ped_status' => 'P',
+                    ];
+                    $this->pedido->save($dados_ped);
+                }
             }
 
             $ret['erro'] = false;
@@ -689,6 +692,7 @@ class EstCompraCotacao extends BaseController
         $pre->attrdata              = $attr;
         $pre->largura               = 30;
         $pre->dispForm              = 'col-12 justify-content-center';
+        $val->funcBlur              = 'gravaPreCompra(this)';
         $val->classediv              = 'text-center';
         $this->com_previsao         = $pre->crInput();
 
@@ -969,7 +973,7 @@ class EstCompraCotacao extends BaseController
             foreach ($dados['compras']['itens'] as $pedidoArray) {
                 foreach ($pedidoArray as $produtoArray) {
                     foreach ($produtoArray as $marcaArray) {
-                        // debug($marcaArray['marca']);
+                        debug($marcaArray['marca']);
                         $mar_id  = $this->marca->getMarca($marcaArray['marca']);
                         // debug($mar_id);
                         $dados_pro = [
@@ -1033,7 +1037,7 @@ class EstCompraCotacao extends BaseController
         $ret = [];
         $ret['erro'] = false;
         $dados = $this->request->getPost();
-        // debug($dados, true);
+        debug($dados, true);
         $erros = [];
         $total = 0;
         foreach ($dados['pro_id'] as $key => $value) {
@@ -1070,17 +1074,11 @@ class EstCompraCotacao extends BaseController
                     'cop_quantia'   => floatval($qtia),
                     'cop_valor'   => $dados['cop_valor'][$key],
                     'cop_total'   => $dados['cop_total'][$key],
-                    'cop_previsao'   => $dados['com_previsao'][$key],
+                    'cop_previsao'   => $dados['cop_previsao'][$key],
                     'cop_atualizado' => $data_atu
                 ];
-                // debug($dados_pro);
-                // if ($dados['cop_id'] != '') {
-                //     $salva = $this->common->updateReg('dbEstoque', 'est_compra_produto', 'cop_id = ' . $dados['cop_id'], $dados_pro);
-                //     $cop_id = $dados['cop_id'];
-                // } else {
                 $salva = $this->common->insertReg('dbEstoque', 'est_compra_produto', $dados_pro);
                 $cop_id = $salva;
-                // }
                 if (!$salva) {
                     $ret['erro'] = true;
                     $ret['msg'] = 'Não foi possível gravar os produtos, Verifique!';
