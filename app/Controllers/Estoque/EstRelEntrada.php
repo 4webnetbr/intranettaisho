@@ -38,7 +38,7 @@ class EstRelEntrada extends BaseController
         $campos[1] = $this->dash_empresa;
         $campos[2] = $this->dash_deposito;
 
-        $colunas = ['Código', 'Código', 'Produto/Fornecedor','Ref Data','Entrada','Conv.','Und','Data Reg','Usuário',''];
+        $colunas = ['Código', 'Código', 'Ped Compra', 'Produto/Fornecedor','Ref Data','Entrada','Conv.','Und','Data Reg','Usuário'];
 
         $this->data['cols']     	= $colunas;  
         $this->data['nome']     	= 'relentradas';  
@@ -120,17 +120,18 @@ class EstRelEntrada extends BaseController
             $prod = $entradas[$p];
             $prods[$p][0] = $prod['mar_codigo'];
             $prods[$p][1] = $prod['mar_codigo'];
-            $prods[$p][2] = $prod['pro_nome']."<br>".$prod['for_razao'];
-            $prods[$p][3] = dataDbToBr($prod['ent_data']);
+            $prods[$p][2] = $prod['com_id'];
+            $prods[$p][3] = $prod['pro_nome']."<br>".$prod['for_razao'];
+            $prods[$p][4] = dataDbToBr($prod['ent_data']);
             $qtia = formataQuantia(isset($prod['enp_quantia'])?$prod['enp_quantia']:0);
             $conv = formataQuantia(isset($prod['enp_qtia_conv'])?$prod['enp_qtia_conv']:0);
-            $prods[$p][4] = $qtia['qtia'];
-            $prods[$p][5] = $conv['qtia'];
-            $prods[$p][6] = $prod['und_sigla'];
-            $prods[$p][7] = dataDbToBr($prod['ent_datahora']);
+            $prods[$p][5] = $qtia['qtia'];
+            $prods[$p][6] = $conv['qtia'];
+            $prods[$p][7] = $prod['und_sigla'];
+            $prods[$p][8] = dataDbToBr($prod['ent_datahora']);
             $log = buscaLog('est_entrada', $prod['ent_id']);
-            $prods[$p][8] = $log['usua_alterou'];
-            $prods[$p][9] = '';    
+            $prods[$p][9] = $log['usua_alterou'];
+            // $prods[$p][9] = '';    
         }
         // debug(count($prods));
         // $ret['entradas'] = [];

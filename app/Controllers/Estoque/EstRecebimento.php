@@ -131,6 +131,7 @@ class EstRecebimento extends BaseController
         // $campos = montaColunasCampos($this->data, 'com_id');
         // debug($campos, true);
         $dados_compr = $this->compra->getCompraProdPendente(false, $param);
+        // debug($dados_compr);
         $com_ids_assoc = array_column($dados_compr, 'com_id');
         $log = buscaLogTabela('est_compra', $com_ids_assoc);
         // $this->data['edicao'] = false;
