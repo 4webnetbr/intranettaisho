@@ -30,7 +30,7 @@ class EstCompraCotacao extends BaseController
     public $for_id;
     public $cop_valor;
     public $cop_total;
-    public $com_previsao;
+    public $cof_previsao;
     public $com_id;
     public $cop_id;
     public $und_id;
@@ -377,12 +377,8 @@ class EstCompraCotacao extends BaseController
                 'ped_datains'   => dataDbToBr($prod['ped_datains']),
                 'ped_qtia'      => $prod['ped_qtia'],
                 'ped_sugestao'  => $prod['ped_sugestao'],
-                // 'und_sigla'     => $prod['und_sigla'],
                 'und_consumo'       => $prod['und_sigla'],
                 'und_compra'       => $prod['und_sigla_compra'],
-                // 'mar_id'        => $prod['mar_id'],
-                // 'mar_nome'      => $prod['mar_nome'],
-                // 'mar_apresenta' => $prod['mar_apresenta'],
             ];
 
             // Itera de 1 a 10 fornecedores
@@ -395,7 +391,7 @@ class EstCompraCotacao extends BaseController
                 $ret[$dc]["cof_precoundcompra_$i"]    = $this->{"cof_precoundcompra_$i"};
                 $ret[$dc]["cof_validade_$i"] = $this->{"cof_validade_$i"};
                 $ret[$dc]["com_quantia_$i"]  = $this->cop_quantia;
-                $ret[$dc]["com_previsao_$i"] = $this->com_previsao;
+                $ret[$dc]["cop_previsao_$i"] = $this->{"cop_previsao_$i"};
                 $ret[$dc]["ped_id_$i"]       = $this->ped_id;
                 $ret[$dc]["cot_id_$i"]       = $this->cot_id;
                 $ret[$dc]["cop_id_$i"]       = $this->cop_id;
@@ -681,20 +677,20 @@ class EstCompraCotacao extends BaseController
         $this->{$chave}            = $val->crInput();
 
         $previsao = new DateTime("+1 days");
-        $chave = "cof_previsao_{$ord}";
+        $chave = "cop_previsao_{$ord}";
         if(isset($dados[$chave]) && $dados[$chave] != ''){
             $previsao = new DateTime("+".$dados[$chave]." days");
         }
-        $pre                        = new MyCampo('est_compra', 'com_previsao');
-        $pre->valor                 = isset($dados['com_previsao']) ? $dados['com_previsao'] : $previsao->format('Y-m-d');
+        $pre                        = new MyCampo('est_compra_produto', 'cop_previsao');
+        $pre->valor                 = isset($dados[$chave]) ? $dados[$chave] : $previsao->format('Y-m-d');
         $pre->ordem                 = $ord;
         $pre->label                 = '';
         $pre->attrdata              = $attr;
         $pre->largura               = 30;
         $pre->dispForm              = 'col-12 justify-content-center';
-        $val->funcBlur              = 'gravaPreCompra(this)';
-        $val->classediv              = 'text-center';
-        $this->com_previsao         = $pre->crInput();
+        $pre->funcBlur              = 'gravaPreCompra(this)';
+        $pre->classediv              = 'text-center';
+        $this->{$chave}             = $pre->crInput();
 
         $chave = "cof_observacao_{$ord}";
         $obs                        = new MyCampo('est_cotacao_fornec', 'cof_observacao');
@@ -973,7 +969,7 @@ class EstCompraCotacao extends BaseController
             foreach ($dados['compras']['itens'] as $pedidoArray) {
                 foreach ($pedidoArray as $produtoArray) {
                     foreach ($produtoArray as $marcaArray) {
-                        debug($marcaArray['marca']);
+                        // debug($marcaArray['marca']);
                         $mar_id  = $this->marca->getMarca($marcaArray['marca']);
                         // debug($mar_id);
                         $dados_pro = [

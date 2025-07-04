@@ -57,7 +57,9 @@ class Filters extends BaseConfig
                     'estcotforn',
                     'estcotforn/*',
                     'criapdf2025',
-                    'criapdf2025/*'
+                    'criapdf2025/*',
+                    'public/*',
+                    'paginas/*'
                 ]
             ],
             'limpezaAuto',

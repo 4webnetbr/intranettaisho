@@ -1060,7 +1060,7 @@ function carrega_lista_cotacao(obj, url, nome) {
             "</div>";
           linha +=
             '          <div class="d-inline-flex float-start col-2">' +
-            element["com_previsao_" + f] +
+            element["cop_previsao_" + f] +
             "</div>";
           if (
             element["cof_observacao_" + f] != "" &&

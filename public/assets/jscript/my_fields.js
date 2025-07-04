@@ -2958,7 +2958,7 @@ function gravaPreCompra(obj) {
     `#mar_id\\[${ordem}\\][data-ordemcot='${indice}']`
   ).val();
   const previsao = jQuery(
-    `#com_previsao\\[${ordem}\\][data-ordemcot='${indice}']`
+    `#cop_previsao\\[${ordem}\\][data-ordemcot='${indice}']`
   ).val();
   const total = converteFloatMoeda(preco * quantia);
 
