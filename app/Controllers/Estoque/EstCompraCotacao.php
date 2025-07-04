@@ -887,12 +887,12 @@ class EstCompraCotacao extends BaseController
 
 
         $previsao = new DateTime("+2 days");
-        $pre                        = new MyCampo('est_compra', 'com_previsao');
-        $pre->nome               = "com_previsao[$pos]";
+        $pre                        = new MyCampo('est_compra_produto', 'cop_previsao');
+        $pre->nome               = "cop_previsao[$pos]";
         $pre->ordem              = $pos;
         $pre->valor                 = $dados['cop_previsao'] ?? $dados['com_previsao'];
         $pre->largura               = 16;
-        $this->com_previsao         = $pre->crInput();
+        $this->cop_previsao         = $pre->crInput();
 
         $qtia = formataQuantia($dados['cop_quantia']);
 
@@ -1033,7 +1033,7 @@ class EstCompraCotacao extends BaseController
         $ret = [];
         $ret['erro'] = false;
         $dados = $this->request->getPost();
-        debug($dados, true);
+        // debug($dados, true);
         $erros = [];
         $total = 0;
         foreach ($dados['pro_id'] as $key => $value) {
