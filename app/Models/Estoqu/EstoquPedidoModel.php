@@ -247,7 +247,8 @@ class EstoquPedidoModel extends Model
         }
         $db = db_connect('dbEstoque');
         // $builder = $db->table("vw_pedidos_com_cotacoes");
-        $builder = $db->table("vw_produtos_cotados");
+        // $builder = $db->table("vw_produtos_cotados");
+        $builder = $db->table("vw_pedidos_com_cotacao_fornec");
         $builder->select("*");
         // if ($ped_id) {
         //     $builder->where("pro.ped_id", $ped_id);
@@ -262,11 +263,16 @@ class EstoquPedidoModel extends Model
         if ($grc_id) {
             $builder->where("grc_id", $grc_id);
         }
-        $builder->orderBy("grc_nome, pro_nome");
+        // $start = microtime(true);
+        $builder->orderBy("grc_nome, pro_nome, ped_datains,cot_id,for_razao");
         $ret = $builder->get()->getResultArray();
         // debug($db->getLastQuery(), true);
 
-
+        // $end = microtime(true);
+        
+        // $executionTime = $end - $start;
+        // Fim da medição
+        // debug($executionTime);
         return $ret;
     }
 }

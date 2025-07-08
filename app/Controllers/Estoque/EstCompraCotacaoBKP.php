@@ -15,7 +15,7 @@ use App\Models\Estoqu\EstoquProdutoModel;
 use App\Models\Estoqu\EstoquUndMedidaModel;
 use DateTime;
 
-class EstCompraCotacao extends BaseController
+class EstCompraCotacaoBKP extends BaseController
 {
     public $data = [];
     public $permissao = '';
@@ -141,7 +141,7 @@ class EstCompraCotacao extends BaseController
         $grucs = ['0' => ':: Todos ::'] + $grucs;
 
         $grc                        = new MyCampo('est_produto', 'grc_id');
-        $grc->valor = $grc->selecionado = '1';
+        $grc->valor = $grc->selecionado = '0';
         $grc->label                 = 'Grupo';
         $grc->opcoes                = $grucs;
         $grc->largura               = 40;
@@ -298,7 +298,7 @@ class EstCompraCotacao extends BaseController
         $this->data['campos']         = $campos;
         // $this->data['camposedit']   = $camposedit;
         $this->data['destino']         = '';
-        $this->data['script']       = "<script>carrega_lista_cotacao('empresa', '" . $this->data['url_lista'] . "','" . $this->data['nome'] . "');</script>";
+        // $this->data['script']       = "<script>carrega_lista_cotacao('empresa', '" . $this->data['url_lista'] . "','" . $this->data['nome'] . "');</script>";
         echo view('vw_add_compra_cotacao_10', $this->data);
     }
 
@@ -367,86 +367,39 @@ class EstCompraCotacao extends BaseController
         $produtos = $this->pedido->getCotacaoProdutos($empresas[0], $param2);
         // debug($produtos);
         $ret = [];
-        $forIndexByProduct = [];
-        $produto = [];
-        $pro_id = '';
 
-        // $inicio = microtime(true);
+        foreach ($produtos as $dc => $prod) {
+            $ret[$dc] = [
+                'ped_id'        => $prod['ped_id'],
+                'pro_id'        => $prod['pro_id'],
+                'grc_nome'      => $prod['grc_nome'],
+                'pro_nome'      => $prod['pro_nome'],
+                'ped_datains'   => dataDbToBr($prod['ped_datains']),
+                'ped_qtia'      => $prod['ped_qtia'],
+                'ped_sugestao'  => $prod['ped_sugestao'],
+                'und_consumo'       => $prod['und_sigla'],
+                'und_compra'       => $prod['und_sigla_compra'],
+            ];
 
-        foreach ($produtos as $prod) {
-                // log_message('debug', 'INÍCIO LOOP PRODUTO: ' . microtime(true));
+            // Itera de 1 a 10 fornecedores
+            for ($i = 1; $i <= 10; $i++) {
+                $this->def_campos_forn($prod, $i, $dc);
 
-            if($pro_id != '' && $forIndexByProduct[$pro_id] < 10 ){
-                for($f = $forIndexByProduct[$pro_id]; $f<=10; $f++){
-                    $i = $f;
-                    // $this->def_campos_forn($produto, $i, $pro_id);// $dc agora é o pro_id (chave única do produto)
-                    $camp = $this->def_campos_forn($produto, $i, $pro_id);// $dc agora é o pro_id (chave única do produto)
-
-                    // Copia os campos dinâmicos
-                    $ret[$pro_id]["for_id_$i"]              = $camp["for_id"];
-                    $ret[$pro_id]["cof_preco_$i"]           = $camp["cof_preco"];
-                    $ret[$pro_id]["cof_precoundcompra_$i"]  = $camp["cof_precoundcompra"];
-                    $ret[$pro_id]["cof_validade_$i"]        = $camp["cof_validade"];
-                    $ret[$pro_id]["com_quantia_$i"]         = $camp["cop_quantia"];
-                    $ret[$pro_id]["cop_previsao_$i"]        = $camp["cop_previsao"];
-                    $ret[$pro_id]["ped_id_$i"]              = $camp["ped_id"];
-                    $ret[$pro_id]["cot_id_$i"]              = $camp["cot_id"];
-                    $ret[$pro_id]["cop_id_$i"]              = $camp["cop_id"];
-                    $ret[$pro_id]["pro_id_$i"]              = $camp["pro_id"];
-                    $ret[$pro_id]["mar_id_$i"]              = $camp["mar_id"];
-                    $ret[$pro_id]["cof_id_$i"]              = $camp["cof_id"];
-                    $ret[$pro_id]["cof_observacao_$i"] = '';
-                }
+                $ret[$dc]["for_id_$i"]       = $this->{"for_id_$i"};
+                $ret[$dc]["cof_preco_$i"]    = $this->{"cof_preco_$i"};
+                $ret[$dc]["cof_precoundcompra_$i"]    = $this->{"cof_precoundcompra_$i"};
+                $ret[$dc]["cof_validade_$i"] = $this->{"cof_validade_$i"};
+                $ret[$dc]["com_quantia_$i"]  = $this->cop_quantia;
+                $ret[$dc]["cop_previsao_$i"] = $this->{"cop_previsao_$i"};
+                $ret[$dc]["ped_id_$i"]       = $this->ped_id;
+                $ret[$dc]["cot_id_$i"]       = $this->cot_id;
+                $ret[$dc]["cop_id_$i"]       = $this->cop_id;
+                $ret[$dc]["pro_id_$i"]       = $this->pro_id;
+                $ret[$dc]["mar_id_$i"]       = $this->{"mar_id_$i"};
+                $ret[$dc]["cof_id_$i"]       = $this->{"cof_id_$i"};
+                $ret[$dc]["cof_observacao_$i"]       = $prod["cof_observacao_$i"];
             }
-            $pro_id = $prod['pro_id'].'A';
-            // Se ainda não iniciamos esse produto, iniciamos agora
-            if (!isset($ret[$pro_id])) {
-                $ret[$pro_id] = [
-                    'ped_id'        => $prod['ped_id'],
-                    'pro_id'        => $prod['pro_id'],
-                    'grc_nome'      => $prod['grc_nome'],
-                    'pro_nome'      => $prod['pro_nome'],
-                    'ped_datains'   => dataDbToBr($prod['ped_datains']),
-                    'ped_qtia'      => $prod['ped_qtia'],
-                    'ped_sugestao'  => $prod['ped_sugestao'],
-                    'und_consumo'   => $prod['und_sigla'],
-                    'und_compra'    => $prod['und_sigla_compra'],
-                ];
-                $produto = $ret[$pro_id];
-
-                $forIndexByProduct[$pro_id] = 1;
-            }
-
-            // Pega índice atual do fornecedor para esse produto
-            $i = $forIndexByProduct[$pro_id];
-
-            // Chama sua função normalmente
-            $camp = $this->def_campos_forn($prod, $i, $pro_id);// $dc agora é o pro_id (chave única do produto)
-
-            // Copia os campos dinâmicos
-            $ret[$pro_id]["for_id_$i"]              = $camp["for_id"];
-            $ret[$pro_id]["cof_preco_$i"]           = $camp["cof_preco"];
-            $ret[$pro_id]["cof_precoundcompra_$i"]  = $camp["cof_precoundcompra"];
-            $ret[$pro_id]["cof_validade_$i"]        = $camp["cof_validade"];
-            $ret[$pro_id]["com_quantia_$i"]         = $camp["cop_quantia"];
-            $ret[$pro_id]["cop_previsao_$i"]        = $camp["cop_previsao"];
-            $ret[$pro_id]["ped_id_$i"]              = $camp["ped_id"];
-            $ret[$pro_id]["cot_id_$i"]              = $camp["cot_id"];
-            $ret[$pro_id]["cop_id_$i"]              = $camp["cop_id"];
-            $ret[$pro_id]["pro_id_$i"]              = $camp["pro_id"];
-            $ret[$pro_id]["mar_id_$i"]              = $camp["mar_id"];
-            $ret[$pro_id]["cof_id_$i"]              = $camp["cof_id"];
-            $ret[$pro_id]["cof_observacao_$i"] = isset($prod["cof_observacao"]) ? $prod["cof_observacao"] : '';
-
-            // Incrementa índice de fornecedor para esse produto
-            // debug($forIndexByProduct[$pro_id]);
-            // debug($prod['pro_nome']);
-            // debug($prod['for_razao']);
-            $forIndexByProduct[$pro_id]++;
-            //  log_message('debug', 'FIM LOOP PRODUTO: ' . microtime(true));
         }
-
-        // log_message('debug', 'TEMPO TOTAL LOOP: ' . (microtime(true) - $inicio));
         echo json_encode($ret);
     }
 
@@ -561,7 +514,6 @@ class EstCompraCotacao extends BaseController
      */
     public function def_campos_forn($dados, $ord = 0, $indice = 0)
     {
-        $ret = [];
         if (!$dados) {
             return;
         }
@@ -576,35 +528,35 @@ class EstCompraCotacao extends BaseController
         $pedid->ordem = $ord;
         $pedid->attrdata = $attr;
         $pedid->valor = isset($dados['ped_id']) ? $dados['ped_id'] : '';
-        $ret["ped_id"] = $pedid->crOculto();
+        $this->ped_id = $pedid->crOculto();
 
         $cota = new MyCampo('est_cotacao', 'cot_id');
         $cota->ordem = $ord;
         $cota->attrdata = $attr;
         $cota->valor = isset($dados['cot_id']) ? $dados['cot_id'] : '';
-        $ret["cot_id"] = $cota->crOculto();
+        $this->cot_id = $cota->crOculto();
 
-        $chave = "cof_id";
+        $chave = "cof_id_{$ord}";
         $cotf = new MyCampo('est_cotacao_fornec', 'cof_id');
         $cotf->ordem = $ord;
         $cotf->attrdata = $attr;
         $cotf->valor = isset($dados[$chave]) ? $dados[$chave] : '';
-        $ret[$chave] = $cotf->crOculto();
+        $this->{$chave} = $cotf->crOculto();
 
         $proco = new MyCampo('est_cotacao_produto', 'ctp_id');
         $proco->ordem = $ord;
         $proco->attrdata = $attr;
         $proco->valor = isset($dados['cop_id']) ? $dados['cop_id'] : '';
-        $ret["cop_id"] = $proco->crOculto();
+        $this->cop_id = $proco->crOculto();
 
         $proid = new MyCampo('est_pedido', 'pro_id');
         $proid->ordem = $ord;
         $proid->attrdata = $attr;
         $proid->valor = $dados['pro_id'];
-        $ret["pro_id"] = $proid->crOculto();
+        $this->pro_id = $proid->crOculto();
 
         $marcs = [];
-        $chave = "mar_id";
+        $chave = "mar_id_{$ord}";
         if(isset($dados[$chave]) && $dados[$chave] != null && $dados[$chave] != 0){
             $dados_mar = $this->marca->getMarca($dados[$chave]);
         } else {
@@ -625,10 +577,10 @@ class EstCompraCotacao extends BaseController
         if (isset($dados[$chave]) && $dados[$chave] != null && $dados[$chave] != 0) {
             $marc->leitura = true;
         }
-        $ret[$chave]             = $marc->crSelect();
+        $this->{$chave}             = $marc->crSelect();
 
         $fornec = [];
-        $chave = "for_id";
+        $chave = "for_id_{$ord}";
         if (isset($dados[$chave]) && $dados[$chave] != null) {
             $fornecedor = new EstoquFornecedorModel();
             $dados_for = $fornecedor->getFornecedor($dados[$chave]);
@@ -650,7 +602,7 @@ class EstCompraCotacao extends BaseController
         if (isset($dados[$chave]) && $dados[$chave] != null) {
             $forn->leitura = true;
         }
-        $ret[$chave]               = $forn->crSelbusca();
+        $this->{$chave}               = $forn->crSelbusca();
 
 
         $qtia = formataQuantia(isset($dados['ped_qtia']) ? $dados['ped_qtia'] : 0);
@@ -666,24 +618,24 @@ class EstCompraCotacao extends BaseController
         $qti->dispForm              = 'col-12';
         $qti->funcBlur              = 'gravaPreCompra(this)';
         $qti->place                 = '';
-        $ret["cop_quantia"]          = $qti->crInput();
+        $this->cop_quantia          = $qti->crInput();
 
-        $chave = "cof_preco";
+        $chave = "cof_preco_{$ord}";
         $val                        = new MyCampo('est_cotacao_fornec', 'cof_preco');
         $val->label                 = '';
         $val->ordem                 = $ord;
         $val->attrdata = $attr;
         $val->largura               = 20;
-        $val->valor                 = isset($dados[$chave]) ? $dados[$chave] : (isset($dados['cof_precoundcompra'])?$dados['cof_precoundcompra']:0);
+        $val->valor                 = isset($dados[$chave]) ? $dados[$chave] : '0';
         $val->dispForm              = 'col-12';
         $val->funcBlur              = 'gravaCotacao(this)';
         $val->place                 = '';
         if (isset($dados[$chave]) && $dados[$chave] != null) {
             $val->leitura = true;
         }
-        $ret[$chave]            = $val->crInput();
+        $this->{$chave}            = $val->crInput();
 
-        $chave = "cof_precoundcompra";
+        $chave = "cof_precoundcompra_{$ord}";
         $val                        = new MyCampo('est_cotacao_fornec', 'cof_precoundcompra');
         $val->label                 = '';
         $val->ordem                 = $ord;
@@ -696,9 +648,9 @@ class EstCompraCotacao extends BaseController
         if (isset($dados[$chave]) && $dados[$chave] != null) {
             $val->leitura = true;
         }
-        $ret[$chave]            = $val->crInput();
+        $this->{$chave}            = $val->crInput();
 
-        $chave = "cof_validade";
+        $chave = "cof_validade_{$ord}";
         $val                        = new MyCampo('est_cotacao_fornec', 'cof_validade');
         $val->ordem                 = $ord;
         $val->label                 = '';
@@ -710,20 +662,18 @@ class EstCompraCotacao extends BaseController
         $val->funcBlur              = 'gravaCotacao(this)';
         $val->place                 = '';
         // debug($dados[$chave]);
-        $data = isset($dados[$chave]) ? $dados[$chave] : '';
-        if($data != ''){
-            $formato = 'Y-m-d';
+        $data = $dados[$chave];
+        $formato = 'Y-m-d';
 
-            $d = DateTime::createFromFormat($formato, $data);
+        $d = DateTime::createFromFormat($formato, $data);
 
-            if (isset($dados[$chave]) && $d && $d->format($formato) === $data && empty(DateTime::getLastErrors()['warning_count']) && empty(DateTime::getLastErrors()['error_count'])) {
-                $val->leitura = true;
-            }
+        if (isset($dados[$chave]) && $d && $d->format($formato) === $data && empty(DateTime::getLastErrors()['warning_count']) && empty(DateTime::getLastErrors()['error_count'])) {
+            $val->leitura = true;
         }
-        $ret[$chave]            = $val->crInput();
+        $this->{$chave}            = $val->crInput();
 
         $previsao = new DateTime("+1 days");
-        $chave = "cop_previsao";
+        $chave = "cop_previsao_{$ord}";
         if(isset($dados[$chave]) && $dados[$chave] != ''){
             $previsao = new DateTime("+".$dados[$chave]." days");
         }
@@ -736,9 +686,9 @@ class EstCompraCotacao extends BaseController
         $pre->dispForm              = 'col-12 justify-content-center';
         $pre->funcBlur              = 'gravaPreCompra(this)';
         $pre->classediv              = 'text-center';
-        $ret[$chave]             = $pre->crInput();
+        $this->{$chave}             = $pre->crInput();
 
-        $chave = "cof_observacao";
+        $chave = "cof_observacao_{$ord}";
         $obs                        = new MyCampo('est_cotacao_fornec', 'cof_observacao');
         $obs->label                 = '';
         $obs->ordem                 = $ord;
@@ -748,9 +698,7 @@ class EstCompraCotacao extends BaseController
         $obs->dispForm              = 'col-12';
         $obs->place                 = '';
         $obs->leitura               = true;
-        $ret[$chave]             = $val->crInput();
-
-        return $ret;
+        $this->{$chave}             = $val->crInput();
     }
 
     /**

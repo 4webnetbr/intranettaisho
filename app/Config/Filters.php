@@ -40,6 +40,7 @@ class Filters extends BaseConfig
                     'buscas/*',
                     'common/*',
                     'util/*',
+                    'utils/*',
                     'auth/*',
                     'apiconfig/*',
                     'apiestoque/*',

@@ -121,18 +121,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Aplica o valor salvo a todos os selects encontrados
     selects.forEach(function (select) {
-    if(savedEmpresa != null){
+      if(savedEmpresa != null){
         if (savedEmpresa != select.value) {
             select.value = savedEmpresa;
             jQuery(select).selectpicker('val',savedEmpresa);
-            jQuery(select).trigger('change');
+            // jQuery(select).trigger('change');
         }
       }
-        // Evento de mudança para salvar o valor
-        select.addEventListener('change', function () {
-            localStorage.setItem('empresaSelecionada', this.value);
-            console.log('Empresa selecionada:', this.value); // DEBUG
-        });
+      // Evento de mudança para salvar o valor
+      select.addEventListener('change', function () {
+          localStorage.setItem('empresaSelecionada', this.value);
+          console.log('Empresa selecionada:', this.value); // DEBUG
+      });
     });
 });
+
 </script>
