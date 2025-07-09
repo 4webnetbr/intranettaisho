@@ -1420,145 +1420,6 @@ function carrega_lista_cotacao_marca(obj, url, nome) {
 //   });
 // }
 
-// function carrega_lista_cotacaoNOVO(obj, url, nome) {
-//   bloqueiaTela();
-
-//   const param = jQuery("#empresa").val();
-//   const param2 = jQuery("#grc_id").val();
-//   url = `${url}?param=${param}&param2=${param2}`;
-
-//   jQuery.ajax({
-//     type: "POST",
-//     async: false,
-//     dataType: "json",
-//     url: url,
-//     success: function (itens) {
-//       console.time("renderAccordion");
-
-//       const keys = Object.keys(itens);
-//       const container = document.getElementById("accProdutos");
-//       const outer = document.getElementById("divTable");
-//       container.innerHTML = "";
-
-//       let index = 0;
-//       let prod = "",
-//         marca = "";
-
-//       function renderNext() {
-//         if (index >= keys.length) {
-//           jQuery(".selectpicker").selectpicker();
-//           itens_compra = [];
-//           jQuery("#itens_tabela_compra").html("");
-//           desBloqueiaTela();
-//           console.timeEnd("renderAccordion");
-
-//           // Volta para o primeiro produto suavemente
-//           const firstItem = container.querySelector(".accordion-item");
-//           if (firstItem) {
-//             const top = firstItem.offsetTop - 60;
-//             outer.scrollTo({ top, behavior: "smooth" });
-//           }
-//           return;
-//         }
-
-//         const element = itens[keys[index]];
-//         const iddiv = element.pro_id;
-//         const linhas = [];
-
-//         if (element.pro_nome !== prod) {
-//           if (prod !== "") {
-//             linhas.push("</div></div></div></div></div>");
-//           }
-
-//           marca = "";
-//           prod = element.pro_nome;
-
-//           linhas.push(`
-//             <div class="accordion-item">
-//               <h2 class="accordion-header border border-botton-1" id="heading${iddiv}">
-//                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-//                   data-bs-target="#collapse${iddiv}" aria-expanded="true" aria-controls="collapse${iddiv}" onclick="posicionaProdutoTopo(this)">
-//                   <div class="col-2"><b>Grupo</b><br>${element.grc_nome}</div>
-//                   <div class="col-4"><b>Produto</b><br>${element.pro_nome}</div>
-//                   <div class="col-2"><b>Data Solic</b><br>${element.ped_datains}</div>
-//                   <div class="col-1"><b>Quantia</b><br>${element.ped_qtia}</div>
-//                   <div class="col-1"><b>Sugestão</b><br>${element.ped_sugestao}</div>
-//                   <div class="col-2"><b>Und.</b><br>${element.und_compra}</div>
-//                 </button>
-//               </h2>
-//               <div id="collapse${iddiv}" class="accordion-collapse collapse" aria-labelledby="heading${iddiv}" data-bs-parent="#accProdutos">
-//                 <div class="accordion-body p-1" style="max-height:50vh; height:50vh; overflow-y: auto">
-//                   <div class="d-block float-start col-12 p-0">
-//                     <div class="d-inline-flex float-start col-3 fw-bold"><div class="col-12 text-center">Fornecedor</div></div>
-//                     <div class="d-inline-flex float-start col-2 fw-bold"><div class="col-12 text-center">Marca:</div></div>
-//                     <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">Validade</div></div>
-//                     <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">R$ ${element.und_consumo}</div></div>
-//                     <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">R$ ${element.und_compra}</div></div>
-//                     <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">Quantia</div></div>
-//                     <div class="d-inline-flex float-start col-2 fw-bold"><div class="col-12 text-center">Prev. Entrega</div></div>
-//                   </div>
-//                   <div class="d-block float-start col-12 p-0" style="max-height:45vh; overflow-y: auto">
-//           `);
-//         }
-
-//         for (let f = 1; f <= 10; f++) {
-//           const obs = element[`cof_observacao_${f}`] || "";
-//           linhas.push(`
-//             <div class="d-block float-start col-12 p-0">
-//               <div class="d-inline-flex float-start col-3">${f} ${
-//             element[`pro_id_${f}`] || ""
-//           }${element[`ped_id_${f}`] || ""}${element[`cot_id_${f}`] || ""}${
-//             element[`cop_id_${f}`] || ""
-//           }${element[`for_id_${f}`] || ""}</div>
-//               <div class="d-inline-flex float-start col-2">${
-//                 element[`mar_id_${f}`] || ""
-//               }</div>
-//               <div class="d-inline-flex float-start col-1 me-3">${
-//                 element[`cof_id_${f}`] || ""
-//               }${element[`cof_validade_${f}`] || ""}</div>
-//               <div class="d-inline-flex float-start col-1 me-3">${
-//                 element[`cof_preco_${f}`] || ""
-//               }</div>
-//               <div class="d-inline-flex float-start col-1 me-3">${
-//                 element[`cof_precoundcompra_${f}`] || ""
-//               }</div>
-//               <div class="d-inline-flex float-start col-1 me-3">${
-//                 element[`com_quantia_${f}`] || ""
-//               }</div>
-//               <div class="d-inline-flex float-start col-2">${
-//                 element[`cop_previsao_${f}`] || ""
-//               }</div>
-//               ${
-//                 obs
-//                   ? `<div class="d-inline-flex float-start col-12 px-5 mb-3">Obs.: ${obs}</div>`
-//                   : ""
-//               }
-//             </div>
-//           `);
-//         }
-
-//         linhas.push("</div></div></div>");
-
-//         const div = document.createElement("div");
-//         div.innerHTML = linhas.join("");
-//         container.appendChild(div);
-
-//         // Scrolla até o último item renderizado
-//         const lastItem = container.lastElementChild;
-//         if (lastItem) {
-//           const top = lastItem.offsetTop - 60;
-//           outer.scrollTo({ top, behavior: "smooth" });
-//         }
-
-//         index++;
-//         setTimeout(renderNext, 0);
-//       }
-
-//       renderNext();
-//     },
-//   });
-// }
-
 let cotacaoRequest = null; // variável global para armazenar a requisição
 
 function carrega_lista_cotacao(obj, url, nome) {
@@ -1583,12 +1444,11 @@ function carrega_lista_cotacao(obj, url, nome) {
     success: function (html) {
       const container = document.getElementById("accProdutos");
       container.innerHTML = html;
-
       desBloqueiaTela();
     },
     error: function (xhr, status) {
       if (status !== "abort") {
-        console.error("Erro ao carregar cotações:", status);
+        console.error("Erro ao carregar produtos cotados:", status);
         desBloqueiaTela();
       }
     },
@@ -1597,6 +1457,7 @@ function carrega_lista_cotacao(obj, url, nome) {
 
 function posicionaProdutoTopo(obj) {
   bloqueiaTela();
+  id = obj.getAttribute("aria-controls");
   const button = obj;
   if (!button) return;
 
@@ -1604,22 +1465,53 @@ function posicionaProdutoTopo(obj) {
   const targetCollapse = document.querySelector(button.dataset.bsTarget);
   if (!targetCollapse) return;
 
-  // Inicializar selectpicker apenas nos elementos ainda não inicializados
-  jQuery(".selectpicker", targetCollapse).each(function () {
-    if (!jQuery(this).parent().hasClass("bootstrap-select")) {
-      jQuery(this).selectpicker();
-    }
-  });
+  if (
+    jQuery("#" + id)
+      .html()
+      .trim() == ""
+  ) {
+    // faz a busca dos fornecedores;
+    bloqueiaTela();
 
-  targetCollapse.addEventListener(
-    "shown.bs.collapse",
-    function () {
-      const item = targetCollapse.closest(".accordion-item");
-      const offsetTop = item.offsetTop - 60;
-      outer.scrollTo({ top: offsetTop, behavior: "smooth" });
-    },
-    { once: true }
-  );
+    const param = jQuery("#empresa").val();
+    const param2 = jQuery("#grc_id").val();
+    const param3 = obj.getAttribute("data-proid");
+    controler = jQuery("#controler").val();
+    url = window.location.origin + "/EstCompraCotacao/listafornprod";
+    url = `${url}?param=${param}&param2=${param2}&param3=${param3}`;
+
+    jQuery.ajax({
+      type: "POST",
+      async: false,
+      dataType: "html",
+      url: url,
+      success: function (html) {
+        jQuery("#" + id).html(html);
+        jQuery(".selectpicker", targetCollapse).each(function () {
+          if (!jQuery(this).parent().hasClass("bootstrap-select")) {
+            jQuery(this).selectpicker();
+          }
+        });
+
+        targetCollapse.addEventListener(
+          "shown.bs.collapse",
+          function () {
+            const item = targetCollapse.closest(".accordion-item");
+            const offsetTop = item.offsetTop - 60;
+            outer.scrollTo({ top: offsetTop, behavior: "smooth" });
+          },
+          { once: true }
+        );
+        // desBloqueiaTela();
+      },
+      error: function (xhr, status) {
+        if (status !== "abort") {
+          console.error("Erro ao carregar produtos cotados:", status);
+          // desBloqueiaTela();
+        }
+      },
+    });
+  }
   desBloqueiaTela();
 }
 

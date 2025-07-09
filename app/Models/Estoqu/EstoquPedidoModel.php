@@ -247,8 +247,7 @@ class EstoquPedidoModel extends Model
         }
         $db = db_connect('dbEstoque');
         // $builder = $db->table("vw_pedidos_com_cotacoes");
-        // $builder = $db->table("vw_produtos_cotados");
-        $builder = $db->table("vw_pedidos_com_cotacao_fornec");
+        $builder = $db->table("vw_produtos_cotados");
         $builder->select("*");
         // if ($ped_id) {
         //     $builder->where("pro.ped_id", $ped_id);
@@ -275,4 +274,85 @@ class EstoquPedidoModel extends Model
         // debug($executionTime);
         return $ret;
     }
+
+    public function getFornecProdCotados($empresa = false, $grc_id = false, $pro_id = false)
+    {
+        if (!$empresa) {
+            $empresa           = explode(',', session()->get('usu_empresa'));
+        }
+        $db = db_connect('dbEstoque');
+        // $builder = $db->table("vw_pedidos_com_cotacoes");
+        $builder = $db->table("vw_pedidos_com_cotacao_fornec");
+        $builder->select("*");
+        // if ($ped_id) {
+        //     $builder->where("pro.ped_id", $ped_id);
+        // }
+        if ($empresa) {
+            if (is_array($empresa)) {
+                $builder->whereIn("emp_id", $empresa);
+            } else {
+                $builder->where("emp_id", $empresa);
+            }
+        }
+        if ($grc_id) {
+            $builder->where("grc_id", $grc_id);
+        }
+        if ($pro_id) {
+            $builder->where("pro_id", $pro_id);
+        }
+        // $start = microtime(true);
+        $builder->orderBy("grc_nome, pro_nome, ped_datains");
+        $ret = $builder->get()->getResultArray();
+        // debug($db->getLastQuery(), true);
+
+        // $end = microtime(true);
+        
+        // $executionTime = $end - $start;
+        // Fim da medição
+        // debug($executionTime);
+        return $ret;
+    }
+
+public function getProdutosCotados($empresa = false, $grc_id = false)
+{
+    if (!$empresa) {
+        $empresa = explode(',', session()->get('usu_empresa'));
+    }
+
+    $db = db_connect('dbEstoque');
+
+    $where = [];
+    if ($empresa) {
+        if (is_array($empresa)) {
+            $empresas = implode(',', array_map('intval', $empresa));
+            $where[] = "emp_id IN ($empresas)";
+        } else {
+            $where[] = "emp_id = " . intval($empresa);
+        }
+    }
+
+    if ($grc_id) {
+        $where[] = "grc_id = " . intval($grc_id);
+    }
+
+    $whereSql = $where ? ' AND ' . implode(' AND ', $where) : '';
+
+    $sql = "
+        WITH ranked AS (
+            SELECT *, 
+                   ROW_NUMBER() OVER (
+                       PARTITION BY pro_id
+                       ORDER BY grc_nome, pro_nome, ped_datains, cot_id, for_razao
+                   ) AS row_num
+            FROM vw_pedidos_com_cotacao_fornec
+            WHERE ped_status = 'P' $whereSql
+        )
+        SELECT *
+        FROM ranked
+        WHERE row_num = 1
+    ";
+
+    $ret = $db->query($sql)->getResultArray();
+    return $ret;
+}
 }
