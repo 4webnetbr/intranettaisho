@@ -59,6 +59,9 @@ class EstCompraCotacaoBKP extends BaseController
     public $cof_validade_3;
     public $cot_id;
     public $grupo;
+    public $dados_mar;
+    public $dados_for;
+    public $fornecedor;
 
     /**
      * Construtor da Classe
@@ -76,7 +79,11 @@ class EstCompraCotacaoBKP extends BaseController
         $this->marca       = new EstoquMarcaModel();
         $this->grupocompra  = new EstoquGrupoCompraModel();
         $this->unidades     = new EstoquUndMedidaModel();
+        $this->fornecedor = new EstoquFornecedorModel();
         $this->data['scripts'] = 'my_consulta';
+
+        $this->dados_mar = $this->marca->getMarca();
+        $this->dados_for = $this->fornecedor->getFornecedor();
 
         if ($this->data['erromsg'] != '') {
             $this->__erro();
@@ -141,7 +148,7 @@ class EstCompraCotacaoBKP extends BaseController
         $grucs = ['0' => ':: Todos ::'] + $grucs;
 
         $grc                        = new MyCampo('est_produto', 'grc_id');
-        $grc->valor = $grc->selecionado = '0';
+        $grc->valor = $grc->selecionado = '1';
         $grc->label                 = 'Grupo';
         $grc->opcoes                = $grucs;
         $grc->largura               = 40;
@@ -150,9 +157,9 @@ class EstCompraCotacaoBKP extends BaseController
         $this->grupo                = $grc->crSelect();
 
         $fornec = [];
-        $fornecedor = new EstoquFornecedorModel();
-        $dados_for = $fornecedor->getFornecedor();
-        $fornec = array_column($dados_for, 'for_completo', 'for_id');
+        // $fornecedor = new EstoquFornecedorModel();
+        // $dados_for = $fornecedor->getFornecedor();
+        $fornec = array_column($this->dados_for, 'for_completo', 'for_id');
 
         $forn                       = new MyCampo('est_compra', 'for_id');
         $forn->opcoes               = $fornec;
@@ -298,7 +305,7 @@ class EstCompraCotacaoBKP extends BaseController
         $this->data['campos']         = $campos;
         // $this->data['camposedit']   = $camposedit;
         $this->data['destino']         = '';
-        // $this->data['script']       = "<script>carrega_lista_cotacao('empresa', '" . $this->data['url_lista'] . "','" . $this->data['nome'] . "');</script>";
+        $this->data['script']       = "<script>carrega_lista_cotacao('empresa', '" . $this->data['url_lista'] . "','" . $this->data['nome'] . "');</script>";
         echo view('vw_add_compra_cotacao_10', $this->data);
     }
 
@@ -505,6 +512,7 @@ class EstCompraCotacaoBKP extends BaseController
         echo json_encode($ret);
     }
 
+
     /**
      * Definição de Campos
      * def_campos
@@ -557,12 +565,12 @@ class EstCompraCotacaoBKP extends BaseController
 
         $marcs = [];
         $chave = "mar_id_{$ord}";
-        if(isset($dados[$chave]) && $dados[$chave] != null && $dados[$chave] != 0){
-            $dados_mar = $this->marca->getMarca($dados[$chave]);
-        } else {
-            $dados_mar = $this->marca->getMarcaProd($dados['pro_id']);
-        }
-        $marcs = array_column($dados_mar, 'mar_nomecodbar', 'mar_id');
+        // if(isset($dados[$chave]) && $dados[$chave] != null && $dados[$chave] != 0){
+        //     $dados_mar = $this->marca->getMarca($dados[$chave]);
+        // } else {
+        //     $dados_mar = $this->marca->getMarcaProd($dados['pro_id']);
+        // }
+        $marcs = array_column($this->dados_mar, 'mar_nomecodbar', 'mar_id');
         
         $marc = new MyCampo('est_cotacao_fornec', 'mar_id');
         $marc->valor                = $marc->selecionado  = isset($dados[$chave]) ? $dados[$chave] : '';
@@ -582,9 +590,9 @@ class EstCompraCotacaoBKP extends BaseController
         $fornec = [];
         $chave = "for_id_{$ord}";
         if (isset($dados[$chave]) && $dados[$chave] != null) {
-            $fornecedor = new EstoquFornecedorModel();
-            $dados_for = $fornecedor->getFornecedor($dados[$chave]);
-            $fornec = array_column($dados_for, 'for_completo', 'for_id');
+            // $fornecedor = new EstoquFornecedorModel();
+            // $dados_for = $fornecedor->getFornecedor($dados[$chave]);
+            $fornec = array_column($this->dados_for, 'for_completo', 'for_id');
         }
 
         $busca = base_url('Buscas/buscaFornecedor');
@@ -740,9 +748,9 @@ class EstCompraCotacaoBKP extends BaseController
 
 
         $fornec = [];
-        $fornecedor = new EstoquFornecedorModel();
-        $dados_for = $fornecedor->getFornecedor();
-        $fornec = array_column($dados_for, 'for_completo', 'for_id');
+        // $fornecedor = new EstoquFornecedorModel();
+        // $dados_for = $fornecedor->getFornecedor();
+        $fornec = array_column($this->dados_for, 'for_completo', 'for_id');
 
         $forn                       = new MyCampo('est_compra', 'for_id');
         $forn->valor = $forn->selecionado  = isset($dados['for_id']) ? $dados['for_id'] : '';

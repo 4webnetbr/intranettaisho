@@ -59,6 +59,9 @@ class EstCompraCotacao extends BaseController
     public $cof_validade_3;
     public $cot_id;
     public $grupo;
+    public $dados_mar;
+    public $dados_for;
+    public $fornecedor;
 
     /**
      * Construtor da Classe
@@ -76,7 +79,11 @@ class EstCompraCotacao extends BaseController
         $this->marca       = new EstoquMarcaModel();
         $this->grupocompra  = new EstoquGrupoCompraModel();
         $this->unidades     = new EstoquUndMedidaModel();
+        $this->fornecedor = new EstoquFornecedorModel();
         $this->data['scripts'] = 'my_consulta';
+
+        $this->dados_mar = $this->marca->getMarca();
+        $this->dados_for = $this->fornecedor->getFornecedor();
 
         if ($this->data['erromsg'] != '') {
             $this->__erro();
@@ -117,6 +124,10 @@ class EstCompraCotacao extends BaseController
         $dados_emp = $this->empresa->getEmpresa($empresas);
         $empres = array_column($dados_emp, 'emp_apelido', 'emp_id');
 
+        // $empresa = $_COOKIE['empresaSelecionada'] ?? null;
+        // if($empresa == null){
+        //     $empresa = $idempresa;
+        // }
         $emp                        = new MyCampo();
         $emp->nome                  = 'empresa';
         $emp->id                    = 'empresa';
@@ -150,9 +161,9 @@ class EstCompraCotacao extends BaseController
         $this->grupo                = $grc->crSelect();
 
         $fornec = [];
-        $fornecedor = new EstoquFornecedorModel();
-        $dados_for = $fornecedor->getFornecedor();
-        $fornec = array_column($dados_for, 'for_completo', 'for_id');
+        // $fornecedor = new EstoquFornecedorModel();
+        // $dados_for = $fornecedor->getFornecedor();
+        $fornec = array_column($this->dados_for, 'for_completo', 'for_id');
 
         $forn                       = new MyCampo('est_compra', 'for_id');
         $forn->opcoes               = $fornec;
@@ -445,9 +456,33 @@ class EstCompraCotacao extends BaseController
             $forIndexByProduct[$pro_id]++;
             //  log_message('debug', 'FIM LOOP PRODUTO: ' . microtime(true));
         }
+        if($pro_id != '' && $forIndexByProduct[$pro_id] < 10 ){
+            for($f = $forIndexByProduct[$pro_id]; $f<=10; $f++){
+                $i = $f;
+                // $this->def_campos_forn($produto, $i, $pro_id);// $dc agora é o pro_id (chave única do produto)
+                $camp = $this->def_campos_forn($produto, $i, $pro_id);// $dc agora é o pro_id (chave única do produto)
+
+                // Copia os campos dinâmicos
+                $ret[$pro_id]["for_id_$i"]              = $camp["for_id"];
+                $ret[$pro_id]["cof_preco_$i"]           = $camp["cof_preco"];
+                $ret[$pro_id]["cof_precoundcompra_$i"]  = $camp["cof_precoundcompra"];
+                $ret[$pro_id]["cof_validade_$i"]        = $camp["cof_validade"];
+                $ret[$pro_id]["com_quantia_$i"]         = $camp["cop_quantia"];
+                $ret[$pro_id]["cop_previsao_$i"]        = $camp["cop_previsao"];
+                $ret[$pro_id]["ped_id_$i"]              = $camp["ped_id"];
+                $ret[$pro_id]["cot_id_$i"]              = $camp["cot_id"];
+                $ret[$pro_id]["cop_id_$i"]              = $camp["cop_id"];
+                $ret[$pro_id]["pro_id_$i"]              = $camp["pro_id"];
+                $ret[$pro_id]["mar_id_$i"]              = $camp["mar_id"];
+                $ret[$pro_id]["cof_id_$i"]              = $camp["cof_id"];
+                $ret[$pro_id]["cof_observacao_$i"] = '';
+            }
+        }
 
         // log_message('debug', 'TEMPO TOTAL LOOP: ' . (microtime(true) - $inicio));
-        echo json_encode($ret);
+        // echo json_encode($ret);
+        return view('partials/accordion_lista_cotacao', ['produtos' => $ret]);
+
     }
 
 
@@ -605,12 +640,12 @@ class EstCompraCotacao extends BaseController
 
         $marcs = [];
         $chave = "mar_id";
-        if(isset($dados[$chave]) && $dados[$chave] != null && $dados[$chave] != 0){
-            $dados_mar = $this->marca->getMarca($dados[$chave]);
-        } else {
-            $dados_mar = $this->marca->getMarcaProd($dados['pro_id']);
-        }
-        $marcs = array_column($dados_mar, 'mar_nomecodbar', 'mar_id');
+        // if(isset($dados[$chave]) && $dados[$chave] != null && $dados[$chave] != 0){
+        //     $dados_mar = $this->marca->getMarca($dados[$chave]);
+        // } else {
+        //     $dados_mar = $this->marca->getMarcaProd($dados['pro_id']);
+        // }
+        $marcs = array_column($this->dados_mar, 'mar_nomecodbar', 'mar_id');
         
         $marc = new MyCampo('est_cotacao_fornec', 'mar_id');
         $marc->valor                = $marc->selecionado  = isset($dados[$chave]) ? $dados[$chave] : '';
@@ -630,9 +665,9 @@ class EstCompraCotacao extends BaseController
         $fornec = [];
         $chave = "for_id";
         if (isset($dados[$chave]) && $dados[$chave] != null) {
-            $fornecedor = new EstoquFornecedorModel();
-            $dados_for = $fornecedor->getFornecedor($dados[$chave]);
-            $fornec = array_column($dados_for, 'for_completo', 'for_id');
+            // $fornecedor = new EstoquFornecedorModel();
+            // $dados_for = $fornecedor->getFornecedor($dados[$chave]);
+            $fornec = array_column($this->dados_for, 'for_completo', 'for_id');
         }
 
         $busca = base_url('Buscas/buscaFornecedor');

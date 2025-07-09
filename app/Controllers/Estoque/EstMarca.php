@@ -89,7 +89,7 @@ class EstMarca extends BaseController {
                 // $dados_marcas[$dm]['codbar'] = $imgcodbar;
 
             }
-            $marcas = [             
+            $marcas = [
                 'data' => montaListaColunas($this->data,'mar_id',$dados_marcas,'pro_nome'),
             ];
         // }

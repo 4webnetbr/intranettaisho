@@ -1373,10 +1373,15 @@ class MyCampo
             $this->id       = $this->id . "[" . $this->ordem . "]";
         }
 
+        $selpic = 'selectpicker';
+        if($this->leitura){
+            $selpic = ''; // não coloca selectpicker se for somente leitura
+        }
+
         $this->field = array(
             'name'          => $this->nome,
             'id'            => $this->id,
-            'class'         => " form-control form-select selectpicker $this->classep",
+            'class'         => " form-control form-select $selpic $this->classep",
             'data-dropup-auto' => 'false'
         );
         if (!isset($this->size) || $this->size == '') {
@@ -1474,11 +1479,16 @@ class MyCampo
             $this->id       = $this->id . "[" . $this->ordem . "]";
         }
 
+        $selpic = 'selectpicker';
+        if($this->leitura){
+            $selpic = ''; // não coloca selectpicker se for somente leitura
+        }
+
         $this->field = array(
             'name'          => $this->nome,
             'id'            => $this->id,
             'data-busca'    => $this->urlbusca,
-            'class'         => "form-control form-select selbusca selectpicker text-nowrap"
+            'class'         => "form-control form-select selbusca $selpic text-nowrap  $this->classep"
         );
         if (!isset($this->size) || $this->size == '') {
             $this->size = -1;

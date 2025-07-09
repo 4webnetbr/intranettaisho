@@ -532,7 +532,9 @@ function montaListaColunas($data_lis, $chave, $dados, $nome, $detalhe = false)
                     $retor[$fields[$f]] = "<div class='text-center'>" .
                         dataDbToBr($retor[$fields[$f]]) . "</div>";
                 } else {
-                    $data = DateTime::createFromFormat('Y-m-d', $retor[$fields[$f]]);
+                    if($retor[$fields[$f]] != null){
+                        $data = DateTime::createFromFormat('Y-m-d', $retor[$fields[$f]]);
+                    }
                     if ($data && $data->format('Y-m-d') === $retor[$fields[$f]]) {
                         $retor[$fields[$f]] = "<div class='text-center'>" . dataDbToBr($retor[$fields[$f]]) .
                             "</div>";

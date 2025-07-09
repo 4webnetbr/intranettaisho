@@ -1213,154 +1213,403 @@ function carrega_lista_cotacao_marca(obj, url, nome) {
 //     },
 //   });
 // }
+// function carrega_lista_cotacao(obj, url, nome) {
+//   bloqueiaTela();
+//   //   $fixo.html("").hide();
+//   //   var tabela = " tb_" + nome;
+
+//   param = jQuery("#empresa").val();
+//   param2 = jQuery("#grc_id").val();
+
+//   url = url + "?param=" + param + "&param2=" + param2;
+
+//   jQuery.ajax({
+//     type: "POST",
+//     async: true,
+//     dataType: "json",
+//     url: url,
+//     success: function (itens) {
+//       prod = "";
+//       linha = "";
+
+//       for (let it = 0; it < itens.length; it++) {
+//         const element = itens[it];
+//         iddiv = element.pro_id;
+//         if (element.pro_nome != prod) {
+//           if (prod != "") {
+//             linha += "</div>";
+//             linha += "</div>";
+//             linha += "</div>";
+//             linha += "</div>";
+//             linha += "</div>";
+//           }
+//           marca = "";
+//           prod = element.pro_nome;
+//           linha += '<div class="accordion-item">';
+//           linha +=
+//             '  <h2 class="accordion-header border border-botton-1" id="heading' +
+//             iddiv +
+//             '">';
+//           linha +=
+//             '      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse' +
+//             iddiv +
+//             '" aria-expanded="true" aria-controls="collapse' +
+//             iddiv +
+//             '">';
+//           linha +=
+//             '          <div class="col-2"><b>Grupo</b><br>' +
+//             element.grc_nome +
+//             "</div>";
+//           linha +=
+//             '          <div class="col-4"><b>Produto</b><br>' +
+//             element.pro_nome +
+//             "</div>";
+//           linha +=
+//             '          <div class="col-2"><b>Data Solic</b><br>' +
+//             element.ped_datains +
+//             "</div>";
+//           linha +=
+//             '          <div class="col-1"><b>Quantia</b><br>' +
+//             element.ped_qtia +
+//             "</div>";
+//           linha +=
+//             '          <div class="col-1"><b>Sugestão</b><br>' +
+//             element.ped_sugestao +
+//             "</div>";
+//           linha +=
+//             '          <div class="col-2"><b>Und.</b><br>' +
+//             element.und_compra +
+//             "</div>";
+//           linha += "      </button>";
+//           linha += "  </h2>";
+//           linha +=
+//             '  <div id="collapse' +
+//             iddiv +
+//             '" class="accordion-collapse collapse" aria-labelledby="heading' +
+//             iddiv +
+//             '" data-bs-parent="#accProdutos">';
+//           linha +=
+//             '      <div class="accordion-body p-1"  style="max-height:50vh; height:50vh; overflow-y: auto">';
+//           linha += '      <div class="d-block float-start col-12 p-0 ">';
+//           linha +=
+//             '          <div class="d-inline-flex float-start col-3 fw-bold"><div class="col-12 text-center">Fornecedor</div></div>';
+//           linha +=
+//             '          <div class="d-inline-flex float-start col-2 fw-bold"><div class="col-12 text-center">Marca:</div></div>';
+//           linha +=
+//             '          <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">Validade</div></div>';
+//           linha +=
+//             '          <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">R$ ' +
+//             element.und_consumo +
+//             "</div></div>";
+//           linha +=
+//             '          <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">R$ ' +
+//             element.und_compra +
+//             "</div></div>";
+//           linha +=
+//             '          <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">Quantia</div></div>';
+//           linha +=
+//             '          <div class="d-inline-flex float-start col-2 fw-bold"><div class="col-12 text-center">Prev. Entrega</div></div>';
+//           linha += "      </div>";
+//           linha +=
+//             '      <div class="d-block float-start col-12 p-0" style="max-height:45vh; overflow-y: auto">';
+//         }
+//         for (f = 1; f < 11; f++) {
+//           // if (marca != element.mar_id) {
+//           //   if (marca != "") {
+//           //     linha += "      </div>";
+//           //     linha += "      </div>";
+//           //   }
+//           //   let classeParOuImpar = it % 2 === 0 ? "odd" : "even";
+//           //   linha +=
+//           //     '      <div class="d-block float-start col-12 p-0 border border-1 ' +
+//           //     classeParOuImpar +
+//           //     '">';
+//           //   linha +=
+//           //     '          <div class="d-block float-start col-1 fw-bold text-vertical fs-3" style="height: 50%; width:auto;">' +
+//           //     element.mar_nome +
+//           //     "<br>" +
+//           //     element.mar_apresenta +
+//           //     "</div>";
+//           //   linha += '      <div class="d-block float-start col-12 p-0">';
+//           //   marca = element.mar_id;
+//           // }
+//           linha += '      <div class="d-block float-start col-12 p-0">';
+//           linha +=
+//             '          <div class="d-inline-flex float-start col-3">' +
+//             f +
+//             " " +
+//             element["pro_id_" + f] +
+//             element["ped_id_" + f] +
+//             element["cot_id_" + f] +
+//             element["cop_id_" + f] +
+//             element["for_id_" + f] +
+//             "</div>";
+//           linha +=
+//             '          <div class="d-inline-flex float-start col-2">' +
+//             element["mar_id_" + f] +
+//             "</div>";
+//           linha +=
+//             '          <div class="d-inline-flex float-start col-1 me-3">' +
+//             element["cof_id_" + f] +
+//             element["cof_validade_" + f] +
+//             "</div>";
+//           linha +=
+//             '          <div class="d-inline-flex float-start col-1 me-3">' +
+//             element["cof_preco_" + f] +
+//             "</div>";
+//           linha +=
+//             '          <div class="d-inline-flex float-start col-1 me-3">' +
+//             element["cof_precoundcompra_" + f] +
+//             "</div>";
+//           linha +=
+//             '          <div class="d-inline-flex float-start col-1 me-3">' +
+//             element["com_quantia_" + f] +
+//             "</div>";
+//           linha +=
+//             '          <div class="d-inline-flex float-start col-2">' +
+//             element["cop_previsao_" + f] +
+//             "</div>";
+//           if (
+//             element["cof_observacao_" + f] != "" &&
+//             element["cof_observacao_" + f] != null
+//           ) {
+//             linha +=
+//               '          <div class="d-inline-flex float-start col-12 px-5 mb-3">' +
+//               "Obs.: " +
+//               element["cof_observacao_" + f] +
+//               "</div>";
+//           }
+//           linha += "</div>";
+//         }
+//       }
+//       linha += "</div>";
+//       linha += "</div>";
+//       linha += "</div>";
+//       jQuery("#accProdutos").html(linha);
+//       jQuery(".selectpicker").selectpicker();
+//       jQuery("#divTable").scrollTop(0);
+//       itens_compra = [];
+//       jQuery("#itens_tabela_compra").html("");
+
+//       desBloqueiaTela();
+//       const container = document.getElementById("divTable");
+
+//       document.querySelectorAll(".accordion-button").forEach((button) => {
+//         button.addEventListener("click", function () {
+//           const targetCollapse = document.querySelector(this.dataset.bsTarget);
+
+//           targetCollapse.addEventListener(
+//             "shown.bs.collapse",
+//             function () {
+//               const item = targetCollapse.closest(".accordion-item");
+
+//               // Calcula a posição do item em relação ao container
+//               const offsetTop = item.offsetTop - 60;
+
+//               // Scrolla o container para que o item fique no topo
+//               container.scrollTo({
+//                 top: offsetTop,
+//                 behavior: "smooth",
+//               });
+//             },
+//             { once: true }
+//           );
+//         });
+//       });
+//     },
+//   });
+// }
+
+// function carrega_lista_cotacaoNOVO(obj, url, nome) {
+//   bloqueiaTela();
+
+//   const param = jQuery("#empresa").val();
+//   const param2 = jQuery("#grc_id").val();
+//   url = `${url}?param=${param}&param2=${param2}`;
+
+//   jQuery.ajax({
+//     type: "POST",
+//     async: false,
+//     dataType: "json",
+//     url: url,
+//     success: function (itens) {
+//       console.time("renderAccordion");
+
+//       const keys = Object.keys(itens);
+//       const container = document.getElementById("accProdutos");
+//       const outer = document.getElementById("divTable");
+//       container.innerHTML = "";
+
+//       let index = 0;
+//       let prod = "",
+//         marca = "";
+
+//       function renderNext() {
+//         if (index >= keys.length) {
+//           jQuery(".selectpicker").selectpicker();
+//           itens_compra = [];
+//           jQuery("#itens_tabela_compra").html("");
+//           desBloqueiaTela();
+//           console.timeEnd("renderAccordion");
+
+//           // Volta para o primeiro produto suavemente
+//           const firstItem = container.querySelector(".accordion-item");
+//           if (firstItem) {
+//             const top = firstItem.offsetTop - 60;
+//             outer.scrollTo({ top, behavior: "smooth" });
+//           }
+//           return;
+//         }
+
+//         const element = itens[keys[index]];
+//         const iddiv = element.pro_id;
+//         const linhas = [];
+
+//         if (element.pro_nome !== prod) {
+//           if (prod !== "") {
+//             linhas.push("</div></div></div></div></div>");
+//           }
+
+//           marca = "";
+//           prod = element.pro_nome;
+
+//           linhas.push(`
+//             <div class="accordion-item">
+//               <h2 class="accordion-header border border-botton-1" id="heading${iddiv}">
+//                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+//                   data-bs-target="#collapse${iddiv}" aria-expanded="true" aria-controls="collapse${iddiv}" onclick="posicionaProdutoTopo(this)">
+//                   <div class="col-2"><b>Grupo</b><br>${element.grc_nome}</div>
+//                   <div class="col-4"><b>Produto</b><br>${element.pro_nome}</div>
+//                   <div class="col-2"><b>Data Solic</b><br>${element.ped_datains}</div>
+//                   <div class="col-1"><b>Quantia</b><br>${element.ped_qtia}</div>
+//                   <div class="col-1"><b>Sugestão</b><br>${element.ped_sugestao}</div>
+//                   <div class="col-2"><b>Und.</b><br>${element.und_compra}</div>
+//                 </button>
+//               </h2>
+//               <div id="collapse${iddiv}" class="accordion-collapse collapse" aria-labelledby="heading${iddiv}" data-bs-parent="#accProdutos">
+//                 <div class="accordion-body p-1" style="max-height:50vh; height:50vh; overflow-y: auto">
+//                   <div class="d-block float-start col-12 p-0">
+//                     <div class="d-inline-flex float-start col-3 fw-bold"><div class="col-12 text-center">Fornecedor</div></div>
+//                     <div class="d-inline-flex float-start col-2 fw-bold"><div class="col-12 text-center">Marca:</div></div>
+//                     <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">Validade</div></div>
+//                     <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">R$ ${element.und_consumo}</div></div>
+//                     <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">R$ ${element.und_compra}</div></div>
+//                     <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">Quantia</div></div>
+//                     <div class="d-inline-flex float-start col-2 fw-bold"><div class="col-12 text-center">Prev. Entrega</div></div>
+//                   </div>
+//                   <div class="d-block float-start col-12 p-0" style="max-height:45vh; overflow-y: auto">
+//           `);
+//         }
+
+//         for (let f = 1; f <= 10; f++) {
+//           const obs = element[`cof_observacao_${f}`] || "";
+//           linhas.push(`
+//             <div class="d-block float-start col-12 p-0">
+//               <div class="d-inline-flex float-start col-3">${f} ${
+//             element[`pro_id_${f}`] || ""
+//           }${element[`ped_id_${f}`] || ""}${element[`cot_id_${f}`] || ""}${
+//             element[`cop_id_${f}`] || ""
+//           }${element[`for_id_${f}`] || ""}</div>
+//               <div class="d-inline-flex float-start col-2">${
+//                 element[`mar_id_${f}`] || ""
+//               }</div>
+//               <div class="d-inline-flex float-start col-1 me-3">${
+//                 element[`cof_id_${f}`] || ""
+//               }${element[`cof_validade_${f}`] || ""}</div>
+//               <div class="d-inline-flex float-start col-1 me-3">${
+//                 element[`cof_preco_${f}`] || ""
+//               }</div>
+//               <div class="d-inline-flex float-start col-1 me-3">${
+//                 element[`cof_precoundcompra_${f}`] || ""
+//               }</div>
+//               <div class="d-inline-flex float-start col-1 me-3">${
+//                 element[`com_quantia_${f}`] || ""
+//               }</div>
+//               <div class="d-inline-flex float-start col-2">${
+//                 element[`cop_previsao_${f}`] || ""
+//               }</div>
+//               ${
+//                 obs
+//                   ? `<div class="d-inline-flex float-start col-12 px-5 mb-3">Obs.: ${obs}</div>`
+//                   : ""
+//               }
+//             </div>
+//           `);
+//         }
+
+//         linhas.push("</div></div></div>");
+
+//         const div = document.createElement("div");
+//         div.innerHTML = linhas.join("");
+//         container.appendChild(div);
+
+//         // Scrolla até o último item renderizado
+//         const lastItem = container.lastElementChild;
+//         if (lastItem) {
+//           const top = lastItem.offsetTop - 60;
+//           outer.scrollTo({ top, behavior: "smooth" });
+//         }
+
+//         index++;
+//         setTimeout(renderNext, 0);
+//       }
+
+//       renderNext();
+//     },
+//   });
+// }
+
+let cotacaoRequest = null; // variável global para armazenar a requisição
 
 function carrega_lista_cotacao(obj, url, nome) {
+  // Cancela a requisição anterior, se ainda estiver ativa
+  if (cotacaoRequest) {
+    const container = document.getElementById("accProdutos");
+    container.innerHTML = "";
+    cotacaoRequest.abort();
+  }
+
   bloqueiaTela();
 
   const param = jQuery("#empresa").val();
   const param2 = jQuery("#grc_id").val();
   url = `${url}?param=${param}&param2=${param2}`;
 
-  jQuery.ajax({
+  cotacaoRequest = jQuery.ajax({
     type: "POST",
-    async: false,
-    dataType: "json",
+    async: true,
+    dataType: "html",
     url: url,
-    success: function (itens) {
-      console.time("renderAccordion");
-
-      const keys = Object.keys(itens);
+    success: function (html) {
       const container = document.getElementById("accProdutos");
-      const outer = document.getElementById("divTable");
-      container.innerHTML = "";
+      container.innerHTML = html;
 
-      let index = 0;
-      let prod = "",
-        marca = "";
-
-      function renderNext() {
-        if (index >= keys.length) {
-          jQuery(".selectpicker").selectpicker();
-          itens_compra = [];
-          jQuery("#itens_tabela_compra").html("");
-          desBloqueiaTela();
-          console.timeEnd("renderAccordion");
-
-          // Volta para o primeiro produto suavemente
-          const firstItem = container.querySelector(".accordion-item");
-          if (firstItem) {
-            const top = firstItem.offsetTop - 60;
-            outer.scrollTo({ top, behavior: "smooth" });
-          }
-          return;
-        }
-
-        const element = itens[keys[index]];
-        const iddiv = element.pro_id;
-        const linhas = [];
-
-        if (element.pro_nome !== prod) {
-          if (prod !== "") {
-            linhas.push("</div></div></div></div></div>");
-          }
-
-          marca = "";
-          prod = element.pro_nome;
-
-          linhas.push(`
-            <div class="accordion-item">
-              <h2 class="accordion-header border border-botton-1" id="heading${iddiv}">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#collapse${iddiv}" aria-expanded="true" aria-controls="collapse${iddiv}" onclick="posicionaProdutoTopo(this)">
-                  <div class="col-2"><b>Grupo</b><br>${element.grc_nome}</div>
-                  <div class="col-4"><b>Produto</b><br>${element.pro_nome}</div>
-                  <div class="col-2"><b>Data Solic</b><br>${element.ped_datains}</div>
-                  <div class="col-1"><b>Quantia</b><br>${element.ped_qtia}</div>
-                  <div class="col-1"><b>Sugestão</b><br>${element.ped_sugestao}</div>
-                  <div class="col-2"><b>Und.</b><br>${element.und_compra}</div>
-                </button>
-              </h2>
-              <div id="collapse${iddiv}" class="accordion-collapse collapse" aria-labelledby="heading${iddiv}" data-bs-parent="#accProdutos">
-                <div class="accordion-body p-1" style="max-height:50vh; height:50vh; overflow-y: auto">
-                  <div class="d-block float-start col-12 p-0">
-                    <div class="d-inline-flex float-start col-3 fw-bold"><div class="col-12 text-center">Fornecedor</div></div>
-                    <div class="d-inline-flex float-start col-2 fw-bold"><div class="col-12 text-center">Marca:</div></div>
-                    <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">Validade</div></div>
-                    <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">R$ ${element.und_consumo}</div></div>
-                    <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">R$ ${element.und_compra}</div></div>
-                    <div class="d-inline-flex float-start col-1 fw-bold"><div class="col-12 text-center">Quantia</div></div>
-                    <div class="d-inline-flex float-start col-2 fw-bold"><div class="col-12 text-center">Prev. Entrega</div></div>
-                  </div>
-                  <div class="d-block float-start col-12 p-0" style="max-height:45vh; overflow-y: auto">
-          `);
-        }
-
-        for (let f = 1; f <= 10; f++) {
-          const obs = element[`cof_observacao_${f}`] || "";
-          linhas.push(`
-            <div class="d-block float-start col-12 p-0">
-              <div class="d-inline-flex float-start col-3">${f} ${
-            element[`pro_id_${f}`] || ""
-          }${element[`ped_id_${f}`] || ""}${element[`cot_id_${f}`] || ""}${
-            element[`cop_id_${f}`] || ""
-          }${element[`for_id_${f}`] || ""}</div>
-              <div class="d-inline-flex float-start col-2">${
-                element[`mar_id_${f}`] || ""
-              }</div>
-              <div class="d-inline-flex float-start col-1 me-3">${
-                element[`cof_id_${f}`] || ""
-              }${element[`cof_validade_${f}`] || ""}</div>
-              <div class="d-inline-flex float-start col-1 me-3">${
-                element[`cof_preco_${f}`] || ""
-              }</div>
-              <div class="d-inline-flex float-start col-1 me-3">${
-                element[`cof_precoundcompra_${f}`] || ""
-              }</div>
-              <div class="d-inline-flex float-start col-1 me-3">${
-                element[`com_quantia_${f}`] || ""
-              }</div>
-              <div class="d-inline-flex float-start col-2">${
-                element[`cop_previsao_${f}`] || ""
-              }</div>
-              ${
-                obs
-                  ? `<div class="d-inline-flex float-start col-12 px-5 mb-3">Obs.: ${obs}</div>`
-                  : ""
-              }
-            </div>
-          `);
-        }
-
-        linhas.push("</div></div></div>");
-
-        const div = document.createElement("div");
-        div.innerHTML = linhas.join("");
-        container.appendChild(div);
-
-        // Scrolla até o último item renderizado
-        const lastItem = container.lastElementChild;
-        if (lastItem) {
-          const top = lastItem.offsetTop - 60;
-          outer.scrollTo({ top, behavior: "smooth" });
-        }
-
-        index++;
-        setTimeout(renderNext, 0);
+      desBloqueiaTela();
+    },
+    error: function (xhr, status) {
+      if (status !== "abort") {
+        console.error("Erro ao carregar cotações:", status);
+        desBloqueiaTela();
       }
-
-      renderNext();
     },
   });
 }
 
 function posicionaProdutoTopo(obj) {
-  // const button = obj.target.closest(".accordion-button");
+  bloqueiaTela();
   const button = obj;
   if (!button) return;
-  const outer = document.getElementById("divTable");
 
+  const outer = document.getElementById("divTable");
   const targetCollapse = document.querySelector(button.dataset.bsTarget);
   if (!targetCollapse) return;
+
+  // Inicializar selectpicker apenas nos elementos ainda não inicializados
+  jQuery(".selectpicker", targetCollapse).each(function () {
+    if (!jQuery(this).parent().hasClass("bootstrap-select")) {
+      jQuery(this).selectpicker();
+    }
+  });
 
   targetCollapse.addEventListener(
     "shown.bs.collapse",
@@ -1371,7 +1620,28 @@ function posicionaProdutoTopo(obj) {
     },
     { once: true }
   );
+  desBloqueiaTela();
 }
+
+// function posicionaProdutoTopo(obj) {
+//   // const button = obj.target.closest(".accordion-button");
+//   const button = obj;
+//   if (!button) return;
+//   const outer = document.getElementById("divTable");
+
+//   const targetCollapse = document.querySelector(button.dataset.bsTarget);
+//   if (!targetCollapse) return;
+
+//   targetCollapse.addEventListener(
+//     "shown.bs.collapse",
+//     function () {
+//       const item = targetCollapse.closest(".accordion-item");
+//       const offsetTop = item.offsetTop - 60;
+//       outer.scrollTo({ top: offsetTop, behavior: "smooth" });
+//     },
+//     { once: true }
+//   );
+// }
 
 function extrairComEscape(id) {
   const match = id.match(/\[(\d+)\]/);

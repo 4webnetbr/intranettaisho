@@ -264,7 +264,7 @@ class EstoquPedidoModel extends Model
             $builder->where("grc_id", $grc_id);
         }
         // $start = microtime(true);
-        $builder->orderBy("grc_nome, pro_nome, ped_datains,cot_id,for_razao");
+        $builder->orderBy("grc_nome, pro_nome, ped_datains");
         $ret = $builder->get()->getResultArray();
         // debug($db->getLastQuery(), true);
 

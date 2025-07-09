@@ -125,12 +125,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (savedEmpresa != select.value) {
             select.value = savedEmpresa;
             jQuery(select).selectpicker('val',savedEmpresa);
-            // jQuery(select).trigger('change');
+            jQuery(select).trigger('change');
         }
       }
       // Evento de mudança para salvar o valor
       select.addEventListener('change', function () {
           localStorage.setItem('empresaSelecionada', this.value);
+          document.cookie = "empresaSelecionada=" + localStorage.getItem('empresaSelecionada');
           console.log('Empresa selecionada:', this.value); // DEBUG
       });
     });
