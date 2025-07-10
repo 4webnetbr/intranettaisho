@@ -82,7 +82,7 @@ class EstCompraCotacao extends BaseController
         $this->fornecedor = new EstoquFornecedorModel();
         $this->data['scripts'] = 'my_consulta';
 
-        $this->dados_mar = $this->marca->getMarca();
+        // $this->dados_mar = $this->marca->getMarca();
         $this->dados_for = $this->fornecedor->getFornecedor();
 
         if ($this->data['erromsg'] != '') {
@@ -375,7 +375,7 @@ class EstCompraCotacao extends BaseController
         }
 
         $empresas = explode(',', $param);
-        $produtos = $this->pedido->getCotacaoProdutos($empresas[0], $param2);
+        $produtos = $this->pedido->getProdutosCotados($empresas[0], $param2);
         // debug($produtos, true);
         $ret = [];
         $forIndexByProduct = [];
@@ -510,13 +510,15 @@ class EstCompraCotacao extends BaseController
         $pro_id = $param3;
         $produto = [];
         foreach ($produtos as $prod) {
-
             if(count($produto) == 0){
                 $produto = [
                     'ped_id'        => $prod['ped_id'],
                     'pro_id'        => $prod['pro_id'],
+                    'cot_id'        => $prod['cot_id'],
+                    'mar_id'        => '',
                     'grc_nome'      => $prod['grc_nome'],
                     'pro_nome'      => $prod['pro_nome'],
+                    'cop_id'        => $prod['ped_id'],
                     'ped_datains'   => dataDbToBr($prod['ped_datains']),
                     'ped_qtia'      => $prod['ped_qtia'],
                     'ped_sugestao'  => $prod['ped_sugestao'],
@@ -525,6 +527,7 @@ class EstCompraCotacao extends BaseController
                 ];
             }
             // Chama sua função normalmente
+            $prod['cop_id'] = $prod['ped_id'];
             $camp = $this->def_campos_forn($prod, $fornec, $pro_id);// $dc agora é o pro_id (chave única do produto)
             // debug($camp, true);
             // Copia os campos dinâmicos
@@ -545,7 +548,6 @@ class EstCompraCotacao extends BaseController
             $fornec++;
         }
         if($fornec <= 10 ){
-
             for($f = $fornec; $f<=10; $f++){
                 // $this->def_campos_forn($produto, $i, $pro_id);// $dc agora é o pro_id (chave única do produto)
                 $camp = $this->def_campos_forn($produto, $f, $pro_id);// $dc agora é o pro_id (chave única do produto)
@@ -729,17 +731,23 @@ class EstCompraCotacao extends BaseController
         $proid->valor = $dados['pro_id'];
         $ret["pro_id"] = $proid->crOculto();
 
+        $valor = '';
         $marcs = [];
         $chave = "mar_id";
-        // if(isset($dados[$chave]) && $dados[$chave] != null && $dados[$chave] != 0){
-        //     $dados_mar = $this->marca->getMarca($dados[$chave]);
-        // } else {
-        //     $dados_mar = $this->marca->getMarcaProd($dados['pro_id']);
-        // }
+        // debug($dados);
+        if(isset($dados[$chave]) && $dados[$chave] != null && $dados[$chave] != 0 && $dados[$chave] != '' ){
+            $this->dados_mar = $this->marca->getMarca($dados[$chave]);
+            $valor = $dados[$chave];
+        } else {
+            $this->dados_mar = $this->marca->getMarcaProd($dados['pro_id']);
+        }
+        // debug($dados[$chave]);
+        // debug($this->dados_mar);
         $marcs = array_column($this->dados_mar, 'mar_nomecodbar', 'mar_id');
+        // debug($marcs);
         
         $marc = new MyCampo('est_cotacao_fornec', 'mar_id');
-        $marc->valor                = $marc->selecionado  = isset($dados[$chave]) ? $dados[$chave] : '';
+        $marc->valor                = $marc->selecionado  = $valor;
         $marc->ordem                = $ord;
         $marc->attrdata             = $attr;
         $marc->label                = '';
@@ -770,7 +778,7 @@ class EstCompraCotacao extends BaseController
         $forn->opcoes               = $fornec;
         $forn->largura              = 40;
         $forn->dispForm             = 'col-12';
-        $forn->classep              = 'text-truncate';
+        $forn->classep              = 'text-nowrap';
         $forn->urlbusca             = $busca;
         $forn->leitura              = false;
         if (isset($dados[$chave]) && $dados[$chave] != null) {

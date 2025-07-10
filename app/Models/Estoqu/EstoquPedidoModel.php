@@ -265,7 +265,7 @@ class EstoquPedidoModel extends Model
         // $start = microtime(true);
         $builder->orderBy("grc_nome, pro_nome, ped_datains");
         $ret = $builder->get()->getResultArray();
-        // debug($db->getLastQuery(), true);
+        debug($db->getLastQuery(), true);
 
         // $end = microtime(true);
         
@@ -301,7 +301,7 @@ class EstoquPedidoModel extends Model
             $builder->where("pro_id", $pro_id);
         }
         // $start = microtime(true);
-        $builder->orderBy("grc_nome, pro_nome, ped_datains");
+        $builder->orderBy("grc_nome, pro_nome, ped_datains, for_razao");
         $ret = $builder->get()->getResultArray();
         // debug($db->getLastQuery(), true);
 
@@ -345,13 +345,14 @@ public function getProdutosCotados($empresa = false, $grc_id = false)
                        ORDER BY grc_nome, pro_nome, ped_datains, cot_id, for_razao
                    ) AS row_num
             FROM vw_pedidos_com_cotacao_fornec
-            WHERE ped_status = 'P' $whereSql
+            WHERE 1=1 $whereSql
         )
         SELECT *
         FROM ranked
         WHERE row_num = 1
     ";
 
+    // debug($sql, true);
     $ret = $db->query($sql)->getResultArray();
     return $ret;
 }

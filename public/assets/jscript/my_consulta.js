@@ -1456,7 +1456,7 @@ function carrega_lista_cotacao(obj, url, nome) {
 }
 
 function posicionaProdutoTopo(obj) {
-  bloqueiaTela();
+  // bloqueiaTela();
   id = obj.getAttribute("aria-controls");
   const button = obj;
   if (!button) return;
@@ -1482,7 +1482,7 @@ function posicionaProdutoTopo(obj) {
 
     jQuery.ajax({
       type: "POST",
-      async: false,
+      async: true,
       dataType: "html",
       url: url,
       success: function (html) {
@@ -1502,18 +1502,60 @@ function posicionaProdutoTopo(obj) {
           },
           { once: true }
         );
-        // desBloqueiaTela();
+        desBloqueiaTela();
       },
       error: function (xhr, status) {
         if (status !== "abort") {
           console.error("Erro ao carregar produtos cotados:", status);
-          // desBloqueiaTela();
+          desBloqueiaTela();
         }
       },
     });
   }
-  desBloqueiaTela();
+  // desBloqueiaTela();
 }
+
+// Após inserir dinamicamente o .selbusca com o <select>
+// function inicializaBuscaViaSelectpicker($select) {
+//   const busca = $select.data("busca");
+
+//   $select.selectpicker({
+//     searchAutofocus: true,
+//     source: {
+//       data: function (callback) {
+//         jQuery
+//           .ajax({
+//             method: "POST",
+//             url: busca,
+//             dataType: "json",
+//           })
+//           .then((response) => callback(response.data));
+//       },
+//       search: function (callback, page, searchTerm) {
+//         jQuery
+//           .ajax({
+//             method: "POST",
+//             url: busca,
+//             data: { page, busca: searchTerm },
+//             dataType: "json",
+//             success: function (retorno) {
+//               $select.empty();
+//               jQuery.each(retorno, function (i, item) {
+//                 $select.append(
+//                   jQuery("<option>", { value: item.id, text: item.text })
+//                 );
+//               });
+//             },
+//           })
+//           .then((response) => callback(response.data));
+//       },
+//     },
+//   });
+
+//   $select.selectpicker("refresh");
+// }
+
+// exemplo de uso:
 
 // function posicionaProdutoTopo(obj) {
 //   // const button = obj.target.closest(".accordion-button");

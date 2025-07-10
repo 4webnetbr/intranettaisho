@@ -11,13 +11,13 @@
         <div class="d-block float-start col-12 p-0" style="max-height:45vh; overflow-y: auto">
             <?php for ($i = 1; $i <= 10; $i++): ?>
             <div class="d-block float-start col-12 p-0">
-                <div class="d-inline-flex float-start col-3"><?= $produtos["pro_id_$i"].$produtos["ped_id_$i"].$produtos["cot_id_$i"].$produtos["cop_id_$i"].$produtos["for_id_$i"]?></div>
+                <div class="d-inline-flex float-start col-3"><?= $produtos["for_id_$i"]?></div>
                 <div class="d-inline-flex float-start col-2"><?= $produtos["mar_id_$i"]?></div>
                 <div class="d-inline-flex float-start col-1 me-3"><?= $produtos["cof_id_$i"].$produtos["cof_validade_$i"]?></div>
                 <div class="d-inline-flex float-start col-1 me-3"><?= $produtos["cof_preco_$i"]?></div>
                 <div class="d-inline-flex float-start col-1 me-3"><?= $produtos["cof_precoundcompra_$i"]?></div>
                 <div class="d-inline-flex float-start col-1 me-3"><?= $produtos["com_quantia_$i"]?></div>
-                <div class="d-inline-flex float-start col-2"><?= $produtos["cop_previsao_$i"]?></div>
+                <div class="d-inline-flex float-start col-2"><?= $produtos["pro_id_$i"].$produtos["ped_id_$i"].$produtos["cot_id_$i"].$produtos["cop_id_$i"].$produtos["cop_previsao_$i"]?></div>
                 <?php if (!empty($produtos["cof_observacao_$i"])): ?>
                 <div class="d-inline-flex float-start col-12 px-5 mb-3">Obs.: <?= $produtos["cof_observacao_$i"] ?></div>
                 <?php endif; ?>
