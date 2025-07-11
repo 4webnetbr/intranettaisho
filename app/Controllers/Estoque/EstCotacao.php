@@ -352,9 +352,8 @@ class EstCotacao extends BaseController
         $pendentes = $this->cotacao->getPedidosPendentes($empresas);
 
         // Identifica produtos que já estão em cotações abertas (prazo > agora)
-        $agora = date('Y-m-d H:i:s');
         $cotacoesAbertas = $this->cotacao
-            ->where('cot_prazo >', $agora)
+            ->where('cot_status', 'A')
             ->findAll();
 
         $idsEmCotacao = [];

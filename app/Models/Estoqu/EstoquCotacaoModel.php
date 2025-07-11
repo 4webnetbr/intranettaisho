@@ -283,7 +283,7 @@ class EstoquCotacaoModel extends Model
     {
         $columns = [];
         foreach ($empresas as $empresa) {
-            $columns[] = "MAX(CASE WHEN cfg_empresa.emp_id = {$empresa['emp_id']} THEN vw_est_pedidos_relac.ped_qtia ELSE NULL END) AS `{$empresa['emp_abrev']}`";
+            $columns[] = "SUM(CASE WHEN cfg_empresa.emp_id = {$empresa['emp_id']} THEN vw_est_pedidos_relac.ped_qtia ELSE NULL END) AS `{$empresa['emp_abrev']}`";
         }
         $columns_sql = implode(",",$columns);
         $where = '';
