@@ -94,6 +94,7 @@ class CfgUsuario extends BaseController
         $campos[0][5] = $this->usu_perfil;
         $campos[0][6] = $this->usu_dashboard;
         $campos[0][7] = $this->usu_empresa;
+        $campos[0][8] = $this->usu_deposito;
 
         // $secao[1] = 'Avatar';
         // $campos[1][0] = $this->usu_avatar;
