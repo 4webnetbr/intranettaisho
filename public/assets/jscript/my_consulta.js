@@ -1444,6 +1444,8 @@ function carrega_lista_cotacao(obj, url, nome) {
     success: function (html) {
       const container = document.getElementById("accProdutos");
       container.innerHTML = html;
+      jQuery("#itens_tabela_compra").html("");
+      itens_compra = [];
       desBloqueiaTela();
     },
     error: function (xhr, status) {
