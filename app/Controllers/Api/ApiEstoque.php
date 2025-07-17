@@ -193,6 +193,7 @@ class ApiEstoque extends Auth
         }
     }
 
+
     /**
      * getCompra
      * Retorna as Compras dos produtos da empresa informada no parametro
@@ -270,6 +271,8 @@ class ApiEstoque extends Auth
             return $this->respond(['message' => 'Não Autorizado'], 401);
         }
     }
+
+
     /**
      * getmarcacodbar
      * Retorna os dados do produto e da marca pelo cõdigo de barras informado

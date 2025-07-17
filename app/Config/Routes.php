@@ -308,6 +308,8 @@ $routes->get('/ApiEstoque', 'Api\ApiEstoque::index');
 $routes->get('/ApiEstoque/(:any)', 'Api\ApiEstoque::$1');
 $routes->post('/ApiEstoque/(:any)', 'Api\ApiEstoque::$1');
 
+// $routes->resource('ApiEstoque', ['filter' => 'jwt']);
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing

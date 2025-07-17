@@ -23,6 +23,7 @@ class Filters extends BaseConfig
         'secureheaders' => SecureHeaders::class,
         'loginFilter'    => \App\Filters\loginFilter::class,
         'limpezaAuto'   => \App\Filters\LimpezaAutomatica::class,
+        // 'jwt'       => \App\Filters\JwtFilter::class,
     ];
 
     /**
