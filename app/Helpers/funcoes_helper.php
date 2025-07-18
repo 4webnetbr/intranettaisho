@@ -1158,41 +1158,47 @@ function contarDiasDaSemana($inicio, $fim, $diaDaSemana)
 
 function formataQuantia($qtia)
 {
-    // Garantir que ',' seja substituído por '.' para formatação numérica
-    $qtia = str_replace(',', '.', $qtia);
-
-    // Garantir que é float
-    $qtia = (float) $qtia;
-
     $ret = [];
+    if(!is_null($qtia)){
+        // Garantir que ',' seja substituído por '.' para formatação numérica
+        $qtia = str_replace(',', '.', $qtia);
 
-    if (fmod($qtia, 1) == 0) { // NÃO TEM DECIMAIS
-        $ret['qtiv'] = str_replace('.', '', intval($qtia));
-        $qtia = number_format($qtia, 3, '.', '');
-        $ret['qtia'] = "<div class='text-end'>" . (int)$qtia . "</div>";
-        $ret['qtis'] = (int)$qtia;
-        $ret['dec'] = 0;
-    } else { // tem decimais
-        $qtia = number_format($qtia, 3, '.', '');
-        $decimalPart = explode('.', (string)$qtia)[1];
+        // Garantir que é float
+        $qtia = (float) $qtia;
 
-        $ret['qtiv'] = $qtia;
 
-        if (fmod((int)$decimalPart, 100) == 0) {
-            $ret['qtia'] = "<div class='text-end'>" . number_format($qtia, 1, ',', '') . "</div>";
-            $ret['qtis'] = number_format($qtia, 1, '.', '');
-            $ret['dec'] = 1;
-        } else if (fmod((int)$decimalPart, 10) == 0) {
-            $ret['qtia'] = "<div class='text-end'>" . number_format($qtia, 2, ',', '') . "</div>";
-            $ret['qtis'] = number_format($qtia, 2, '.', '');
-            $ret['dec'] = 2;
-        } else {
-            $ret['qtia'] = "<div class='text-end'>" . number_format($qtia, 3, ',', '') . "</div>";
-            $ret['qtis'] = number_format($qtia, 3, '.', '');
-            $ret['dec'] = 3;
+        if (fmod($qtia, 1) == 0) { // NÃO TEM DECIMAIS
+            $ret['qtiv'] = str_replace('.', '', intval($qtia));
+            $qtia = number_format($qtia, 3, '.', '');
+            $ret['qtia'] = "<div class='text-end'>" . (int)$qtia . "</div>";
+            $ret['qtis'] = (int)$qtia;
+            $ret['dec'] = 0;
+        } else { // tem decimais
+            $qtia = number_format($qtia, 3, '.', '');
+            $decimalPart = explode('.', (string)$qtia)[1];
+
+            $ret['qtiv'] = $qtia;
+
+            if (fmod((int)$decimalPart, 100) == 0) {
+                $ret['qtia'] = "<div class='text-end'>" . number_format($qtia, 1, ',', '') . "</div>";
+                $ret['qtis'] = number_format($qtia, 1, '.', '');
+                $ret['dec'] = 1;
+            } else if (fmod((int)$decimalPart, 10) == 0) {
+                $ret['qtia'] = "<div class='text-end'>" . number_format($qtia, 2, ',', '') . "</div>";
+                $ret['qtis'] = number_format($qtia, 2, '.', '');
+                $ret['dec'] = 2;
+            } else {
+                $ret['qtia'] = "<div class='text-end'>" . number_format($qtia, 3, ',', '') . "</div>";
+                $ret['qtis'] = number_format($qtia, 3, '.', '');
+                $ret['dec'] = 3;
+            }
         }
+    } else {
+        $ret['qtia'] = "<div class='text-end'>0</div>";
+        $ret['qtis'] = '0';
+        $ret['dec'] = 0;
+        $ret['qtiv'] = '';
     }
-
     return $ret;
 }
 

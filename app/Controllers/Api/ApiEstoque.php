@@ -581,299 +581,142 @@ class ApiEstoque extends Auth
     //         return $this->respond(['message' => 'Não Autorizado'], 401);
     //     }
     // }
-    // public function gravaentrada()
-    // {
-    //     if ($this->request->header('Authorization') != null) {
-    //         $token = $this->request->header('Authorization')->getValue();
-    //         if ($this->validateToken($token) == true) {
-    //             $inform  = get_object_vars($this->validateToken($token));
-    //             $dados   = get_object_vars($inform['data']);
-    //             $usuario = $dados['id'];
-
-    //             $user = $this->usuario->getUsuarioId($usuario);
-    //             session()->set('usu_nome', $user[0]['usu_nome']);
-    //             log_message('info', 'Usuário: ' . $usuario . ' Função: gravaentrada');
-
-    //             $key = $this->request->getHeaderLine('Idempotency-Key');
-
-    //             if (!$key) {
-    //                 return $this->fail('Idempotency key required', 400);
-    //             }
-
-    //             $cache = cache();
-
-    //             if ($cache->get($key)) {
-    //                 return $this->respond(['message' => 'Duplicate request ignored'], 200);
-    //             }
-
-    //             $empresa    = $this->request->getVar('empresa');
-    //             $deposito   = $this->request->getVar('deposito');
-    //             $codbar     = $this->request->getVar('codbar');
-    //             $produto    = $this->request->getVar('produto');
-    //             $quantia    = $this->request->getVar('quantia');
-    //             $preco      = $this->request->getVar('preco');
-    //             $total      = $this->request->getVar('total');
-    //             $unidade    = $this->request->getVar('unidade');
-    //             $convers    = $this->request->getVar('convers');
-    //             $fornece    = $this->request->getVar('fornecedor');
-    //             $compra     = $this->request->getVar('compra');
-
-    //             $total      = moedaToFloat($total);
-    //             $valor      = moedaToFloat($preco);
-
-    //             $db = Database::connect(); // Instancia o DB
-    //             $db->transStart(); // <<< INICIA TRANSACAO
-
-    //             $dados_ent = [
-    //                 'ent_data'   => date('Y-m-d'),
-    //                 'emp_id'     => $empresa,
-    //                 'for_id'     => $fornece,
-    //                 'dep_id'     => $deposito,
-    //                 'com_id'     => $compra,
-    //                 'ent_valor'  => $total,
-    //             ];
-    //             log_message('info', 'Entrada: ' . json_encode($dados_ent) . ' Função: gravaentrada');
-
-    //             if (!$this->entrada->save($dados_ent)) {
-    //                 $db->transRollback();
-    //                 return $this->respond(['success' => false, 'message' => 'Erro ao gravar entrada'], 500);
-    //             }
-
-    //             $ent_id = $this->entrada->getInsertID();
-    //             $data_atu = date('Y-m-d H:i:s');
-
-    //             $quantia = formataQuantia($quantia)['qtiv'];
-    //             $convers = formataQuantia($convers)['qtiv'];
-
-    //             $dados_pro = [
-    //                 'ent_id'         => $ent_id,
-    //                 'mar_codigo'     => $codbar,
-    //                 'pro_id'         => $produto,
-    //                 'und_id'         => $unidade,
-    //                 'enp_quantia'    => $quantia,
-    //                 'enp_valor'      => $valor,
-    //                 'enp_conversao'  => $convers,
-    //                 'enp_total'      => $total,
-    //                 'enp_atualizado' => $data_atu
-    //             ];
-    //             log_message('info', 'Produto: ' . json_encode($dados_pro) . ' Função: gravaentrada');
-
-    //             $salvaProduto = $this->common->insertReg('dbEstoque', 'est_entrada_produto', $dados_pro);
-
-    //             if (!$salvaProduto) {
-    //                 $db->transRollback();
-    //                 return $this->respond(['success' => false, 'message' => 'Erro ao gravar produto'], 500);
-    //             }
-
-    //             if ($compra != null) {
-    //                 $completo = $this->compra->getCompraVsEntrada($compra)[0];
-    //                 if($completo['entrada_completa'] == 1){
-    //                     $dados_com = [
-    //                         'com_id'    => $compra,
-    //                         'com_status'    => 'R',
-    //                     ];
-    //                     $this->compra->save($dados_com);
-    //                 }
-    //             }
-
-    //             // verifica se o código de barras existe
-    //             $existecodbar = $this->marca->getMarcaCod($codbar);
-    //             if(count($existecodbar) == 0){ // codbar não existe, insere a marca
-    //                 $dados_mar = [
-    //                     'pro_id'         => $produto,
-    //                     'mar_codigo'         => $codbar,
-    //                     'mar_nome'         => 'Marca não cadastrada',
-    //                     'und_id'         => '',
-    //                     'mar_apresenta'         => '',
-    //                     'mar_conversao'         => $convers,
-    //                 ];
-    //                 // debug($dados_mar,true);
-    //                 $salvar = $this->marca->save($dados_mar);
-    //             }
-
-    //             $db->transComplete(); // <<< FINALIZA TRANSACAO
-
-    //             if ($db->transStatus() === false) {
-    //                 return $this->respond(['success' => false, 'message' => 'Erro na transação'], 500);
-    //             }
-
-    //             $cache->save($key, true, 300);
-
-    //             log_message('info', 'Entrada gravada com sucesso Função: gravaentrada');
-    //             return $this->respond(['success' => true, 'id_entrada' => $ent_id], 200);
-    //         } else {
-    //             return $this->respond(['success' => false, 'message' => 'Token inválido'], 401);
-    //         }
-    //     } else {
-    //         return $this->respond(['success' => false, 'message' => 'Não autorizado'], 401);
-    //     }
-    // }
-
     public function gravaentrada()
     {
-        // Verifica se o token de autorização foi enviado
         if ($this->request->header('Authorization') != null) {
             $token = $this->request->header('Authorization')->getValue();
-
-            // Valida o token
-            if ($this->validateToken($token) === true) {
+            if ($this->validateToken($token) == true) {
                 $inform  = get_object_vars($this->validateToken($token));
                 $dados   = get_object_vars($inform['data']);
                 $usuario = $dados['id'];
 
-                // Recupera o usuário logado e registra na sessão
                 $user = $this->usuario->getUsuarioId($usuario);
                 session()->set('usu_nome', $user[0]['usu_nome']);
                 log_message('info', 'Usuário: ' . $usuario . ' Função: gravaentrada');
 
-                // Gera um hash baseado nos dados da requisição
-                $payload = [
-                    'empresa'    => $this->request->getVar('empresa'),
-                    'deposito'   => $this->request->getVar('deposito'),
-                    'codbar'     => $this->request->getVar('codbar'),
-                    'produto'    => $this->request->getVar('produto'),
-                    'quantia'    => $this->request->getVar('quantia'),
-                    'preco'      => $this->request->getVar('preco'),
-                    'total'      => $this->request->getVar('total'),
-                    'unidade'    => $this->request->getVar('unidade'),
-                    'convers'    => $this->request->getVar('convers'),
-                    'fornecedor' => $this->request->getVar('fornecedor'),
-                    'compra'     => $this->request->getVar('compra')
-                ];
+                $key = $this->request->getHeaderLine('Idempotency-Key');
 
-                $hash = md5(json_encode($payload));
-                $lockKey = 'entrada_lock_' . $hash;
+                if (!$key) {
+                    return $this->fail('Idempotency key required', 400);
+                }
 
                 $cache = cache();
 
-                // Se a mesma requisição já está em andamento, simplesmente descarta sem retorno
-                if ($cache->get($lockKey)) {
-                    exit(); // silenciosamente ignora a chamada
+                if ($cache->get($key)) {
+                    return $this->respond(['message' => 'Duplicate request ignored'], 200);
                 }
 
-                // Cria o lock com tempo de expiração (ex: 60 segundos)
-                $cache->save($lockKey, true, 60);
+                $empresa    = $this->request->getVar('empresa');
+                $deposito   = $this->request->getVar('deposito');
+                $codbar     = $this->request->getVar('codbar');
+                $produto    = $this->request->getVar('produto');
+                $quantia    = $this->request->getVar('quantia');
+                $preco      = $this->request->getVar('preco');
+                $total      = $this->request->getVar('total');
+                $unidade    = $this->request->getVar('unidade');
+                $convers    = $this->request->getVar('convers');
+                $fornece    = $this->request->getVar('fornecedor');
+                $compra     = $this->request->getVar('compra');
+
+                $total      = moedaToFloat($total);
+                $valor      = moedaToFloat($preco);
+
+                $db = Database::connect(); // Instancia o DB
+                $db->transStart(); // <<< INICIA TRANSACAO
+
+                $dados_ent = [
+                    'ent_data'   => date('Y-m-d'),
+                    'emp_id'     => $empresa,
+                    'for_id'     => $fornece,
+                    'dep_id'     => $deposito,
+                    'com_id'     => $compra,
+                    'ent_valor'  => $total,
+                ];
+                log_message('info', 'Entrada: ' . json_encode($dados_ent) . ' Função: gravaentrada');
 
                 try {
-                    // Verifica se o cabeçalho Idempotency-Key foi enviado
-                    $key = $this->request->getHeaderLine('Idempotency-Key');
-                    if (!$key) {
-                        $cache->delete($lockKey);
-                        return $this->fail('Idempotency key required', 400);
-                    }
-
-                    // Se a chave já foi usada, descarta a chamada (já foi processada)
-                    if ($cache->get($key)) {
-                        exit(); // silenciosamente ignora a chamada duplicada
-                    }
-
-                    // Coleta e formata os dados da requisição
-                    $empresa    = $payload['empresa'];
-                    $deposito   = $payload['deposito'];
-                    $codbar     = $payload['codbar'];
-                    $produto    = $payload['produto'];
-                    $quantia    = formataQuantia($payload['quantia'])['qtiv'];
-                    $valor      = moedaToFloat($payload['preco']);
-                    $total      = moedaToFloat($payload['total']);
-                    $unidade    = $payload['unidade'];
-                    $convers    = formataQuantia($payload['convers'])['qtiv'];
-                    $fornece    = $payload['fornecedor'];
-                    $compra     = $payload['compra'];
-
-                    // Inicia transação de banco
-                    $db = Database::connect();
-                    $db->transStart();
-
-                    // Dados da entrada principal
-                    $dados_ent = [
-                        'ent_data'   => date('Y-m-d'),
-                        'emp_id'     => $empresa,
-                        'for_id'     => $fornece,
-                        'dep_id'     => $deposito,
-                        'com_id'     => $compra,
-                        'ent_valor'  => $total,
-                    ];
-                    log_message('info', 'Entrada: ' . json_encode($dados_ent) . ' Função: gravaentrada');
-
-                    // Grava a entrada
                     if (!$this->entrada->save($dados_ent)) {
+                        // Erros de validação do Model
                         $db->transRollback();
-                        $cache->delete($lockKey);
                         return $this->respond(['success' => false, 'message' => 'Erro ao gravar entrada'], 500);
                     }
+                } catch (\CodeIgniter\Database\Exceptions\DatabaseException $e) {
+                    if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
+                        // Tratar erro de duplicidade
+                        $ent_id = $this->entrada->getInsertID();
+                        log_message('info', 'Tentativa de entrada duplicada '.$ent_id.' Função: gravaentrada');
+                        return $this->respond(['success' => true, 'id_entrada' => $ent_id], 200);
 
-                    $ent_id = $this->entrada->getInsertID();
-                    $data_atu = date('Y-m-d H:i:s');
-
-                    // Dados do produto vinculado à entrada
-                    $dados_pro = [
-                        'ent_id'         => $ent_id,
-                        'mar_codigo'     => $codbar,
-                        'pro_id'         => $produto,
-                        'und_id'         => $unidade,
-                        'enp_quantia'    => $quantia,
-                        'enp_valor'      => $valor,
-                        'enp_conversao'  => $convers,
-                        'enp_total'      => $total,
-                        'enp_atualizado' => $data_atu
-                    ];
-                    log_message('info', 'Produto: ' . json_encode($dados_pro) . ' Função: gravaentrada');
-
-                    // Grava o produto da entrada
-                    $salvaProduto = $this->common->insertReg('dbEstoque', 'est_entrada_produto', $dados_pro);
-
-                    if (!$salvaProduto) {
+                    } else {
+                        // Outro erro de banco
                         $db->transRollback();
-                        $cache->delete($lockKey);
-                        return $this->respond(['success' => false, 'message' => 'Erro ao gravar produto'], 500);
+                        return $this->respond(['success' => false, 'message' => 'Erro ao gravar entrada'. $e], 500);
+                        // throw $e; // rethrow se quiser tratar globalmente
                     }
-
-                    // Verifica se a compra está completa e atualiza status
-                    if ($compra != null) {
-                        $completo = $this->compra->getCompraVsEntrada($compra)[0];
-                        if ($completo['entrada_completa'] == 1) {
-                            $dados_com = [
-                                'com_id'     => $compra,
-                                'com_status' => 'R',
-                            ];
-                            $this->compra->save($dados_com);
-                        }
-                    }
-
-                    // Verifica se código de barras existe, se não, cria uma nova marca
-                    $existecodbar = $this->marca->getMarcaCod($codbar);
-                    if (count($existecodbar) == 0) {
-                        $dados_mar = [
-                            'pro_id'        => $produto,
-                            'mar_codigo'    => $codbar,
-                            'mar_nome'      => 'Marca não cadastrada',
-                            'und_id'        => '',
-                            'mar_apresenta' => '',
-                            'mar_conversao' => $convers,
-                        ];
-                        $this->marca->save($dados_mar);
-                    }
-
-                    // Finaliza a transação
-                    $db->transComplete();
-
-                    if ($db->transStatus() === false) {
-                        $cache->delete($lockKey);
-                        return $this->respond(['success' => false, 'message' => 'Erro na transação'], 500);
-                    }
-
-                    // Salva a Idempotency-Key para marcar que a requisição foi processada com sucesso
-                    $cache->save($key, true, 300);
-
-                    log_message('info', 'Entrada gravada com sucesso Função: gravaentrada');
-
-                    return $this->respond(['success' => true, 'id_entrada' => $ent_id], 200);
-
-                } finally {
-                    // Garante que o lock seja sempre liberado, independentemente do que acontecer
-                    $cache->delete($lockKey);
                 }
 
+                $ent_id = $this->entrada->getInsertID();
+                $data_atu = date('Y-m-d H:i:s');
+
+                $quantia = formataQuantia($quantia)['qtiv'];
+                $convers = formataQuantia($convers)['qtiv'];
+
+                $dados_pro = [
+                    'ent_id'         => $ent_id,
+                    'mar_codigo'     => $codbar,
+                    'pro_id'         => $produto,
+                    'und_id'         => $unidade,
+                    'enp_quantia'    => $quantia,
+                    'enp_valor'      => $valor,
+                    'enp_conversao'  => $convers,
+                    'enp_total'      => $total,
+                    'enp_atualizado' => $data_atu
+                ];
+                log_message('info', 'Produto: ' . json_encode($dados_pro) . ' Função: gravaentrada');
+
+                $salvaProduto = $this->common->insertReg('dbEstoque', 'est_entrada_produto', $dados_pro);
+
+                if (!$salvaProduto) {
+                    $db->transRollback();
+                    return $this->respond(['success' => false, 'message' => 'Erro ao gravar produto'], 500);
+                }
+
+                if ($compra != null) {
+                    $completo = $this->compra->getCompraVsEntrada($compra)[0];
+                    if($completo['entrada_completa'] == 1){
+                        $dados_com = [
+                            'com_id'    => $compra,
+                            'com_status'    => 'R',
+                        ];
+                        $this->compra->save($dados_com);
+                    }
+                }
+
+                // verifica se o código de barras existe
+                $existecodbar = $this->marca->getMarcaCod($codbar);
+                if(count($existecodbar) == 0){ // codbar não existe, insere a marca
+                    $dados_mar = [
+                        'pro_id'         => $produto,
+                        'mar_codigo'         => $codbar,
+                        'mar_nome'         => 'Marca não cadastrada',
+                        'und_id'         => '',
+                        'mar_apresenta'         => '',
+                        'mar_conversao'         => $convers,
+                    ];
+                    // debug($dados_mar,true);
+                    $salvar = $this->marca->save($dados_mar);
+                }
+
+                $db->transComplete(); // <<< FINALIZA TRANSACAO
+
+                if ($db->transStatus() === false) {
+                    return $this->respond(['success' => false, 'message' => 'Erro na transação'], 500);
+                }
+
+                $cache->save($key, true, 300);
+
+                log_message('info', 'Entrada gravada com sucesso Função: gravaentrada');
+                return $this->respond(['success' => true, 'id_entrada' => $ent_id], 200);
             } else {
                 return $this->respond(['success' => false, 'message' => 'Token inválido'], 401);
             }
@@ -881,6 +724,7 @@ class ApiEstoque extends Auth
             return $this->respond(['success' => false, 'message' => 'Não autorizado'], 401);
         }
     }
+
 
     /**
      * getConsumo
@@ -1005,7 +849,7 @@ class ApiEstoque extends Auth
                 $empresa       = $this->request->getVar('empresa');
                 $deposito       = $this->request->getVar('deposito');
 
-                $produtos =  $this->produto->getProdutoPedido(false, $empresa);
+                $produtos =  $this->produto->getProdutoPedido($empresa);
 
                 log_message('info', 'Resultado: ' . json_encode($produtos) . ' Função: getSolicitacao');
 

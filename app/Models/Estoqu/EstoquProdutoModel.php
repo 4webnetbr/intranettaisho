@@ -112,7 +112,7 @@ class EstoquProdutoModel extends Model
      * @param bool $id 
      * @return array
      */
-    public function getProdutoPedido($pro_id = false, $empresa, $fields = false)
+    public function getProdutoPedido($empresa,$pro_id = false,  $fields = false)
     {
         $db = db_connect('dbEstoque');
         $builder = $db->table('vw_est_produtos_relac pro');
@@ -144,8 +144,8 @@ class EstoquProdutoModel extends Model
         $builder->groupBy("pro.pro_id");
         $builder->orderBy("sld.total_entradas DESC, sld.total_saidas DESC, pro_nome");
 
+        // debug($builder->getCompiledSelect(), true);
         $ret = $builder->get()->getResultArray();
-        // debug($this->db->getLastQuery(), false);
 
         return $ret;
     }
@@ -158,7 +158,7 @@ class EstoquProdutoModel extends Model
      * @param bool $id 
      * @return array
      */
-    public function getProdutoPedidoView($pro_id = NULL, $empresa)
+    public function getProdutoPedidoView( $empresa,$pro_id = NULL)
     {
         $db = db_connect('dbEstoque');
         $sql = "CALL GetProdutosPedidos(?, ?)";

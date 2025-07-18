@@ -67,10 +67,13 @@ $routes->setDefaultNamespace('App\Controllers');
 $routes->setDefaultController('home');
 $routes->setDefaultMethod('index');
 $routes->setTranslateURIDashes(true);
+$routes->get('(.+)\.map', function ($filename) {
+    // Redireciona todas as chamadas a .map para um arquivo vazio
+    return redirect()->to('/assets/empty.map');
+});
 $routes->set404Override(function () {
-    return service('response')
-        ->setStatusCode(404)
-        ->setJSON(['error' => 'Rota não encontrada']);
+    log_message('critical', 'Rota 404 chamada: {uri}', ['uri' => current_url()]);
+    return service('response')->respond(['error' => 'Rota não encontrada'], 404);
 });
 $routes->setAutoRoute(true);
 

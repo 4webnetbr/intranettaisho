@@ -306,7 +306,15 @@ class EstoquCotacaoModel extends Model
             LEFT JOIN
                 taisho_estoquedb.vw_est_pedidos_relac
             ON
-                vw_est_produtos_relac.pro_id = vw_est_pedidos_relac.pro_id AND vw_est_pedidos_relac.ped_status = 'P'
+                vw_est_produtos_relac.pro_id = vw_est_pedidos_relac.pro_id
+                AND vw_est_pedidos_relac.ped_status = 'P'
+                AND NOT EXISTS (
+                            SELECT 1
+                            FROM est_cotacao_produto cp
+                            JOIN est_cotacao c ON c.cot_id = cp.cot_id
+                            WHERE cp.pro_id = vw_est_pedidos_relac.pro_id
+                            AND c.cot_datains > vw_est_pedidos_relac.ped_datains
+                        )
             INNER JOIN
                 taisho_configdb.cfg_empresa
             ON

@@ -350,7 +350,7 @@ class EstCotacao extends BaseController
         // Busca empresas e produtos pendentes
         $empresas = $this->empresa->getEmpresa();
         $pendentes = $this->cotacao->getPedidosPendentes($empresas);
-
+        // debug($pendentes, true);
         // Identifica produtos que já estão em cotações abertas (prazo > agora)
         $cotacoesAbertas = $this->cotacao
             ->where('cot_status', 'A')

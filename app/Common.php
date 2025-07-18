@@ -526,29 +526,31 @@ function montaListaColunas($data_lis, $chave, $dados, $nome, $detalhe = false)
                 $retor[$fields[$f]] = fmtEtiquetaCorBst($retor['stt_cor'], $retor[$fields[$f]]);
             }
             // var_dump($retor[$fields[$f]]);
-            if (strlen($retor[$fields[$f]]) < 15) {
-                $data = DateTime::createFromFormat('Y-m-d H:i:s', $retor[$fields[$f]]);
-                if ($data && $data->format('Y-m-d H:i:s') === $retor[$fields[$f]]) {
-                    $retor[$fields[$f]] = "<div class='text-center'>" .
-                        dataDbToBr($retor[$fields[$f]]) . "</div>";
-                } else {
-                    if($retor[$fields[$f]] != null){
-                        $data = DateTime::createFromFormat('Y-m-d', $retor[$fields[$f]]);
-                    }
-                    if ($data && $data->format('Y-m-d') === $retor[$fields[$f]]) {
-                        $retor[$fields[$f]] = "<div class='text-center'>" . dataDbToBr($retor[$fields[$f]]) .
-                            "</div>";
+            if (!is_null($retor[$fields[$f]])){
+                if( strlen($retor[$fields[$f]]) < 20) {
+                    $data = DateTime::createFromFormat('Y-m-d H:i:s', $retor[$fields[$f]]);
+                    if ($data && $data->format('Y-m-d H:i:s') === $retor[$fields[$f]]) {
+                        $retor[$fields[$f]] = "<div class='text-center'>" .
+                            dataDbToBr($retor[$fields[$f]]) . "</div>";
                     } else {
-                        // testa se o campo é numérico, se for alinha a direita
-                        if (is_numeric($retor[$fields[$f]]) > 0) {
-                            $partes = explode('.', $retor[$fields[$f]]);
-                            if (isset($partes[1]) && trim($partes[1]) != '') {
-                                if (strlen($partes[1]) > 2) {
-                                    $retor[$fields[$f]] = "<div class='text-end'>" .
-                                        floatToQuantia($retor[$fields[$f]], 3) . "</div>";
-                                } else {
-                                    $retor[$fields[$f]] = "<div class='text-end'>" .
-                                        floatToMoeda($retor[$fields[$f]]) . "</div>";
+                        if($retor[$fields[$f]] != null){
+                            $data = DateTime::createFromFormat('Y-m-d', $retor[$fields[$f]]);
+                        }
+                        if ($data && $data->format('Y-m-d') === $retor[$fields[$f]]) {
+                            $retor[$fields[$f]] = "<div class='text-center'>" . dataDbToBr($retor[$fields[$f]]) .
+                                "</div>";
+                        } else {
+                            // testa se o campo é numérico, se for alinha a direita
+                            if (is_numeric($retor[$fields[$f]]) > 0) {
+                                $partes = explode('.', $retor[$fields[$f]]);
+                                if (isset($partes[1]) && trim($partes[1]) != '') {
+                                    if (strlen($partes[1]) > 2) {
+                                        $retor[$fields[$f]] = "<div class='text-end'>" .
+                                            floatToQuantia($retor[$fields[$f]], 3) . "</div>";
+                                    } else {
+                                        $retor[$fields[$f]] = "<div class='text-end'>" .
+                                            floatToMoeda($retor[$fields[$f]]) . "</div>";
+                                    }
                                 }
                             }
                         }
@@ -613,27 +615,28 @@ function montaListaEditColunas($colunas, $chave, $dados, $nome, $detalhe = false
                 $retor[$fields[$f]] = fmtEtiquetaCorBst($retor['stt_cor'], $retor[$fields[$f]]);
             }
             // debug($retor[$fields[$f]]);
-            if (strlen($retor[$fields[$f]]) < 20) {
-                $data = DateTime::createFromFormat('Y-m-d H:i:s', $retor[$fields[$f]]);
-                if ($data && $data->format('Y-m-d H:i:s') === $retor[$fields[$f]]) {
-                    $retor[$fields[$f]] = "<div class='text-center'>" .
-                        dataDbToBr($retor[$fields[$f]]) . "</div>";
-                } else {
-                    $data = DateTime::createFromFormat('Y-m-d', $retor[$fields[$f]]);
-                    if ($data && $data->format('Y-m-d') === $retor[$fields[$f]]) {
-                        $retor[$fields[$f]] = "<div class='text-center'>" . dataDbToBr($retor[$fields[$f]]) .
-                            "</div>";
+            if (!is_null($retor[$fields[$f]])){
+                if( strlen($retor[$fields[$f]]) < 20) {
+                    $data = DateTime::createFromFormat('Y-m-d H:i:s', $retor[$fields[$f]]);
+                    if ($data && $data->format('Y-m-d H:i:s') === $retor[$fields[$f]]) {
+                        $retor[$fields[$f]] = "<div class='text-center'>" .
+                            dataDbToBr($retor[$fields[$f]]) . "</div>";
                     } else {
-                        // testa se o campo é numérico, se for alinha a direita
-                        if (is_numeric($retor[$fields[$f]]) > 0) {
-                            $partes = explode('.', $retor[$fields[$f]]);
-                            if (isset($partes[1]) && trim($partes[1]) != '') {
-                                if (strlen($partes[1]) > 2) {
-                                    $retor[$fields[$f]] = "<div class='text-end'>" .
-                                        floatToQuantia($retor[$fields[$f]], 3) . "</div>";
-                                } else {
-                                    $retor[$fields[$f]] = "<div class='text-end'>" .
-                                        floatToMoeda($retor[$fields[$f]]) . "</div>";
+                        if ($data && $data->format('Y-m-d') === $retor[$fields[$f]]) {
+                            $retor[$fields[$f]] = "<div class='text-center'>" . dataDbToBr($retor[$fields[$f]]) .
+                                "</div>";
+                        } else {
+                            // testa se o campo é numérico, se for alinha a direita
+                            if (is_numeric($retor[$fields[$f]]) > 0) {
+                                $partes = explode('.', $retor[$fields[$f]]);
+                                if (isset($partes[1]) && trim($partes[1]) != '') {
+                                    if (strlen($partes[1]) > 2) {
+                                        $retor[$fields[$f]] = "<div class='text-end'>" .
+                                            floatToQuantia($retor[$fields[$f]], 3) . "</div>";
+                                    } else {
+                                        $retor[$fields[$f]] = "<div class='text-end'>" .
+                                            floatToMoeda($retor[$fields[$f]]) . "</div>";
+                                    }
                                 }
                             }
                         }

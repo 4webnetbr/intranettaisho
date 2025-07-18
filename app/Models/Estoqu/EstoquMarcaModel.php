@@ -159,7 +159,7 @@ class EstoquMarcaModel extends Model
         $ret = $builder->get()->getResultArray();
 
         $sql = $this->db->getLastQuery();
-        log_message('info', 'SQL getMarcaCod: ' . $sql);
+        // log_message('info', 'SQL getMarcaCod: ' . $sql);
 
         return $ret;
     }

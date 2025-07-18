@@ -311,7 +311,7 @@ class EstPedido extends BaseController
         }
 
         $empresas = explode(',', $param);
-        $produtos = $this->produto->getProdutoPedido(false, $empresas[0]);
+        $produtos = $this->produto->getProdutoPedido( $empresas[0]);
 
         $campos = [
             'pro_id', 'gru_nome', 'pro_nome', 'minmax', 'saldo',
@@ -394,6 +394,99 @@ class EstPedido extends BaseController
 
         echo json_encode($pedid);
     }
+
+    // public function listaadd($empresa = false)
+    // {
+    //     $param = $_REQUEST['param'] ?? false;
+    //     if ($param === 'undefined') {
+    //         $param = false;
+    //     }
+
+    //     $empresas = explode(',', $param);
+    //     $produtos = $this->produto->getProdutoPedido($empresas[0]);
+
+    //     $campos = [
+    //         'pro_id', 'gru_nome', 'pro_nome', 'minmax', 'saldo',
+    //         'sugestao', 'ped_qtia', 'und_sigla', 'ped_justifica', 'ped_data'
+    //     ];
+
+    //     $dados_pedid = [];
+
+    //     // Calcular uma única vez fora do loop
+    //     $hoje = new DateTime();
+    //     $diaSemanaAtual = $hoje->format('N');
+    //     $diasFaltando = (4 - $diaSemanaAtual + 7) % 7;
+    //     $diasFaltando = ($diasFaltando === 0) ? 7 : $diasFaltando;
+
+    //     foreach ($produtos as $i => $prod) {
+    //         $saldo     = (float) $prod['saldo'];
+    //         $consumo   = (float) $prod['con_consumo'];
+    //         $duracao   = (float) $prod['con_duracao'];
+    //         $reposicao = (float) $prod['con_tporeposicao'];
+    //         $fcc       = max((float) $prod['pro_fcc'], 1);
+    //         $minimo    = (float) ($prod['mmi_minimo'] ?? 0);
+    //         $maximo    = (float) ($prod['mmi_maximo'] ?? 0);
+    //         $sugestao  = 0;
+
+    //         if ($maximo === 0) {
+    //             if ($consumo > 0 || $duracao > 0) {
+    //                 $indiceConsumo = ($consumo > 0) ? ($consumo / 7) : 0;
+    //                 $indiceDuracao = ($duracao > 0) ? (1 / $duracao) : 0;
+    //                 $indice = max($indiceConsumo, $indiceDuracao) / $fcc;
+
+    //                 $sugestao = max(0, (($indice * $reposicao) - $saldo) / $fcc);
+    //                 $maximo = $indice * $reposicao;
+    //                 $minimo = $indice * $diasFaltando;
+    //             }
+    //         } else {
+    //             $sugestao = max(0, ($maximo - $saldo) / $fcc);
+    //             $minimo   = $minimo / $fcc;
+    //             $maximo   = $maximo / $fcc;
+    //             $saldo    = $saldo / $fcc;
+    //         }
+
+    //         $sugestao = ceil($sugestao);
+    //         $minimo   = ceil($minimo);
+    //         $maximo   = ceil($maximo);
+    //         $saldo    = ceil($saldo);
+
+    //         // Formatação pesada separada para evitar gasto em processamento paralelo
+    //         $saldo_formatado    = formataQuantia($saldo, 2)['qtia'];
+    //         $sugestao_formatada = formataQuantia($sugestao, 3)['qtiv'];
+    //         $data_formatada     = dataDbToBr($prod['ped_data']);
+
+    //         // Dados principais
+    //         $dados = [
+    //             'pro_id'        => $prod['pro_id'],
+    //             'gru_nome'      => $prod['gru_nome'],
+    //             'pro_nome'      => $prod['pro_nome'],
+    //             'minmax'        => "<div class='text-start d-inline-flex'>{$minimo}</div> - <div class='text-end d-inline-flex'>{$maximo}</div>",
+    //             'saldo'         => $saldo_formatado,
+    //             'sugestao'      => $sugestao_formatada,
+    //             'und_sigla'     => $prod['und_sigla_compra'],
+    //             'ped_data'      => "<div id='ped_data[$i]'>" . $data_formatada . "</div>",
+    //             'ped_id'        => $prod['ped_id'],
+    //             'ped_qtia'      => $prod['ped_qtia'],
+    //             'und_id'        => $prod['und_id_compra'],
+    //             'ped_justifica' => $prod['ped_justifica'],
+    //             'gru_controlaestoque' => $prod['gru_controlaestoque'],
+    //         ];
+
+    //         // Esta função é crítica: se ela for lenta, ela é o gargalo principal!
+    //         $this->def_campos_prod($dados, $i);
+
+    //         // Inserção final com valores atualizados
+    //         $dados['sugestao'] = $this->sugestao;
+    //         $dados['ped_qtia'] = "{$this->ped_id} {$this->pro_id} {$this->und_id} {$this->ped_qtia}";
+    //         $dados['ped_justifica'] = "{$this->ped_justifica} {$this->gru_controlaestoque}";
+
+    //         $dados_pedid[] = $dados;
+    //     }
+
+    //     echo json_encode([
+    //         'data' => montaListaEditColunas($campos, 'pro_id', $dados_pedid, 'gru_nome')
+    //     ]);
+    // }
 
     /**
      * Exclusão
