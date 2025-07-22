@@ -313,55 +313,6 @@ class EstCompraCotacao extends BaseController
         echo view('vw_add_compra_cotacao_10', $this->data);
     }
 
-    public function listaaddantes()
-    {
-        $param = $_REQUEST['param'];
-        $param2 = $_REQUEST['param2'];
-
-        if ($param == 'undefined') {
-            $param = false;
-        }
-
-        $empresas = explode(',', $param);
-        $produtos = $this->pedido->getCotacaoProdutos($empresas[0], $param2);
-        // debug($produtos,true);
-        $ret = [];
-
-        foreach ($produtos as $dc => $prod) {
-            $ret[$dc] = [
-                'ped_id'        => $prod['ped_id'],
-                'pro_id'        => $prod['pro_id'],
-                'pro_nome'      => $prod['pro_nome'],
-                'ped_datains'   => dataDbToBr($prod['ped_datains']),
-                'ped_qtia'      => $prod['ped_qtia'],
-                'ped_sugestao'  => $prod['ped_sugestao'],
-                'und_sigla'     => $prod['und_sigla'],
-                'mar_id'        => $prod['mar_id'],
-                'mar_nome'      => $prod['mar_nome'],
-                'mar_apresenta' => $prod['mar_apresenta'],
-            ];
-
-            // Itera de 1 a 10 fornecedores
-            for ($i = 1; $i <= 10; $i++) {
-                $this->def_campos_forn($prod, $i, $dc);
-
-                $ret[$dc]["for_id_$i"]       = $this->{"for_id_$i"};
-                $ret[$dc]["cof_preco_$i"]    = $this->{"cof_preco_$i"};
-                $ret[$dc]["cof_validade_$i"] = $this->{"cof_validade_$i"};
-                $ret[$dc]["com_quantia_$i"]  = $this->cop_quantia;
-                $ret[$dc]["com_previsao_$i"] = $this->com_previsao;
-                $ret[$dc]["ped_id_$i"]       = $this->ped_id;
-                $ret[$dc]["cot_id_$i"]       = $this->cot_id;
-                $ret[$dc]["cop_id_$i"]       = $this->cop_id;
-                $ret[$dc]["pro_id_$i"]       = $this->pro_id;
-                $ret[$dc]["mar_id_$i"]       = $this->mar_id;
-                $ret[$dc]["cof_id_$i"]       = $this->{"cof_id_$i"};
-            }
-        }
-
-        echo json_encode($ret);
-    }
-
     public function listaadd()
     {
         $param = $_REQUEST['param'];
@@ -385,33 +336,7 @@ class EstCompraCotacao extends BaseController
         // $inicio = microtime(true);
 
         foreach ($produtos as $prod) {
-                // log_message('debug', 'INÍCIO LOOP PRODUTO: ' . microtime(true));
-
-            // if($pro_id != '' && $forIndexByProduct[$pro_id] < 10 ){
-            //     for($f = $forIndexByProduct[$pro_id]; $f<=10; $f++){
-            //         $i = $f;
-            //         // $this->def_campos_forn($produto, $i, $pro_id);// $dc agora é o pro_id (chave única do produto)
-            //         $camp = $this->def_campos_forn($produto, $i, $pro_id);// $dc agora é o pro_id (chave única do produto)
-
-            //         // Copia os campos dinâmicos
-            //         $ret[$pro_id]["for_id_$i"]              = $camp["for_id"];
-            //         $ret[$pro_id]["cof_preco_$i"]           = $camp["cof_preco"];
-            //         $ret[$pro_id]["cof_precoundcompra_$i"]  = $camp["cof_precoundcompra"];
-            //         $ret[$pro_id]["cof_validade_$i"]        = $camp["cof_validade"];
-            //         $ret[$pro_id]["com_quantia_$i"]         = $camp["cop_quantia"];
-            //         $ret[$pro_id]["cop_previsao_$i"]        = $camp["cop_previsao"];
-            //         $ret[$pro_id]["ped_id_$i"]              = $camp["ped_id"];
-            //         $ret[$pro_id]["cot_id_$i"]              = $camp["cot_id"];
-            //         $ret[$pro_id]["cop_id_$i"]              = $camp["cop_id"];
-            //         $ret[$pro_id]["pro_id_$i"]              = $camp["pro_id"];
-            //         $ret[$pro_id]["mar_id_$i"]              = $camp["mar_id"];
-            //         $ret[$pro_id]["cof_id_$i"]              = $camp["cof_id"];
-            //         $ret[$pro_id]["cof_observacao_$i"] = '';
-            //     }
-            // }
             $pro_id = $prod['pro_id'].'A';
-            // Se ainda não iniciamos esse produto, iniciamos agora
-            // if (!isset($ret[$pro_id])) {
                 $ret[$pro_id] = [
                     'ped_id'        => $prod['ped_id'],
                     'pro_id'        => $prod['pro_id'],
@@ -423,64 +348,7 @@ class EstCompraCotacao extends BaseController
                     'und_consumo'   => $prod['und_sigla'],
                     'und_compra'    => $prod['und_sigla_compra'],
                 ];
-            //     $produto = $ret[$pro_id];
-
-            //     $forIndexByProduct[$pro_id] = 1;
-            // }
-
-            // Pega índice atual do fornecedor para esse produto
-            // $i = $forIndexByProduct[$pro_id];
-
-            // Chama sua função normalmente
-            // $camp = $this->def_campos_forn($prod, $i, $pro_id);// $dc agora é o pro_id (chave única do produto)
-
-            // Copia os campos dinâmicos
-            // $ret[$pro_id]["for_id_$i"]              = $camp["for_id"];
-            // $ret[$pro_id]["cof_preco_$i"]           = $camp["cof_preco"];
-            // $ret[$pro_id]["cof_precoundcompra_$i"]  = $camp["cof_precoundcompra"];
-            // $ret[$pro_id]["cof_validade_$i"]        = $camp["cof_validade"];
-            // $ret[$pro_id]["com_quantia_$i"]         = $camp["cop_quantia"];
-            // $ret[$pro_id]["cop_previsao_$i"]        = $camp["cop_previsao"];
-            // $ret[$pro_id]["ped_id_$i"]              = $camp["ped_id"];
-            // $ret[$pro_id]["cot_id_$i"]              = $camp["cot_id"];
-            // $ret[$pro_id]["cop_id_$i"]              = $camp["cop_id"];
-            // $ret[$pro_id]["pro_id_$i"]              = $camp["pro_id"];
-            // $ret[$pro_id]["mar_id_$i"]              = $camp["mar_id"];
-            // $ret[$pro_id]["cof_id_$i"]              = $camp["cof_id"];
-            // $ret[$pro_id]["cof_observacao_$i"] = isset($prod["cof_observacao"]) ? $prod["cof_observacao"] : '';
-
-            // Incrementa índice de fornecedor para esse produto
-            // debug($forIndexByProduct[$pro_id]);
-            // debug($prod['pro_nome']);
-            // debug($prod['for_razao']);
-            // $forIndexByProduct[$pro_id]++;
-            //  log_message('debug', 'FIM LOOP PRODUTO: ' . microtime(true));
         }
-        // if($pro_id != '' && $forIndexByProduct[$pro_id] < 10 ){
-        //     for($f = $forIndexByProduct[$pro_id]; $f<=10; $f++){
-        //         $i = $f;
-        //         // $this->def_campos_forn($produto, $i, $pro_id);// $dc agora é o pro_id (chave única do produto)
-        //         $camp = $this->def_campos_forn($produto, $i, $pro_id);// $dc agora é o pro_id (chave única do produto)
-
-        //         // Copia os campos dinâmicos
-        //         $ret[$pro_id]["for_id_$i"]              = $camp["for_id"];
-        //         $ret[$pro_id]["cof_preco_$i"]           = $camp["cof_preco"];
-        //         $ret[$pro_id]["cof_precoundcompra_$i"]  = $camp["cof_precoundcompra"];
-        //         $ret[$pro_id]["cof_validade_$i"]        = $camp["cof_validade"];
-        //         $ret[$pro_id]["com_quantia_$i"]         = $camp["cop_quantia"];
-        //         $ret[$pro_id]["cop_previsao_$i"]        = $camp["cop_previsao"];
-        //         $ret[$pro_id]["ped_id_$i"]              = $camp["ped_id"];
-        //         $ret[$pro_id]["cot_id_$i"]              = $camp["cot_id"];
-        //         $ret[$pro_id]["cop_id_$i"]              = $camp["cop_id"];
-        //         $ret[$pro_id]["pro_id_$i"]              = $camp["pro_id"];
-        //         $ret[$pro_id]["mar_id_$i"]              = $camp["mar_id"];
-        //         $ret[$pro_id]["cof_id_$i"]              = $camp["cof_id"];
-        //         $ret[$pro_id]["cof_observacao_$i"] = '';
-        //     }
-        // }
-
-        // log_message('debug', 'TEMPO TOTAL LOOP: ' . (microtime(true) - $inicio));
-        // echo json_encode($ret);
         return view('partials/accordion_lista_cotacao', ['produtos' => $ret]);
 
     }
@@ -547,8 +415,8 @@ class EstCompraCotacao extends BaseController
 
             $fornec++;
         }
-        if($fornec <= 10 ){
-            for($f = $fornec; $f<=10; $f++){
+        if($fornec <= 15 ){
+            for($f = $fornec; $f<=15; $f++){
                 // $this->def_campos_forn($produto, $i, $pro_id);// $dc agora é o pro_id (chave única do produto)
                 $camp = $this->def_campos_forn($produto, $f, $pro_id);// $dc agora é o pro_id (chave única do produto)
 

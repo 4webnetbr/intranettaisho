@@ -9,9 +9,11 @@
             <div class="d-inline-flex float-start col-2 fw-bold text-center">Prev. Entrega</div>
         </div>
         <div class="d-block float-start col-12 p-0" style="max-height:45vh; overflow-y: auto">
-            <?php for ($i = 1; $i <= 10; $i++): ?>
+            <?php for ($i = 1; $i <= 15; $i++):
+                $n = substr('00'.$i,-2);
+            ?>
             <div class="d-block float-start col-12 p-0">
-                <div class="d-inline-flex float-start col-3"><?= $produtos["for_id_$i"]?></div>
+                <div class="d-inline-flex float-start col-3"><?= $n.' '.$produtos["for_id_$i"]?></div>
                 <div class="d-inline-flex float-start col-2"><?= $produtos["mar_id_$i"]?></div>
                 <div class="d-inline-flex float-start col-1 me-3"><?= $produtos["cof_id_$i"].$produtos["cof_validade_$i"]?></div>
                 <div class="d-inline-flex float-start col-1 me-3"><?= $produtos["cof_preco_$i"]?></div>

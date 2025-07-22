@@ -2655,11 +2655,27 @@ function gravaCotforn(obj) {
   let valido = false;
 
   jQuery('input[name^="cof_precoundcompra"]').each(function (index) {
-    const preco = parseFloat(jQuery(this).val()) || 0;
-    if (preco > 0) {
+    let precoUndCompra = parseFloat(jQuery(this).val()) || 0;
+
+    const $inputPrecoVenda = jQuery(`input[name="cof_preco[${index}]"]`);
+    let precoVenda = $inputPrecoVenda.length
+      ? parseFloat($inputPrecoVenda.val()) || 0
+      : null;
+
+    // Se precoVenda for válido e precoUndCompra for zero, copia o valor
+    if (precoVenda !== null) {
+      if (precoUndCompra > 0 && precoVenda === 0) {
+        precoVenda = precoUndCompra;
+        $inputPrecoVenda.val(precoVenda);
+      } else if (precoVenda > 0 && precoUndCompra === 0) {
+        precoUndCompra = precoVenda;
+        jQuery(this).val(precoUndCompra);
+      }
+    }
+
+    if (precoUndCompra > 0 || (precoVenda !== null && precoVenda > 0)) {
       valido = true;
 
-      // Adiciona os valores válidos por índice
       dados[`pro_id[${index}]`] = jQuery(
         `input[name="pro_id[${index}]"]`
       ).val();
@@ -2669,9 +2685,12 @@ function gravaCotforn(obj) {
       dados[`ctp_id[${index}]`] = jQuery(
         `input[name="ctp_id[${index}]"]`
       ).val();
-      const precoun = jQuery(`input[name="cof_preco[${index}]"]`).val();
-      dados[`cof_preco[${index}]`] = precoun ?? preco;
-      dados[`cof_precoundcompra[${index}]`] = preco;
+      dados[`cof_precoundcompra[${index}]`] = precoUndCompra;
+
+      if (precoVenda !== null) {
+        dados[`cof_preco[${index}]`] = precoVenda;
+      }
+
       dados[`cof_validade[${index}]`] = jQuery(
         `input[name="cof_validade[${index}]"]`
       ).val();
@@ -2835,7 +2854,15 @@ function gravaCotacao(obj) {
       "#cof_precoundcompra\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
     ).val()
   );
-  if (parseFloat(precocompra) === 0) {
+  preco = converteMoedaFloat(
+    jQuery(
+      "#cof_preco\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
+    ).val()
+  );
+  if (parseFloat(preco) === 0) {
+    preco = precocompra;
+  }
+  if (parseFloat(precocompra) + parseFloat(preco) === 0) {
     return;
   }
   cofid = jQuery(
@@ -2870,14 +2897,6 @@ function gravaCotacao(obj) {
     copid = jQuery(
       "#ctp_id\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
     ).val();
-    preco = converteMoedaFloat(
-      jQuery(
-        "#cof_preco\\[" + ordem + "\\][data-ordemcot='" + indice + "']"
-      ).val()
-    );
-    if (preco == 0.0) {
-      preco = precocompra;
-    }
     url = window.location.origin + "/EstCotacao/storeforn";
     jQuery.ajax({
       type: "POST",
