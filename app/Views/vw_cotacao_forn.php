@@ -1,4 +1,4 @@
-<?= $this->extend('templates/graph_template') ?>
+<?= $this->extend('templates/cotacao_template') ?>
 <?= $this->section('content'); ?>
 <style>
   .content {
@@ -27,7 +27,7 @@
 
 
 </style>
-<div id='content' class='container page-content m-0 p-0'>
+<div id='content' class='container-fluid page-content p-2'>
   <form id="form1" data-alter method="post" autocomplete="off" action="<?= site_url(strtolower($controler) . "/" . $destino) ?>"
     class="col-12" enctype="multipart/form-data">
     <div class='col-12 d-block float-start bg-white mb-0 p-2'>
@@ -44,19 +44,16 @@
 
     </forn>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js" integrity="sha512-oVbWSv2O4y1UzvExJMHaHcaib4wsBMS5tEP3/YkMP6GmkwRJAa79Jwsv+Y/w7w2Vb/98/Xhvck10LyJweB8Jsw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="<?= base_url('assets/jscript/my_default.js'); ?>"></script>
-<script src="<?= base_url('assets/jscript/my_fields.js'); ?>"></script>
-<script src="<?= base_url('assets/jscript/my_mask.js'); ?>"></script>
-<script src="<?= base_url('assets/jscript/my_filter.js'); ?>"></script>
-<script src="<?= base_url('assets/jscript/my_consulta.js'); ?>"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js" defer integrity="sha512-oVbWSv2O4y1UzvExJMHaHcaib4wsBMS5tEP3/YkMP6GmkwRJAa79Jwsv+Y/w7w2Vb/98/Xhvck10LyJweB8Jsw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="<?= base_url('assets/jscript/my_default.js'); ?>" defer></script>
+<script src="<?= base_url('assets/jscript/my_fields.js'); ?>" defer></script>
+<script src="<?= base_url('assets/jscript/my_mask.js'); ?>" defer></script>
+<script src="<?= base_url('assets/jscript/my_filter.js'); ?>" defer></script>
+<script src="<?= base_url('assets/jscript/my_consulta.js'); ?>" defer></script>
 
 <?
 if (isset($script)) {
   echo $script;
 }
 ?>
-<script>
-  carregamentos_iniciais();
-</script>
 <?= $this->endSection(); ?>

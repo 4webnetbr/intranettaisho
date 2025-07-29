@@ -123,7 +123,7 @@ class EstCotForn extends BaseController
 
         $mini                        = new MyCampo('est_fornecedor', 'for_minimo');
         $mini->valor                 = 0;
-        $mini->dispForm              = 'col-12 col-lg-2';
+        $mini->dispForm              = 'col-8 col-lg-2';
         $this->for_minimo            = $mini->crInput();
 
         $nome                        = new MyCampo('est_fornecedor', 'for_razao');
@@ -289,14 +289,20 @@ class EstCotForn extends BaseController
         $prev->place                 = '';
         $this->cof_previsao          = $prev->crInput();
 
+
         $obsv                        = new MyCampo('est_cotacao_fornec', 'cof_observacao');
         $obsv->label                 = '';
         $obsv->ordem                 = $ord;
         $obsv->largura               = 200;
         $obsv->colunas               = 200;
         $obsv->linhas                = 1;
+        if(isMobile()){
+            $obsv->largura               = 40;
+            $obsv->colunas               = 80;
+            $obsv->linhas                = 3;
+        }
         $obsv->valor                 = $observacao;
-        $obsv->dispForm              = 'col-12';
+        $obsv->dispForm              = 'col-9';
         $obsv->place                 = '';
         $this->cof_observacao          = $obsv->crTexto();
     }

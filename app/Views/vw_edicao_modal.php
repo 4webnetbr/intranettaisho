@@ -4,12 +4,11 @@
 <?=$this->endSection();?>
 
 <?=$this->section('content');?>
-    <script src="<?=base_url('assets/jscript/my_fields.js');?>"></script>
-    
+
     <div id='content' class='container page-content bg-light m-0'>
-    <!-- <div id='content' class='vh-auto page-content dashboard dashboard-app dashboard-content '> -->
+        <!-- <div id='content' class='vh-auto page-content dashboard dashboard-app dashboard-content '> -->
     <form id="form_modal" method="post"  action="<?= site_url($controler."/".$destino) ?>" class="col-12" type="modal" enctype="multipart/form-data">
-        <?
+    <?
         if (sizeof($secoes)) {
 			$active = 'show active';
             echo "<div class='tab-content bg-white' id='myTabContent'>";
@@ -58,19 +57,20 @@
 		?>
     </form>    
     </div>
-
+    
     <script src="<?=base_url('assets/jscript/summernote-lite.js');?>"></script>
     <script src="<?=base_url('assets/jscript/jquery.bootstrap-duallistbox.js');?>"></script>
     <!-- include summernote-pt-BR -->
     <script src="<?=base_url('assets/jscript/summ-lang/summernote-pt-BR.js');?>"></script>
-
+    
     <link rel="stylesheet" href="<?=base_url('assets/css/summernote-lite.css');?>">
     <link rel="stylesheet" href="<?=base_url('assets/css/summernote.min.css');?>">
     <link rel="stylesheet" href="<?=base_url('assets/css/bootstrap-duallistbox.css');?>">
-
+    
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-
+    
+    <script src="<?=base_url('assets/jscript/my_fields.js');?>"></script>
     <script src="<?=base_url('assets/jscript/my_mask.js?noc='.time());?>"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fontawesome-iconpicker/3.2.0/js/fontawesome-iconpicker.min.js" integrity="sha512-7dlzSK4Ulfm85ypS8/ya0xLf3NpXiML3s6HTLu4qDq7WiJWtLLyrXb9putdP3/1umwTmzIvhuu9EW7gHYSVtCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
