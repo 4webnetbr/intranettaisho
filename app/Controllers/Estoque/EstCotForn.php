@@ -335,13 +335,14 @@ class EstCotForn extends BaseController
 
         $cofDados = [];
 
+        // debug($dados['pro_id'], true);
         foreach ($dados['pro_id'] as $key => $chave) {
             $cop_id = $dados['ctp_id'][$key];
             $pro_id = $dados['pro_id'][$key];
             $mar_id = $dados['mar_id'][$key];
             $preco  = str_replace(',', '.', $dados['cof_precoundcompra'][$key]);
             $precocompra  = str_replace(',', '.', $dados['cof_precoundcompra'][$key]);
-            if(isset($dados['cof_preco'])){
+            if(isset($dados['cof_preco'][$key])){
                 $preco  = str_replace(',', '.', $dados['cof_preco'][$key]);
             }
             $validade = $dados['cof_validade'][$key];
