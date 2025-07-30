@@ -2212,6 +2212,9 @@ function gravaPedido(obj) {
             jQuery(".toast").toast("show");
           }
         },
+        error: function () {
+          boxAlert("Erro ao Gravar o Pedido.", true, "");
+        },
       });
       // }
     } else if (id != "") {
@@ -2236,6 +2239,9 @@ function gravaPedido(obj) {
             animation: true,
           });
           jQuery(".toast").toast("show");
+        },
+        error: function () {
+          boxAlert("Erro ao Excluir o Pedido.", true, "");
         },
       });
     }
@@ -2276,6 +2282,9 @@ function gravaConsumo(obj) {
           jQuery(".toast").toast("show");
         }
       },
+      error: function () {
+        boxAlert("Erro ao Gravar o Consumo.", true, "");
+      },
     });
   } else if (id != "" && con == 0 && dur == 0) {
     // if (min == '') {
@@ -2295,6 +2304,9 @@ function gravaConsumo(obj) {
           animation: true,
         });
         jQuery(".toast").toast("show");
+      },
+      error: function () {
+        boxAlert("Erro ao Excluir o Consumo.", true, "");
       },
     });
   }
@@ -2361,6 +2373,9 @@ function gravaContagem(obj) {
             jQuery(".toast").toast("show");
           }
         },
+        error: function () {
+          boxAlert("Erro ao Gravar a Contagem.", true, "");
+        },
       });
     }
   }
@@ -2409,6 +2424,9 @@ function gravaMinmax(obj) {
             jQuery(".toast").toast("show");
           }
         },
+        error: function () {
+          boxAlert("Erro ao Gravar o Mínimo e Máximo.", true, "");
+        },
       });
     } else {
       boxAlert(
@@ -2438,6 +2456,9 @@ function gravaMinmax(obj) {
           animation: true,
         });
         jQuery(".toast").toast("show");
+      },
+      error: function () {
+        boxAlert("Erro ao Excluir o Mínimo e Máximo.", true, "");
       },
     });
   }
@@ -2615,6 +2636,9 @@ function gravaCompra(obj) {
             jQuery(".toast").toast("show");
           }
         },
+        error: function () {
+          boxAlert("Erro ao Gravar a Compra.", true, "");
+        },
       });
     }
   } else if (id != "") {
@@ -2637,6 +2661,9 @@ function gravaCompra(obj) {
           animation: true,
         });
         jQuery(".toast").toast("show");
+      },
+      error: function () {
+        boxAlert("Erro ao Excluir a Compra.", true, "");
       },
     });
   }
@@ -2735,6 +2762,9 @@ function gravaCotforn(obj) {
         boxAlert(data.msg, data.erro, data.url, false, 1, false);
       }
     },
+    error: function () {
+      boxAlert("Erro ao Gravar a Cotação.", true, "");
+    },
   });
 }
 
@@ -2779,6 +2809,9 @@ function gravaQuadro(obj) {
         });
         jQuery(".toast").toast("show");
       }
+    },
+    error: function () {
+      boxAlert("Erro ao Gravar o Quadro.", true, "");
     },
   });
 }
@@ -2842,6 +2875,9 @@ function geraCotacao() {
       } else {
         boxAlert(data.msg, data.erro, data.url, false, 1, false);
       }
+    },
+    error: function () {
+      boxAlert("Erro ao Gerar a Cotação.", true, "");
     },
   });
 }
