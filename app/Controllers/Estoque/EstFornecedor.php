@@ -254,6 +254,8 @@ class EstFornecedor extends BaseController
         $min = new MyCampo('est_fornecedor', 'for_minimo');
         $min->obrigatorio = false;
         $min->dispForm   = '2col';
+        $min->minimo    = 0;
+        $min->maximo    = 100000;
         $min->classep  = 'float-start';
         $min->valor       = isset($dados['for_minimo']) ? $dados['for_minimo'] : '0.00';
         $this->for_minimo    = $min->crInput();
@@ -311,7 +313,7 @@ class EstFornecedor extends BaseController
         $cfon->tipo         = 'whatsapp';
         $cfon->obrigatorio  = false;
         $cfon->valor        = isset($dados['for_fone']) ? $dados['for_fone'] : '';
-        $cfon->largura        = 20;
+        $cfon->largura        = 30;
         $cfon->dispForm      = '2col';
         $this->for_fone    = $cfon->crInput();
 

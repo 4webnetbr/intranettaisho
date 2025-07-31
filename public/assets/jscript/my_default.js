@@ -50,25 +50,43 @@ jQuery(document).ready(function () {
     jQuery(".toast-body").html("");
   });
 
-  jQuery("#bt_salvar").on("click", function () {
+  jQuery("#bt_salvar").on("click", function (event) {
+    bloqueiaTela();
+    var form = jQuery("#form1");
+    // }
     jQuery("[id*='-valid']").addClass("d-none");
     jQuery("[id*='-fival']").removeClass("d-block");
     var form = jQuery(this)[0].form;
 
-    if (!form.checkValidity()) {
+    form.classList.add("was-validated");
+    isvalido = validador(form);
+    if (!isvalido) {
+      desBloqueiaTela();
       event.preventDefault();
       event.stopPropagation();
+    } else {
+      // verificar se o campo select foi alterado
+      jQuery("input[data-valid], select[data-valid]").each(async function () {
+        let validar = this.getAttribute("data-valid");
+
+        if (!validar || validar === "0") return;
+        let valororig = this.getAttribute("data-valor");
+        let value = jQuery(this).val();
+
+        // Se for um array (como em selects múltiplos), converte para string
+        if (Array.isArray(value)) {
+          value = value.join(",");
+        }
+
+        if (valororig !== value) {
+          event.preventDefault();
+          event.stopPropagation();
+          boxAlert(20, false, "submit", true, 1, true, "");
+        }
+      });
     }
-
-    form.classList.add("was-validated");
-
-    jQuery(".was-validated :invalid").each(function (index) {
-      nid = jQuery(this)[0].id;
-      jQuery("[id='" + nid + "-fival']").addClass("d-block");
-      tab = jQuery(this)[0].closest(".tab-pane").id;
-      jQuery("[id='" + tab + "-valid']").removeClass("d-none");
-    });
   });
+
   /**
    * Submete o Formulário com ajax
    * Document Ready my_default
@@ -904,5 +922,206 @@ function executaAjaxWait(urldest, tipo = "json", dados = {}, funcao = "") {
         desBloqueiaTela();
       },
     });
+  });
+}
+
+function validador(form) {
+  let valido = true;
+
+  jQuery("input").each(function () {
+    const $el = jQuery(this);
+    if ($el.closest(".d-none").length > 0) {
+      $el.prop("required", false);
+      $el.removeAttr("pattern");
+      $el.removeClass("is-valid is-invalid");
+    }
+  });
+
+  if (!form.checkValidity()) {
+    jQuery(".was-validated :invalid").each(function () {
+      const el = this;
+      const $el = jQuery(el);
+
+      const nid = escIdColchetes(el.id);
+      const tab = escIdColchetes(el.closest(".tab-pane")?.id);
+      const $erro = jQuery("#" + nid + "-fival");
+      const $tabVal = jQuery("#" + tab + "-valid");
+
+      $erro.removeClass("d-none").addClass("d-block");
+      if ($tabVal.length) $tabVal.removeClass("d-none");
+
+      const nome = el.title || "";
+      let mensagens = [];
+
+      if (el.validity.badInput) {
+        mensagens.push("Valor inserido é inválido");
+      }
+      if (el.validity.patternMismatch) {
+        mensagens.push("Valor não corresponde ao formato esperado agora");
+      }
+      if (el.validity.rangeOverflow) {
+        mensagens.push("Valor máximo permitido é " + el.max);
+      }
+      if (el.validity.rangeUnderflow) {
+        mensagens.push("Valor mínimo permitido é " + el.min);
+      }
+      if (el.validity.stepMismatch) {
+        mensagens.push("Valor não é permitido para este intervalo.");
+      }
+      if (el.validity.tooLong) {
+        mensagens.push(
+          "O campo " +
+            nome +
+            ", aceita no máximo " +
+            el.maxLength +
+            " caracteres"
+        );
+      }
+      if (el.validity.tooShort) {
+        mensagens.push(
+          "Digite pelo menos " + el.minLength + " caracteres para " + nome
+        );
+      }
+      if (el.validity.typeMismatch) {
+        mensagens.push("Valor não corresponde ao tipo esperado");
+      }
+      if (el.validity.valueMissing) {
+        mensagens.push(nome + " é Obrigatório!");
+      }
+
+      const mensagemFinal = mensagens.join("<br>");
+      $erro.html(mensagemFinal);
+
+      valido = false;
+    });
+  }
+
+  return valido;
+}
+
+function escIdColchetes(id) {
+  if (typeof id !== "string") return id;
+
+  // Só escapa se ainda não estiver escapado
+  return id
+    .replace(/(?<!\\)\[/g, "\\[") // escapa [ se não tiver barra antes
+    .replace(/(?<!\\)\]/g, "\\]"); // escapa ] se não tiver barra antes
+}
+
+function mostranoToast(texto, alerta = false) {
+  if (texto != "") {
+    showToast(texto, alerta);
+  }
+  showNotification(texto);
+}
+function getContrastYIQ(hexcolor) {
+  hexcolor = hexcolor.replace("#", "");
+  const r = parseInt(hexcolor.substr(0, 2), 16);
+  const g = parseInt(hexcolor.substr(2, 2), 16);
+  const b = parseInt(hexcolor.substr(4, 2), 16);
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+  return yiq >= 128 ? "black" : "white";
+}
+
+function rgbToHex(rgb) {
+  const result = rgb.match(/\d+/g);
+  return result
+    ? "#" + result.map((x) => (+x).toString(16).padStart(2, "0")).join("")
+    : "#000000";
+}
+
+function showToast(message, isAlert = false) {
+  let msg_id = null;
+  let titulo = "Informação";
+  let corpo = message;
+  let fundo = isAlert ? "#dc3545" : "#198754";
+  let classeFundo = isAlert ? "bg-danger" : "bg-success";
+  let icone = `<i class="bi ${
+    isAlert ? "bi-exclamation-triangle" : "bi-info-circle"
+  }"></i>`;
+  let tituloHTML = `${icone} ${titulo}`;
+
+  if (!isNaN(message)) {
+    msg_id = msg_cfg[parseInt(message) - 1];
+    if (msg_id) {
+      titulo = msg_id.msg_titulo || titulo;
+      corpo = msg_id.msg_mensagem || corpo;
+      tituloHTML = msg_id.msg_desc_tipo || `${icone} ${titulo}`;
+      if (msg_id.msg_cor) {
+        if (msg_id.msg_cor.startsWith("#")) {
+          fundo = msg_id.msg_cor;
+          classeFundo = "";
+        } else {
+          classeFundo = msg_id.msg_cor;
+          fundo = null; // será determinado via CSS real
+        }
+      }
+    }
+  }
+
+  const container = document.getElementById("toast-container");
+  const toast = document.createElement("div");
+  toast.className = `toast align-items-center ${classeFundo}`.trim();
+
+  // Aplicar contraste adequado ao texto
+  let textoCor = "white";
+  if (fundo && fundo.startsWith("#")) {
+    toast.style.backgroundColor = fundo;
+    textoCor = getContrastYIQ(fundo);
+    toast.style.color = textoCor;
+  } else if (classeFundo) {
+    // cria elemento temporário para obter a cor real
+    const temp = document.createElement("div");
+    temp.className = classeFundo;
+    temp.style.display = "none";
+    document.body.appendChild(temp);
+
+    const computed = getComputedStyle(temp).backgroundColor;
+    const hex = rgbToHex(computed);
+    textoCor = getContrastYIQ(hex);
+    toast.classList.add(`text-${textoCor}`);
+    document.body.removeChild(temp);
+  }
+
+  // Cabeçalho
+  const header = document.createElement("div");
+  header.className = "toast-header";
+  header.style.color = fundo; // título sempre preto
+
+  const title = document.createElement("strong");
+  title.className = "me-auto";
+  title.innerHTML = tituloHTML;
+
+  const closeBtn = document.createElement("button");
+  closeBtn.type = "button";
+  closeBtn.className = "btn-close";
+  closeBtn.style.color = "black";
+  closeBtn.setAttribute("aria-label", "Fechar");
+
+  header.appendChild(title);
+  header.appendChild(closeBtn);
+
+  // Corpo
+  const body = document.createElement("div");
+  body.className = "toast-body";
+  body.textContent = corpo;
+
+  toast.appendChild(header);
+  toast.appendChild(body);
+  container.appendChild(toast);
+
+  // Força reflow e ativa a animação
+  void toast.offsetHeight;
+  toast.classList.add("toast-animar");
+
+  const timeout = setTimeout(() => {
+    toast.classList.remove("toast-animar");
+    toast.addEventListener("transitionend", () => toast.remove());
+  }, 4000);
+
+  closeBtn.addEventListener("click", () => {
+    clearTimeout(timeout);
+    toast.classList.remove("toast-animar");
+    toast.addEventListener("transitionend", () => toast.remove());
   });
 }
