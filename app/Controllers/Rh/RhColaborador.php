@@ -127,6 +127,7 @@ class RhColaborador extends BaseController
         $secao[0] = 'Dados Gerais';
         $campos[0][0] = $this->col_id;
         $campos[0][count($campos[0])] = $this->emp_id;
+        $campos[0][count($campos[0])] = $this->emp_id_registro;
         $campos[0][count($campos[0])] = $this->cag_id;
         $campos[0][count($campos[0])] = $this->set_id;
         $campos[0][count($campos[0])] = $this->col_cpf;
@@ -216,6 +217,7 @@ class RhColaborador extends BaseController
         $secao[0] = 'Dados Gerais';
         $campos[0][0] = $this->col_id;
         $campos[0][count($campos[0])] = $this->emp_id;
+        $campos[0][count($campos[0])] = $this->emp_id_registro;
         $campos[0][count($campos[0])] = $this->cag_id;
         $campos[0][count($campos[0])] = $this->set_id;
         $campos[0][count($campos[0])] = $this->col_cpf;
@@ -310,6 +312,14 @@ class RhColaborador extends BaseController
         $emp->largura               = 50;
         $emp->leitura               = $show;
         $this->emp_id               = $emp->crSelect();
+
+        $reg                        = new MyCampo('rh_colaborador', 'emp_id_registro');
+        $reg->valor = $emp->selecionado = isset($dados['emp_id_registro']) ? $dados['emp_id_registro'] : '';
+        $reg->obrigatorio           = true;
+        $reg->opcoes                = $opc_emp;
+        $reg->largura               = 50;
+        $reg->leitura               = $show;
+        $this->emp_id_registro               = $reg->crSelect();
 
         $cargos                     = new RechumCargoModel();
         $dados_cag                  = $cargos->getCargo();

@@ -505,6 +505,9 @@ class MyCampo
             'onclick'       => $this->funcChan,
             'title'         => $this->place,
         );
+        if(isset($this->tipo)){
+            $this->field['type'] = $this->tipo;
+        }
         $this->funcChan = '';
         $this->propriedades();
 

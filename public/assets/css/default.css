@@ -745,17 +745,17 @@ input[type="color"]::-webkit-color-swatch {
 
 .invalid-feedback {
     display: none;
-    /* border: 2px solid;
-    border-radius: 10px; */
-    width: 100%;
-    /* background: white; */
-    bottom: -20px;
+    width: 80ch;
+    background: white;
+    top: 27px;
+    left: 40px;
     font-size: .875em;
-    height: fit-content;
+    height: 16px;
     position: absolute;
-    text-align: center;
+    text-align: left;
     color: var(--bs-danger-text);
     z-index: 100;
+    transform: translateX(0%);
 }
 
 /*Seleciona a classe form-control, desde que o elemento anterior tenha a classe .input-group-addon*/

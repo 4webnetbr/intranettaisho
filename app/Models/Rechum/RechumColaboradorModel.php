@@ -18,6 +18,7 @@ class RechumColaboradorModel extends Model
 
     protected $allowedFields    = [ 'col_id',
                                     'emp_id',
+                                    'emp_id_registro',
                                     'cag_id',
                                     'set_id',
                                     'col_cpf',

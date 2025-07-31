@@ -178,7 +178,7 @@ class RhHolerite extends BaseController
 
             $file->move($uploadPath);
             $arquivo = $uploadPath . $file->getName();
-
+            // echo $arquivo;
             // Carrega a planilha
             $spreadsheet = IOFactory::load($arquivo);
 
@@ -198,13 +198,15 @@ class RhHolerite extends BaseController
                 if ($parar) {
                     break;
                 }
+                $cont = 0;
                 foreach ($cellIterator as $cell) {
                     $valor = $cell->getValue();
                     $coluna = $cell->getColumn(); // Obtém o identificador da coluna (ex: A, B, C)
-
+                    $cont++;
+                    // debug('iniciou '.$cont);
+                    // debug("Coluna: $coluna, Valor: $valor"); // Exibe a coluna e o valor
                     // Verifica se a célula não está vazia
                     if ($valor !== null && $valor !== '') {
-                        // echo "Coluna: $coluna, Valor: $valor<br>"; // Exibe a coluna e o valor
                         if (substr(trim($valor), 0, 6) == 'Resumo') {
                             $parar = true;
                             break;
@@ -226,7 +228,7 @@ class RhHolerite extends BaseController
                                     // debug('EMPRESA NÃO CADASTRADA');
                                 } else {
                                     $holerite->emp_id = $empresa[0]['emp_id'];
-                                    $regcolab->emp_id = $empresa[0]['emp_id'];
+                                    $regcolab->emp_id_registro = $empresa[0]['emp_id'];
                                 }
                             }
                             $proximo = '';
@@ -388,7 +390,7 @@ class RhHolerite extends BaseController
                                 // echo "Alteração de Colaborador";
                                 // var_dump($salvacol);
                             } else {
-                                $regcolab->emp_id = $holerite->emp_id;
+                                $regcolab->emp_id_registro = $holerite->emp_id;
                                 $salvacol = $this->colaborador->insert($regcolab);
                                 $col_id = $this->colaborador->getInsertID();
                                 // echo "Inclusão de Colaborador";
@@ -818,6 +820,8 @@ class RhHolerite extends BaseController
         //     $ret['erro'] = true;
         //     $ret['msg'] = 'Arquivo Inválido';
         // }
+
+        // debug($ret);
         echo json_encode($ret);
     }
 
@@ -845,13 +849,13 @@ class RhHolerite extends BaseController
         $this->arquivo               = $arq->crArquivo();
 
         $bot = new MyCampo();
+        $bot->tipo = 'submit';
         $bot->nome = 'Processar';
         $bot->id    = 'Processar';
         $bot->label = 'Processar';
         $bot->place = 'Processar';
         $bot->i_cone = "<i class='fa-solid fa-play'></i> Processar";
         $bot->classep = 'btn btn-warning';
-        $bot->tipo = 'submit';
         // $bot->funcChan = 'monitora_importacao()';
         $bot->dispForm  = 'col-2';
         $this->botao = $bot->crBotao();
