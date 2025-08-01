@@ -549,7 +549,7 @@ class RhPonto extends BaseController
                             $proximo = '';
                             continue;
                         }
-                        if (trim($valor) == 'CNPJ' && $cnpj == '') {
+                        if ((trim($valor) == 'CNPJ' || trim($valor) == 'CNPJ:') && $cnpj == '') {
                             $proximo = 'cnpj';
                             continue;
                         }
@@ -557,22 +557,22 @@ class RhPonto extends BaseController
                             if ($cnpj == '') {
                                 $cnpj = formatCNPJ(trim($valor));
                                 // echo 'CNPJ: '.$cnpj."<br>";
-                                $empresa = $this->empresa->getEmpresaCNPJ($cnpj);
+                                $empresatrab = $this->empresa->getEmpresaCNPJ($cnpj);
                                 // debug($empresa, true);
-                                if (count($empresa) < 0) {
+                                if (count($empresatrab) < 0) {
                                     $ret['erro'] = true;
                                     $ret['msg'] = 'CNPJ ' . $cnpj . ' Não cadastrado';
                                     $parar = true;
                                     break;
                                 } else {
-                                    $ponto->emp_id = $empresa[0]['emp_id'];
-                                    $regcolab->emp_id = $empresa[0]['emp_id'];
+                                    $ponto->emp_id = $empresatrab[0]['emp_id'];
+                                    $regcolab->emp_id = $empresatrab[0]['emp_id'];
                                 }
                             }
                             $proximo = '';
                             continue;
                         }
-                        if (trim($valor) == 'Nome') {
+                        if ((trim($valor) == 'Nome' || trim($valor) == 'Nome:')) {
                             $proximo = 'nome';
                             continue;
                         }
@@ -581,7 +581,7 @@ class RhPonto extends BaseController
                             $proximo = '';
                             continue;
                         }
-                        if (trim($valor) == 'CPF') {
+                        if ((trim($valor) == 'CPF' || trim($valor) == 'CPF:')) {
                             $proximo = 'cpf';
                             // debug($proximo);
                             continue;
@@ -601,7 +601,7 @@ class RhPonto extends BaseController
                             $proximo = '';
                             continue;
                         }
-                        if (trim($valor) == 'Admissão' && !$regcolab->col_id) {
+                        if ((trim($valor) == 'Admissão' || trim($valor) == 'Admissão:') && !$regcolab->col_id) {
                             $proximo = 'admissao';
                             continue;
                         }
@@ -616,7 +616,7 @@ class RhPonto extends BaseController
                             $proximo = '';
                             continue;
                         }
-                        if (trim($valor) == 'Função' && !$regcolab->col_id) {
+                        if ((trim($valor) == 'Função' || trim($valor) == 'Função:') && !$regcolab->col_id) {
                             $proximo = 'funcao';
                             continue;
                         }
@@ -638,7 +638,7 @@ class RhPonto extends BaseController
                             $proximo = '';
                             continue;
                         }
-                        if ($valor == 'Data') {
+                        if ($valor == 'Data' || $valor == 'Data:') {
                             $ordem[$ctord] = $valor;
                             // debug($ordem);
                             $ctord++;
@@ -666,7 +666,7 @@ class RhPonto extends BaseController
                                 $proximo = 'colunas';
                                 continue;
                             }
-                        } else if (Trim($valor) == 'Atras.') {
+                        } else if ((Trim($valor) == 'Atras.' || Trim($valor) == 'Atras.:')) {
                             $maxord = $ctord;
                             // debug('Maxordem '.$maxord);
                             // debug($ordem);
@@ -718,7 +718,7 @@ class RhPonto extends BaseController
                                     }
                                     // debug($ponto->toArray());
                                     $ponto = new Ponto();
-                                    $ponto->emp_id = $empresa[0]['emp_id'];
+                                    $ponto->emp_id = $empresatrab[0]['emp_id'];
                                     $ponto->col_id = $regcolab->col_id;
 
                                     $ponto->pon_competencia = dataBrToDb($competencia);
@@ -737,7 +737,7 @@ class RhPonto extends BaseController
             }
             if (!$ret['erro']) {
                 $ret['erro'] = false;
-                $ret['msg'] = 'Importados os Pontos de ' . $contador . ' Colaboradores, \nda Empresa ' . $empresa[0]['emp_apelido'];
+                $ret['msg'] = 'Importados os Pontos de ' . $contador . ' Colaboradores, \nda Empresa ' . $empresatrab[0]['emp_apelido'];
                 session()->setFlashdata('msg', $ret['msg']);
                 $ret['url'] = site_url($this->data['controler']);
             }

@@ -127,6 +127,9 @@ class RhHolerite extends BaseController
             $param = false;
         }
 
+        $this->data['exclusao'] = false;
+        $this->data['edicao'] = false;
+
         $dados_holerites = $this->holerite->getHolerite(false, $param);
         $holerites = [
             'data' => montaListaColunas($this->data, 'col_id', $dados_holerites, 'col_nome'),
@@ -343,11 +346,13 @@ class RhHolerite extends BaseController
                         }
                         if ($proximo == 'cargo') {
                             $regcargo->cag_id = $valor;
+                            // debug($regcargo);
                             $proximo = 'nomecargo';
                             continue;
                         }
                         if ($proximo == 'nomecargo') {
                             $regcargo->cag_nome = $valor;
+                            // debug($regcargo);
                             $proximo = '';
                             continue;
                         }
@@ -357,15 +362,19 @@ class RhHolerite extends BaseController
                         }
                         if ($proximo == 'cbo') {
                             $regcargo->cag_cbo = $valor;
-                            $cargo = $this->cargo->getCargoSearch($regcargo->cag_nome);
-                            // debug($cargo);
-                            if (count($cargo) > 0) {
-                                $regcolab->cag_id = $cargo[0]['cag_id'];
-                            } else {
-                                $regcargo->cag_id = null;
-                                // debug($regcargo);
-                                $this->cargo->insert($regcargo);
-                                $regcolab->cag_id = $this->cargo->getInsertID();
+                            // debug('Busca Cargo');
+                            // debug($regcargo);
+                            if(isset($regcargo->cag_nome)){
+                                $cargo = $this->cargo->getCargoSearch($regcargo->cag_nome);
+                                // debug($cargo);
+                                if (count($cargo) > 0) {
+                                    $regcolab->cag_id = $cargo[0]['cag_id'];
+                                } else {
+                                    $regcargo->cag_id = null;
+                                    // debug($regcargo);
+                                    $this->cargo->insert($regcargo);
+                                    $regcolab->cag_id = $this->cargo->getInsertID();
+                                }
                             }
                             $regcargo = new Cargo();
                             $proximo = '';
@@ -386,6 +395,7 @@ class RhHolerite extends BaseController
                             if (count($colab) > 0) {
                                 $holerite->col_id = $colab[0]['col_id'];
                                 $regcolab->col_id = $colab[0]['col_id'];
+                                $regcolab->emp_id_registro = $holerite->emp_id;
                                 $salvacol = $this->colaborador->update($regcolab->col_id, $regcolab);
                                 // echo "Alteração de Colaborador";
                                 // var_dump($salvacol);
@@ -606,221 +616,6 @@ class RhHolerite extends BaseController
             $ret['msg'] = 'Arquivo Inválido';
         }
 
-        // Obtém os dados da planilha
-        // $data = $sheet->toArray(); // Converte a planilha em um array
-
-        // // Exibe os dados
-        // foreach ($data as $linha) {
-        //     echo implode(', ', $linha) . "\n"; // Exibe cada linha
-        // }
-
-        //     debug('Fim', true);         
-        //     $reader = Factory::createReader($arquivo);
-        //     $reader->load();
-        //     // debug($reader->, true);
-
-        //     $holerite = new Holerite();
-        //     $regcolab = new Colaborador();
-        //     $regcargo = new Cargo();
-        //     $novcolab = false;
-        //     $novcargo = false;
-        //     $salvarhol = false;
-        //     $resumo = false;
-        //     $contador = 0;
-        //     $cnpj = '';
-        //     foreach ($reader->read() as $row){
-        //         // debug($row);                
-        //         if(isset($row['A']) && substr(trim($row['A']),0,6) == 'Resumo'){
-        //             $resumo = true;
-        //         }                
-        //         if(isset($row['A']) && trim($row['A']) == 'CNPJ:'){
-        //             $resumo = false;
-        //             // debug($row['A']);
-        //             if($cnpj == ''){
-        //                 $cnpj = formatCNPJ(trim($row['Q']));
-        //                 // debug('CNPJ: '.$cnpj);
-        //                 $empresa = $this->empresa->getEmpresaCNPJ($cnpj);
-        //                 // debug($empresa);
-        //                 if(count($empresa) < 0){
-        //                     // debug('EMPRESA NÃO CADASTRADA');
-        //                 } else{
-        //                     $holerite->emp_id = $empresa[0]['emp_id'];
-        //                     $regcolab->emp_id = $empresa[0]['emp_id']; 
-        //                 }
-        //                 $cnpj = '';
-        //             }
-        //         }
-        //         if(!$resumo){
-        //             if(isset($row['BT']) && trim($row['BT']) == 'Emissão:'){
-        //                 $holerite->hol_dataemissao = substr($row['CA'],0,10);
-        //             }
-        //             if(isset($row['A']) && trim($row['A']) == 'Cálculo:'){
-        //                 $holerite->hol_calculo = $row['Q'];
-        //             }
-        //             if(isset($row['BT']) && trim($row['BT']) == 'Horas:'){
-        //                 $holerite->hol_horaemissao = substr($row['CA'],11,8);
-        //             }
-        //             if(isset($row['A']) && trim($row['A']) == 'Competência:'){
-        //                 $compet = substr($row['Q'],0,10);
-        //                 $datacompet = DateTime::createFromFormat('Y-m-d', $compet);
-        //                 $datacompet->add(new DateInterval('P1D'));
-        //                 $holerite->hol_competencia = $datacompet->format('Y-m-d');
-        //                 // debug($holerite->hol_competencia);
-        //             }
-        //             if(isset($row['A']) && trim($row['A']) == 'Empr.:'){
-        //                 $regcolab->col_cpf = $row['AZ'];
-        //                 $colab = $this->colaborador->getCPF($regcolab->col_cpf);
-        //                 // debug(count($colab));
-        //                 // debug($colab);
-        //                 if(count($colab) > 0){
-        //                     $holerite->col_id = $colab[0]['col_id'];
-        //                     $regcolab->col_id = $colab[0]['col_id'];
-        //                 } else {
-        //                     $novcolab = true;
-        //                     $regcolab->emp_id = $holerite->emp_id; 
-        //                 }
-        //                 $regcolab->col_nome = $row['J'];
-        //                 $regcolab->col_matricula = $row['F'];
-        //             }
-        //             if(isset($row['AB']) && trim($row['AB']) == 'Situação:'){
-        //                 $holerite->hol_situacao = $row['AG'];
-        //                 $regcolab->col_situacao = $row['AG'];
-        //             }
-        //             if(isset($row['BO']) && trim($row['BO']) == 'Adm:'){
-        //                 $admis = substr($row['BZ'],0,10);
-        //                 $dataadmis = DateTime::createFromFormat('Y-m-d', $admis);
-        //                 $dataadmis->add(new DateInterval('P1D'));
-        //                 $regcolab->col_data_admissao = $dataadmis->format('Y-m-d');
-        //             }
-        //             if(isset($row['A']) && trim($row['A']) == 'Cargo:'){
-        //                 $regcargo->cag_nome =  $row['J'];
-        //                 $cargo = $this->cargo->getCargoSearch($regcargo->cag_nome);
-        //                 // debug($cargo);
-        //                 if(count($cargo) > 0){
-        //                     $regcolab->cag_id = $cargo[0]['cag_id'];
-        //                 } else {
-        //                     $novcargo = true;
-        //                     $regcargo->cag_cbo = $row['AG'];
-        //                 }
-        //             }
-        //             if(isset($row['A']) && trim($row['A']) == 'Vínculo:'){
-        //                 $regcolab->col_vinculo = $row['J'];
-        //             }
-        //             if(isset($row['BL']) && trim($row['BL']) == 'Horas Mês:'){
-        //                 $regcolab->col_cargahoraria = $row['BY'];
-        //             }
-        //             if(isset($row['BM']) && trim($row['BM']) == 'Salário:'){
-        //                 $regcolab->col_salario = $row['BT'];
-        //                 // Salário é o último campo antes da relação de proventos e descontos
-        //                 // Aqui deve ser feito os cadastros
-        //                 if($novcargo){
-        //                     $this->cargo->save($regcargo);
-        //                     $regcolab->cag_id = $this->cargo->getInsertID();
-        //                 }
-        //                 // debug($regcolab);
-        //                 if($regcolab->col_id){
-        //                     // debug($regcolab);
-        //                     $salvacol = $this->colaborador->update($regcolab->col_id, $regcolab);
-        //                     $holerite->col_id = $regcolab->col_id;
-        //                 } else {
-        //                     $salvacol = $this->colaborador->insert($regcolab);
-        //                     $col_id = $this->colaborador->getInsertID();
-        //                     $holerite->col_id = $col_id;
-        //                 }
-        //                 $jatemhol = $this->holerite->getHoleriteUnico($holerite->emp_id, $holerite->col_id, $holerite->hol_competencia);
-        //                 if($jatemhol){
-        //                     $this->holerite->update($jatemhol[0]['hol_id'],$holerite);
-        //                     $holerite->hol_id = $jatemhol[0]['hol_id'];
-        //                 } else {
-        //                     $this->holerite->save($holerite);
-        //                     $holerite->hol_id = $this->holerite->getInsertID();
-        //                 }
-        //             }
-        //             if(isset($row['B']) && is_numeric(trim($row['B']))){
-        //                 $holitem = new HoleriteItem();
-        //                 $holitem->hol_id = $holerite->hol_id;
-        //                 $holitem->hoit_cod = $row['B'];
-        //                 $holitem->hoit_descricao = $row['I'];
-        //                 $holitem->hoit_valor = $row['U'];
-        //                 $holitem->hoit_valortotal = $row['AC'];
-        //                 $holitem->hoit_tipo = $row['AK'];
-        //                 $jatemite = $this->holeriteitem->getHoleriteItemUnico($holitem->hol_id, $holitem->hoit_cod);
-        //                 if($jatemite){
-        //                     $holitem->hoit_id = $jatemite[0]['hoit_id'];
-        //                 }
-        //                 $this->holeriteitem->save($holitem);
-        //             }
-        //             if(isset($row['AN']) && is_numeric(trim($row['AN']))){
-        //                 $holitem = new HoleriteItem();
-        //                 $holitem->hol_id = $holerite->hol_id;
-        //                 $holitem->hoit_cod = $row['AN'];
-        //                 $holitem->hoit_descricao = $row['AS'];
-        //                 $holitem->hoit_valor = $row['BK'];
-        //                 $holitem->hoit_valortotal = $row['BV'];
-        //                 $holitem->hoit_tipo = $row['CD'];
-        //                 $jatemite = $this->holeriteitem->getHoleriteItemUnico($holitem->hol_id, $holitem->hoit_cod);
-        //                 if($jatemite){
-        //                     $holitem->hoit_id = $jatemite[0]['hoit_id'];
-        //                 }
-        //                 $this->holeriteitem->save($holitem);
-        //             }
-        //             if(isset($row['H']) && trim($row['H']) == 'Proventos:'){
-        //                 $holerite->hol_proventos = $row['L'];
-        //             }
-        //             if(isset($row['T']) && trim($row['T']) == 'Descontos:'){
-        //                 $holerite->hol_descontos = $row['Y'];
-        //             }
-        //             if(isset($row['AG']) && trim($row['AG']) == 'Informativa:'){
-        //                 $holerite->hol_informativa = $row['AM'];
-        //             }
-        //             if(isset($row['AX']) && trim($row['AX']) == 'Informativa Dedutora:'){
-        //                 $holerite->hol_informativa_dedutora = $row['BG'];
-        //             }
-        //             if(isset($row['BP']) && trim($row['BP']) == 'Líquido:'){
-        //                 $holerite->hol_liquido = $row['BY'];
-        //             }
-        //             if(isset($row['H']) && trim($row['H']) == 'Base INSS:'){
-        //                 $holerite->hol_baseinss = $row['L'];
-        //             }
-        //             if(isset($row['T']) && trim($row['T']) == 'Excedente INSS:'){
-        //                 $holerite->hol_excedente_inss = $row['Y'];
-        //             }
-        //             if(isset($row['AG']) && trim($row['AG']) == 'Base FGTS:'){
-        //                 $holerite->hol_basefgts = $row['AM'];
-        //             }
-        //             if(isset($row['BP']) && trim($row['BP']) == 'Base IRRF:'){
-        //                 $holerite->hol_baseirrf = $row['BY'];
-        //                 $salvarhol = true;
-        //             }
-        //             if(isset($row['A']) && strlen(trim($row['A'])) > 30){
-        //                 $holerite->hol_observacao = $row['A'];
-        //             }
-        //             if($salvarhol){
-        //                 $this->holerite->save($holerite);
-        //                 $holanter = $holerite;
-        //                 // debug($regcolab->col_nome);
-        //                 $contador++;
-        //                 $holerite = new Holerite();
-        //                 $holerite->emp_id = $empresa[0]['emp_id'];
-        //                 $holerite->hol_dataemissao = $holanter->hol_dataemissao;
-        //                 $holerite->hol_horaemissao = $holanter->hol_horaemissao;
-        //                 $holerite->hol_calculo     = $holanter->hol_calculo;
-        //                 $holerite->hol_competencia = $holanter->hol_competencia;
-        //                 $novcolab = false;
-        //                 $novcargo = false;
-        //                 $salvarhol = false;                            
-        //             }
-        //         }
-        //     }
-        //     $ret['erro'] = false;
-        //     $ret['msg'] = 'Importados os Holerites de '.$contador.' Colaboradores, \nda Empresa '.$empresa[0]['emp_apelido'];
-        //     session()->setFlashdata('msg', $ret['msg']);
-        //     $ret['url'] = site_url($this->data['controler']);
-        // } else {
-        //     $ret['erro'] = true;
-        //     $ret['msg'] = 'Arquivo Inválido';
-        // }
-
         // debug($ret);
         echo json_encode($ret);
     }
@@ -845,7 +640,7 @@ class RhHolerite extends BaseController
         $arq->size                  = 100;
         $arq->largura               = 0;
         $arq->dispForm              = 'col-12';
-        $arq->tipoArq               = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        $arq->tipoArq               = 'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
         $this->arquivo               = $arq->crArquivo();
 
         $bot = new MyCampo();
