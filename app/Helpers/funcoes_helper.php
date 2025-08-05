@@ -867,6 +867,8 @@ function fmtEtiquetaCorBst($cor)
 
 function get_cloudfy_curl($config, $empresa, $inicio = false, $fim = false)
 {
+    // $inicio = '20250731';
+    // $fim = '20250802';
     $api = $config['api_nome'];
     if (!$inicio) {
         $inicio = date('Ymd', strtotime("-1 days"));
