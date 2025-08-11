@@ -60,7 +60,8 @@ class RhPagamento extends BaseController
     {
         $this->def_campos();
 
-        $campos[0] = $this->emp_id;
+        // $campos[0] = $this->emp_id;
+        $campos[0] = $this->emp_id_registro;
         $campos[1] = $this->competencia;
         $campos[2] = $this->vtcuritiba;
         $campos[3] = $this->vtmetropolitana;
@@ -81,7 +82,8 @@ class RhPagamento extends BaseController
         // debug($dados_emp);
         $filtro          = $this->request->getVar();
         // debug($filtro, false);
-        $empresa        = $filtro['empresa'];
+        // $empresa        = $filtro['empresa'];
+        $empresa        = $filtro['registro'];
         $competencia    = $filtro['competencia'];
         $vtcur          = moedaToFloat($filtro['vtcur']);
         $vtmet          = moedaToFloat($filtro['vtmet']);
@@ -160,6 +162,7 @@ class RhPagamento extends BaseController
                 $totfalta = 0;
                 $totatest = 0;
                 $ferias   = 0;
+                $inss = 0;
                 if (count($dados_resumo) > 0) {
                     $dados_resumo = $dados_resumo[0];
                     $descontar = $dados_resumo['pon_falta'] + $dados_resumo['pon_atestado'];
@@ -327,6 +330,14 @@ class RhPagamento extends BaseController
         $emp->dispForm  = 'col-3';
         $this->emp_id               = $emp->crSelect();
 
+        $reg                        = new MyCampo('rh_colaborador', 'emp_id_registro');
+        $reg->valor = $emp->selecionado = isset($dados['emp_id_registro']) ? $dados['emp_id_registro'] : '';
+        $reg->obrigatorio           = true;
+        $reg->opcoes                = $opc_emp;
+        $reg->largura               = 50;
+        $reg->leitura               = $show;
+        $this->emp_id_registro               = $reg->crSelect();
+
         $comp                        = new MyCampo();
         $comp->id = $comp->nome      = 'competencia';
         $comp->valor = $comp->selecionado = '';
@@ -336,7 +347,7 @@ class RhPagamento extends BaseController
         $comp->opcoes                = [];
         $comp->largura               = 20;
         $comp->leitura               = $show;
-        $comp->pai                  = 'emp_id';
+        $comp->pai                  = 'emp_id_registro';
         $comp->urlbusca             = 'buscas/buscaCompetencia';
         $comp->dispForm             = 'col-2';
         $this->competencia          = $comp->crDepende();

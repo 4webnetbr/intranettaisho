@@ -555,10 +555,12 @@ class RhPonto extends BaseController
                         }
                         if ($proximo == 'cnpj') {
                             if ($cnpj == '') {
+                                // debug($valor, false);
                                 $cnpj = formatCNPJ(trim($valor));
                                 // echo 'CNPJ: '.$cnpj."<br>";
+                                // debug($cnpj, false);
                                 $empresatrab = $this->empresa->getEmpresaCNPJ($cnpj);
-                                // debug($empresa, true);
+                                // debug($empresatrab, true);
                                 if (count($empresatrab) < 0) {
                                     $ret['erro'] = true;
                                     $ret['msg'] = 'CNPJ ' . $cnpj . ' Não cadastrado';
@@ -779,7 +781,7 @@ class RhPonto extends BaseController
         $bot->i_cone = "<i class='fa-solid fa-play'></i> Processar";
         $bot->classep = 'btn btn-warning';
         $bot->tipo = 'submit';
-        $bot->funcChan = 'submit()';
+        // $bot->funcChan = 'submit()';
         $bot->dispForm  = 'col-2';
         $this->botao = $bot->crBotao();
     }
