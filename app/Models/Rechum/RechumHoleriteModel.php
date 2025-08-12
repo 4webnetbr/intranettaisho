@@ -109,7 +109,10 @@ class RechumHoleriteModel extends Model
             $builder->where("hol_id", $hol_id);
         }
         if ($emp_id) {
+            $builder->groupStart();
             $builder->where("emp_id", $emp_id);
+            $builder->orWhere("emp_id_registro", $emp_id);
+            $builder->groupEnd();
         }
         if ($competencia) {
             $builder->where("hol_mesanocompetencia", $competencia);
@@ -181,7 +184,7 @@ class RechumHoleriteModel extends Model
     public function getCompetencia($empresa)
     {
         $db = db_connect('dbRh');
-        $builder = $db->table('vw_rh_competencia');
+        $builder = $db->table('vw_rh_competencia_hol');
         $builder->select('*');
         $builder->where('emp_id', $empresa);
         $builder->orderBy('data_competencia', 'DESC');

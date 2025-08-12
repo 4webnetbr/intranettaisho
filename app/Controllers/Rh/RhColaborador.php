@@ -58,6 +58,13 @@ class RhColaborador extends BaseController
         $this->data['url_lista']    = base_url($this->data['controler'] . '/lista');
         $this->data['campos']         = $campos;
         $this->data['script']       = "<script>carrega_lista('empresa', '" . $this->data['url_lista'] . "','" . $this->data['nome'] . "');</script>";
+
+        $desc_edicao = 
+        "<div class='float-start bg-success py-1 px-3 me-1' >Férias</div> ".
+        "<div class='float-start bg-warning py-1 px-3 me-1' >Demitido</div> ".
+        "<div class='float-start bg-info py-1 px-3' >INSS</div> ";
+        $this->data['desc_edicao']         = $desc_edicao;
+
         echo view('vw_lista_filtrada', $this->data);
     }
 
@@ -158,6 +165,7 @@ class RhColaborador extends BaseController
         $campos[2][count($campos[2])] = $this->col_data_demissao;
         $campos[2][count($campos[2])] = $this->col_tipo;
         $campos[2][count($campos[2])] = $this->col_salario;
+        $campos[2][count($campos[2])] = $this->col_premio;
         $campos[2][count($campos[2])] = $this->col_pctparticipacao;
         $campos[2][count($campos[2])] = $this->col_situacao;
         $campos[2][count($campos[2])] = $this->col_vale;
@@ -248,6 +256,7 @@ class RhColaborador extends BaseController
         $campos[2][count($campos[2])] = $this->col_data_demissao;
         $campos[2][count($campos[2])] = $this->col_tipo;
         $campos[2][count($campos[2])] = $this->col_salario;
+        $campos[2][count($campos[2])] = $this->col_premio;
         $campos[2][count($campos[2])] = $this->col_pctparticipacao;
         $campos[2][count($campos[2])] = $this->col_situacao;
         $campos[2][count($campos[2])] = $this->col_vale;
@@ -457,6 +466,13 @@ class RhColaborador extends BaseController
         $sal->leitura               = $show;
         $sal->largura               = 30;
         $this->col_salario               = $sal->crInput();
+
+        $pre                        = new MyCampo('rh_colaborador', 'col_premio');
+        $pre->valor = $pre->selecionado = isset($dados['col_premio']) ? $dados['col_premio'] : '';
+        $pre->obrigatorio           = false;
+        $pre->leitura               = $show;
+        $pre->largura               = 30;
+        $this->col_premio               = $pre->crInput();
 
         $par                        = new MyCampo('rh_colaborador', 'col_pctparticipacao');
         $par->valor = $par->selecionado = isset($dados['col_pctparticipacao']) ? $dados['col_pctparticipacao'] : '';

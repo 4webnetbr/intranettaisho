@@ -69,8 +69,13 @@ class RhPagamento extends BaseController
 
         $colunas = ['id', 'Colaborador', 'Tipo', 'Combinado', 'Vencimentos', 'Descontos', 'Vale', 'VT', 'VT Falta', 'V Premio', 'Premio', 'V Mercado', 'Banco', 'p/fora', 'Total'];
 
+        $desc_edicao = 
+        "<div class='float-start bg-success py-1 px-3 me-1' >Férias</div> ".
+        "<div class='float-start bg-warning py-1 px-3 me-1' >Demitido</div> ".
+        "<div class='float-start bg-info py-1 px-3' >INSS</div> ";
         $this->data['cols']         = $colunas;
         $this->data['nome']         = 'pagamento';
+        $this->data['desc_edicao']         = $desc_edicao;
         $this->data['campos'] = $campos;
         $this->data['destino'] = 'index';
 
@@ -243,17 +248,29 @@ class RhPagamento extends BaseController
             }
 
             // CALCULA O VALE MERCADO
-            if ($tipo == 9 || $inss > 0 || trim($situac) == 'Férias') {
+            if ($tipo == 9 || $inss > 0 || trim($situac) == 'Férias' || $ferias > 15) {
                 $merca = 0;
             } else {
-                if ($totfalta >= 2 || $totatest > 1) {
+                if ($totatest > 1) {
                     $merca = 0;
                 } else if ($totfalta > 0) {
-                    $merca = 40;
+                    $merca = 50;
                 } else {
-                    $merca = 80;
+                    $merca = 100;
                 }
             }
+
+            // CALCULA O MERCADO
+            $premio = $hole['col_premio'];
+            if ($tipo == 9 || $inss > 0 || trim($situac) == 'Férias' || $ferias > 15) {
+                $premio = 0;
+            } else {
+                $premio = $premio - ($totatest * 100);
+                if($premio < 0){
+                    $premio = 0;
+                }
+            }
+
             $pfora = $total - $banco;
             $totbanco += $banco;
             $totpfora += $pfora;
@@ -274,8 +291,8 @@ class RhPagamento extends BaseController
             $pagam[$ct][6] = floatToMoeda($vale);
             $pagam[$ct][7] = floatToMoeda($valorvt);
             $pagam[$ct][8] = floatToMoeda($valorde);
-            $pagam[$ct][9] = 0;
-            $pagam[$ct][10] = 0;
+            $pagam[$ct][9] = floatToMoeda($hole['col_premio']);
+            $pagam[$ct][10] = floatToMoeda($premio);
             $pagam[$ct][11] = floatToMoeda($merca);
             $pagam[$ct][12] = floatToMoeda($banco);
             $pagam[$ct][13] = floatToMoeda($pfora);

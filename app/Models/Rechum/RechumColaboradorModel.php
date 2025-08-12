@@ -43,6 +43,7 @@ class RechumColaboradorModel extends Model
                                     'col_data_demissao',
                                     'col_tipo',
                                     'col_salario',
+                                    'col_premio',
                                     'col_pctparticipacao',
                                     'col_excluido',
                                     'col_situacao',
