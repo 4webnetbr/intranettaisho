@@ -946,3 +946,157 @@ function montaListaDadosGrupo(tabela, url, groupColumn = 0) {
     // }
   }
 }
+
+function montaListaDadosCarregados(tabela) {
+  jQuery.fn.dataTable.moment("DD/MM/YYYY HH:mm:ss"); // Formatação com Hora
+  jQuery.fn.dataTable.moment("DD/MM/YYYY"); // Formatação sem Hora
+
+  table = new DataTable("#" + tabela, {
+    retrieve: true,
+    stateSave: true,
+    sPaginationType: "full_numbers",
+    order: [], // Adicione esta linha para evitar ordenação inicial
+    columnDefs: [
+      { visible: false, targets: [0] },
+      { "max-width": "8em", targets: [-1] },
+      { "min-width": "8em", targets: [-1] },
+      { width: "8em", targets: [-1] },
+      { searchable: false, targets: [-1] },
+      { className: "text-center acao text-nowrap", targets: [-1] },
+      { className: "acao", targets: [0] },
+      { className: "text-start cell-border", targets: "_all" },
+    ],
+    buttons: {
+      dom: {
+        button: {
+          className: "btn btn-outline-primary wauto",
+          style: "max-width: 31.5px!important;",
+        },
+      },
+      buttons: [
+        {
+          extend: "searchBuilder",
+          text: '<i class="fas fa-filter" aria-hidden="true"></i>',
+          titleAttr: "Filtrar",
+          config: {
+            text: '<i class="fas fa-filter" aria-hidden="true"></i>',
+            id: "bt_filtro",
+            columns: [":not(.acao)", ":visible"],
+            defaultCondition: "Igual",
+          },
+          preDefined: {
+            criteria: [
+              {
+                condition: "Igual",
+              },
+            ],
+          },
+        },
+        {
+          extend: "excelHtml5",
+          text: '<i class="far fa-file-excel" aria-hidden="true"></i>',
+          titleAttr: "Exportar para Excel",
+          title: function () {
+            return document.title + " - " + jQuery("#legenda").text();
+          },
+          filename: function () {
+            return document.title + " - " + jQuery("#legenda").text();
+          },
+          exportOptions: {
+            columns: [":not(.acao)"],
+          },
+        },
+        {
+          extend: "pdfHtml5",
+          text: '<i class="far fa-file-pdf" aria-hidden="true"></i>',
+          titleAttr: "Exportar para PDF",
+          title: function () {
+            return document.title + " - " + jQuery("#legenda").text();
+          },
+          filename: function () {
+            return document.title + " - " + jQuery("#legenda").text();
+          },
+          exportOptions: {
+            columns: [":not(.acao)"],
+          },
+        },
+        {
+          extend: "print",
+          autoPrint: true,
+          text: '<i class="fas fa-print" aria-hidden="true"></i>',
+          titleAttr: "Enviar para Impressora",
+          title: function () {
+            return document.title + " - " + jQuery("#legenda").text();
+          },
+          exportOptions: {
+            columns: ":not(.acao)",
+          },
+        },
+        {
+          extend: "colvis",
+          text: '<i class="fa-solid fa-table-columns"></i>',
+          columns: [":not(.acao)"],
+          popoverTitle: "Colunas",
+        },
+      ],
+    },
+    bSortCellsTop: true,
+    pageLength: 50,
+    bPaginate: true,
+    scrollY: "calc(100vh - 15rem)",
+    bProcessing: true,
+    bScrollCollapse: true,
+    deferRender: true,
+    sDom: "lftrBip",
+    language: {
+      url: "assets/jscript/datatables-lang/pt-BR.json",
+    },
+    fnRowCallback: function (nRow, aData) {
+      // Verifica se a coluna "status" existe antes de tentar acessar
+      if (aData && aData.hasOwnProperty("cor")) {
+        if (aData.cor != "") {
+          jQuery(nRow).removeClass("even");
+          jQuery(nRow).removeClass("odd");
+          jQuery(nRow).addClass(aData.cor);
+        }
+      }
+    },
+    fnDrawCallback: function (oSettings) {
+      jQuery("table#" + tabela + " > tbody > tr")
+        .on("mouseover", function () {
+          jQuery(this).children().find(".btn").addClass("hover");
+        })
+        .on("mouseleave", function () {
+          jQuery(this).children().find(".btn").removeClass("hover");
+        });
+    },
+  });
+
+  jQuery("#" + tabela).on("click", 'tbody tr td:not(".acao")', function () {
+    var link = jQuery(this).parent().find("a")[0];
+
+    if (link && link.href) {
+      if (link.href.indexOf("edit/") > -1 || link.indexOf("show/") > -1) {
+        redireciona(link.href);
+      }
+    }
+  });
+
+  table.on("draw", function () {
+    jQuery(".buttons-colvis").removeClass("dropdown-toggle");
+  });
+
+  table.on("draw.dt", function (e, settings) {
+    let api = new DataTable.Api(settings);
+
+    settings.aoColumns.forEach((c, i) => {
+      if (c.sType.includes("num")) {
+        api
+          .cells(null, i, { page: "current" })
+          .nodes()
+          .to$()
+          .addClass("text-end");
+      }
+    });
+  });
+}

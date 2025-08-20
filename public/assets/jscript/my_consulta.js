@@ -1583,3 +1583,57 @@ function extrairComEscape(id) {
   const match = id.match(/\[(\d+)\]/);
   return match ? `\\[${match[1]}\\]` : "";
 }
+
+function foco_sults(obj) {
+  if (jQuery(obj).is("select[multiple]")) {
+    const selecionadosAntes = jQuery(obj).val() || [];
+    jQuery(obj).data("valores-antes", selecionadosAntes);
+  }
+}
+
+function carrega_sults(obj) {
+  const formData = {};
+  const $section = jQuery(obj).closest("section"); // Busca a section mais próxima do obj
+
+  $section.find("input, select").each(function () {
+    const $field = jQuery(this);
+    const id = $field.attr("id");
+
+    if (id) {
+      // Se for um campo daterange, captura início e fim
+      if ($field.hasClass("daterange")) {
+        const val = $field.val();
+        if (val && val.includes(" - ")) {
+          const [inicio, fim] = val.split(" - ");
+          formData[id + "_inicio"] = inicio.trim();
+          formData[id + "_fim"] = fim.trim();
+        } else {
+          formData[id + "_inicio"] = "";
+          formData[id + "_fim"] = "";
+        }
+      } else {
+        let valor = $field.val();
+        if (Array.isArray(valor)) {
+          valor = valor.join(","); // Converte array para string
+        }
+        formData[id] = valor;
+      }
+    }
+  });
+  console.log("Dados do formulário:", JSON.parse(JSON.stringify(formData)));
+  jQuery.ajax({
+    url: "/DashSults/busca_dados", // Caminho para o controller/método
+    type: "POST",
+    data: formData,
+    dataType: "json",
+    success: function (response) {
+      console.log("✅ Resposta do servidor:", response);
+      jQuery("#conteudo").html(response.tabela);
+      montaListaDadosCarregados("table");
+      // Aqui você pode manipular o retorno, como atualizar a UI
+    },
+    error: function (xhr, status, error) {
+      console.error("❌ Erro na requisição AJAX:", status, error);
+    },
+  });
+}

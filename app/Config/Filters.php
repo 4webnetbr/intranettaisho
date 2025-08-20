@@ -52,6 +52,8 @@ class Filters extends BaseConfig
                     'integracfyantes/*',
                     'integraopinae',
                     'integraopinae/*',
+                    'integrasults',
+                    'integrasults/*',
                     'graph',
                     'graph/*',
                     'table',

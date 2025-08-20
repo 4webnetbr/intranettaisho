@@ -24,6 +24,7 @@ class MyCampo
     public string $valor;      // Valor inicial do Campo
     public string $funcChan;   // Função que será executada na alteracao do campo
     public string $funcBlur;   // Função que será executada na saída do campo
+    public string $funcFoco;   // Função que será executada na entrada do campo
     public string $classep;    // Classe personalizada a ser aplicado no campo
     public string $classediv;    // Classe personalizada a ser aplicado na div do campo
     public string $tipoArq;    // Tipos de Arquivo suportados pelo campo imagem
@@ -73,6 +74,7 @@ class MyCampo
         $this->classediv    = '';
         $this->funcChan     = '';
         $this->funcBlur     = '';
+        $this->funcFoco     = '';
         // $this->ordem        = 0;
         $this->infotop      = '';
         $this->inforig      = '';
@@ -410,6 +412,7 @@ class MyCampo
         $this->field['label']         = isset($this->label) ? $this->label : "";
         $this->field['hint']          = isset($this->hint) ? $this->hint : "";
         $this->field['autocomplete']  = 'off';
+        $this->field['onfocus']      = isset($this->funcFoco) ? $this->funcFoco : "";
         $this->field['onchange']      = isset($this->funcChan) ? $this->funcChan : "";
         $this->field['onblur']        = isset($this->funcBlur) ? $this->funcBlur : "";
         $this->field['tabindex']      = 0;
@@ -946,7 +949,7 @@ class MyCampo
                     );
                     $resp .= form_input($fieldpassoculto);
                     $this->field['class']     = "form-control $this->classep password";
-                    $this->field['onchange']  = $this->funcChan;
+                    // $this->field['onchange']  = $this->funcChan;
                     $this->field['onblur']    = 'validaSenha(this);oculta_passinfo();' . $this->funcBlur;
                     $this->field['aria-describedby'] = 'ad_' . $this->nome;
                     $groupant .= "<span class='input-group-text input-group-addon' 

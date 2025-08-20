@@ -1605,3 +1605,29 @@ function buscarProdutoMultiFonte($gtin) {
 }
 
 
+function get_sults_curl($api)
+{
+    // debug($param);
+
+    $ch = curl_init();
+
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $api['api_url'],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => [
+                "Authorization: ".$api['api_tokenkey'],
+                "Content-Type: application/json;charset=UTF-8"
+            ],
+        ]);
+
+        $response = curl_exec($ch);
+        $error    = curl_error($ch);
+        curl_close($ch);
+
+        if ($error) {
+            log_message('error', 'Erro ao consumir API: ' . $error);
+            return false;
+        }
+
+        return json_decode($response, true);    
+};;

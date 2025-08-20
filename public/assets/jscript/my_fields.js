@@ -17,6 +17,7 @@ function carregamentos_iniciais() {
       alwaysShowCalendars: true,
       startDate: start,
       endDate: end,
+      autoUpdateInput: false, // evita preencher automaticamente
       ranges: {
         Hoje: [moment(), moment()],
         Ontem: [moment().subtract(1, "days"), moment().subtract(1, "days")],
@@ -29,12 +30,13 @@ function carregamentos_iniciais() {
         ],
         "Últimos 12 meses": [moment().subtract(12, "months"), moment()],
         "Últimos 18 meses": [moment().subtract(18, "months"), moment()],
+        "Sem período": [moment(), moment()], // só como gatilho
       },
       locale: {
         format: "DD/MM/YYYY",
         customRangeLabel: "Período",
         applyLabel: "Aplicar",
-        cancelLabel: "Cancela",
+        cancelLabel: "Limpar",
         daysOfWeek: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],
         monthNames: [
           "Janeiro",
@@ -50,13 +52,21 @@ function carregamentos_iniciais() {
           "Novembro",
           "Dezembro",
         ],
-        // "firstDay": 1
       },
     },
-    cb
+    function (start, end, label) {
+      // <--- seu cb
+      cb(start, end);
+      const $input = jQuery(this.element);
+      if (label === "Sem período") {
+        $input.val("Sem Período").trigger("change"); // range nulo
+        return;
+      }
+      $input
+        .val(start.format("DD/MM/YYYY") + " - " + end.format("DD/MM/YYYY"))
+        .trigger("change");
+    }
   );
-
-  cb(start, end);
 
   var temNumero = /[0-9]/;
   var temMaiusc = /[A-Z]/;

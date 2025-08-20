@@ -83,6 +83,35 @@ class CommonModel extends Model
 
 
     /**
+     * saveReg
+     *
+     * Insere ou altera Registro na Tabela informada
+     *  
+     * @param string $table 
+     * @param mixed $data 
+     * @return int
+     */
+    public function saveReg($grupo, $table, $data, $chave)
+    {
+        $db = db_connect($grupo);
+        $builder = $db->table($table);        
+        $existe = $this->getExiste($grupo,$table, $chave);
+        if($existe){
+            $builder = $db->table($table);
+            $builder->where($chave);
+            $update_id = $builder->update($data);
+            // $sql = $builder->getCompiledUpdate();
+        } else {
+            $builder = $db->table($table);
+            $ins = $builder->insert($data);
+            $update_id = $db->insertID();
+        }
+        $sql = $db->getLastQuery();
+        // debug($sql);        
+        return $update_id;
+    }
+
+    /**
      * getFieldsTable
      *
      * Retorna os Campos da Tabela informada
@@ -165,6 +194,20 @@ class CommonModel extends Model
         // $sql = $this->db->getLastQuery();
         // debug($sql, true);
 
+        return $ret;
+    }
+
+    public function getResult($banco, $table, $chave = '1 = 1', $fields = '*', $order = 1)
+    {
+        $db = db_connect($banco);
+        $builder = $db->table($table);
+        $builder->select($fields);
+        $builder->where($chave);
+        $builder->orderBy($order);
+
+        // $sql = $builder->getCompiledSelect();
+        // debug($sql, false);
+        $ret = $builder->get()->getResultArray();
         return $ret;
     }
 }
