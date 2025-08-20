@@ -1592,34 +1592,47 @@ function foco_sults(obj) {
 }
 
 function carrega_sults(obj) {
+  bloqueiaTela();
   const formData = {};
   const $section = jQuery(obj).closest("section"); // Busca a section mais próxima do obj
 
-  $section.find("input, select").each(function () {
-    const $field = jQuery(this);
-    const id = $field.attr("id");
-
-    if (id) {
-      // Se for um campo daterange, captura início e fim
-      if ($field.hasClass("daterange")) {
-        const val = $field.val();
-        if (val && val.includes(" - ")) {
-          const [inicio, fim] = val.split(" - ");
-          formData[id + "_inicio"] = inicio.trim();
-          formData[id + "_fim"] = fim.trim();
-        } else {
-          formData[id + "_inicio"] = "";
-          formData[id + "_fim"] = "";
-        }
-      } else {
-        let valor = $field.val();
-        if (Array.isArray(valor)) {
-          valor = valor.join(","); // Converte array para string
-        }
-        formData[id] = valor;
-      }
+  if (obj.id == "aberto") {
+    const val = jQuery(obj).val();
+    if (val && val.includes(" - ")) {
+      const [inicio, fim] = val.split(" - ");
+      formData[obj.id + "_inicio"] = inicio.trim();
+      formData[obj.id + "_fim"] = fim.trim();
+    } else {
+      formData[obj.id + "_inicio"] = "";
+      formData[obj.id + "_fim"] = "";
     }
-  });
+  } else {
+    $section.find("input, select").each(function () {
+      const $field = jQuery(this);
+      const id = $field.attr("id");
+
+      if (id) {
+        // Se for um campo daterange, captura início e fim
+        if ($field.hasClass("daterange")) {
+          const val = $field.val();
+          if (val && val.includes(" - ")) {
+            const [inicio, fim] = val.split(" - ");
+            formData[id + "_inicio"] = inicio.trim();
+            formData[id + "_fim"] = fim.trim();
+          } else {
+            formData[id + "_inicio"] = "";
+            formData[id + "_fim"] = "";
+          }
+        } else {
+          let valor = $field.val();
+          if (Array.isArray(valor)) {
+            valor = valor.join(","); // Converte array para string
+          }
+          formData[id] = valor;
+        }
+      }
+    });
+  }
   console.log("Dados do formulário:", JSON.parse(JSON.stringify(formData)));
   jQuery.ajax({
     url: "/DashSults/busca_dados", // Caminho para o controller/método
@@ -1630,6 +1643,37 @@ function carrega_sults(obj) {
       console.log("✅ Resposta do servidor:", response);
       jQuery("#conteudo").html(response.tabela);
       montaListaDadosCarregados("table");
+      if (obj.id != "unidade[]") {
+        jQuery("select[id='unidade[]']").selectpicker("val", response.unidade);
+      }
+      if (obj.id != "departamento[]") {
+        jQuery("select[id='departamento[]']").selectpicker(
+          "val",
+          response.departamento
+        );
+      }
+      if (obj.id != "assunto[]") {
+        jQuery("select[id='assunto[]']").selectpicker("val", response.assunto);
+      }
+      if (obj.id != "solicitante[]") {
+        jQuery("select[id='solicitante[]']").selectpicker(
+          "val",
+          response.solicitante
+        );
+      }
+      if (obj.id != "responsavel[]") {
+        jQuery("select[id='responsavel[]']").selectpicker(
+          "val",
+          response.responsavel
+        );
+      }
+      if (obj.id != "situacao[]") {
+        jQuery("select[id='situacao[]']").selectpicker(
+          "val",
+          response.situacao
+        );
+      }
+      desBloqueiaTela();
       // Aqui você pode manipular o retorno, como atualizar a UI
     },
     error: function (xhr, status, error) {

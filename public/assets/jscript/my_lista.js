@@ -952,20 +952,9 @@ function montaListaDadosCarregados(tabela) {
   jQuery.fn.dataTable.moment("DD/MM/YYYY"); // Formatação sem Hora
 
   table = new DataTable("#" + tabela, {
-    retrieve: true,
-    stateSave: true,
     sPaginationType: "full_numbers",
     order: [], // Adicione esta linha para evitar ordenação inicial
-    columnDefs: [
-      { visible: false, targets: [0] },
-      { "max-width": "8em", targets: [-1] },
-      { "min-width": "8em", targets: [-1] },
-      { width: "8em", targets: [-1] },
-      { searchable: false, targets: [-1] },
-      { className: "text-center acao text-nowrap", targets: [-1] },
-      { className: "acao", targets: [0] },
-      { className: "text-start cell-border", targets: "_all" },
-    ],
+    columnDefs: [{ className: "text-start cell-border", targets: "_all" }],
     buttons: {
       dom: {
         button: {
@@ -974,24 +963,6 @@ function montaListaDadosCarregados(tabela) {
         },
       },
       buttons: [
-        {
-          extend: "searchBuilder",
-          text: '<i class="fas fa-filter" aria-hidden="true"></i>',
-          titleAttr: "Filtrar",
-          config: {
-            text: '<i class="fas fa-filter" aria-hidden="true"></i>',
-            id: "bt_filtro",
-            columns: [":not(.acao)", ":visible"],
-            defaultCondition: "Igual",
-          },
-          preDefined: {
-            criteria: [
-              {
-                condition: "Igual",
-              },
-            ],
-          },
-        },
         {
           extend: "excelHtml5",
           text: '<i class="far fa-file-excel" aria-hidden="true"></i>',
@@ -1042,10 +1013,11 @@ function montaListaDadosCarregados(tabela) {
     },
     bSortCellsTop: true,
     pageLength: 50,
-    bPaginate: true,
-    scrollY: "calc(100vh - 15rem)",
     bProcessing: true,
-    bScrollCollapse: true,
+    bPaginate: true,
+    // scrollY: "calc(100vh - 15rem)",
+    scrollX: true, // <--- faz o thead “andar” no scroll horizontal
+    bScrollCollapse: false,
     deferRender: true,
     sDom: "lftrBip",
     language: {

@@ -293,19 +293,34 @@ $postData = $this->request->getPost();
         $filtroFinal = implode(' AND ', $clausulas);
 
         $retorno = $this->common->getResult('default', 'vw_ger_sults_relac',$filtroFinal);
+        $unidade = array_values(array_unique(array_column($retorno, 'id_unidade')));
+        $departamento = array_values(array_unique(array_column($retorno, 'id_departamento')));
+        $assunto = array_values(array_unique(array_column($retorno, 'id_assunto')));
+        $solicitante = array_values(array_unique(array_column($retorno, 'id_solicitante')));
+        $responsavel = array_values(array_unique(array_column($retorno, 'id_responsavel')));
+        $situacao = array_values(array_unique(array_column($retorno, 'situacao')));
     } else {
         $filtroFinal = '';
         $retorno = [];
+        $unidade = [];
+        $departamento = [];
+        $assunto = [];
+        $solicitante = [];
+        $responsavel = [];
+        $situacao = [];
     }
     $colunas = ['Id','Unidade','Departamento', 'Assunto', 'Solicitante','Aberto em','Responsável','Resolvido em','Concluído em','Situação'];
 
     $tabela = view('partials/chamados', ['colunas' => $colunas,'chamados' => $retorno]);
     return $this->response->setJSON([
         'status'        => 'ok',
-        'dados_recebidos' => $postData,
-        'filtro_sql'    => $filtroFinal,
-        'retorno'    => $retorno,
         'tabela'    => $tabela,
+        'unidade'   => $unidade,
+        'departamento' => $departamento,
+        'assunto'   => $assunto,
+        'solicitante' => $solicitante,
+        'responsavel' => $responsavel,
+        'situacao' => $situacao
     ]);
 }
 

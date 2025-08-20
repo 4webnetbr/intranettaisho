@@ -3,13 +3,11 @@ jQuery(document).ready(function () {
 });
 
 function carregamentos_iniciais() {
-  var start = moment().subtract(30, "days");
+  var start = moment().subtract(29, "days");
   var end = moment();
 
-  function cb(start, end) {
-    jQuery(".daterange").html(
-      start.format("DD/MM/YYYY") + " - " + end.format("DD/MM/YYYY")
-    );
+  function setValue($el, start, end) {
+    $el.val(start.format("DD/MM/YYYY") + " - " + end.format("DD/MM/YYYY"));
   }
 
   jQuery(".daterange").daterangepicker(
@@ -17,10 +15,11 @@ function carregamentos_iniciais() {
       alwaysShowCalendars: true,
       startDate: start,
       endDate: end,
-      autoUpdateInput: false, // evita preencher automaticamente
+      autoUpdateInput: false, // deixamos false para poder limpar no "Não Considerar"
       ranges: {
         Hoje: [moment(), moment()],
         Ontem: [moment().subtract(1, "days"), moment().subtract(1, "days")],
+        "Não Considerar": [moment(), moment()], // apenas gatilho
         "Últimos 7 dias": [moment().subtract(6, "days"), moment()],
         "Últimos 30 dias": [moment().subtract(29, "days"), moment()],
         "Mês atual": [moment().startOf("month"), moment().endOf("month")],
@@ -30,7 +29,6 @@ function carregamentos_iniciais() {
         ],
         "Últimos 12 meses": [moment().subtract(12, "months"), moment()],
         "Últimos 18 meses": [moment().subtract(18, "months"), moment()],
-        "Sem período": [moment(), moment()], // só como gatilho
       },
       locale: {
         format: "DD/MM/YYYY",
@@ -55,18 +53,28 @@ function carregamentos_iniciais() {
       },
     },
     function (start, end, label) {
-      // <--- seu cb
-      cb(start, end);
       const $input = jQuery(this.element);
-      if (label === "Sem período") {
-        $input.val("Sem Período").trigger("change"); // range nulo
+
+      if (label === "Não Considerar") {
+        $input.val("Não Considerar").trigger("change"); // range nulo
         return;
       }
-      $input
-        .val(start.format("DD/MM/YYYY") + " - " + end.format("DD/MM/YYYY"))
-        .trigger("change");
+
+      setValue($input, start, end);
+      $input.trigger("change");
     }
   );
+
+  // valor inicial (últimos 30 dias)
+  jQuery(".daterange")
+    .not("#concluido")
+    .not("#resolvido")
+    .each(function () {
+      setValue(jQuery(this), start, end);
+      jQuery(this).trigger("change");
+    });
+  jQuery("#concluido.daterange").val("Não Considerar");
+  jQuery("#resolvido.daterange").val("Não Considerar");
 
   var temNumero = /[0-9]/;
   var temMaiusc = /[A-Z]/;

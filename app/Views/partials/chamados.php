@@ -26,8 +26,8 @@
                 echo "<div class='tab-pane fade p-lg-3 p-2 $active' id='" . $secao . "' role='tabpanel' 
                         aria-labelledby='" . $secao . "-tab' tabindex='0'>";
                 ?>
-                <table id="table" class="display compact table table-sm table-info table-striped table-hover table-borderless col-12">
-                <thead class="table-default col-12">
+                <table id="table" class="table table-sm table-info table-striped table-hover table-borderless">
+                <thead class="table-default">
                     <tr>
                     <?
                     for ($c = 0; $c < sizeof($colunas); $c++){
@@ -41,17 +41,19 @@
                     // debug($chamados);
                     if(count($chamados)> 0){
                         for ($c = 0; $c < count($chamados); $c++){
+                            $link = "<a href='https://taisho.sults.com.br/chamados/interacoes/".$chamados[$c]['id']."' target='_blank'>{$chamados[$c]['id']}</a>";
                             echo "<tr>";
-                            echo "<td class='text-center text-nowrap'>{$chamados[$c]['id']}</td>";
-                            echo "<td class='text-center text-nowrap'>{$chamados[$c]['unidade_nome']}</td>";
-                            echo "<td class='text-center text-nowrap'>{$chamados[$c]['departamento_nome']}</td>";
-                            echo "<td class='text-center text-nowrap'>{$chamados[$c]['assunto_nome']}</td>";
-                            echo "<td class='text-center text-nowrap'>{$chamados[$c]['solicitante_nome']}</td>";
-                            echo "<td class='text-center text-nowrap'>{$chamados[$c]['aberto']}</td>";
-                            echo "<td class='text-center text-nowrap'>{$chamados[$c]['responsavel_nome']}</td>";
-                            echo "<td class='text-center text-nowrap'>{$chamados[$c]['resolvido']}</td>";
-                            echo "<td class='text-center text-nowrap'>{$chamados[$c]['concluido']}</td>";
-                            echo "<td class='text-center text-nowrap'>{$chamados[$c]['descsituacao']}</td>";
+                            echo "<td class='text-nowrap'>".$link."</td>";
+                            echo "<td class='text-nowrap'>{$chamados[$c]['unidade_nome']}</td>";
+                            echo "<td class='text-nowrap'>{$chamados[$c]['departamento_nome']}</td>";
+                            echo "<td class='text-nowrap'>{$chamados[$c]['assunto_nome']}</td>";
+                            echo "<td class='text-nowrap'>{$chamados[$c]['solicitante_nome']}</td>";
+                            echo "<td class='text-nowrap'>".dataDbToBr($chamados[$c]['aberto'])."</td>";
+                            echo "<td class='text-nowrap'>{$chamados[$c]['responsavel_nome']}</td>";
+                            echo "<td class='text-nowrap'>".dataDbToBr($chamados[$c]['resolvido'])."</td>";
+                            echo "<td class='text-nowrap'>".dataDbToBr($chamados[$c]['concluido'])."</td>";
+                            echo "<td class='text-nowrap'>{$chamados[$c]['descsituacao']}</td>";
+                            // echo "<td class=''>{$chamados[$c]['titulo']}</td>";
                             echo "</tr>";
                         }
                     }

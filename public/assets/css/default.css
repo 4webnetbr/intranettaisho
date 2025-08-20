@@ -175,7 +175,7 @@ a:hover {
 }
 
 .dataTable {
-    width: 100% !important;
+    /* width: 100% !important; */
     /* transition: max-height 5s ease-out; */
     animation: showDtable 5s 5s 5s both;
 }

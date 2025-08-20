@@ -15,14 +15,14 @@
 <?=$this->section('content');?>
 <style>
 .dataTables_scroll {
-    min-height: 63vh!important;
-    height: 63vh!important;
-    max-height: 63vh!important;
+    min-height: 70vh!important;
+    height: 70vh!important;
+    max-height: 70vh!important;
 }  
 .dataTables_scrollBody{
-    min-height: 57vh!important;
-    height: 57vh!important;
-    max-height: 57vh!important;
+    min-height: 65vh!important;
+    height: 65vh!important;
+    max-height: 65vh!important;
 }
 </style>
 
