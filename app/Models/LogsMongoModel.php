@@ -57,13 +57,15 @@ class LogMonModel
      */
     public function insertLog($tabela, $operacao, $registro, $dados)
     {
+		$request = \Config\Services::request();		
         $sql_data = [
             'log_tabela'        => $tabela,
             'log_operacao'      => $operacao,
             'log_id_registro'   => strval($registro),
             'log_id_usuario'    => session()->get('usu_nome'),
             'log_data'          => date('Y-m-d H:i:s'),
-            'log_dados'         => $dados
+            'log_ip'            => $request->getIPAddress(),
+            'log_dados'         => $dados,
         ];
         $ret = $this->logMongo->insertOne($sql_data);
         return $ret;

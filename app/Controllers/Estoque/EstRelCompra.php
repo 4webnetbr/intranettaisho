@@ -39,7 +39,7 @@ class EstRelCompra extends BaseController
         $campos[1] = $this->dash_empresa;
         $campos[2] = $this->dash_fornecedor;
 
-        $colunas = ['Id','Empresa - Fornecedor','Data','Produto','Quantia','Und','R$ Unit','R$ Total',''];
+        $colunas = ['Id','Empresa - Fornecedor','N° Pedido','Data','Produto','Quantia','Und','R$ Unit','R$ Total',''];
 
         $this->data['cols']     	= $colunas;  
         $this->data['nome']     	= 'relcompras';  
@@ -119,13 +119,14 @@ class EstRelCompra extends BaseController
             $prod = $compras[$p];
             $prods[$p][0] = $prod['com_id'];
             $prods[$p][1] = $prod['emp_apelido'].' - '.$prod['for_razao'];
-            $prods[$p][2] = dataDbToBr($prod['com_data']);
-            $prods[$p][3] = $prod['pro_nome'];
-            $prods[$p][4] = ($prod['und_sigla']=='und'||$prod['und_sigla']=='cx')?intval($prod['cop_quantia']):floatval($prod['cop_quantia']);
-            $prods[$p][5] = $prod['und_sigla'];
-            $prods[$p][6] = floatToMoeda($prod['cop_valor']);
-            $prods[$p][7] = floatToMoeda($prod['cop_total']);
-            $prods[$p][8] = '';
+            $prods[$p][2] = $prod['com_id'];
+            $prods[$p][3] = dataDbToBr($prod['com_data']);
+            $prods[$p][4] = $prod['pro_nome'];
+            $prods[$p][5] = ($prod['und_sigla']=='und'||$prod['und_sigla']=='cx')?intval($prod['cop_quantia']):floatval($prod['cop_quantia']);
+            $prods[$p][6] = $prod['und_sigla'];
+            $prods[$p][7] = floatToMoeda($prod['cop_valor']);
+            $prods[$p][8] = floatToMoeda($prod['cop_total']);
+            $prods[$p][9] = '';
         }
         // debug(count($prods));
         // $ret['compras'] = [];

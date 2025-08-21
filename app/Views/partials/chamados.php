@@ -53,6 +53,8 @@
                             echo "<td class='text-nowrap'>".dataDbToBr($chamados[$c]['resolvido'])."</td>";
                             echo "<td class='text-nowrap'>".dataDbToBr($chamados[$c]['concluido'])."</td>";
                             echo "<td class='text-nowrap'>{$chamados[$c]['descsituacao']}</td>";
+                            echo "<td class='text-nowrap'>{$chamados[$c]['aberto_com_atraso']}</td>";
+                            echo "<td class='text-nowrap'>{$chamados[$c]['resolvido_com_atraso']}</td>";
                             // echo "<td class=''>{$chamados[$c]['titulo']}</td>";
                             echo "</tr>";
                         }

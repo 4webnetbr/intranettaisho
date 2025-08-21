@@ -114,30 +114,32 @@ class EstRelEntrada extends BaseController
         $ret = [];
 
         $entradas       = $this->entrada->getRelEntrada($deposito, $empresa, $inicio, $fim);
-        // debug($entradas);
+        $entids = array_column($entradas,'ent_id');
+        // debug($entids, false);
+        $logs = buscaLogBatch('est_entrada', $entids);
+        // debug($logs);
         $prods = [];
-        for($p=0;$p<count($entradas);$p++){
-            $prod = $entradas[$p];
+        // for($p=0;$p<count($entradas);$p++){
+        foreach ($entradas as $p => $prod) {
+            // $prod = $entradas[$p];
             $prods[$p][0] = $prod['mar_codigo'];
             $prods[$p][1] = $prod['mar_codigo'];
             $prods[$p][2] = $prod['com_id'];
             $prods[$p][3] = $prod['pro_nome']."<br>".$prod['for_razao'];
             $prods[$p][4] = dataDbToBr($prod['ent_data']);
-            $qtia = formataQuantia(isset($prod['enp_quantia'])?$prod['enp_quantia']:0);
-            $conv = formataQuantia(isset($prod['enp_qtia_conv'])?$prod['enp_qtia_conv']:0);
+            $qtia = formataQuantia($prod['enp_quantia'] ?? 0);
+            $conv = formataQuantia($prod['enp_qtia_conv'] ?? 0);
             $prods[$p][5] = $qtia['qtia'];
             $prods[$p][6] = $conv['qtia'];
             $prods[$p][7] = $prod['und_sigla'];
             $prods[$p][8] = dataDbToBr($prod['ent_datahora']);
-            $log = buscaLog('est_entrada', $prod['ent_id']);
-            $prods[$p][9] = $log['usua_alterou'];
+            $prods[$p][9] = $logs[$prod['ent_id']]['usua_alterou'];
             // $prods[$p][9] = '';    
         }
-        // debug(count($prods));
+        // debug($prods);
         // $ret['entradas'] = [];
         $ret['data'] = $prods;
         echo json_encode($ret);
     }
-
 
 }

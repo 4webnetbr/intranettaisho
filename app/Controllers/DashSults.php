@@ -293,6 +293,7 @@ $postData = $this->request->getPost();
         $filtroFinal = implode(' AND ', $clausulas);
 
         $retorno = $this->common->getResult('default', 'vw_ger_sults_relac',$filtroFinal);
+        
         $unidade = array_values(array_unique(array_column($retorno, 'id_unidade')));
         $departamento = array_values(array_unique(array_column($retorno, 'id_departamento')));
         $assunto = array_values(array_unique(array_column($retorno, 'id_assunto')));
@@ -309,7 +310,7 @@ $postData = $this->request->getPost();
         $responsavel = [];
         $situacao = [];
     }
-    $colunas = ['Id','Unidade','Departamento', 'Assunto', 'Solicitante','Aberto em','Responsável','Resolvido em','Concluído em','Situação'];
+    $colunas = ['Id','Unidade','Departamento', 'Assunto', 'Solicitante','Aberto em','Responsável','Resolvido em','Concluído em','Situação','Aberto c/ Atraso','Fechado c/ Atraso'];
 
     $tabela = view('partials/chamados', ['colunas' => $colunas,'chamados' => $retorno]);
     return $this->response->setJSON([

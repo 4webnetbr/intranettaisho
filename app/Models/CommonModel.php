@@ -126,30 +126,6 @@ class CommonModel extends Model
         return $fields;
     }
 
-    /**
-     * insertLog
-     *
-     * Insere o Registro na Tabela de Log
-     *  
-     * @param string $tabela
-     * @param string $operacao
-     * @param int    $registro
-     * @return int
-     */
-    public function insertLog($tabela, $operacao, $registro)
-    {
-        $sql_data = [
-            'log_tabela'        => $tabela,
-            'log_operacao'      => $operacao,
-            'log_id_registro'   => $registro,
-            'log_id_usuario'    => session()->get('usu_id'),
-            'log_data'          => date('Y-m-d H:i:s')
-        ];
-        $ins_id = $this->builder()->insert($sql_data);
-
-        return $ins_id;
-    }
-
     public function getExiste($banco, $table, $chave)
     {
         $db = db_connect($banco);

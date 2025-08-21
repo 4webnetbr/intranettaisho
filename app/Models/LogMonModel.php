@@ -8,7 +8,6 @@ use MongoDB\Driver\Command;
 use MongoDB\Driver\Exception\RuntimeException;
 use MongoDB\Driver\Query;
 use stdClass;
-
 class LogMonModel
 {
 
@@ -162,6 +161,7 @@ class LogMonModel
 	 */
 	public function insertLog($tabela, $operacao, $registro, $dados)
 	{
+		$request = \Config\Services::request();		
 		try {
 			$sql_data = [
 				'log_tabela'        => $tabela,
@@ -169,7 +169,8 @@ class LogMonModel
 				'log_id_registro'   => strval($registro),
 				'log_id_usuario'    => session()->get('usu_nome'),
 				'log_data'          => date('Y-m-d H:i:s'),
-				'log_dados'         => $dados
+	            'log_ip'            => $request->getIPAddress(),
+				'log_dados'         => $dados,
 			];
 
 			$query = new \MongoDB\Driver\BulkWrite();
