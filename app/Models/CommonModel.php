@@ -182,7 +182,7 @@ class CommonModel extends Model
         $builder->orderBy($order);
 
         // $sql = $builder->getCompiledSelect();
-        // debug($sql, false);
+        // debug($sql, true);
         $ret = $builder->get()->getResultArray();
         return $ret;
     }

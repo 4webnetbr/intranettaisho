@@ -1596,7 +1596,8 @@ function carrega_sults(obj) {
   const formData = {};
   const $section = jQuery(obj).closest("section"); // Busca a section mais próxima do obj
 
-  if (obj.id == "aberto") {
+  if (jQuery(obj).hasClass("daterange")) {
+    // se for um dos campos de data, desconsidera os outros filtros
     const val = jQuery(obj).val();
     if (val && val.includes(" - ")) {
       const [inicio, fim] = val.split(" - ");
@@ -1607,13 +1608,32 @@ function carrega_sults(obj) {
       formData[obj.id + "_fim"] = "";
     }
   } else {
-    $section.find("input, select").each(function () {
-      const $field = jQuery(this);
-      const id = $field.attr("id");
+    let marcado = false;
 
-      if (id) {
-        // Se for um campo daterange, captura início e fim
+    if (jQuery(obj).is("select[multiple]")) {
+      const valoresAntes = jQuery(obj).data("valores-antes") || [];
+      const valoresAtuais = jQuery(obj).val() || [];
+
+      const marcados = valoresAtuais.filter((v) => !valoresAntes.includes(v));
+
+      if (marcados.length > 0) {
+        marcado = true;
+        if (Array.isArray(marcados)) {
+          marc = marcados.join(","); // Converte array para string
+        }
+
+        formData[obj.id] = marc;
+      } else {
+        if (valoresAtuais.length == 0) {
+          desBloqueiaTela();
+          return;
+        }
+      }
+      $section.find("input, select").each(function () {
+        const $field = jQuery(this);
+        const id = $field.attr("id");
         if ($field.hasClass("daterange")) {
+          // Se for um campo daterange, captura início e fim
           const val = $field.val();
           if (val && val.includes(" - ")) {
             const [inicio, fim] = val.split(" - ");
@@ -1624,14 +1644,16 @@ function carrega_sults(obj) {
             formData[id + "_fim"] = "";
           }
         } else {
-          let valor = $field.val();
-          if (Array.isArray(valor)) {
-            valor = valor.join(","); // Converte array para string
+          if (!marcado) {
+            let valor = $field.val();
+            if (Array.isArray(valor)) {
+              valor = valor.join(","); // Converte array para string
+            }
+            formData[id] = valor;
           }
-          formData[id] = valor;
         }
-      }
-    });
+      });
+    }
   }
   console.log("Dados do formulário:", JSON.parse(JSON.stringify(formData)));
   jQuery.ajax({
@@ -1643,36 +1665,51 @@ function carrega_sults(obj) {
       console.log("✅ Resposta do servidor:", response);
       jQuery("#conteudo").html(response.tabela);
       montaListaDadosCarregados("table");
-      if (obj.id != "unidade[]") {
-        jQuery("select[id='unidade[]']").selectpicker("val", response.unidade);
-      }
-      if (obj.id != "departamento[]") {
-        jQuery("select[id='departamento[]']").selectpicker(
-          "val",
-          response.departamento
-        );
-      }
-      if (obj.id != "assunto[]") {
-        jQuery("select[id='assunto[]']").selectpicker("val", response.assunto);
-      }
-      if (obj.id != "solicitante[]") {
-        jQuery("select[id='solicitante[]']").selectpicker(
-          "val",
-          response.solicitante
-        );
-      }
-      if (obj.id != "responsavel[]") {
-        jQuery("select[id='responsavel[]']").selectpicker(
-          "val",
-          response.responsavel
-        );
-      }
-      if (obj.id != "situacao[]") {
-        jQuery("select[id='situacao[]']").selectpicker(
-          "val",
-          response.situacao
-        );
-      }
+      // if (obj.id != "unidade[]") {
+      jQuery("select[id='unidade[]']").selectpicker("val", response.unidade);
+      jQuery("select[id='unidade[]']").data("valores-antes", response.unidade);
+      // }
+      // if (obj.id != "departamento[]") {
+      jQuery("select[id='departamento[]']").selectpicker(
+        "val",
+        response.departamento
+      );
+      jQuery("select[id='departamento[]']").data(
+        "valores-antes",
+        response.departamento
+      );
+      // }
+      // if (obj.id != "assunto[]") {
+      jQuery("select[id='assunto[]']").selectpicker("val", response.assunto);
+      jQuery("select[id='assunto[]']").data("valores-antes", response.assunto);
+      // }
+      // if (obj.id != "solicitante[]") {
+      jQuery("select[id='solicitante[]']").selectpicker(
+        "val",
+        response.solicitante
+      );
+      jQuery("select[id='solicitante[]']").data(
+        "valores-antes",
+        response.solicitante
+      );
+      // }
+      // if (obj.id != "responsavel[]") {
+      jQuery("select[id='responsavel[]']").selectpicker(
+        "val",
+        response.responsavel
+      );
+      jQuery("select[id='responsavel[]']").data(
+        "valores-antes",
+        response.responsavel
+      );
+      // }
+      // if (obj.id != "situacao[]") {
+      jQuery("select[id='situacao[]']").selectpicker("val", response.situacao);
+      jQuery("select[id='situacao[]']").data(
+        "valores-antes",
+        response.situacao
+      );
+      // }
       desBloqueiaTela();
       // Aqui você pode manipular o retorno, como atualizar a UI
     },

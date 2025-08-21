@@ -157,15 +157,18 @@ class CfgUsuario extends BaseController
         $campos[0][5] = $this->usu_contra_senha;
         $campos[0][6] = "<span id='msg_senha' class='text-danger bg-warning'></span>";
         $campos[0][7] = $this->usu_perfil;
-
+        $campos[0][8] = $this->usu_dashboard;
+        $campos[0][9] = $this->usu_empresa;
+        $campos[0][10] = $this->usu_deposito;
 
         // $secao[1] = 'Avatar';
         // $campos[1][0] = $this->usu_avatar;
 
+        $this->data['metodo']     = 'edit';
         $this->data['secoes']     = $secao;
         $this->data['campos']     = $campos;
         $this->data['destino']    = 'store';
-        $this->data['desc_metodo'] = 'Alteração de Senha de';
+        $this->data['desc_metodo'] = 'Alteração de Senha de Usuário';
 
         echo view('vw_edicao', $this->data);
     }
@@ -225,6 +228,10 @@ class CfgUsuario extends BaseController
         $dash->selecionado     = $dash->valor;
         $dash->opcoes          = $telas;
         $dash->dispForm = '1col';
+        $dash->leitura    = $leitura;
+        if($leitura){
+            $dash->infotop   = 'Para alterar o Dashboard, solicite ao Gestor do Sistema';
+        }
         $this->usu_dashboard   = $dash->crSelect();
 
         $nova_senha             =  new MyCampo('cfg_usuario','usu_senha');
@@ -250,7 +257,7 @@ class CfgUsuario extends BaseController
         $contra_senha->maxLength   	= 12;
 		$contra_senha->largura   	= 25;
 		$contra_senha->valor	    = '';
-        $contra_senha->dispForm = '1col';
+        $contra_senha->dispForm = 'col-12';
         $contra_senha->funcBlur	    = "compara_senha('contra_senha','usu_senha')";
         $this->usu_contra_senha = $contra_senha->crInput();
 
@@ -262,6 +269,7 @@ class CfgUsuario extends BaseController
         $empres->opcoes     = $empresas;
         $empres->selecionado = (isset($dados['usu_empresa']))?explode(",",$dados['usu_empresa']):[];
         $empres->dispForm = '1col';
+        $empres->leitura    = $leitura;
         if($leitura){
             $empres->infotop   = 'Para alterar a Empresa, solicite ao Gestor do Sistema';
         }
@@ -276,6 +284,7 @@ class CfgUsuario extends BaseController
         $depos->opcoes     = $depositos;
         $depos->selecionado = (isset($dados['usu_deposito']))?explode(",",$dados['usu_deposito']):[];
         $depos->dispForm = '1col';
+        $depos->leitura    = $leitura;
         if($leitura){
             $depos->infotop   = 'Para alterar o Depósito, solicite ao Gestor do Sistema';
         }

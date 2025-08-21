@@ -211,7 +211,6 @@ $postData = $this->request->getPost();
             $postData[$k] = [];
         }
     }
-
     $clausulas   = [];
     $datasInicio = [];
     $datasFim    = [];
@@ -288,7 +287,7 @@ $postData = $this->request->getPost();
             $clausulas[] = "$base <= '" . addslashes($fimDb) . "'";
         }
     }
-
+    // debug($clausulas);
     if(count($clausulas)){
         $filtroFinal = implode(' AND ', $clausulas);
 
