@@ -99,10 +99,19 @@ function carregamentos_iniciais() {
    */
   jQuery(".password").on("keyup", function (e) {
     var passwordsInfo = jQuery("#pass-info");
+    const rect = this.getBoundingClientRect();
+    const height = jQuery(this).outerHeight();
+    const $infoBox = jQuery("#pass-info").appendTo("body");
+
     val = this.value;
     var valid = true;
     var text = "";
     if (val.length > 0) {
+      $infoBox.css({
+        top: rect.top + height + "px",
+        left: rect.left + "px",
+        position: "fixed",
+      });
       passwordsInfo.show();
       if (val.length >= 6) {
         text += lino + tem + msg1 + "</span><br>";

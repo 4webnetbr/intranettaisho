@@ -26,14 +26,17 @@
 }
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
+
 <div id='content' class='container page-content m-0'>
-    <div class='col-2 d-block p-3 float-start bg-white' style="height: 90vh">
-    <?
-      for ($cs=0;$cs<sizeof($campos);$cs++) {
-        echo $campos[$cs];
-      }
-    ?>
-        </div>
+      <div class='col-2 d-block p-3 float-start bg-white' style="height: 90vh">
+          <?
+            for ($cs=0;$cs<sizeof($campos);$cs++) {
+              echo $campos[$cs];
+            }
+          ?>
+      </div>
       <div id="conteudo" class='col-10 d-block float-start bg-white' style="max-height:90vh;overflow-y:auto;">
       </div>
   </div>
@@ -67,5 +70,6 @@
                 crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" />
+
 
 <?=$this->endSection();?>

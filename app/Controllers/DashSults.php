@@ -201,128 +201,218 @@ class DashSults extends BaseController
 		session()->set($vars);
 	}
     
-public function busca_dados()
-{
-$postData = $this->request->getPost();
+    public function busca_dados()
+    {
+        $postData = $this->request->getPost();
 
-    // 1) Normaliza arrays do tipo [""] -> []
-    foreach ($postData as $k => $v) {
-        if (is_array($v) && count($v) === 1 && $v[0] === '') {
-            $postData[$k] = [];
-        }
-    }
-    $clausulas   = [];
-    $datasInicio = [];
-    $datasFim    = [];
-
-    // Utilitário: aceita array ou CSV e devolve lista limpa
-    // Aceita array, array com 1 item CSV ["73,65"] ou string "73,65"
-    $toList = static function ($v): array {
-        if (is_array($v)) {
-            if (count($v) === 1 && is_string($v[0]) && strpos($v[0], ',') !== false) {
-                $arr = explode(',', $v[0]);         // trata ["73,65"]
-            } else {
-                $arr = $v;                           // ex.: ["73","65"]
+        // 1) Normaliza arrays do tipo [""] -> []
+        foreach ($postData as $k => $v) {
+            if (is_array($v) && count($v) === 1 && $v[0] === '') {
+                $postData[$k] = [];
             }
-        } else {
-            $arr = explode(',', (string)$v);         // trata "73,65"
         }
+        $clausulas   = [];
+        $datasInicio = [];
+        $datasFim    = [];
 
-        $arr = array_map('trim', $arr);
-        $arr = array_filter($arr, static fn($x) => $x !== '' && $x !== null);
-        return array_values(array_unique($arr));
-    };
-
-    // 2) Loop principal
-    foreach ($postData as $key => $value) {
-
-        // --- Datas: separam-se para montar BETWEEN depois ---
-        if (substr($key, -7) === '_inicio') {
-            $base = substr($key, 0, -7);
-            $datasInicio[$base] = trim((string)$value);
-            continue;
-        }
-        if (substr($key, -4) === '_fim') {
-            $base = substr($key, 0, -4);
-            $datasFim[$base] = trim((string)$value);
-            continue;
-        }
-
-        // --- [AQUI] Arrays/CSV -> IN com prefixo id_ e cada item entre aspas ---
-        if (is_array($value) || (is_string($value) && strpos($value, ',') !== false)) {
-            $lista = $toList($value);
-            if (!empty($lista)) {
-                $campo = $key;
-                if($key != 'situacao'){
-                    $campo = 'id_' . $key;
+        // Utilitário: aceita array ou CSV e devolve lista limpa
+        // Aceita array, array com 1 item CSV ["73,65"] ou string "73,65"
+        $toList = static function ($v): array {
+            if (is_array($v)) {
+                if (count($v) === 1 && is_string($v[0]) && strpos($v[0], ',') !== false) {
+                    $arr = explode(',', $v[0]);         // trata ["73,65"]
+                } else {
+                    $arr = $v;                           // ex.: ["73","65"]
                 }
-                $vals  = array_map(static fn($v) => "'" . addslashes((string)$v) . "'", $lista);
-                $clausulas[] = "$campo IN (" . implode(', ', $vals) . ")";
+            } else {
+                $arr = explode(',', (string)$v);         // trata "73,65"
             }
-            continue; // já tratou, vai pro próximo campo
+
+            $arr = array_map('trim', $arr);
+            $arr = array_filter($arr, static fn($x) => $x !== '' && $x !== null);
+            return array_values(array_unique($arr));
+        };
+
+        // 2) Loop principal
+        foreach ($postData as $key => $value) {
+
+            // --- Datas: separam-se para montar BETWEEN depois ---
+            if (substr($key, -7) === '_inicio') {
+                $base = substr($key, 0, -7);
+                $datasInicio[$base] = trim((string)$value);
+                continue;
+            }
+            if (substr($key, -4) === '_fim') {
+                $base = substr($key, 0, -4);
+                $datasFim[$base] = trim((string)$value);
+                continue;
+            }
+
+            // --- [AQUI] Arrays/CSV -> IN com prefixo id_ e cada item entre aspas ---
+            if (is_array($value) || (is_string($value) && strpos($value, ',') !== false)) {
+                $lista = $toList($value);
+                if (!empty($lista)) {
+                    $campo = $key;
+                    if($key != 'situacao'){
+                        $campo = 'id_' . $key;
+                    }
+                    $vals  = array_map(static fn($v) => "'" . addslashes((string)$v) . "'", $lista);
+                    $clausulas[] = "$campo IN (" . implode(', ', $vals) . ")";
+                }
+                continue; // já tratou, vai pro próximo campo
+            }
+
+            // --- Escalares -> igualdade ---
+            $val = trim((string)$value);
+            if ($val !== '') {
+                $clausulas[] = "$key = '" . addslashes($val) . "'";
+            }
         }
 
-        // --- Escalares -> igualdade ---
-        $val = trim((string)$value);
-        if ($val !== '') {
-            $clausulas[] = "$key = '" . addslashes($val) . "'";
+        // 3) Monta BETWEEN para datas (ou >= / <= se só vier um lado)
+        $bases = array_unique(array_merge(array_keys($datasInicio), array_keys($datasFim)));
+        foreach ($bases as $base) {
+            $ini = $datasInicio[$base] ?? '';
+            $fim = $datasFim[$base] ?? '';
+
+            if ($ini !== '' && $fim !== '') {
+                $iniDb = dataBrToDb($ini);
+                $fimDb = dataBrToDb($fim);
+                $clausulas[] = "$base BETWEEN '" . addslashes($iniDb) . "' AND '" . addslashes($fimDb) . "'";
+            } elseif ($ini !== '') {
+                $iniDb = dataBrToDb($ini);
+                $clausulas[] = "$base >= '" . addslashes($iniDb) . "'";
+            } elseif ($fim !== '') {
+                $fimDb = dataBrToDb($fim);
+                $clausulas[] = "$base <= '" . addslashes($fimDb) . "'";
+            }
         }
-    }
+        // debug($clausulas);
+        if(count($clausulas)){
+            $filtroFinal = implode(' AND ', $clausulas);
 
-    // 3) Monta BETWEEN para datas (ou >= / <= se só vier um lado)
-    $bases = array_unique(array_merge(array_keys($datasInicio), array_keys($datasFim)));
-    foreach ($bases as $base) {
-        $ini = $datasInicio[$base] ?? '';
-        $fim = $datasFim[$base] ?? '';
-
-        if ($ini !== '' && $fim !== '') {
-            $iniDb = dataBrToDb($ini);
-            $fimDb = dataBrToDb($fim);
-            $clausulas[] = "$base BETWEEN '" . addslashes($iniDb) . "' AND '" . addslashes($fimDb) . "'";
-        } elseif ($ini !== '') {
-            $iniDb = dataBrToDb($ini);
-            $clausulas[] = "$base >= '" . addslashes($iniDb) . "'";
-        } elseif ($fim !== '') {
-            $fimDb = dataBrToDb($fim);
-            $clausulas[] = "$base <= '" . addslashes($fimDb) . "'";
+            $retorno = $this->common->getResult('default', 'vw_ger_sults_relac',$filtroFinal);
+            
+            $unidade = array_values(array_unique(array_column($retorno, 'id_unidade')));
+            $departamento = array_values(array_unique(array_column($retorno, 'id_departamento')));
+            $assunto = array_values(array_unique(array_column($retorno, 'id_assunto')));
+            $solicitante = array_values(array_unique(array_column($retorno, 'id_solicitante')));
+            $responsavel = array_values(array_unique(array_column($retorno, 'id_responsavel')));
+            $situacao = array_values(array_unique(array_column($retorno, 'situacao')));
+        } else {
+            $filtroFinal = '';
+            $retorno = [];
+            $unidade = [];
+            $departamento = [];
+            $assunto = [];
+            $solicitante = [];
+            $responsavel = [];
+            $situacao = [];
         }
-    }
-    // debug($clausulas);
-    if(count($clausulas)){
-        $filtroFinal = implode(' AND ', $clausulas);
-
-        $retorno = $this->common->getResult('default', 'vw_ger_sults_relac',$filtroFinal);
+        $colunas = ['Id','Unidade','Departamento', 'Assunto', 'Solicitante','Aberto em','Responsável','Resolvido em','Concluído em','Situação','Aberto c/ Atraso','Fechado c/ Atraso'];
+        $campos  = ['id','unidade_nome','departamento_nome','assunto_nome','solicitante_nome','aberto','responsavel_nome','resolvido','concluido','descsituacao','aberto_com_atraso','resolvido_com_atraso'];
         
-        $unidade = array_values(array_unique(array_column($retorno, 'id_unidade')));
-        $departamento = array_values(array_unique(array_column($retorno, 'id_departamento')));
-        $assunto = array_values(array_unique(array_column($retorno, 'id_assunto')));
-        $solicitante = array_values(array_unique(array_column($retorno, 'id_solicitante')));
-        $responsavel = array_values(array_unique(array_column($retorno, 'id_responsavel')));
-        $situacao = array_values(array_unique(array_column($retorno, 'situacao')));
-    } else {
-        $filtroFinal = '';
-        $retorno = [];
-        $unidade = [];
-        $departamento = [];
-        $assunto = [];
-        $solicitante = [];
-        $responsavel = [];
-        $situacao = [];
+        // $resolvido = array_values(array_unique(array_column($retorno, 'resolvido')));
+
+        // debug($resolvido, true);
+        $score['Chamados'] = count($retorno);
+        $score['Abertos'] = count(array_filter($retorno, function($item) {
+            return empty($item['resolvido']);
+        }));
+        $score['Atrasados'] = count(array_filter($retorno, function($item) {
+            return isset($item['aberto_com_atraso']) && $item['aberto_com_atraso'] === 'Sim';
+        }));
+        $score['Resolvidos'] = count(array_filter($retorno, function($item) {
+            return isset($item['resolvido']) && $item['resolvido'] != '';
+        }));
+        $score['Resolvidos c/ Atraso'] = count(array_filter($retorno, function($item) {
+            return isset($item['resolvido_com_atraso']) && $item['resolvido_com_atraso'] === 'Sim';
+        }));
+        $score['Na Fila'] = count(array_filter($retorno, function($item) {
+            return isset($item['responsavel_nome']) && trim($item['responsavel_nome']) === ">> na Fila";
+        }));
+        
+        $tabela = view('partials/chamados', ['colunas' => $colunas,'chamados' => $retorno,'campos' => $campos,'scores' => $score]);
+
+        // Função utilitária: agrega por campo (id + label) e monta estrutura para ApexCharts
+        $makeChartData = function(array $rows, string $idField, string $labelField): array {
+            $groups = [];
+
+            foreach ($rows as $r) {
+                if (!isset($r[$idField])) continue;
+
+                $id    = $r[$idField];
+                $label = $r[$labelField] ?? (string)$id;
+
+                if (!isset($groups[$id])) {
+                    $groups[$id] = [
+                        'label' => $label,
+                        // separe sem atraso vs com atraso (nada de duplicar total na pilha)
+                        'abertosSemAtr'    => 0,
+                        'abertosAtr'       => 0,
+                        'resolvidosSemAtr' => 0,
+                        'resolvidosAtr'    => 0,
+                    ];
+                }
+
+                $isAberto = empty($r['resolvido']); // aberto se não tem data de resolvido
+
+                if ($isAberto) {
+                    if (($r['aberto_com_atraso'] ?? '') === 'Sim') {
+                        $groups[$id]['abertosAtr']++;
+                    } else {
+                        $groups[$id]['abertosSemAtr']++;
+                    }
+                } else {
+                    if (($r['resolvido_com_atraso'] ?? '') === 'Sim') {
+                        $groups[$id]['resolvidosAtr']++;
+                    } else {
+                        $groups[$id]['resolvidosSemAtr']++;
+                    }
+                }
+            }
+
+            $categories=[]; $abertosSemAtr=[]; $abertosAtr=[]; $resolvidosSemAtr=[]; $resolvidosAtr=[];
+            foreach ($groups as $g) {
+                $categories[]       = $g['label'];
+                $abertosSemAtr[]    = (int)$g['abertosSemAtr'];
+                $abertosAtr[]       = (int)$g['abertosAtr'];
+                $resolvidosSemAtr[] = (int)$g['resolvidosSemAtr'];
+                $resolvidosAtr[]    = (int)$g['resolvidosAtr'];
+            }
+
+            return [
+                'categories' => $categories,
+                'series' => [
+                    // mesma stack = empilha; nomes continuam os que você usa no front
+                    [ 'name' => 'Abertos',               'stack' => 'stack_abertos',    'data' => $abertosSemAtr ],
+                    [ 'name' => 'Abertos com atraso',    'stack' => 'stack_abertos',    'data' => $abertosAtr ],
+                    [ 'name' => 'Resolvidos',            'stack' => 'stack_resolvidos', 'data' => $resolvidosSemAtr ],
+                    [ 'name' => 'Resolvidos com atraso', 'stack' => 'stack_resolvidos', 'data' => $resolvidosAtr ],
+                ],
+            ];
+        };
+
+        // Monte os 3 conjuntos de dados
+        $chartUnidade = $makeChartData($retorno, 'id_unidade', 'unidade_nome');
+        $chartResp    = $makeChartData($retorno, 'id_responsavel', 'responsavel_nome');
+        $chartAssunto = $makeChartData($retorno, 'id_assunto', 'assunto_nome');
+
+        return $this->response->setJSON([
+            'status'       => 'ok',
+            'tabela'       => $tabela,
+            'unidade'      => $unidade,
+            'departamento' => $departamento,
+            'assunto'      => $assunto,
+            'solicitante'  => $solicitante,
+            'responsavel'  => $responsavel,
+            'situacao'     => $situacao,
+            'scores'       => $score,
+            'charts' => [
+                'unidade'     => $chartUnidade,
+                'responsavel' => $chartResp,
+                'assunto'     => $chartAssunto,
+            ],
+        ]);
     }
-    $colunas = ['Id','Unidade','Departamento', 'Assunto', 'Solicitante','Aberto em','Responsável','Resolvido em','Concluído em','Situação','Aberto c/ Atraso','Fechado c/ Atraso'];
-
-    $tabela = view('partials/chamados', ['colunas' => $colunas,'chamados' => $retorno]);
-    return $this->response->setJSON([
-        'status'        => 'ok',
-        'tabela'    => $tabela,
-        'unidade'   => $unidade,
-        'departamento' => $departamento,
-        'assunto'   => $assunto,
-        'solicitante' => $solicitante,
-        'responsavel' => $responsavel,
-        'situacao' => $situacao
-    ]);
-}
-
-
 }

@@ -366,8 +366,8 @@ class MyCampo
         }
         if ($this->tipo == 'password' || $this->tipo == 'senha') {
             $respf .= "<div id='pass-info' class='invalid-feedback
-                                border border-1 bg-white position-content p-2 text-start'
-                                style='z-index:200;top:2rem;height:auto'></div>";
+                                border border-1 bg-white position-absolute p-2 text-start'
+                                style='z-index:200;top:2rem;height:auto;'></div>";
         }
         $respf .= "</div>";
         if ($this->inforig != '') {

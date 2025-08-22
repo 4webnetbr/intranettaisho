@@ -1661,7 +1661,7 @@ function carrega_sults(obj) {
     type: "POST",
     data: formData,
     dataType: "json",
-    success: function (response) {
+    success: async function (response) {
       console.log("✅ Resposta do servidor:", response);
       jQuery("#conteudo").html(response.tabela);
       montaListaDadosCarregados("table");
@@ -1711,10 +1711,201 @@ function carrega_sults(obj) {
       );
       // }
       desBloqueiaTela();
-      // Aqui você pode manipular o retorno, como atualizar a UI
-    },
-    error: function (xhr, status, error) {
-      console.error("❌ Erro na requisição AJAX:", status, error);
+      const json = response;
+      if (window["chartjs-plugin-zoom"]) {
+        Chart.register(window["chartjs-plugin-zoom"]);
+      }
+      // Paleta opcional (Abertos, Abertos atraso, Resolvidos, Resolvidos atraso)
+      const COLORS = {
+        ABERTOS: "rgba(13,110,253,0.8)", // bg-primary
+        ABERTOS_ATR: "rgba(255,193,7,0.8)", // bg-warning
+        RESOLVIDOS: "rgba(25,135,84,0.8)", // bg-success
+        RESOLVIDOS_ATR: "rgba(220,53,69,0.8)",
+      };
+
+      function toDatasets(series) {
+        // Chart.js empilha por "dataset.stack": igual = mesma pilha; diferente = lado a lado
+        return series.map((s) => {
+          const stack =
+            s.stack || (/abertos/i.test(s.name) ? "Abertos" : "Resolvidos");
+          let bg;
+          if (/Abertos com atraso/i.test(s.name)) bg = COLORS.ABERTOS_ATR;
+          else if (/Abertos/i.test(s.name)) bg = COLORS.ABERTOS;
+          else if (/Resolvidos com atraso/i.test(s.name))
+            bg = COLORS.RESOLVIDOS_ATR;
+          else if (/Resolvidos/i.test(s.name)) bg = COLORS.RESOLVIDOS;
+          else bg = "rgba(100,100,100,0.8)";
+
+          return {
+            label: s.name,
+            stack: stack,
+            data: s.data,
+            backgroundColor: bg,
+            borderWidth: 0,
+          };
+        });
+      }
+      // Opções base: pilhas e zoom
+      function baseOptions(labels, title) {
+        return {
+          type: "bar",
+          data: { labels, datasets: [] },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false, // ocupa a altura do .chart-box
+            plugins: {
+              title: { display: true, text: title },
+              legend: { position: "top" },
+              tooltip: {
+                callbacks: {
+                  label(ctx) {
+                    const label = ctx.dataset.label || "";
+                    const idx = ctx.dataIndex; // posição da barra no eixo X
+                    const chart = ctx.chart;
+                    const stackName = ctx.dataset.stack;
+                    const val = Number(ctx.parsed?.y ?? ctx.raw ?? 0);
+
+                    // só soma quando for a linha "base" (Abertos / Resolvidos),
+                    // e NÃO a linha "com atraso"
+                    const isComAtraso = /com atraso/i.test(label);
+                    const isStackInteresse =
+                      stackName === "stack_abertos" ||
+                      stackName === "stack_resolvidos";
+
+                    if (!isComAtraso && isStackInteresse) {
+                      const total = chart.data.datasets
+                        .filter((ds) => ds.stack === stackName)
+                        .reduce(
+                          (acc, ds) => acc + (Number(ds.data?.[idx]) || 0),
+                          0
+                        );
+                      return `${label}: ${fmt(total)}`; // ex.: Abertos: 24 / Resolvidos: 152
+                    }
+
+                    // linhas "com atraso" continuam mostrando o parcial
+                    return `${label}: ${fmt(val)}`; // ex.: Abertos com atraso: 20 / Resolvidos com atraso: 76
+                  },
+                },
+              },
+              zoom: {
+                pan: { enabled: true, mode: "x" },
+                zoom: {
+                  wheel: { enabled: true },
+                  pinch: { enabled: true },
+                  drag: { enabled: true },
+                  mode: "x",
+                },
+                limits: { x: { min: 0 } },
+              },
+            },
+            scales: {
+              x: {
+                stacked: true, // mantém duas barras por categoria (Abertos / Resolvidos)
+                ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 },
+                grid: {
+                  offset: true,
+                },
+              },
+              y: {
+                stacked: true,
+                beginAtZero: true,
+                ticks: { precision: 0 },
+              },
+            },
+          },
+        };
+      }
+
+      // Render helper
+      function renderStackedGrouped(canvasEl, data, title) {
+        const cfg = baseOptions(data.categories, title);
+        cfg.data.datasets = toDatasets(data.series);
+        return new Chart(canvasEl, cfg);
+      }
+
+      // Rolagem horizontal automática (opcional)
+      function setMinWidthForScroll(canvasEl, categories, pxPerCategory = 80) {
+        // Aloca ~80px por categoria para caber 2 barras empilhadas confortavelmente
+        const w = Math.max(1200, categories.length * pxPerCategory);
+        // Sobe ao container da box para aplicar a largura mínima
+        const box = canvasEl.closest(".chart-box");
+        if (box) box.style.minWidth = w + "px";
+      }
+
+      // Abrir em nova janela só com o gráfico
+      function openChartWindow(title, data) {
+        const w = window.open("", "_blank");
+        w.document.write(`
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <title>${title}</title>
+            <style>body{margin:16px;font-family:system-ui,Segoe UI,Roboto,Arial}</style>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
+          </head>
+          <body>
+            <h3 style="margin:0 0 10px;">${title}</h3>
+            <div style="height:70vh;">
+              <canvas id="c"></canvas>
+            </div>
+            <script>
+              const data = ${JSON.stringify(data)};
+              const COLORS = ${JSON.stringify(COLORS)};
+              const toDatasets = ${toDatasets.toString()};
+              const baseOptions = ${baseOptions.toString()};
+
+              const cfg = baseOptions(data.categories, ${JSON.stringify(
+                title
+              )});
+              cfg.data.datasets = toDatasets(data.series);
+              const ctx = document.getElementById('c').getContext('2d');
+              new Chart(ctx, cfg);
+            </script>
+          </body>
+          </html>
+        `);
+        w.document.close();
+      }
+
+      // Pega dados do backend
+      const unidade = json.charts.unidade;
+      const responsavel = json.charts.responsavel;
+      const assunto = json.charts.assunto;
+
+      // Render
+      const chUnidade = renderStackedGrouped(
+        document.getElementById("chartUnidade").getContext("2d"),
+        unidade,
+        "Abertos x Resolvidos por Unidade"
+      );
+      const chResp = renderStackedGrouped(
+        document.getElementById("chartResponsavel").getContext("2d"),
+        responsavel,
+        "Abertos x Resolvidos por Responsável"
+      );
+      const chAssunto = renderStackedGrouped(
+        document.getElementById("chartAssunto").getContext("2d"),
+        assunto,
+        "Abertos x Resolvidos por Assunto"
+      );
+
+      // Botões "Abrir em nova janela"
+      document
+        .getElementById("openUnidade")
+        .addEventListener("click", () =>
+          openChartWindow("Abertos x Resolvidos por Unidade", unidade)
+        );
+      document
+        .getElementById("openResponsavel")
+        .addEventListener("click", () =>
+          openChartWindow("Abertos x Resolvidos por Responsável", responsavel)
+        );
+      document
+        .getElementById("openAssunto")
+        .addEventListener("click", () =>
+          openChartWindow("Abertos x Resolvidos por Assunto", assunto)
+        );
     },
   });
 }
