@@ -1718,9 +1718,9 @@ function carrega_sults(obj) {
       // Paleta opcional (Abertos, Abertos atraso, Resolvidos, Resolvidos atraso)
       const COLORS = {
         ABERTOS: "rgba(13,110,253,0.8)", // bg-primary
-        ABERTOS_ATR: "rgba(255,193,7,0.8)", // bg-warning
+        ABERTOS_ATR: "rgba(13,110,253,0.3)", // bg-warning
         RESOLVIDOS: "rgba(25,135,84,0.8)", // bg-success
-        RESOLVIDOS_ATR: "rgba(220,53,69,0.8)",
+        RESOLVIDOS_ATR: "rgba(25,135,84,0.3)",
       };
 
       function toDatasets(series) {
@@ -1745,6 +1745,7 @@ function carrega_sults(obj) {
           };
         });
       }
+      const fmt = (n) => Number(n || 0).toLocaleString("pt-BR");
       // Opções base: pilhas e zoom
       function baseOptions(labels, title) {
         return {
@@ -1753,37 +1754,48 @@ function carrega_sults(obj) {
           options: {
             responsive: true,
             maintainAspectRatio: false, // ocupa a altura do .chart-box
+            interaction: { mode: "index", intersect: false },
             plugins: {
               title: { display: true, text: title },
               legend: { position: "top" },
               tooltip: {
                 callbacks: {
+                  title(items) {
+                    return items?.[0]?.label || "";
+                  },
                   label(ctx) {
-                    const label = ctx.dataset.label || "";
-                    const idx = ctx.dataIndex; // posição da barra no eixo X
                     const chart = ctx.chart;
+                    const idx = ctx.dataIndex;
+                    const label = ctx.dataset.label || "";
                     const stackName = ctx.dataset.stack;
-                    const val = Number(ctx.parsed?.y ?? ctx.raw ?? 0);
 
-                    // só soma quando for a linha "base" (Abertos / Resolvidos),
-                    // e NÃO a linha "com atraso"
-                    const isComAtraso = /com atraso/i.test(label);
-                    const isStackInteresse =
-                      stackName === "stack_abertos" ||
-                      stackName === "stack_resolvidos";
-
-                    if (!isComAtraso && isStackInteresse) {
-                      const total = chart.data.datasets
-                        .filter((ds) => ds.stack === stackName)
+                    const sumStack = (stack) =>
+                      chart.data.datasets
+                        .filter(
+                          (ds) => ds.stack === stack && ds.hidden !== true
+                        )
                         .reduce(
                           (acc, ds) => acc + (Number(ds.data?.[idx]) || 0),
                           0
                         );
-                      return `${label}: ${fmt(total)}`; // ex.: Abertos: 24 / Resolvidos: 152
+
+                    // séries-base mostram o TOTAL da pilha
+                    if (
+                      stackName === "stack_abertos" &&
+                      !/com atraso/i.test(label)
+                    ) {
+                      return `Abertos: ${fmt(sumStack("stack_abertos"))}`;
+                    }
+                    if (
+                      stackName === "stack_resolvidos" &&
+                      !/com atraso/i.test(label)
+                    ) {
+                      return `Resolvidos: ${fmt(sumStack("stack_resolvidos"))}`;
                     }
 
-                    // linhas "com atraso" continuam mostrando o parcial
-                    return `${label}: ${fmt(val)}`; // ex.: Abertos com atraso: 20 / Resolvidos com atraso: 76
+                    // “com atraso” mostra o parcial
+                    const v = Number(ctx.parsed?.y ?? ctx.raw ?? 0);
+                    return `${label}: ${fmt(v)}`;
                   },
                 },
               },

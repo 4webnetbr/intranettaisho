@@ -82,7 +82,7 @@
                         for ($c = 0; $c < count($chamados); $c++){
                             $link = "<a href='https://taisho.sults.com.br/chamados/interacoes/".$chamados[$c]['id']."' target='_blank'>{$chamados[$c]['id']}</a>";
                             echo "<tr>";
-                            echo "<td class='text-nowrap'>'.$link.'</td>";
+                            echo "<td class='text-nowrap'>{$link}</td>";
                             for ($cp=1; $cp < count($campos); $cp++) { 
                                 $info = $chamados[$c][$campos[$cp]];
                                 $info = isValidDate($info, 'Y-m-d H:i:s')?dataDbToBr($info):$info;
