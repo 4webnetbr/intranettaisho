@@ -309,8 +309,8 @@ class DashSults extends BaseController
             $responsavel = [];
             $situacao = [];
         }
-        $colunas = ['Id','Unidade','Departamento', 'Assunto', 'Solicitante','Aberto em','Responsável','Resolvido em','Concluído em','Situação','Aberto c/ Atraso','Fechado c/ Atraso'];
-        $campos  = ['id','unidade_nome','departamento_nome','assunto_nome','solicitante_nome','aberto','responsavel_nome','resolvido','concluido','descsituacao','aberto_com_atraso','resolvido_com_atraso'];
+        $colunas = ['Id','Unidade','Departamento', 'Assunto', 'Solicitante','Aberto em','Responsável','Resolvido em','Concluído em','Situação','Aberto c/ Atraso','Fechado c/ Atraso','Título'];
+        $campos  = ['id','unidade_nome','departamento_nome','assunto_nome','solicitante_nome','aberto','responsavel_nome','resolvido','concluido','descsituacao','aberto_com_atraso','resolvido_com_atraso','titulo'];
         
         // $resolvido = array_values(array_unique(array_column($retorno, 'resolvido')));
 
