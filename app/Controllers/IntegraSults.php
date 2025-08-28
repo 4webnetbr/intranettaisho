@@ -21,7 +21,7 @@ class IntegraSults extends BaseController
 	public function integrar($start = 0)
 	{
         $inicio = date('Y-m-d\TH:i:s\Z',strtotime('2025-08-01 08:00:00'));
-        $inicio = date('Y-m-d\TH:i:s\Z', strtotime('-30 days midnight'));
+        $inicio = date('Y-m-d\TH:i:s\Z', strtotime('-120 days midnight'));
         debug($inicio);
         $apis['api_nome']       = 'API Sults';
         $apis['api_url']        = "https://api.sults.com.br/api/v1/chamado/ticket?start={$start}&limit=100&abertoStart={$inicio}";
