@@ -251,6 +251,9 @@ class ApiEstoque extends Auth
                     $prods[$d]['qtia']          = (string) formataQuantia($chave['cop_quantia'])['qtis'];
                     $prods[$d]['valor']          = floatToMoeda($chave['cop_valor']);
                     $prods[$d]['total']          = floatToMoeda($chave['cop_total']);
+                    $prods[$d]['marid']        = $chave['mar_id'];
+                    $prods[$d]['promarca']      = $chave['mar_nome'];
+                    log_message('info', 'Marca: ' . $chave['mar_nome'] . ' Função: getCompraFornec');
 
                     $prods[$d]['codbar']          = '';
                     $produto = $this->compra->getCompraProd($chave['com_id'], $chave['pro_id'])[0];

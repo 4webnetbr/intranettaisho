@@ -81,13 +81,6 @@ class EstMarca extends BaseController {
                 // $dados_compr[$dc]['d'] = '';
                 $qtia = formataQuantia($dados_marcas[$dm]['mar_conversao']);
                 $dados_marcas[$dm]['mar_conversao'] = $qtia['qtia'];
-
-                
-                // $codbar = substr('0000000000000'.trim($dados_marcas[$dm]['mar_codigo']), -12);
-                // $barcodeGen = new BarcodeGen();
-                // $imgcodbar = $barcodeGen->generateHTML($codbar);
-                // $dados_marcas[$dm]['codbar'] = $imgcodbar;
-
             }
             $marcas = [
                 'data' => montaListaColunas($this->data,'mar_id',$dados_marcas,'pro_nome'),
