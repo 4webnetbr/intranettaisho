@@ -27,6 +27,7 @@ class EstMarca extends BaseController {
     public $unm_id;
     public $mar_apresenta;
     public $mar_conversao;
+    public $mar_aprovada;
     /**
      * Construtor da Classe
      * construct
@@ -97,20 +98,22 @@ class EstMarca extends BaseController {
     public function add($modal = false)
     {
         $this->def_campos();
+            $this->def_campos_codigo(false, 0);
 
         $secao[0] = 'Dados Gerais';
         $campos[0][0] = "<div class='col-6 float-start'>";
         $campos[0][1] = $this->mar_id;
         $campos[0][2] = $this->mar_codigo;
         $campos[0][3] = $this->pro_id;
-        $campos[0][4] = $this->und_id;
+        $campos[0][4] = $this->und_id; 
         $campos[0][5] = $this->mar_nome;
         $campos[0][6] = $this->unm_id;
         $campos[0][7] = $this->mar_apresenta;
         $campos[0][8] = $this->mar_conversao;
-        $campos[0][9] = "</div>";
-        $campos[0][10] = "<div id='dados_produto' class='col-6 float-start'>";
-        $campos[0][11] = "</div>";
+        $campos[0][9] = $this->mar_aprovada;
+        $campos[0][10] = "</div>";
+        $campos[0][11] = "<div id='dados_produto' class='col-6 float-start'>";
+        $campos[0][12] = "</div>";
 
         $this->data['secoes'] = $secao;
         $this->data['campos'] = $campos;
@@ -143,31 +146,64 @@ class EstMarca extends BaseController {
      */
     public function edit($id, $show = false)
     {
-        $dados_marca = $this->marca->getMarca($id)[0];
+        $dados_marca = $this->marca->getMarca($id);
         // debug($dados_marca);
-        $this->def_campos($dados_marca, 0, $show);
+        $this->def_campos($dados_marca[0], 0, $show);
         $secao[0] = 'Dados Gerais';
         $campos[0][0] = "<div class='col-6 float-start'>";
         $campos[0][1] = $this->mar_id;
-        $campos[0][2] = $this->mar_codigo;
-        $campos[0][3] = $this->pro_id;
-        $campos[0][4] = $this->und_id;
-        $campos[0][5] = $this->mar_nome;
-        $campos[0][6] = $this->unm_id;
-        $campos[0][7] = $this->mar_apresenta;
-        $campos[0][8] = $this->mar_conversao;
+        $campos[0][2] = $this->pro_id;
+        $campos[0][3] = $this->und_id;
+        $campos[0][4] = $this->mar_nome;
+        $campos[0][5] = $this->unm_id;
+        $campos[0][6] = $this->mar_apresenta;
+        $campos[0][7] = $this->mar_conversao;
+        $campos[0][8] = $this->mar_aprovada;
+
+        $secao[1] = 'Código de Barras';
+        $displ[1] = 'tabela';
+        if(count($dados_marca) > 0){
+            for($c=0;$c<count($dados_marca);$c++){
+                $this->def_campos_codigo($dados_marca[$c], $c);
+                $campos[1][$c][0] = $this->mar_codigo;
+                $campos[1][$c][1] = $this->bt_add;
+                $campos[1][$c][2] = $this->bt_del;
+            }
+        } else {
+            $this->def_campos_codigo(false, 0);
+            $campos[1][0][0] = $this->mar_codigo;
+            $campos[1][0][1] = $this->bt_add;
+            $campos[1][0][2] = $this->bt_del;
+        }
+
+
         $campos[0][9] = "</div>";
         $campos[0][10] = "<div id='dados_produto' class='col-6 float-start'>";
         $campos[0][11] = "</div>";
 
+        $this->data['desc_edicao'] = $dados_marca[0]['mar_nome'];
         $this->data['secoes'] = $secao;
+        $this->data['displ'] = $displ; 
         $this->data['campos'] = $campos;
         $this->data['destino'] = 'store';
+        $this->data['script'] = "<script>acerta_botoes_rep('codigo_de_barras');</script>";
 
         // BUSCAR DADOS DO LOG
         $this->data['log'] = buscaLog('est_marca', $id);
 
         echo view('vw_edicao', $this->data);
+    }
+
+    public function add_campo($ind){
+        $this->def_campos_codigo(false, $ind);
+
+        $campo = [];
+        $campo[count($campo)] = $this->mar_codigo;
+        $campo[count($campo)] = $this->bt_add;
+        $campo[count($campo)] = $this->bt_del;
+
+        echo json_encode($campo);
+        exit;
     }
 
     /**
@@ -271,9 +307,47 @@ class EstMarca extends BaseController {
         $conv->leitura               = $show;
         $this->mar_conversao        = $conv->crInput();
 
+        $simnao['A'] = 'Aprovada';
+        $simnao['R'] = 'Reprovada';
+        $aprov        = new MyCampo('est_marca','mar_aprovada');
+        $aprov->valor = $aprov->selecionado = isset($dados['mar_aprovada'])? $dados['mar_aprovada']: 'A';
+        $aprov->opcoes = $simnao;
+        $aprov->classep = 'mark';
+        $this->mar_aprovada = $aprov->cr2opcoes();
     }
 
 
+    public function def_campos_codigo($dados = false, $pos = 0, $show = false){
+        $codi                       = new MyCampo('est_marca','mar_codigo');
+        $codi->nome                 = "mar_codigo[$pos]";
+        $codi->id                   = "mar_codigo[$pos]";
+        $codi->obrigatorio          = true;
+        $codi->valor                = isset($dados['mar_codigo'])? $dados['mar_codigo']: '';
+        $codi->leitura               = $show;
+        $codi->funcBlur             = 'buscarProdutoPorCodBarras()';
+        $this->mar_codigo           = $codi->crInput();
+    
+        $atrib['data-index'] = $pos;
+        $add            = new MyCampo();
+        $add->attrdata  = $atrib;
+        $add->nome      = "bt_add[$pos]";
+        $add->id        = "bt_add[$pos]";
+        $add->i_cone     = "<i class='fas fa-plus'></i>";
+        $add->place     = "Adicionar Código";
+        $add->classep    = "btn-outline-success btn-sm bt-repete mt-4";
+        $add->funcChan = "addCampo('".base_url("EstMarca/add_campo")."','codigo_de_barras',this)";
+        $this->bt_add   = $add->crBotao();
+
+        $del            = new MyCampo();
+        $del->attrdata  = $atrib;
+        $del->nome      = "bt_del[$pos]";
+        $del->id        = "bt_del[$pos]";
+        $del->i_cone     = "<i class='fas fa-trash'></i>";
+        $del->place     = "Excluir Código";
+        $del->classep    = "btn-outline-danger btn-sm bt-exclui mt-4";
+        $del->funcChan = "exclui_campo('codigo_de_barras',this)";
+        $this->bt_del   = $del->crBotao();
+    }
     /**
      * Gravação
      * store
@@ -287,30 +361,53 @@ class EstMarca extends BaseController {
         $dados_mar = [
             'mar_id'           => $dados['mar_id'],
             'pro_id'         => $dados['pro_id'],
-            'mar_codigo'         => $dados['mar_codigo'],
             'mar_nome'         => $dados['mar_nome'],
             'und_id'         => $dados['unm_id'],
+            'mar_aprovada'         => $dados['mar_aprovada'],
             'mar_apresenta'         => $dados['mar_apresenta'],
             'mar_conversao'         => str_replace(',','.',$dados['mar_conversao']),
         ];
         // debug($dados_mar,true);
         $salvar = $this->marca->save($dados_mar);
         if ($salvar) {
-            $entradas = new EstoquEntradaModel();
-            $lst_entr = $entradas->getProdutoEntradaMarca($dados['mar_codigo']);
-            for ($e=0; $e < count($lst_entr); $e++) { 
-                $sql_ent = [
-                    'enp_conversao' => str_replace(',','.',$dados['mar_conversao']),
-                ];
-                $salva = $this->common->updateReg('dbEstoque','est_entrada_produto',"enp_id = ".$lst_entr[$e]['enp_id'],$sql_ent);
+            $mar_id = $this->marca->getInsertID();
+            if($dados['mar_id'] != ''){
+                $mar_id = $dados['mar_id'];
             }
-            $saidas = new EstoquSaidaModel();
-            $lst_said = $saidas->getProdutoSaidaMarca($dados['mar_codigo']);
-            for ($s=0; $s < count($lst_said); $s++) { 
-                $sql_sai = [
-                    'sap_conversao' => str_replace(',','.',$dados['mar_conversao']),
-                ];
-                $salva = $this->common->updateReg('dbEstoque','est_saida_produto',"sap_id = ".$lst_said[$s]['sap_id'],$sql_sai);
+            if(isset($dados['mar_codigo'])){
+                // debug($dados['cvs_id']);
+                $cvs_exc = $this->marca->excluiCodigo($mar_id);
+                for($cvs=0;$cvs<count($dados['mar_codigo']);$cvs++){
+                    if(isset($dados['mar_codigo'][$cvs])){
+                        $dados_cvs = [
+                            'mar_id' => $mar_id,
+                            'mar_codigo'=> $dados['mar_codigo'][$cvs],
+                        ];
+                        // debug($dados_cvs);
+                        $cvs_id = $this->common->insertReg('dbEstoque','est_marca', $dados_cvs);
+                        if(!$cvs_id){
+                            $ret['erro'] = true;
+                            $ret['msg'] = 'Não foi possível gravar os Códigos, Verifique!';
+                            break;
+                        }
+                    }
+                    $entradas = new EstoquEntradaModel();
+                    $lst_entr = $entradas->getProdutoEntradaMarca($dados['mar_codigo'][$cvs]);
+                    for ($e=0; $e < count($lst_entr); $e++) { 
+                        $sql_ent = [
+                            'enp_conversao' => str_replace(',','.',$dados['mar_conversao']),
+                        ];
+                        $salva = $this->common->updateReg('dbEstoque','est_entrada_produto',"enp_id = ".$lst_entr[$e]['enp_id'],$sql_ent);
+                    }
+                    $saidas = new EstoquSaidaModel();
+                    $lst_said = $saidas->getProdutoSaidaMarca($dados['mar_codigo'][$cvs]);
+                    for ($s=0; $s < count($lst_said); $s++) { 
+                        $sql_sai = [
+                            'sap_conversao' => str_replace(',','.',$dados['mar_conversao']),
+                        ];
+                        $salva = $this->common->updateReg('dbEstoque','est_saida_produto',"sap_id = ".$lst_said[$s]['sap_id'],$sql_sai);
+                    }
+                }
             }
             // debug($fim, true);
             $ret['erro'] = false;

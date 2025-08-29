@@ -147,7 +147,7 @@ class EstoquCompraModel extends Model
      * @param bool $id 
      * @return array
      */
-    public function getCompraProd($com_id = false, $pro_id = false)
+    public function getCompraProd($com_id = false, $pro_id = false, $stat = false)
     {
         $db = db_connect('dbEstoque');
         $builder = $db->table('vw_est_compras_produto_relac');
@@ -158,9 +158,13 @@ class EstoquCompraModel extends Model
         if ($pro_id) {
             $builder->where("pro_id", $pro_id);
         }
+        if ($stat) {
+            $builder->where("cop_status", $stat);
+        }
         $builder->orderBy("com_data");
         $ret = $builder->get()->getResultArray();
 
+        log_message('info', 'Não Chegou: ' . $this->db->getLastQuery() . ' Função: gravanaochegou');
         // debug($this->db->getLastQuery(), false);
 
         return $ret;
@@ -297,7 +301,7 @@ class EstoquCompraModel extends Model
      * @param bool $id 
      * @return array
      */
-    public function getCompraProdPendente($pro_id = false, $empresa = false, $fornecedor = false)
+    public function getCompraProdPendente($pro_id = false, $empresa = false, $fornecedor = false, $compra = false)
     {
         $db = db_connect('dbEstoque');
         $builder = $db->table('vw_compras_produtos_pendentes');
@@ -310,6 +314,9 @@ class EstoquCompraModel extends Model
         }
         if ($fornecedor) {
             $builder->where("for_id", $fornecedor);
+        }
+        if ($compra) {
+            $builder->where("com_id", $compra);
         }
         $builder->where("com_status", 'P');
         $builder->orderBy("com_data DESC");

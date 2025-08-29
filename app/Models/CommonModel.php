@@ -58,7 +58,8 @@ class CommonModel extends Model
         $builder->where($chave);
 
         $update_id = $builder->update($data);
-        // $sql = $this->db->getLastQuery();
+        $sql = $db->getLastQuery();
+        log_message('info', 'Não Chegou: ' . $sql . ' Função: gravanaochegou');
         // debug($sql);        
         return $update_id;
     }

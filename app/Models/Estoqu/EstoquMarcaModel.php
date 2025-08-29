@@ -25,6 +25,7 @@ class EstoquMarcaModel extends Model
         'und_id',
         'mar_apresenta',
         'mar_conversao',
+        'mar_aprovada',
     ];
 
 
@@ -185,4 +186,16 @@ class EstoquMarcaModel extends Model
         // debug($this->db->getLastQuery(), false);
         return $ret;
     }
+
+    public function excluiCodigo($mar_id)
+    {
+        $db = db_connect('dbEstoque');
+        $builder = $db->table('est_marca_codigo_link');
+        $builder->where("mar_id",$mar_id);
+        $ret = $builder->delete();
+        // debug($this->db->getLastQuery(), false);
+        return $ret;
+
+    }                 
+
 }

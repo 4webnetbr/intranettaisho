@@ -275,6 +275,85 @@ class ApiEstoque extends Auth
         }
     }
 
+    /**
+     * getCompra
+     * Retorna as Compras dos produtos da empresa informada no parametro
+     * @return void
+     */
+    public function getCompraId()
+    {
+        if ($this->request->header('Authorization') != null) {
+            $token = $this->request->header('Authorization')->getValue();
+            if ($this->validateToken($token) == true) {
+                $token      = $this->request->header('Authorization')->getValue();
+                $inform     = get_object_vars($this->validateToken($token));
+                $dados      = get_object_vars($inform['data']);
+                $usuario    = $dados['id'];
+                log_message('info', 'Usuário: ' . $usuario . ' Função: getCompraId');
+
+                $comid       = $this->request->getVar('comid');
+                // $deposito       = $this->request->getVar('deposito');
+
+                $compras       =  $this->compra->getCompraProdPendente(false, false,false,$comid); // somente produtos pendentes
+
+                // echo $this->api->getLastQuery();
+                $prods      = [];
+                for ($d = 0; $d < sizeof($compras); $d++) {
+                    $chave = $compras[$d];
+                    $prods[$d]['proid']        = $chave['pro_id'];
+                    $prods[$d]['pronome']      = $chave['pro_nome'];
+                    $prods[$d]['undsigla']     = $chave['und_sigla'];
+                    log_message('info', 'Produto: ' . $chave['pro_nome'] . ' Função: getCompraId');
+                    log_message('info', 'Und: ' . $chave['und_sigla'] . ' Função: getCompraId');
+                    $minimo = $chave['mmi_minimo'] ?? 0;
+                    $maximo = $chave['mmi_maximo'] ?? 0;
+                    if ($chave['und_id'] != $chave['und_id_compra']) {
+                        $conv = $this->unidades->getConversaoDePara($chave['und_id_compra'], $chave['und_id']);
+                        if (count($conv) > 0) {
+                            $expressao = $minimo . ' ' . $conv[0]['cvs_operador'] . ' ' . $conv[0]['cvs_fator'];
+                            log_message('info', 'exp minimo: ' . $expressao . ' Função: getCompraFornec');
+                            eval('$minimo = ' . $expressao . ';');
+                            log_message('info', 'minimo: ' . $minimo . ' Função: getCompra');
+                            $expressao = $maximo . ' ' . $conv[0]['cvs_operador'] . ' ' . $conv[0]['cvs_fator'];
+                            log_message('info', 'exp maximo: ' . $expressao . ' Função: getCompraFornec');
+                            eval('$maximo = ' . $expressao . ';');
+                            log_message('info', 'maximo: ' . $maximo . ' Função: getCompraFornec');
+                        }
+                    }
+                    $prods[$d]['minimo']         = (string) formataQuantia($minimo)['qtis'];
+                    $prods[$d]['maximo']         = (string) formataQuantia($maximo)['qtis'];
+                    $prods[$d]['saldo']         = "0";
+                    $prods[$d]['for_id']        = $chave['for_id'];
+                    $prods[$d]['for_nome']      = $chave['for_razao'];
+                    $prods[$d]['comid']        = $chave['com_id'];
+                    $prods[$d]['datacompra']      = dataDbToBr($chave['com_data']);
+                    $prods[$d]['entrega']      = isset($chave['cop_previsao'])?dataDbToBr($chave['cop_previsao']):dataDbToBr($chave['com_previsao']);
+                    $prods[$d]['qtia']          = (string) formataQuantia($chave['cop_quantia'])['qtis'];
+                    $prods[$d]['valor']          = floatToMoeda($chave['cop_valor']);
+                    $prods[$d]['total']          = floatToMoeda($chave['cop_total']);
+                    $prods[$d]['marid']        = $chave['mar_id'];
+                    $prods[$d]['promarca']      = $chave['mar_nome'];
+                    log_message('info', 'Marca: ' . $chave['mar_nome'] . ' Função: getCompraFornec');
+
+                    $prods[$d]['codbar']          = '';
+                    $produto = $this->compra->getCompraProd($chave['com_id'], $chave['pro_id'])[0];
+                    if($produto['gru_controlaestoque'] == 'N'){ // busca a marca, traz preenchida e pede a quantidade
+                        $marcax = $this->marca->getMarcaProd($chave['pro_id']);
+                        // debug($marcax);
+                        if($marcax){
+                            $prods[$d]['codbar']          = $marcax[0]['mar_codigo'];
+                        }
+                    }
+                }
+                log_message('info', 'Resultado: ' . json_encode($prods) . ' Função: getCompraId');
+                return $this->respond($prods, 200);
+            } else {
+                return $this->respond(['message' => 'Token Inválido'], 401);
+            }
+        } else {
+            return $this->respond(['message' => 'Não Autorizado'], 401);
+        }
+    }
 
     /**
      * getmarcacodbar
@@ -613,6 +692,7 @@ class ApiEstoque extends Auth
                 $deposito   = $this->request->getVar('deposito');
                 $codbar     = $this->request->getVar('codbar');
                 $produto    = $this->request->getVar('produto');
+                $marca      = $this->request->getVar('promarca')!==null?$this->request->getVar('promarca'):'';
                 $quantia    = $this->request->getVar('quantia');
                 $preco      = $this->request->getVar('preco');
                 $total      = $this->request->getVar('total');
@@ -683,6 +763,11 @@ class ApiEstoque extends Auth
                     $db->transRollback();
                     return $this->respond(['success' => false, 'message' => 'Erro ao gravar produto'], 500);
                 }
+                $dados_com = [
+                    'cop_status' => 'R'
+                ];
+                $chave = "com_id = $compra AND pro_id = $produto";
+                $salva = $this->common->updateReg('dbEstoque', 'est_compra_produto',$chave, $dados_com);
 
                 if ($compra != null) {
                     $completo = $this->compra->getCompraVsEntrada($compra)[0];
@@ -696,18 +781,20 @@ class ApiEstoque extends Auth
                 }
 
                 // verifica se o código de barras existe
-                $existecodbar = $this->marca->getMarcaCod($codbar);
-                if(count($existecodbar) == 0){ // codbar não existe, insere a marca
-                    $dados_mar = [
-                        'pro_id'         => $produto,
-                        'mar_codigo'         => $codbar,
-                        'mar_nome'         => 'Marca não cadastrada',
-                        'und_id'         => '',
-                        'mar_apresenta'         => '',
-                        'mar_conversao'         => $convers,
-                    ];
-                    // debug($dados_mar,true);
-                    $salvar = $this->marca->save($dados_mar);
+                if($marca != ''){
+                    $existecodbar = $this->marca->getMarcaCod($codbar);
+                    if(count($existecodbar) == 0){ // codbar não existe, insere a marca
+                        // busca a marca pelo nome para pegar o ID
+                        $marcaencontrada = $this->marca->getMarcaSearch($marca);
+                        if($marcaencontrada){
+                            $id = $marcaencontrada[0]['mar_id'];
+                            $dados_mar = [
+                                'mar_id'         => $id,
+                                'mar_codigo'         => $codbar,
+                            ];
+                            $cod_id = $this->common->insertReg('dbEstoque','est_marca_codigo_link', $dados_mar);
+                        }
+                    }
                 }
 
                 $db->transComplete(); // <<< FINALIZA TRANSACAO
@@ -728,6 +815,75 @@ class ApiEstoque extends Auth
         }
     }
 
+    public function gravanaochegou()
+    {
+        if ($this->request->header('Authorization') != null) {
+            $token = $this->request->header('Authorization')->getValue();
+            if ($this->validateToken($token) == true) {
+                $inform  = get_object_vars($this->validateToken($token));
+                $dados   = get_object_vars($inform['data']);
+                $usuario = $dados['id'];
+
+                $user = $this->usuario->getUsuarioId($usuario);
+                session()->set('usu_nome', $user[0]['usu_nome']);
+                log_message('info', 'Usuário: ' . $usuario . ' Função: gravanaochegou');
+
+                $key = $this->request->getHeaderLine('Idempotency-Key');
+
+                if (!$key) {
+                    return $this->fail('Idempotency key required', 400);
+                }
+
+                $cache = cache();
+
+                if ($cache->get($key)) {
+                    return $this->respond(['message' => 'Duplicate request ignored'], 200);
+                }
+
+                $produto    = $this->request->getVar('produto');
+                $compra     = $this->request->getVar('compra');
+                $tipo       = $this->request->getVar('tipo');
+
+                $db = Database::connect(); // Instancia o DB
+                $db->transStart(); // <<< INICIA TRANSACAO
+
+                $dados_com = [
+                    'cop_status'     => $tipo,
+                ];
+                log_message('info', 'Não Chegou: ' . json_encode($dados_com) . ' Função: gravanaochegou');
+
+                try {
+                    $chave = "com_id = $compra AND pro_id = $produto";
+                    $salva = $this->common->updateReg('dbEstoque', 'est_compra_produto',$chave, $dados_com);
+                    if (!$salva) {
+                        // Erros de validação do Model
+                        $db->transRollback();
+                        return $this->respond(['success' => false, 'message' => 'Erro ao gravar não chegou'], 500);
+                    }
+                } catch (\CodeIgniter\Database\Exceptions\DatabaseException $e) {
+                    // Outro erro de banco
+                    $db->transRollback();
+                    return $this->respond(['success' => false, 'message' => 'Erro ao gravar não chegou'. $e], 500);
+                    // throw $e; // rethrow se quiser tratar globalmente
+                }
+
+                $db->transComplete(); // <<< FINALIZA TRANSACAO
+
+                if ($db->transStatus() === false) {
+                    return $this->respond(['success' => false, 'message' => 'Erro na transação'], 500);
+                }
+
+                $cache->save($key, true, 300);
+
+                log_message('info', 'Não chegou gravada com sucesso Função: gravanaochegou');
+                return $this->respond(['success' => true, 'id_compra' => $compra], 200);
+            } else {
+                return $this->respond(['success' => false, 'message' => 'Token inválido'], 401);
+            }
+        } else {
+            return $this->respond(['success' => false, 'message' => 'Não autorizado'], 401);
+        }
+    }
 
     /**
      * getConsumo
