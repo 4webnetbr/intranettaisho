@@ -164,7 +164,7 @@ class EstoquCompraModel extends Model
         $builder->orderBy("com_data");
         $ret = $builder->get()->getResultArray();
 
-        log_message('info', 'Não Chegou: ' . $this->db->getLastQuery() . ' Função: gravanaochegou');
+        // log_message('info', 'Não Chegou: ' . $this->db->getLastQuery() . ' Função: gravanaochegou');
         // debug($this->db->getLastQuery(), false);
 
         return $ret;

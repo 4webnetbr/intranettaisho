@@ -180,10 +180,11 @@ class EstoquMarcaModel extends Model
         $builder = $db->table('vw_est_marcas_relac');
         $builder->select('*');
         $builder->groupStart();
-        $builder->like('pro_nome', $termo);
+        $builder->like('mar_nome', $termo);
         $builder->groupEnd();
         $ret = $builder->get()->getResultArray();
-        // debug($this->db->getLastQuery(), false);
+        $sql = $db->getLastQuery();
+        log_message('info', 'Sql Marca: ' . $sql . ' Função: gravaentrada');
         return $ret;
     }
 

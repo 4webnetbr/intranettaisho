@@ -59,7 +59,7 @@ class CommonModel extends Model
 
         $update_id = $builder->update($data);
         $sql = $db->getLastQuery();
-        log_message('info', 'Não Chegou: ' . $sql . ' Função: gravanaochegou');
+        // log_message('info', 'Não Chegou: ' . $sql . ' Função: gravanaochegou');
         // debug($sql);        
         return $update_id;
     }

@@ -585,84 +585,6 @@ class ApiEstoque extends Auth
      * Retorna os dados do produto e da marca pelo cõdigo de barras informado
      * @return void
      */
-    // public function gravaentrada()
-    // {
-    //     if ($this->request->header('Authorization') != null) {
-    //         $token = $this->request->header('Authorization')->getValue();
-    //         if ($this->validateToken($token) == true) {
-    //             $token      = $this->request->header('Authorization')->getValue();
-    //             $inform     = get_object_vars($this->validateToken($token));
-    //             $dados      = get_object_vars($inform['data']);
-    //             $usuario    = $dados['id'];
-    //             $user = $this->usuario->getUsuarioId($usuario);
-    //             session()->set('usu_nome', $user[0]['usu_nome']);
-    //             log_message('info', 'Usuário: ' . $usuario . ' Função: gravaEntrada');
-
-    //             $empresa        = $this->request->getVar('empresa');
-    //             $deposito       = $this->request->getVar('deposito');
-    //             $codbar         = $this->request->getVar('codbar');
-    //             $produto        = $this->request->getVar('produto');
-    //             $quantia        = $this->request->getVar('quantia');
-    //             $preco          = $this->request->getVar('preco');
-    //             $total          = $this->request->getVar('total');
-    //             $unidade        = $this->request->getVar('unidade');
-    //             $convers        = $this->request->getVar('convers');
-    //             $fornece        = $this->request->getVar('fornecedor');
-    //             $compra         = $this->request->getVar('compra');
-    //             $total          = moedaToFloat($total);
-
-    //             $dados_ent = [
-    //                 'ent_data'  => date('Y-m-d'),
-    //                 'emp_id'    => $empresa,
-    //                 'for_id'    => $fornece,
-    //                 'dep_id'    => $deposito,
-    //                 'com_id'    => $compra,
-    //                 'ent_valor'    => $total,
-    //             ];
-    //             log_message('info', 'Entrada: ' . json_encode($dados_ent) . ' Função: gravaentrada');
-    //             if ($this->entrada->save($dados_ent)) {
-    //                 $ent_id = $this->entrada->getInsertID();
-    //                 $data_atu = date('Y-m-d H:i:s');
-    //                 $valor = moedaToFloat($preco);
-    //                 // debug($valor);
-    //                 // debug($total,true);
-    //                 $dados_pro = [
-    //                     'ent_id'        => $ent_id,
-    //                     'mar_codigo'    => $codbar,
-    //                     'pro_id'        => $produto,
-    //                     'und_id'        => $unidade,
-    //                     'enp_quantia'   => $quantia,
-    //                     'enp_valor'     => $valor,
-    //                     'enp_conversao'   => $convers,
-    //                     'enp_total'   => $total,
-    //                     'enp_atualizado' => $data_atu
-    //                 ];
-    //                 log_message('info', 'Produto: ' . json_encode($dados_pro) . ' Função: gravaentrada');
-    //                 $salva = $this->common->insertReg('dbEstoque', 'est_entrada_produto', $dados_pro);
-    //                 if ($salva) {
-    //                     log_message('info', 'Resultado: Gravou Produto Função: gravaentrada');
-    //                     if ($compra != null) {
-    //                         $dados_com = [
-    //                             'com_id'    => $compra,
-    //                             'com_status' => 'R',
-    //                         ];
-    //                         $this->compra->save($dados_com);
-    //                     }
-    //                     $ret = [];
-    //                     return $this->respond($ret, 200);
-    //                 } else {
-    //                     return $this->respond(['message' => 'Erro ao Gravar Produto'], 401);
-    //                 }
-    //             } else {
-    //                 return $this->respond(['message' => 'Erro ao Gravar Entrada'], 401);
-    //             }
-    //         } else {
-    //             return $this->respond(['message' => 'Token Inválido'], 401);
-    //         }
-    //     } else {
-    //         return $this->respond(['message' => 'Não Autorizado'], 401);
-    //     }
-    // }
     public function gravaentrada()
     {
         if ($this->request->header('Authorization') != null) {
@@ -781,11 +703,12 @@ class ApiEstoque extends Auth
                 }
 
                 // verifica se o código de barras existe
+                log_message('info', 'Marca: ' . $marca . ' Função: gravaentrada');
                 if($marca != ''){
                     $existecodbar = $this->marca->getMarcaCod($codbar);
                     if(count($existecodbar) == 0){ // codbar não existe, insere a marca
                         // busca a marca pelo nome para pegar o ID
-                        $marcaencontrada = $this->marca->getMarcaSearch($marca);
+                        $marcaencontrada = $this->marca->getMarcaSearch(trim($marca));
                         if($marcaencontrada){
                             $id = $marcaencontrada[0]['mar_id'];
                             $dados_mar = [
@@ -793,6 +716,7 @@ class ApiEstoque extends Auth
                                 'mar_codigo'         => $codbar,
                             ];
                             $cod_id = $this->common->insertReg('dbEstoque','est_marca_codigo_link', $dados_mar);
+                            log_message('info', 'Gravou: ' . json_encode($dados_mar) . ' Função: gravaentrada');
                         }
                     }
                 }
@@ -829,6 +753,7 @@ class ApiEstoque extends Auth
                 log_message('info', 'Usuário: ' . $usuario . ' Função: gravanaochegou');
 
                 $key = $this->request->getHeaderLine('Idempotency-Key');
+                log_message('info', 'Key '.$key.' Função: gravanaochegou');
 
                 if (!$key) {
                     return $this->fail('Idempotency key required', 400);
@@ -837,6 +762,7 @@ class ApiEstoque extends Auth
                 $cache = cache();
 
                 if ($cache->get($key)) {
+                    log_message('info', 'Chamada duplicada Função: gravanaochegou');
                     return $this->respond(['message' => 'Duplicate request ignored'], 200);
                 }
 
