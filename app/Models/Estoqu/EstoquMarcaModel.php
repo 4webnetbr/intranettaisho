@@ -30,17 +30,6 @@ class EstoquMarcaModel extends Model
 
 
     protected $skipValidation   = false;
-    protected $validationRules = [
-        'mar_codigo' => 'required|is_unique[est_marca.mar_codigo, mar_id,{mar_id}]',
-    ];
-
-    protected $validationMessages = [
-        'mar_codigo' => [
-            'required' => 'O campo código é Obrigatório.',
-            'is_unique' =>  'Esse código de barras, já está cadastrado'
-        ],
-
-    ];
 
     protected $deletedField  = 'mar_excluido';
 

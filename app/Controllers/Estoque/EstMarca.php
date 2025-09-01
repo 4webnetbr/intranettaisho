@@ -358,6 +358,7 @@ class EstMarca extends BaseController {
     {
         $ret = [];
         $dados = $this->request->getPost();
+        // debug($dados, true);
         $dados_mar = [
             'mar_id'           => $dados['mar_id'],
             'pro_id'         => $dados['pro_id'],
@@ -384,7 +385,7 @@ class EstMarca extends BaseController {
                             'mar_codigo'=> $dados['mar_codigo'][$cvs],
                         ];
                         // debug($dados_cvs);
-                        $cvs_id = $this->common->insertReg('dbEstoque','est_marca', $dados_cvs);
+                        $cvs_id = $this->common->insertReg('dbEstoque','est_marca_codigo_link', $dados_cvs);
                         if(!$cvs_id){
                             $ret['erro'] = true;
                             $ret['msg'] = 'Não foi possível gravar os Códigos, Verifique!';
