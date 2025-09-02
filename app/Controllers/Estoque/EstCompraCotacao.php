@@ -607,7 +607,7 @@ class EstCompraCotacao extends BaseController
             $this->dados_mar = $this->marca->getMarca($dados[$chave]);
             $valor = $dados[$chave];
         } else {
-            $this->dados_mar = $this->marca->getMarcaProd($dados['pro_id']);
+            $this->dados_mar = $this->marca->getMarcaProd($dados['pro_id'], 'A'); // somente marcas aprovadas
         }
         // debug($dados[$chave]);
         // debug($this->dados_mar);

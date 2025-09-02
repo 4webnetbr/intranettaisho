@@ -149,7 +149,7 @@ class EstoquCotacaoModel extends Model
         if ($pro_id) {
             $builder->where("pro_id",$pro_id);
         }
-        $builder->orderBy("pro_nome, pro_id, cot_id");
+        $builder->orderBy("pro_nome, mar_nome, cot_id");
         $ret = $builder->get()->getResultArray();
 
         // debug($this->db->getLastQuery(),false);        

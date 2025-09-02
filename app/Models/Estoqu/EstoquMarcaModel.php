@@ -88,13 +88,16 @@ class EstoquMarcaModel extends Model
      * @param bool $id
      * @return array
      */
-    public function getMarca($mar_id = false)
+    public function getMarca($mar_id = false, $aprovada = false)
     {
         $db = db_connect('dbEstoque');
         $builder = $db->table('vw_est_marcas_relac');
         $builder->select('*');
         if ($mar_id) {
             $builder->where("mar_id", $mar_id);
+        }
+        if ($aprovada) {
+            $builder->where("mar_aprovada", $aprovada);
         }
         $builder->orderBy("pro_nome");
         $ret = $builder->get()->getResultArray();
@@ -112,13 +115,16 @@ class EstoquMarcaModel extends Model
      * @param bool $id
      * @return array
      */
-    public function getMarcaProd($pro_id = false)
+    public function getMarcaProd($pro_id = false, $aprovada = false)
     {
         $db = db_connect('dbEstoque');
-        $builder = $db->table('vw_est_marcas_relac');
+        $builder = $db->table('vw_est_marca_aprovadas');
         $builder->select('*');
         if ($pro_id) {
             $builder->where("pro_id", $pro_id);
+        }
+        if ($aprovada) {
+            $builder->where("mar_aprovada", $aprovada);
         }
         $builder->orderBy("mar_nome");
         $ret = $builder->get()->getResultArray();
