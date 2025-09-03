@@ -178,7 +178,7 @@ class MyCampo
                     }
                     break;
                 case 'Caracter longo':
-                    if (intval($dad_camp['COLUMN_SIZE']) <= 100) {
+                    if (intval($dad_camp['COLUMN_SIZE']) <= 200) {
                         $this->objeto = 'input';
                         $this->tipo = 'text';
                         if (intval($dad_camp['COLUMN_SIZE']) > 50) {
@@ -974,7 +974,7 @@ class MyCampo
                     $this->field['data-original-title'] = 'Informe uma url válida!';
                     $this->field['title']     = 'Informe uma url válida!';
                     $grouppos .= "<span class='input-group-text input-group-append' id='ad_$this->nome'>
-                                <i class='far fa-link'></i></span>";
+                                <i class='fa-solid fa-link'></i></span>";
                     break;
                 case 'telefone':
                 case 'fone':

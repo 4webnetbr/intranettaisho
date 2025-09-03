@@ -25,6 +25,8 @@ class EstoquProdutoModel extends Model
         'und_id',
         'und_id_compra',
         'pro_fcc',
+        'pro_link',
+        'pro_status'
 
     ];
 
@@ -141,6 +143,7 @@ class EstoquProdutoModel extends Model
         $builder->where("ent.emp_id", $empresa);
         $builder->orWhere("ent.ent_id IS NULL");
         $builder->groupEnd();
+        $builder->where("pro.pro_status", 'A');
         $builder->groupBy("pro.pro_id");
         $builder->orderBy("sld.total_entradas DESC, sld.total_saidas DESC, pro_nome");
 

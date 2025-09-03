@@ -87,6 +87,7 @@ class EstoquGrupoCompraModel extends Model
         if($grc_id){
             $builder->where("grc_id", $grc_id);
         }
+        $builder->where("grc_excluido", NULL);
         $builder->orderBy("grc_nome");
         $ret = $builder->get()->getResultArray();
 
@@ -113,6 +114,7 @@ class EstoquGrupoCompraModel extends Model
 		$builder->groupStart();
 			$builder->like('grc_nome', $termo);
 		$builder->groupEnd();
+        $builder->where("grc_excluido", NULL);
         $ret = $builder->get()->getResultArray();
         // debug($this->db->getLastQuery(), false);
         return $ret;

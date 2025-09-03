@@ -101,6 +101,8 @@ class EstProduto extends BaseController
         // $campos[0][5] = $this->pro_minimo;
         $campos[0][5] = $this->und_compra;
         $campos[0][6] = $this->pro_fcc;
+        $campos[0][7] = $this->pro_link;
+        $campos[0][8] = $this->pro_status;
 
         $this->data['secoes'] = $secao;
         $this->data['campos'] = $campos;
@@ -145,6 +147,8 @@ class EstProduto extends BaseController
         // $campos[0][5] = $this->pro_minimo;
         $campos[0][5] = $this->und_compra;
         $campos[0][6] = $this->pro_fcc;
+        $campos[0][7] = $this->pro_link;
+        $campos[0][8] = $this->pro_status;
 
         $this->data['secoes'] = $secao;
         $this->data['campos'] = $campos;
@@ -195,12 +199,6 @@ class EstProduto extends BaseController
         $nome->valor = isset($dados['pro_nome']) ? $dados['pro_nome'] : '';
         $nome->leitura       = $show;
         $this->pro_nome = $nome->crInput();
-
-        // $minimo = new MyCampo('est_produto','pro_minimo');
-        // $minimo->valor = isset($dados['pro_minimo'])? $dados['pro_minimo']: '';
-        // $minimo->largura               = 20;
-        // $minimo->leitura       = $show;
-        // $this->pro_minimo = $minimo->crInput();
 
         $dados_gru = $this->grupoproduto->getGrupoProduto();
         $grups = array_column($dados_gru, 'gru_nome', 'gru_id');
@@ -272,14 +270,29 @@ class EstProduto extends BaseController
         }
         $conv                       = new MyCampo('est_produto', 'pro_fcc');
         $conv->obrigatorio          = true;
-        $conv->valor                = 'quantia';
+        $conv->tipo                 = 'quantia';
         $conv->valor                = $fcc['qtiv'];
         $conv->decimal              = $fcc['dec'];
         $conv->infotop              = $txt_info;
         $conv->size                 = 3;
         $conv->maxLength            = 7;
-        $conv->leitura               = $show;
-        $this->pro_fcc        = $conv->crInput();
+        $conv->leitura              = $show;
+        $this->pro_fcc              = $conv->crInput();
+
+        $link                      = new MyCampo('est_produto', 'pro_link');
+        $link->tipo                = 'site';
+        $link->valor               = isset($dados['pro_link']) ? $dados['pro_link'] : '';
+        $link->leitura             = $show;
+        $this->pro_link            = $link->crInput();
+
+        $simnao['A'] = 'Ativo';
+        $simnao['I'] = 'Inativo';
+        $atin                      = new MyCampo('est_produto','pro_status');
+        $atin->valor               = $atin->selecionado = isset($dados['pro_status'])? $dados['pro_status']: 'A';
+        $atin->opcoes              = $simnao;
+        $atin->classep             = 'mark';
+        $this->pro_status          = $atin->cr2opcoes();
+
     }
 
 
@@ -299,8 +312,9 @@ class EstProduto extends BaseController
             'grc_id'            => $dados['grc_id'],
             'pro_nome'          => $dados['pro_nome'],
             'pro_fcc'           => $dados['pro_fcc'],
+            'pro_link'          => $dados['pro_link'],
+            'pro_status'        => $dados['pro_status'],
             'und_id'            => $dados['und_id'],
-            // 'pro_minimo'        => $dados['pro_minimo'],
             'und_id_compra'     => $dados['und_id_compra'],
         ];
         if ($this->Produto->save($dados_dep)) {
