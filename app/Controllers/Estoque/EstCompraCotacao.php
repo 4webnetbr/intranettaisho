@@ -175,50 +175,6 @@ class EstCompraCotacao extends BaseController
 
     }
 
-    /**
-     * Listagem
-     * lista
-     *
-     * @return void
-     */
-    // public function lista()
-    // {
-    //     $param = $_REQUEST['param'];
-    //     if ($param == 'undefined') {
-    //         $param = [0];
-    //     } else {
-    //         $param = [$param];
-    //     }
-    //     // $campos = montaColunasCampos($this->data, 'com_id');
-    //     // debug($campos, true);
-    //     $dados_compr = $this->compra->getCompra(false, $param);
-    //     $com_ids_assoc = array_column($dados_compr, 'com_id');
-    //     $log = buscaLogTabela('est_compra', $com_ids_assoc);
-
-    //     $botao[0] = [
-    //         'url'    => base_url('/CriaPdf2025/PedidoCompra/chave'),
-    //         'funcao' => "redirec_blank(\"url\");",
-    //         'classe' => 'btn btn-white btn-sm border border-2 border-dark',
-    //         'title'  => 'Pedido',
-    //         'icone'  => 'fa fa-print',
-    //     ];
-    //     // $this->data['edicao'] = false;
-    //     foreach ($dados_compr as &$com) {
-    //         // Verificar se o log já está disponível para esse ana_id
-    //         $com['com_usuario'] = $log[$com['com_id']]['usua_alterou'] ?? '';
-    //         $qtia = formataQuantia(isset($com['cop_quantia']) ? $com['cop_quantia'] : 0);
-
-    //         $com['cop_quantia'] = $qtia['qtia'];
-    //     }
-    //     $this->data['botoes'] = $botao;
-    //     $compr = [
-    //         'data' => montaListaColunas($this->data, 'com_id', $dados_compr, 'com_id'),
-    //     ];
-    //     // cache()->save('compr', $compr, 60000);
-    //     // }
-
-    //     echo json_encode($compr);
-    // }
 
     /**
      * Listagem
@@ -263,7 +219,6 @@ class EstCompraCotacao extends BaseController
         // $compr = [
         //     'data' => montaListaColunas($this->data, 'com_id', $dados_compr, 'com_id'),
         // ];
-
         $compr = montaListaColunas($this->data, 'com_id', $dados_compr, $campos[1], true);
         for ($cp = 0; $cp < count($compr); $cp++) {
             $cont = $compr[$cp];
@@ -282,6 +237,7 @@ class EstCompraCotacao extends BaseController
                 $compr[$cp]['details'][$p] = $dados_prods[$p];
             }
         }
+        // debug($compr);
         $compras['data'] = $compr;
         cache()->save('cont', $compras, 60000);
         // }

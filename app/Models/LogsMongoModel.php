@@ -9,6 +9,11 @@ class LogMonModel
         $this->logMongo = (new \MongoDB\Client)->MongoDB->Logs;
     }
 
+    public function getCollection($nome)
+    {
+        return $this->logMongo->selectCollection($nome);
+    }    
+
     /**
      * Retorna todos os registros
      *

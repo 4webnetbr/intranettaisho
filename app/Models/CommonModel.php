@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Models\LogMonModel;
 
 class CommonModel extends Model
 {
@@ -39,6 +40,10 @@ class CommonModel extends Model
         } catch (\Throwable $th) {
             $insert_id = $th;
         }
+        $logdb = new LogMonModel();
+        $registro = $insert_id;
+        $log = $logdb->insertLog($table, 'Incluído', $registro, $data);
+
         return $insert_id;
     }
 
@@ -58,6 +63,9 @@ class CommonModel extends Model
         $builder->where($chave);
 
         $update_id = $builder->update($data);
+        $logdb = new LogMonModel();
+        $registro = $update_id;
+        $log = $logdb->insertLog($table, 'Alterado', $registro, $data);
         $sql = $db->getLastQuery();
         // log_message('info', 'Não Chegou: ' . $sql . ' Função: gravanaochegou');
         // debug($sql);        
@@ -78,6 +86,9 @@ class CommonModel extends Model
         $db = db_connect($grupo);
 
         $query = $db->query("DELETE FROM " . $tabela . " WHERE " . $chave);
+        $logdb = new LogMonModel();
+        $registro = $chave;
+        $log = $logdb->insertLog($tabela, 'Excluído', $registro, []);
 
         return true;
     }
@@ -101,11 +112,17 @@ class CommonModel extends Model
             $builder = $db->table($table);
             $builder->where($chave);
             $update_id = $builder->update($data);
+            $logdb = new LogMonModel();
+            $registro = $update_id;
+            $log = $logdb->insertLog($table, 'Alterado', $registro, $data);
             // $sql = $builder->getCompiledUpdate();
         } else {
             $builder = $db->table($table);
             $ins = $builder->insert($data);
             $update_id = $db->insertID();
+            $logdb = new LogMonModel();
+            $registro = $update_id;
+            $log = $logdb->insertLog($table, 'Incluído', $registro, $data);
         }
         $sql = $db->getLastQuery();
         // debug($sql);        

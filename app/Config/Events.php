@@ -4,6 +4,7 @@ namespace Config;
 
 use CodeIgniter\Events\Events;
 use CodeIgniter\Exceptions\FrameworkException;
+use App\Models\LogMonModel;
 
 /*
  * --------------------------------------------------------------------
@@ -45,4 +46,53 @@ Events::on('pre_system', static function () {
         Events::on('DBQuery', 'CodeIgniter\Debug\Toolbar\Collectors\Database::collect');
         Services::toolbar()->respond();
     }
+});
+
+Events::on('post_controller_constructor', function () {
+    $usuNome = session()->get('usu_nome');
+    $usuid = session()->get('usu_id');
+    if (empty($usuNome)) {
+        return; // não grava log se não estiver logado
+    }
+
+    $router  = service('router');
+    $request = service('request');
+
+    $controllerFull = $router->controllerName();
+    $controller     = basename(str_replace('\\', '/', $controllerFull));
+    $method         = $router->methodName();
+    $ip             = $request->getIPAddress();
+    $userAgent      = $request->getUserAgent()->getAgentString();
+    $queryString    = $_SERVER['QUERY_STRING'] ?? '';
+    $uriCompleta    = $request->getUri()->__toString(); // inclui query params
+    $metodoHTTP     = $request->getMethod();
+
+    // Ignorar controllers se quiser
+    $ignorar = [
+        'App\Controllers\Auth',
+        'App\Controllers\Home',
+    ];
+    if (in_array($controller, $ignorar)) {
+        return;
+    }
+
+    $mongo = new LogMonModel();
+
+    $dados = [
+        'log_tabela'        => '__acesso__',
+        'log_operacao'      => 'acesso',
+        'log_id_registro'   => null,
+        'log_usuario_id'    => $usuid,
+        'log_id_usuario'    => $usuNome,
+        'log_data'          => date('Y-m-d H:i:s'),
+        'log_controller'    => $controller,
+        'log_metodo'        => $method,
+        'log_ip'            => $ip,
+        'log_uri'           => $uriCompleta,
+        'log_query_string'  => $queryString,
+        'log_user_agent'    => $userAgent,
+        'log_metodo_http'   => strtoupper($metodoHTTP),
+    ];
+
+    $mongo->insertLogAcesso($dados);
 });

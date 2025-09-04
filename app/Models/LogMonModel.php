@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Libraries\MongoDb;
+use App\Libraries\MongoDbService;
 use MongoDB\Driver\BulkWrite;
 use MongoDB\Driver\Command;
 use MongoDB\Driver\Exception\RuntimeException;
@@ -161,16 +162,38 @@ class LogMonModel
 	 */
 	public function insertLog($tabela, $operacao, $registro, $dados)
 	{
-		$request = \Config\Services::request();		
+	    $usuNome = session()->get('usu_nome');
+	    $usuid = session()->get('usu_id');
+		$router  = service('router');
+		$request = service('request');
+
+		$controllerFull = $router->controllerName();
+		$controller     = basename(str_replace('\\', '/', $controllerFull));
+		$method         = $router->methodName();
+		$ip             = $request->getIPAddress();
+		$userAgent      = $request->getUserAgent()->getAgentString();
+		$queryString    = $_SERVER['QUERY_STRING'] ?? '';
+		$uriCompleta    = $request->getUri()->__toString(); // inclui query params
+		$metodoHTTP     = $request->getMethod();
+
+
 		try {
 			$sql_data = [
 				'log_tabela'        => $tabela,
 				'log_operacao'      => $operacao,
 				'log_id_registro'   => strval($registro),
-				'log_id_usuario'    => session()->get('usu_nome'),
+				'log_id_usuario'    => $usuNome,
+				'log_usuario_id'    => $usuid,
 				'log_data'          => date('Y-m-d H:i:s'),
 	            'log_ip'            => $request->getIPAddress(),
 				'log_dados'         => $dados,
+				'log_controller'    => $controller,
+				'log_metodo'        => $method,
+				'log_ip'            => $ip,
+				'log_uri'           => $uriCompleta,
+				'log_query_string'  => $queryString,
+				'log_user_agent'    => $userAgent,
+				'log_metodo_http'   => strtoupper($metodoHTTP),
 			];
 
 			$query = new \MongoDB\Driver\BulkWrite();
@@ -221,6 +244,25 @@ class LogMonModel
 			return false;
 		} catch (\MongoDB\Driver\Exception\RuntimeException $ex) {
 			// show_error('Error while deleting log: ' . $ex->getMessage(), 500);
+		}
+	}
+
+	public function insertLogAcesso($dados)
+	{
+		try {
+
+			$query = new \MongoDB\Driver\BulkWrite();
+			$query->insert($dados);
+
+			$result = $this->conn->executeBulkWrite($this->database . '.' . $this->collection, $query);
+
+			if ($result->getInsertedCount() == 1) {
+				return true;
+			}
+
+			return false;
+		} catch (\MongoDB\Driver\Exception\RuntimeException $ex) {
+			// show_error('Error while saving log: ' . $ex->getMessage(), 500);
 		}
 	}
 }

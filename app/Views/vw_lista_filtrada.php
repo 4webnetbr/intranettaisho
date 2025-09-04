@@ -98,10 +98,6 @@ if (isset($script)) {
 }
 ?>
 <script src="<?= base_url('assets/jscript/my_calc_compras.js'); ?>"></script>
-<script>
-  // carregamentos_iniciais();
-</script>
-
 <!-- <script>
       carrega_lista(false, '<?= $url_lista; ?>','<?= $nome; ?>');
     </script> -->
