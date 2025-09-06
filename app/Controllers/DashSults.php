@@ -278,13 +278,13 @@ class DashSults extends BaseController
             if ($ini !== '' && $fim !== '') {
                 $iniDb = dataBrToDb($ini);
                 $fimDb = dataBrToDb($fim);
-                $clausulas[] = "$base BETWEEN '" . addslashes($iniDb) . "' AND '" . addslashes($fimDb) . "'";
+                $clausulas[] = "CAST($base as DATE) BETWEEN '" . addslashes(trim($iniDb)) . "' AND '" . addslashes(trim($fimDb)) . "'";
             } elseif ($ini !== '') {
                 $iniDb = dataBrToDb($ini);
-                $clausulas[] = "$base >= '" . addslashes($iniDb) . "'";
+                $clausulas[] = "CAST($base as DATE) >= '" . addslashes(trim($iniDb)) . "'";
             } elseif ($fim !== '') {
                 $fimDb = dataBrToDb($fim);
-                $clausulas[] = "$base <= '" . addslashes($fimDb) . "'";
+                $clausulas[] = "CAST($base as DATE) <= '" . addslashes(trim($fimDb)) . "'";
             }
         }
         // debug($clausulas);

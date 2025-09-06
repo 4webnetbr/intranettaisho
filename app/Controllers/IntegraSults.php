@@ -1,7 +1,8 @@
 <?php namespace App\Controllers;
 
-use App\Controllers\BaseController;
+use CodeIgniter\I18n\Time;
 use App\Models\CommonModel;
+use App\Controllers\BaseController;
 use App\Models\Config\ConfigApiModel;
 use App\Models\Config\ConfigEmpresaModel;
 
@@ -88,16 +89,16 @@ class IntegraSults extends BaseController
                 $chama['id_etiqueta'] = null;
                 $chama['id_apoio'] = null;
                 $chama['tipo'] = $sults['tipo'];
-                $chama['aberto'] = $sults['aberto'];
-                $chama['resolvido'] = $sults['resolvido'];
-                $chama['concluido'] = $sults['concluido'];
-                $chama['resolverPlanejado'] = $sults['resolverPlanejado'];
-                $chama['resolverEstipulado'] = $sults['resolverEstipulado'];
+                $chama['aberto'] = $sults['aberto'] ? Time::parse($sults['aberto'])->subHours(3):null;
+                $chama['resolvido'] = $sults['resolvido'] ? Time::parse($sults['resolvido'])->subHours(3):null;
+                $chama['concluido'] = $sults['concluido'] ? Time::parse($sults['concluido'])->subHours(3):null;
+                $chama['resolverPlanejado'] = $sults['resolverPlanejado'] ? Time::parse($sults['resolverPlanejado'])->subHours(3):null;
+                $chama['resolverEstipulado'] = $sults['resolverEstipulado'] ? Time::parse($sults['resolverEstipulado'])->subHours(3):null;
                 $chama['avaliacaoNota'] = $sults['avaliacaoNota'];
                 $chama['avaliacaoObservacao'] = $sults['avaliacaoObservacao'];
                 $chama['situacao'] = $sults['situacao'];
-                $chama['primeiraInteracao'] = $sults['primeiraInteracao'];
-                $chama['ultimaAlteracao'] = $sults['ultimaAlteracao'];
+                $chama['primeiraInteracao'] = $sults['primeiraInteracao'] ? Time::parse($sults['primeiraInteracao'])->subHours(3):null;
+                $chama['ultimaAlteracao'] = $sults['ultimaAlteracao'] ? Time::parse($sults['ultimaAlteracao'])->subHours(3):null;
                 $chama['countInteracaoPublico'] = $sults['countInteracaoPublico'];
                 $chama['countInteracaoInterno'] = $sults['countInteracaoInterno'];
 

@@ -112,17 +112,17 @@ class CommonModel extends Model
             $builder = $db->table($table);
             $builder->where($chave);
             $update_id = $builder->update($data);
-            $logdb = new LogMonModel();
-            $registro = $update_id;
-            $log = $logdb->insertLog($table, 'Alterado', $registro, $data);
+            // $logdb = new LogMonModel();
+            // $registro = $update_id;
+            // $log = $logdb->insertLog($table, 'Alterado', $registro, $data);
             // $sql = $builder->getCompiledUpdate();
         } else {
             $builder = $db->table($table);
             $ins = $builder->insert($data);
             $update_id = $db->insertID();
-            $logdb = new LogMonModel();
-            $registro = $update_id;
-            $log = $logdb->insertLog($table, 'Incluído', $registro, $data);
+            // $logdb = new LogMonModel();
+            // $registro = $update_id;
+            // $log = $logdb->insertLog($table, 'Incluído', $registro, $data);
         }
         $sql = $db->getLastQuery();
         // debug($sql);        
@@ -199,9 +199,10 @@ class CommonModel extends Model
         $builder->where($chave);
         $builder->orderBy($order);
 
-        // $sql = $builder->getCompiledSelect();
-        // debug($sql, true);
+        // debug($sql);
         $ret = $builder->get()->getResultArray();
+        $sql = $db->getLastQuery();
+        log_message('info', $sql);
         return $ret;
     }
 }
