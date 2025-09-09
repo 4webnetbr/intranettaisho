@@ -162,8 +162,9 @@ class LogMonModel
 	 */
 	public function insertLog($tabela, $operacao, $registro, $dados)
 	{
-	    $usuNome = session()->get('usu_nome');
-	    $usuid = session()->get('usu_id');
+		$session = session();
+		$usuId   = $session->get('usu_id');
+		$usuNome = $session->get('usu_nome');
 		$router  = service('router');
 		$request = service('request');
 
@@ -183,17 +184,19 @@ class LogMonModel
 				'log_operacao'      => $operacao,
 				'log_id_registro'   => strval($registro),
 				'log_id_usuario'    => $usuNome,
-				'log_usuario_id'    => $usuid,
+				'log_usuario_nome'  => $usuNome,
+				'log_usuario_id'    => $usuId,
 				'log_data'          => date('Y-m-d H:i:s'),
-	            'log_ip'            => $request->getIPAddress(),
-				'log_dados'         => $dados,
 				'log_controller'    => $controller,
 				'log_metodo'        => $method,
-				'log_ip'            => $ip,
-				'log_uri'           => $uriCompleta,
-				'log_query_string'  => $queryString,
-				'log_user_agent'    => $userAgent,
-				'log_metodo_http'   => strtoupper($metodoHTTP),
+				'log_dados'         => [
+					'ip'           => $ip,
+					'uri'          => $uriCompleta,
+					'query_string' => $queryString,
+					'user_agent'   => $userAgent,
+					// 'metodo_http'  => $httpMethod,
+					'dados'		   => $dados,
+				]
 			];
 
 			$query = new \MongoDB\Driver\BulkWrite();
@@ -249,6 +252,7 @@ class LogMonModel
 
 	public function insertLogAcesso($dados)
 	{
+		
 		try {
 
 			$query = new \MongoDB\Driver\BulkWrite();

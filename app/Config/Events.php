@@ -5,7 +5,6 @@ namespace Config;
 use CodeIgniter\Events\Events;
 use CodeIgniter\Exceptions\FrameworkException;
 use App\Models\LogMonModel;
-
 /*
  * --------------------------------------------------------------------
  * Application Events
@@ -48,51 +47,142 @@ Events::on('pre_system', static function () {
     }
 });
 
-Events::on('post_controller_constructor', function () {
-    $usuNome = session()->get('usu_nome');
-    $usuid = session()->get('usu_id');
-    if (empty($usuNome)) {
-        return; // não grava log se não estiver logado
-    }
+// ✅ LOG DE ACESSO POR CONTROLLER/MÉTODO
+// Events::on('post_controller_constructor', function () {
+//     $session = session();
+//     $usuId   = $session->get('usu_id');
+//     $usuNome = $session->get('usu_nome');
 
-    $router  = service('router');
-    $request = service('request');
+//     if (empty($usuId) || empty($usuNome)) {
+//         return; // só loga se o usuário estiver logado
+//     }
 
-    $controllerFull = $router->controllerName();
-    $controller     = basename(str_replace('\\', '/', $controllerFull));
-    $method         = $router->methodName();
-    $ip             = $request->getIPAddress();
-    $userAgent      = $request->getUserAgent()->getAgentString();
-    $queryString    = $_SERVER['QUERY_STRING'] ?? '';
-    $uriCompleta    = $request->getUri()->__toString(); // inclui query params
-    $metodoHTTP     = $request->getMethod();
+//     $router     = service('router');
+//     $request    = service('request');
 
-    // Ignorar controllers se quiser
-    $ignorar = [
-        'App\Controllers\Auth',
-        'App\Controllers\Home',
-    ];
-    if (in_array($controller, $ignorar)) {
-        return;
-    }
+//     $controllerFull = $router->controllerName();
+//     $controller     = basename(str_replace('\\', '/', $controllerFull));
+//     $method         = $router->methodName();
 
-    $mongo = new LogMonModel();
+//     $ip            = $request->getIPAddress();
+//     $queryString   = $_SERVER['QUERY_STRING'] ?? '';
+//     $uriCompleta   = $request->getUri()->__toString();
+//     $userAgent     = $request->getUserAgent()->getAgentString();
+//     $httpMethod    = strtoupper($request->getMethod());
 
-    $dados = [
-        'log_tabela'        => '__acesso__',
-        'log_operacao'      => 'acesso',
-        'log_id_registro'   => null,
-        'log_usuario_id'    => $usuid,
-        'log_id_usuario'    => $usuNome,
-        'log_data'          => date('Y-m-d H:i:s'),
-        'log_controller'    => $controller,
-        'log_metodo'        => $method,
-        'log_ip'            => $ip,
-        'log_uri'           => $uriCompleta,
-        'log_query_string'  => $queryString,
-        'log_user_agent'    => $userAgent,
-        'log_metodo_http'   => strtoupper($metodoHTTP),
-    ];
+//     // Mapeamento de método para operação
+//     $map = [
+//         'index'     => 'abriu',
+//         'lista'     => 'listou',
+//         'add'       => 'abriu_cadastro',
+//         'edit'      => 'abriu_edicao',
+//         'show'      => 'abriu_consulta',
+//         'delete'    => 'excluiu',
+//         'listaadd'  => 'listou_itens',
+//         'store'     => 'gravou',
+//     ];
+//     $operacao = $map[$method] ?? 'acessou';
 
-    $mongo->insertLogAcesso($dados);
-});
+//     $uri     = $request->uri;
+
+//     $idRegistro = null;
+
+//     if ($uri->getTotalSegments() >= 3) {
+//         $idRaw = $uri->getSegment(3);
+//         $idRegistro = is_numeric($idRaw) ? (int) $idRaw : null;
+//     }
+//     // Monta o array de log
+//     $log = [
+//         'log_tabela'        => '__acesso__',
+//         'log_operacao'      => $operacao,
+//         'log_id_registro'   => $idRegistro,
+//         'log_id_usuario'    => $usuNome,
+//         'log_usuario_nome'  => $usuNome,
+//         'log_usuario_id'    => $usuId,
+//         'log_data'          => date('Y-m-d H:i:s'),
+//         'log_controller'    => $controller,
+//         'log_metodo'        => $method,
+//         'log_dados'         => [
+//             'ip'           => $ip,
+//             'uri'          => $uriCompleta,
+//             'query_string' => $queryString,
+//             'user_agent'   => $userAgent,
+//             'metodo_http'  => $httpMethod,
+//         ]
+//     ];
+
+//     // (new MongoDBService())->getCollection('logs')->insertOne($log);
+//     $mongo = new LogMonModel();
+//     $mongo->insertLogAcesso($log);
+// });
+
+// Events::on('DBQuery', function ($query) {
+//     $session = session();
+//     $usuId   = $session->get('usu_id');
+//     $usuNome = $session->get('usu_nome');
+
+//     if (empty($usuId) || empty($usuNome)) {
+//         return;
+//     }
+
+//     $sql       = $query->getQuery();
+//     $operation = strtoupper(strtok(trim($sql), ' '));
+
+//     // Ignora SELECT, só loga INSERT/UPDATE/DELETE
+//     if (!in_array($operation, ['INSERT', 'UPDATE', 'DELETE'])) {
+//         return;
+//     }
+
+//     // Detectar a tabela (via regex simples)
+//     preg_match('/(?:INTO|UPDATE|FROM)\s+`?(\w+)`?/i', $sql, $matches);
+//     $tabela = $matches[1] ?? 'desconhecida';
+
+//     $request      = service('request');
+//     $router       = service('router');
+//     $controller   = basename(str_replace('\\', '/', $router->controllerName()));
+//     $method       = $router->methodName();
+
+//     $ip           = $request->getIPAddress();
+//     $queryString  = $_SERVER['QUERY_STRING'] ?? '';
+//     $uriCompleta  = $request->getUri()->__toString();
+//     $userAgent    = $request->getUserAgent()->getAgentString();
+//     $httpMethod   = strtoupper($request->getMethod());
+
+//     // Bind values
+//     $binds = $query->getBinds();
+
+//     $uri     = $request->uri;
+
+//     $idRegistro = null;
+
+//     if ($uri->getTotalSegments() >= 3) {
+//         $idRaw = $uri->getSegment(3);
+//         $idRegistro = is_numeric($idRaw) ? (int) $idRaw : null;
+//     }
+
+//     $log = [
+//         'log_tabela'        => $tabela,
+//         'log_operacao'      => strtolower($operation),
+//         'log_id_registro'   => $idRegistro,
+//         'log_id_usuario'    => $usuNome,
+//         'log_usuario_nome'  => $usuNome,
+//         'log_usuario_id'    => $usuId,
+//         'log_data'          => date('Y-m-d H:i:s'),
+//         'log_controller'    => $controller,
+//         'log_metodo'        => $method,
+//         'log_dados'         => [
+//             'ip'           => $ip,
+//             'uri'          => $uriCompleta,
+//             'query_string' => $queryString,
+//             'user_agent'   => $userAgent,
+//             'metodo_http'  => $httpMethod,
+//             'query'        => $sql,
+//             'binds'        => $binds,
+//         ]
+//     ];
+
+//     // ✅ Dispara a gravação no MongoDB
+//     // (new MongoDBService())->getCollection('logs')->insertOne($log);
+//     $mongo = new LogMonModel();
+//     $mongo->insertLogAcesso($log);
+// });
