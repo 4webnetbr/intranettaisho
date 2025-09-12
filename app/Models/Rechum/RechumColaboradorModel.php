@@ -173,10 +173,11 @@ class RechumColaboradorModel extends Model
     public function getCPF($cpf = false)
     {
         $db = db_connect('dbRh');
+        $cpf = apenasNumeros($cpf);
         $builder = $db->table('rh_colaborador');
         $builder->select('*'); 
         if($cpf){
-            $builder->where(TRIM("col_cpf"), trim($cpf));
+            $builder->where(TRIM("col_cpf_numero"), trim($cpf));
         }
         $builder->orderBy("col_nome");
         $ret = $builder->get()->getResultArray();

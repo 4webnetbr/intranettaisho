@@ -259,10 +259,10 @@ class EstoquCompraModel extends Model
             $builder->where("emp_id", $emp_id);
         }
         if ($inicio) {
-            $builder->where("com_data >=", $inicio);
+            $builder->where("CAST(com_data AS DATE) >=", $inicio);
         }
         if ($fim) {
-            $builder->where("com_data <=", $fim);
+            $builder->where("CAST(com_data AS DATE) <=", $fim);
         }
         $builder->orderBy("emp_apelido, for_razao DESC, com_data, pro_nome ");
         $ret = $builder->get()->getResultArray();

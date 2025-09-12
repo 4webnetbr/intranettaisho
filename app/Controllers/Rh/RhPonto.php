@@ -535,15 +535,16 @@ class RhPonto extends BaseController
 
                     // Verifica se a célula não está vazia
                     if (($valor !== null && $valor !== '') || $vemitens) {
-                        // echo "Próximo ".$proximo."<br>";
-                        // echo "Coluna: $coluna, Valor: $valor<br>"; // Exibe a coluna e o valor
+                        // debug("Próximo ".$proximo);
+                        // debug("Coluna: $coluna, Valor: $valor"); // Exibe a coluna e o valor
+                        // debug(substr(trim($valor),0,8)); // Exibe a coluna e o valor
                         if (substr(trim($valor), 0, 3) == '(*)') {
                             // GRAVAR PONTO
                             $vemitens = false;
                             $proximo  = '';
                             continue;
                         }
-                        if (substr(trim($valor), 0, 3) == 'De:') {
+                        if (substr(trim($valor), 0, 3) == 'De:' || substr(trim($valor),0,8) == 'Período') {
                             $competencia = substr(trim($valor), -10);
                             $ponto->pon_competencia = dataBrToDb($competencia);
                             $proximo = '';
@@ -588,6 +589,11 @@ class RhPonto extends BaseController
                             // debug($proximo);
                             continue;
                         }
+                        if ((trim($valor) == 'C.T.P.S.' || trim($valor) == 'C.T.P.S.:')) {
+                            $proximo = 'cpf';
+                            // debug($proximo);
+                            continue;
+                        }
                         if ($proximo == 'cpf') {
                             $regcolab->col_cpf = trim($valor);
                             $colab = $this->colaborador->getCPF($regcolab->col_cpf);
@@ -599,6 +605,7 @@ class RhPonto extends BaseController
                                 $regcolab->col_id = $colab[0]['col_id'];
                             } else {
                                 $regcolab->col_id = false;
+                                $regcolab->col_cpf = formatarCPF(apenasNumeros(trim($valor)));
                             }
                             $proximo = '';
                             continue;
@@ -618,24 +625,57 @@ class RhPonto extends BaseController
                             $proximo = '';
                             continue;
                         }
-                        if ((trim($valor) == 'Função' || trim($valor) == 'Função:') && !$regcolab->col_id) {
+                        // if ((trim($valor) == 'Função' || trim($valor) == 'Função:') && !$regcolab->col_id) {
+                        if ((trim($valor) == 'Função' || trim($valor) == 'Função:')) {
                             $proximo = 'funcao';
                             continue;
                         }
+                        // debug($proximo);
                         if ($proximo == 'funcao') {
                             $regcargo->cag_nome = $valor;
                             $cargo = $this->cargo->getCargoSearch($regcargo->cag_nome);
-                            // debug($cargo);
                             if (count($cargo) > 0) {
                                 $regcolab->cag_id = $cargo[0]['cag_id'];
                             } else {
+                            // debug($regcargo);
+                            // debug($cargo, true);
                                 $this->cargo->insert($regcargo);
                                 $regcolab->cag_id = $this->cargo->getInsertID();
                             }
                             $regcolab->emp_id = $ponto->emp_id;
-                            // debug('sai',true);
-                            $salvacol = $this->colaborador->insert($regcolab);
-                            $col_id = $this->colaborador->getInsertID();
+                            // debug($regcolab);
+                            if(!$regcolab->col_id){
+                                try {
+                                    // Tenta inserir os dados
+                                    // debug($regcolab->toArray());
+                                    $salvacol = $this->colaborador->insert($regcolab->toArray());
+                                    
+                                    // Obtém o ID inserido
+                                    $col_id = $this->colaborador->getInsertID();
+                                    // debug($col_id);
+                                } catch (\Throwable $e) {
+                                    $ret['erro'] = true;
+                                    $ret['msg'] = 'Erro ao inserir colaborador: ' . $e->getMessage();
+                                    // debug($ret);
+                                    // echo json_encode($ret);
+                                    break;
+                                }
+                            } else {
+                                $col_id = $regcolab->col_id;
+                                // debug($col_id);
+                                try {
+                                    // Tenta inserir os dados
+                                    // debug($regcolab->toArray());
+                                    $salvacol = $this->colaborador->update($col_id, $regcolab->toArray());
+                                    
+                                } catch (\Throwable $e) {
+                                    $ret['erro'] = true;
+                                    $ret['msg'] = 'Erro ao atualizar colaborador: ' . $e->getMessage();
+                                    // debug($ret);
+                                    // echo json_encode($ret);
+                                    break;
+                                }
+                            }
                             $ponto->col_id = $col_id;
                             $proximo = '';
                             continue;
@@ -653,11 +693,14 @@ class RhPonto extends BaseController
                             && Trim($valor) != 'Ut60%'
                             && Trim($valor) != 'Fe100%'
                             && Trim($valor) != 'Atras.'
+                            && Trim($valor) != 'Totais'
                         ) {
                             $ordem[$ctord] = $valor;
                             $ctord++;
                             if ($ctord == 12) {
                                 $maxord = $ctord;
+
+                                // debug('Valor '.$valor);
                                 // debug('Maxordem '.$maxord);
                                 // debug($ordem);
                                 $ctord = 0;
@@ -668,7 +711,7 @@ class RhPonto extends BaseController
                                 $proximo = 'colunas';
                                 continue;
                             }
-                        } else if ((Trim($valor) == 'Atras.' || Trim($valor) == 'Atras.:')) {
+                        } else if ((Trim($valor) == 'Atras.' || Trim($valor) == 'Atras.:' || Trim($valor) == 'Totais')) {
                             $maxord = $ctord;
                             // debug('Maxordem '.$maxord);
                             // debug($ordem);
@@ -699,8 +742,10 @@ class RhPonto extends BaseController
                                 }
                                 $ponto->{$obj} = $hora;
                                 // debug($obj. ' = '.$ponto->{$obj});
-                                // debug($ponto->{$obj});
+                                // debug($ponto);
                                 $ctord++;
+                                // debug($maxord);
+                                // debug($ctord);
                                 if ($ctord == $maxord) {
                                     if (
                                         strlen($ponto->pon_ent1) +
@@ -708,21 +753,52 @@ class RhPonto extends BaseController
                                         strlen($ponto->pon_ent2) +
                                         strlen($ponto->pon_sai2) +
                                         strlen($ponto->pon_normais)  > 0
-                                    ) {
-                                        $jatempon  = $this->ponto->getPontoUnico($ponto->emp_id, $ponto->col_id, $ponto->pon_competencia, $ponto->pon_data);
-                                        if ($jatempon) {
-                                            $ponto->pon_id = $jatempon[0]['pon_id'];
-                                            $salvapon = $this->ponto->update($ponto->pon_id, $ponto);
-                                        } else {
-                                            $salvapon = $this->ponto->insert($ponto);
-                                        }
-                                        // debug(var_dump($salvapon));
+                                        ) {
+                                            // debug('Entrei aqui');
+                                            try {
+                                                // Verifica se já existe ponto para os dados fornecidos
+                                                $jatempon = $this->ponto->getPontoUnico(
+                                                    $ponto->emp_id,
+                                                    $ponto->col_id,
+                                                    $ponto->pon_competencia,
+                                                    $ponto->pon_data
+                                                );
+                                                // debqug($jatempon);
+                                                if ($jatempon) {
+                                                    // Se já existe, atualiza
+                                                    $ponto->pon_id = $jatempon[0]['pon_id'];
+                                                    $salvapon = $this->ponto->update($ponto->pon_id, $ponto);
+                                                } else {
+                                                    // Se não existe, insere novo
+                                                    // debug($ponto->toArray());
+                                                    $salvapon = $this->ponto->insert($ponto->toArray());
+                                                }
+
+                                                // Debug para verificar resultado da operação
+                                                // debug(var_dump($salvapon));
+                                            } catch (\Throwable $e) {
+                                                // Tratamento de erro com mensagem
+                                                log_message('error', 'Erro ao salvar ponto: ' . $e->getMessage());
+                                                // debug($e->getMessage());
+                                                // Você pode usar esse retorno em API ou view
+                                                // return [
+                                                //     'status' => 'error',
+                                                //     'message' => 'Erro ao salvar ponto: ' . $e->getMessage()
+                                                // ];
+                                                $ret['erro'] = true;
+                                                $ret['msg'] = 'Erro ao salvar ponto: ' . $e->getMessage();
+                                                // debug($ret);
+                                                break;
+                                                // echo json_encode($ret);
+
+                                                // exit;
+                                            }
                                     }
                                     // debug($ponto->toArray());
                                     $ponto = new Ponto();
                                     $ponto->emp_id = $empresatrab[0]['emp_id'];
                                     $ponto->col_id = $regcolab->col_id;
-
+                                    // debug($competencia);
                                     $ponto->pon_competencia = dataBrToDb($competencia);
                                     $ctord = 0;
                                     $proximo = $ordem[$ctord];

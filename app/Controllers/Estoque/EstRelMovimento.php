@@ -38,7 +38,7 @@ class EstRelMovimento extends BaseController
         $campos[0] = $this->periodo;
         $campos[1] = $this->dash_empresa;
 
-        $colunas = ['Código', 'Produto','Und','Ped Data','Ped Quantia','Compra Data','Compra Quantia','Compra Valor','Compra Total','Entrada Data','Entrada Quantia','Entrada Valor','Entrada Total'];
+        $colunas = ['Código', 'Produto','Und Compra','Data Solicitação','Quantia Solicitada','Data Compra','Quantia Comprada','Valor Comprado','Total Comprado','Data Recebimento','Quantia Recebida','Valor Recebido','Total Recebido'];
 
         $this->data['cols']     	= $colunas;  
         $this->data['nome']     	= 'relmovimentos';  
@@ -115,7 +115,11 @@ class EstRelMovimento extends BaseController
             $prods[$p][count($prods[$p])] = $qtiac;
             $prods[$p][count($prods[$p])] = floatToMoeda($prod['cop_valor']);
             $prods[$p][count($prods[$p])] = floatToMoeda($prod['cop_total']);
-            $prods[$p][count($prods[$p])] = dataDbToBr($prod['ent_data']);
+            // if($prod['ent_data'] != null && ehDataValida($prod['ent_data'])){
+                $prods[$p][count($prods[$p])] = dataDbToBr($prod['ent_data']);
+            // } else {
+                // $prods[$p][count($prods[$p])] = $prod['ent_data'];
+            // }
             $qtiae = '';
             if($prod['enp_quantia'] != null){
                 $qtiae = formataQuantia($prod['enp_quantia'])['qtia'];
@@ -123,6 +127,16 @@ class EstRelMovimento extends BaseController
             $prods[$p][count($prods[$p])] = $qtiae;
             $prods[$p][count($prods[$p])] = floatToMoeda($prod['enp_valor']);
             $prods[$p][count($prods[$p])] = floatToMoeda($prod['enp_total']);
+            if($qtiae == '' && date('Y-m-d') > $prod['cop_previsao']){
+                $prods[$p]['cor'] = 'bg-gray-padrao';
+            } else if($qtiae != '' && $qtiac != $qtiae ){
+                $prods[$p]['cor'] = 'bg-warning';
+            }
+            if($qtiac == ''){
+                $prods[$p]['cor'] = 'bg-yellow';
+            } else if($qtiap != $qtiac){
+                $prods[$p]['cor'] = 'bg-danger';
+            }
             // $prods[$p][count($prods[$p])] = '';
         }
         // debug(count($prods));

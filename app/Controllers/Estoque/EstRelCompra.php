@@ -39,7 +39,7 @@ class EstRelCompra extends BaseController
         $campos[1] = $this->dash_empresa;
         $campos[2] = $this->dash_fornecedor;
 
-        $colunas = ['Id','Empresa - Fornecedor','N° Pedido','Data','Produto','Quantia','Und','R$ Unit','R$ Total',''];
+        $colunas = ['Id','Empresa - Fornecedor','N° Pedido','Data','Produto','Quantia','Und','R$ Unit','R$ Total','Usuário'];
 
         $this->data['cols']     	= $colunas;  
         $this->data['nome']     	= 'relcompras';  
@@ -113,6 +113,13 @@ class EstRelCompra extends BaseController
         $ret = [];
 
         $compras       = $this->compra->getRelCompra($fornecedor, $empresa, $inicio, $fim);
+        $com_ids_assoc = array_column($compras, 'com_id');
+        $log = buscaLogTabela('est_compra', $com_ids_assoc);
+        // $this->data['edicao'] = false;
+        foreach ($compras as &$com) {
+            // Verificar se o log já está disponível para esse ana_id
+            $com['com_usuario'] = $log[$com['com_id']]['usua_alterou'] ?? '';
+        }
         // debug($compras);
         $prods = [];
         for($p=0;$p<count($compras);$p++){
@@ -126,7 +133,7 @@ class EstRelCompra extends BaseController
             $prods[$p][6] = $prod['und_sigla'];
             $prods[$p][7] = floatToMoeda($prod['cop_valor']);
             $prods[$p][8] = floatToMoeda($prod['cop_total']);
-            $prods[$p][9] = '';
+            $prods[$p][9] = $prod['com_usuario'];
         }
         // debug(count($prods));
         // $ret['compras'] = [];

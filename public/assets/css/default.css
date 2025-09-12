@@ -7,10 +7,13 @@
     --bs-gray-500: #aaa8a8;
     --bs-blue-claro: #b6d7f5;
     --bs-white: #ffffff;
-    --bs-yellow-claro: #f4cb27;
+    --bs-yellow-claro: #f2f45c;
     --bs-secondary-bg: rgba(0, 0, 0, 0.125);
 }
 
+.bg-yellow {
+    background-color: var(--bs-yellow-claro) !important;
+}
 .bg-blue-dark {
     background-color: var(--bs-blue-dark);
 }
@@ -33,11 +36,11 @@
 
 .bg-gray-500 {
     opacity: 0.7;
-    background-color: var(--bs-gray-500);
+    background-color: var(--bs-gray-500) !important;
 }
 
 .bg-gray-padrao {
-    background-color: var(--bs-gray-padrao);
+    background-color: var(--bs-gray-padrao) !important;
 }
 
 * {

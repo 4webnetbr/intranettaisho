@@ -4,6 +4,8 @@ use CodeIgniter\Entity\Entity;
 
 class Cargo extends Entity
 {
+    // public $cag_id;
+    // public $cag_nome;
     // Se necessário, adicione métodos ou propriedades específicas
     // para manipulação dos dados da entidade.
 

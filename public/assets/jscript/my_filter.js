@@ -396,7 +396,7 @@ function carrega_movimentos(obj) {
   var empresa = jQuery("#empresa").val();
   // var deposito = jQuery("#deposito").val();
 
-  if (empresa != "") {
+  if (empresa != "" && periodo != "") {
     // jQuery('#' + tabela).closest('tr').remove();
     url =
       "/EstRelMovimento/busca_dados?empresa=" +

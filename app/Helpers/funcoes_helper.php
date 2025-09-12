@@ -261,7 +261,7 @@ function dataBrToDb($dataBrasileira)
 
     // Verifica se a conversão foi bem-sucedida
     if (!$data) {
-        // debug($dataBrasileira);
+        debug($dataBrasileira);
         throw new InvalidArgumentException("Formato de data inválido. " . $sodata);
     }
 
@@ -1000,6 +1000,12 @@ function verificarSeEhTime($string)
     return $data && $data->format($formato) === $string;
 }
 
+function ehDataValida(string $data, string $formato = 'Y-m-d'): bool
+{
+    $d = DateTime::createFromFormat($formato, $data);
+    return $d && $d->format($formato) === $data;
+}
+
 
 /**
  * Função para calcular o SOMARPRODUTO
@@ -1631,3 +1637,27 @@ function get_sults_curl($api)
 
         return json_decode($response, true);    
 };;
+
+
+function apenasNumeros(string $texto): string
+{
+    return preg_replace('/\D/', '', $texto);
+}
+
+function formatarCPF(string $texto): ?string
+{
+    // Remove tudo que não for número
+    $numeros = preg_replace('/\D/', '', $texto);
+
+    // Verifica se tem exatamente 11 dígitos
+    if (strlen($numeros) !== 11) {
+        return null; // Retorna null se não for um CPF válido
+    }
+
+    // Formata como CPF
+    return preg_replace(
+        "/(\d{3})(\d{3})(\d{3})(\d{2})/",
+        "$1.$2.$3-$4",
+        $numeros
+    );
+}

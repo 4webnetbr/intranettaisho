@@ -38,7 +38,7 @@ class EstRelPedido extends BaseController
         $campos[0] = $this->periodo;
         $campos[1] = $this->dash_empresa;
 
-        $colunas = ['Id','Empresa','Data','Produto','Quantia','Und',''];
+        $colunas = ['Id','Empresa','Data','Produto','Quantia','Und','Usuário'];
 
         $this->data['cols']     	= $colunas;  
         $this->data['nome']     	= 'relpedidos';  
@@ -94,6 +94,13 @@ class EstRelPedido extends BaseController
         $ret = [];
 
         $pedidos       = $this->pedido->getRelPedido($empresa, $inicio, $fim);
+        $ped_ids_assoc = array_column($pedidos, 'ped_id');
+        $log = buscaLogTabela('est_pedido', $ped_ids_assoc);
+        // $this->data['edicao'] = false;
+        foreach ($pedidos as &$ped) {
+            // Verificar se o log já está disponível para esse ana_id
+            $ped['ped_usuario'] = $log[$ped['ped_id']]['usua_alterou'] ?? '';
+        }
         // debug($pedidos);
         $prods = [];
         for($p=0;$p<count($pedidos);$p++){
@@ -104,9 +111,9 @@ class EstRelPedido extends BaseController
             $prods[$p][3] = $prod['pro_nome'];
             $prods[$p][4] = ($prod['und_sigla_compra']=='und'||$prod['und_sigla_compra']=='cx')?intval($prod['ped_qtia']):floatval($prod['ped_qtia']);
             $prods[$p][5] = $prod['und_sigla_compra'];
-            // $prods[$p][6] = floatToMoeda($prod['cop_valor']);
+            $prods[$p][6] = $prod['ped_usuario'];
             // $prods[$p][7] = floatToMoeda($prod['cop_total']);
-            $prods[$p][6] = '';
+            // $prods[$p][6] = '';
         }
         // debug(count($prods));
         // $ret['pedidos'] = [];

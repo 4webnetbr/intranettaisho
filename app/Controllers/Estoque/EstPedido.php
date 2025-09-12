@@ -738,6 +738,7 @@ class EstPedido extends BaseController
                 'und_id'    => $dados['und_id'],
                 'ped_justifica'    => $dados['ped_justifica'],
                 'ped_sugestao'    => $dados['ped_sugestao'],
+                'ped_datains'   =>  date('Y-m-d H:i:s'),
             ];
             if ($this->pedido->save($dados_ped)) {
                 if ($dados['ped_id'] == '') {
