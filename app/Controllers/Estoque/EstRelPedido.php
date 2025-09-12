@@ -95,7 +95,9 @@ class EstRelPedido extends BaseController
 
         $pedidos       = $this->pedido->getRelPedido($empresa, $inicio, $fim);
         $ped_ids_assoc = array_column($pedidos, 'ped_id');
-        $log = buscaLogTabela('est_pedido', $ped_ids_assoc);
+        $log = buscaLogTabela('est_pedido', $ped_ids_assoc, true);
+        // $log = buscaLogTabela('est_pedido', $ped_ids_assoc);
+        // debug($log);
         // $this->data['edicao'] = false;
         foreach ($pedidos as &$ped) {
             // Verificar se o log já está disponível para esse ana_id

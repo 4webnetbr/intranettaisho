@@ -608,10 +608,10 @@ function buscaLogBatch($tabela, $registros)
  * @param mixed $registro
  * @return array
  */
-function buscaLogTabela($tabela, $registros)
+function buscaLogTabela($tabela, $registros, $tipo = false)
 {
     $logs      = new LogMonModel();
-    $logId = $logs->get_logs_lastVarios($tabela, $registros);
+    $logId = $logs->get_logs_lastVarios($tabela, $registros, $tipo);
     $dados = [];
     $operacao = '';
     // $ct = 0;
@@ -622,7 +622,8 @@ function buscaLogTabela($tabela, $registros)
             $user_nam    = $document->last_record->log_id_usuario;
             $registro    = $document->last_record->log_id_registro;
             $data_alt    = dataDbToBr($document->last_record->log_data);
-            if ($operacao != '') {
+            // if ($operacao != '') {
+            if ((empty($tipo) && !empty($operacao)) || (!empty($tipo) && $operacao == $tipo)) {                
                 $dados[$registro]['operacao']      = $operacao;
                 $dados[$registro]['usua_alterou']  = $user_nam;
                 $dados[$registro]['data_alterou']  = $data_alt;
