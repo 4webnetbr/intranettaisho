@@ -167,7 +167,6 @@ function montaListaDadosAnt(tabela, url) {
     });
   }
 }
-const dataTables = {};
 
 function montaListaDados(tabela, url) {
   jQuery.fn.dataTable.moment("DD/MM/YYYY HH:mm:ss");

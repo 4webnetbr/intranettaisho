@@ -123,7 +123,8 @@ class EstRelSaida extends BaseController
         $prods = [];
         if ($deposito != null) {
             $saidas       = $this->saida->getRelSaida($deposito, $empresa, $inicio, $fim);
-            // debug($saidas);
+            $sai_ids_assoc = array_column($saidas, 'sai_id');
+            $log = buscaLogTabela('est_saida', $sai_ids_assoc);
             // debug(count($saidas));
             for ($p = 0; $p < count($saidas); $p++) {
                 $prod = $saidas[$p];
@@ -138,8 +139,8 @@ class EstRelSaida extends BaseController
                 $prods[$p][6] = $prod['und_sigla'];
                 $prods[$p][7] = $prod['sap_destino'];
                 $prods[$p][8] = dataDbToBr($prod['sai_datahora']);
-                $log = buscaLog('est_saida', $prod['sai_id']);
-                $prods[$p][9] = $log['usua_alterou'];
+                // $log = buscaLog('est_saida', $prod['sai_id']);
+                $prods[$p][9] = $log[$prod['sai_id']]['usua_alterou'] ?? '';
                 $prods[$p][10] = '';
             }
         }

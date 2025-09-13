@@ -301,7 +301,7 @@ class EstoquSaidaModel extends Model
         $builder->orderBy("pro_nome, sai_data");
         $ret = $builder->get()->getResultArray();
 
-        // debug($this->db->getLastQuery(), false);
+        // debug($this->db->getLastQuery(), true);
 
         return $ret;
     }

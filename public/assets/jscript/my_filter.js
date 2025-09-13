@@ -264,11 +264,16 @@ function carrega_saidas(obj) {
   var periodo = jQuery("#periodo").val();
   var startDate = periodo.substr(0, 10); //jQuery("#periodo").data('daterangepicker').startDate.format('DD/MM/YYYY');
   var endDate = periodo.substr(-10); //jQuery("#periodo").data('daterangepicker').endDate.format('DD/MM / YYYY');
+  if (endDate == "Considerar") {
+    startDate = "01/01/2001";
+    endDate = "31/12/2100";
+  }
+  //jQuery("#periodo").data('daterangepicker').endDate.format('DD/MM / YYYY');
 
   var empresa = jQuery("#empresa").val();
   var deposito = jQuery("#deposito").val();
 
-  if (empresa != "") {
+  if (empresa != "" && startDate != "") {
     // jQuery('#' + tabela).closest('tr').remove();
     url =
       "/EstRelSaida/busca_dados?empresa=" +
@@ -289,11 +294,16 @@ function carrega_entradas(obj) {
   var periodo = jQuery("#periodo").val();
   var startDate = periodo.substr(0, 10); //jQuery("#periodo").data('daterangepicker').startDate.format('DD/MM/YYYY');
   var endDate = periodo.substr(-10); //jQuery("#periodo").data('daterangepicker').endDate.format('DD/MM / YYYY');
+  if (endDate == "Considerar") {
+    startDate = "01/01/2001";
+    endDate = "31/12/2100";
+  }
+  //jQuery("#periodo").data('daterangepicker').endDate.format('DD/MM / YYYY');
 
   var empresa = jQuery("#empresa").val();
   var deposito = jQuery("#deposito").val();
 
-  if (deposito != "" && empresa != "") {
+  if (deposito != "" && empresa != "" && startDate != "") {
     // jQuery('#' + tabela).closest('tr').remove();
     url =
       "/EstRelEntrada/busca_dados?empresa=" +
@@ -314,12 +324,17 @@ function carrega_historico(obj) {
   var periodo = jQuery("#periodo").val();
   var startDate = periodo.substr(0, 10); //jQuery("#periodo").data('daterangepicker').startDate.format('DD/MM/YYYY');
   var endDate = periodo.substr(-10); //jQuery("#periodo").data('daterangepicker').endDate.format('DD/MM / YYYY');
+  if (endDate == "Considerar") {
+    startDate = "01/01/2001";
+    endDate = "31/12/2100";
+  }
+  //jQuery("#periodo").data('daterangepicker').endDate.format('DD/MM / YYYY');
 
   var empresa = jQuery("#empresa").val();
   var deposito = jQuery("#deposito").val();
   var produto = jQuery("#produto").val();
 
-  if (deposito != "" && empresa != "" && produto != "") {
+  if (deposito != "" && empresa != "" && produto != "" && startDate != "") {
     // table = undefined;
     jQuery("#" + tabela)
       .closest("tr")
@@ -345,11 +360,16 @@ function carrega_compras(obj) {
   var periodo = jQuery("#periodo").val();
   var startDate = periodo.substr(0, 10); //jQuery("#periodo").data('daterangepicker').startDate.format('DD/MM/YYYY');
   var endDate = periodo.substr(-10); //jQuery("#periodo").data('daterangepicker').endDate.format('DD/MM / YYYY');
+  if (endDate == "Considerar") {
+    startDate = "01/01/2001";
+    endDate = "31/12/2100";
+  }
+  //jQuery("#periodo").data('daterangepicker').endDate.format('DD/MM / YYYY');
 
   var empresa = jQuery("#empresa").val();
   var fornecedor = jQuery("#fornecedor").val();
 
-  if (empresa != "") {
+  if (empresa != "" && startDate != "") {
     // jQuery('#' + tabela).closest('tr').remove();
     url =
       "/EstRelCompra/busca_dados?empresa=" +
@@ -370,10 +390,18 @@ function carrega_pedidos(obj) {
   var periodo = jQuery("#periodo").val();
   var startDate = periodo.substr(0, 10); //jQuery("#periodo").data('daterangepicker').startDate.format('DD/MM/YYYY');
   var endDate = periodo.substr(-10); //jQuery("#periodo").data('daterangepicker').endDate.format('DD/MM / YYYY');
-
+  if (endDate == "Considerar") {
+    startDate = "01/01/2001";
+    endDate = "31/12/2100";
+  }
+  //jQuery("#periodo").data('daterangepicker').endDate.format('DD/MM / YYYY');
+  if (endDate == "Considerar") {
+    startDate = "01/01/2001";
+    endDate = "31/12/2100";
+  }
   var empresa = jQuery("#empresa").val();
 
-  if (empresa != "") {
+  if (empresa != "" && startDate != "") {
     // jQuery('#' + tabela).closest('tr').remove();
     url =
       "/EstRelPedido/busca_dados?empresa=" +
@@ -392,11 +420,16 @@ function carrega_movimentos(obj) {
   var periodo = jQuery("#periodo").val();
   var startDate = periodo.substr(0, 10); //jQuery("#periodo").data('daterangepicker').startDate.format('DD/MM/YYYY');
   var endDate = periodo.substr(-10); //jQuery("#periodo").data('daterangepicker').endDate.format('DD/MM / YYYY');
+  if (endDate == "Considerar") {
+    startDate = "01/01/2001";
+    endDate = "31/12/2100";
+  }
+  //jQuery("#periodo").data('daterangepicker').endDate.format('DD/MM / YYYY');
 
   var empresa = jQuery("#empresa").val();
   // var deposito = jQuery("#deposito").val();
 
-  if (empresa != "" && periodo != "") {
+  if (empresa != "" && periodo != "" && startDate != "") {
     // jQuery('#' + tabela).closest('tr').remove();
     url =
       "/EstRelMovimento/busca_dados?empresa=" +

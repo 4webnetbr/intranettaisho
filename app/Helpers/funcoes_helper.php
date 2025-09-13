@@ -262,7 +262,7 @@ function dataBrToDb($dataBrasileira)
     // Verifica se a conversão foi bem-sucedida
     if (!$data) {
         debug($dataBrasileira);
-        throw new InvalidArgumentException("Formato de data inválido. " . $sodata);
+        throw new \InvalidArgumentException("Formato de data inválido. " . $sodata);
     }
 
     // Formata a data para o formato de banco de dados

@@ -1029,6 +1029,7 @@ class ApiEstoque extends Auth
                     'und_id'    => $undid,
                     'ped_justifica'    => $justi,
                     'ped_sugestao'    => $sugestao,
+                    'ped_datains'    => $data->format('Y-m-d H:i:s'),
                 ];
                 // Verifica se o registro existe
                 $existingRecord = $this->pedido->where('emp_id', $empresa)

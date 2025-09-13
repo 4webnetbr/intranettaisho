@@ -131,6 +131,7 @@ class EstoquConsumoModel extends Model
         if ($emp_id) {
             $builder->where("emp_id", $emp_id);
         }
+        $builder->where("pro_status", 'A');
         $builder->orderBy("con_id");
         $ret = $builder->get()->getResultArray();
 
@@ -163,6 +164,7 @@ class EstoquConsumoModel extends Model
                 $builder->where("p.pro_id", $pro_id);
             }
         }
+        $builder->where("p.pro_status", 'A');
         $builder->where("p.pro_excluido", NULL);
         // if ($emp_id) {
         //     $builder->where("emp_id", $emp_id);

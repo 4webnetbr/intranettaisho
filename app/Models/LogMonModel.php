@@ -53,9 +53,14 @@ class LogMonModel
 		}
 	}
 
-	function get_logs_lastVarios($tabela, $registros)
+	function get_logs_lastVarios($tabela, $registros, $maisAntigo = false)
 	{
 		try {
+			// Define a direção da ordenação
+			$ordem = $maisAntigo ? 1 : -1;
+
+			// Define o nome do campo no group (first_record ou last_record)
+			$campoRecord = $maisAntigo ? 'first_record' : 'last_record';
 			// Define o pipeline de agregação
 			$pipeline = [
 				// Primeiro, filtra os documentos pela tabela, pelos registros informados e pela data
@@ -68,7 +73,7 @@ class LogMonModel
 				],
 				// Ordena os registros em ordem decrescente pela data
 				[
-					'$sort' => ['log_data' => -1]
+					'$sort' => ['log_data' => $ordem]
 				],
 				// Agrupa os documentos por log_id_registro e pega o primeiro documento de cada grupo (que, devido à ordenação, é o mais recente)
 				[
@@ -99,6 +104,7 @@ class LogMonModel
 			show_error('Error while fetching logs: ' . $ex->getMessage(), 500);
 		}
 	}
+
 
 	/**
 	 * get_logs_all

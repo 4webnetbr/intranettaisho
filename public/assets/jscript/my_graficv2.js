@@ -492,29 +492,36 @@ function graf_janela(obj) {
   var titulo = jQuery("#" + nome)[0].children[0].innerHTML;
   var periodo = jQuery("#periodo").val();
   var startDate = periodo.substr(0, 10);
-  var endDate = periodo.substr(-10);
-  var empresa = jQuery("#empresa").val();
-  if (empresa == undefined) {
-    var pos = nome.lastIndexOf("_");
-    empresa = nome.substr(pos + 1);
-    if (empresa == "all") {
-      empresa = [];
-      jQuery.each(jQuery("#empresa\\[\\] option:selected"), function () {
-        empresa.push(jQuery(this).val());
-      });
-    }
+  var endDate = periodo.substr(-10); //jQuery("#periodo").data('daterangepicker').endDate.format('DD/MM / YYYY');
+  if (endDate == "Considerar") {
+    startDate = "01/01/2001";
+    endDate = "31/12/2100";
   }
-  jQuery.post("/DashDiretorV2/secao", {
-    colunas: colunas,
-    nome: nome,
-    tipo: tipo,
-    inicio: startDate,
-    fim: endDate,
-    empresa: empresa,
-    busca: nome,
-    titulo: titulo,
-  });
-  redirec_blank("graph/index");
+
+  if (startDate != "") {
+    var empresa = jQuery("#empresa").val();
+    if (empresa == undefined) {
+      var pos = nome.lastIndexOf("_");
+      empresa = nome.substr(pos + 1);
+      if (empresa == "all") {
+        empresa = [];
+        jQuery.each(jQuery("#empresa\\[\\] option:selected"), function () {
+          empresa.push(jQuery(this).val());
+        });
+      }
+    }
+    jQuery.post("/DashDiretorV2/secao", {
+      colunas: colunas,
+      nome: nome,
+      tipo: tipo,
+      inicio: startDate,
+      fim: endDate,
+      empresa: empresa,
+      busca: nome,
+      titulo: titulo,
+    });
+    redirec_blank("graph/index");
+  }
 }
 
 /**
@@ -527,23 +534,29 @@ function tabe_janela(obj) {
   var titulo = jQuery("#" + nome)[0].children[0].innerHTML;
   var periodo = jQuery("#periodo").val();
   var startDate = periodo.substr(0, 10);
-  var endDate = periodo.substr(-10);
-  var empresa = jQuery("#empresa").val();
-  if (empresa == undefined) {
-    var pos = nome.lastIndexOf("_");
-    empresa = nome.substr(pos + 1);
+  var endDate = periodo.substr(-10); //jQuery("#periodo").data('daterangepicker').endDate.format('DD/MM / YYYY');
+  if (endDate == "Considerar") {
+    startDate = "01/01/2001";
+    endDate = "31/12/2100";
   }
-  jQuery.post("/DashDiretorV2/secao", {
-    colunas: colunas,
-    nome: nome,
-    tipo: tipo,
-    inicio: startDate,
-    fim: endDate,
-    empresa: empresa,
-    busca: nome,
-    titulo: titulo,
-  });
-  redirec_blank("table/montaTable");
+  if (startDate != "") {
+    var empresa = jQuery("#empresa").val();
+    if (empresa == undefined) {
+      var pos = nome.lastIndexOf("_");
+      empresa = nome.substr(pos + 1);
+    }
+    jQuery.post("/DashDiretorV2/secao", {
+      colunas: colunas,
+      nome: nome,
+      tipo: tipo,
+      inicio: startDate,
+      fim: endDate,
+      empresa: empresa,
+      busca: nome,
+      titulo: titulo,
+    });
+    redirec_blank("table/montaTable");
+  }
 }
 
 /**
@@ -556,44 +569,50 @@ function refresh_card(obj, grafico) {
   }
   var periodo = jQuery("#periodo").val();
   var startDate = periodo.substr(0, 10);
-  var endDate = periodo.substr(-10);
-  var empresa = jQuery("#empresa").val();
-  url = "/DashGerenteV2/busca_dados";
-  jQuery.ajax({
-    type: "POST",
-    url: url,
-    async: true,
-    dataType: "json",
-    data: {
-      busca: busca,
-      periodo: periodo,
-      inicio: startDate,
-      fim: endDate,
-      empresa: empresa,
-      tipo: grafico,
-    },
-    beforeSend: function () {
-      jQuery("#s_" + busca).toggleClass("d-none");
-      removeLinhas("tb_" + busca);
-    },
-    success: async function (retorno) {
-      if (retorno.registros > 0) {
-        jQuery("#card_" + busca).removeClass("d-none");
-        var cores = retorno.cores;
-        if (grafico) {
-          jQuery("#tg_" + busca).val(grafico);
-          montaGrafico(busca, retorno.dados, grafico, cores);
+  var endDate = periodo.substr(-10); //jQuery("#periodo").data('daterangepicker').endDate.format('DD/MM / YYYY');
+  if (endDate == "Considerar") {
+    startDate = "01/01/2001";
+    endDate = "31/12/2100";
+  }
+  if (startDate != "") {
+    var empresa = jQuery("#empresa").val();
+    url = "/DashGerenteV2/busca_dados";
+    jQuery.ajax({
+      type: "POST",
+      url: url,
+      async: true,
+      dataType: "json",
+      data: {
+        busca: busca,
+        periodo: periodo,
+        inicio: startDate,
+        fim: endDate,
+        empresa: empresa,
+        tipo: grafico,
+      },
+      beforeSend: function () {
+        jQuery("#s_" + busca).toggleClass("d-none");
+        removeLinhas("tb_" + busca);
+      },
+      success: async function (retorno) {
+        if (retorno.registros > 0) {
+          jQuery("#card_" + busca).removeClass("d-none");
+          var cores = retorno.cores;
+          if (grafico) {
+            jQuery("#tg_" + busca).val(grafico);
+            montaGrafico(busca, retorno.dados, grafico, cores);
+          }
+        } else {
+          if (!jQuery("#card_" + busca).hasClass("d-none")) {
+            jQuery("#card_" + busca).addClass("d-none");
+          }
         }
-      } else {
-        if (!jQuery("#card_" + busca).hasClass("d-none")) {
-          jQuery("#card_" + busca).addClass("d-none");
-        }
-      }
-    },
-    complete: function () {
-      jQuery("#s_" + busca).toggleClass("d-none");
-    },
-  });
+      },
+      complete: function () {
+        jQuery("#s_" + busca).toggleClass("d-none");
+      },
+    });
+  }
 }
 
 /**
@@ -606,7 +625,12 @@ function refresh_card(obj, grafico) {
 //     }
 //     var periodo = jQuery("#periodo").val();
 //     var startDate = periodo.substr(0, 10);
-//     var endDate = periodo.substr(-10);
+//     var endDate = periodo.substr(-10); //jQuery("#periodo").data('daterangepicker').endDate.format('DD/MM / YYYY');
+// if (endDate == "Considerar") {
+//   startDate = "01/01/2001";
+//   endDate = "31/12/2100";
+// }
+
 //     url = "/DashDiretor/busca_dados";
 //     jQuery.ajax({
 //         type: "POST",

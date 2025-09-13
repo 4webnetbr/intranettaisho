@@ -98,6 +98,7 @@ class EstoquProdutoModel extends Model
         if ($pro_id) {
             $builder->where("pro_id", $pro_id);
         }
+        $builder->where("pro_status", 'A');
         $builder->orderBy("gru_nome, pro_nome");
         $ret = $builder->get()->getResultArray();
 
@@ -144,6 +145,7 @@ class EstoquProdutoModel extends Model
         $builder->orWhere("ent.ent_id IS NULL");
         $builder->groupEnd();
         $builder->where("pro.pro_status", 'A');
+        // $builder->where("pro.pro_excluido", NULL);
         $builder->groupBy("pro.pro_id");
         $builder->orderBy("sld.total_entradas DESC, sld.total_saidas DESC, pro_nome");
 

@@ -286,9 +286,9 @@ class EstoquCotacaoModel extends Model
             $columns[] = "SUM(CASE WHEN cfg_empresa.emp_id = {$empresa['emp_id']} THEN vw_est_pedidos_relac.ped_qtia ELSE NULL END) AS `{$empresa['emp_abrev']}`";
         }
         $columns_sql = implode(",",$columns);
-        $where = '';
+        $where = "WHERE pro_status = 'A' ";
         if ($grupo > 0) {
-            $where = "WHERE grc_id = $grupo ";
+            $where = "AND grc_id = $grupo ";
         }
         $query = "
             SELECT

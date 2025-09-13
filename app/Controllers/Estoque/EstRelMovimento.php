@@ -127,15 +127,16 @@ class EstRelMovimento extends BaseController
             $prods[$p][count($prods[$p])] = $qtiae;
             $prods[$p][count($prods[$p])] = floatToMoeda($prod['enp_valor']);
             $prods[$p][count($prods[$p])] = floatToMoeda($prod['enp_total']);
+            $prods[$p]['cor'] = 'bg-white';
             if($qtiae == '' && date('Y-m-d') > $prod['cop_previsao']){
                 $prods[$p]['cor'] = 'bg-gray-padrao';
             } else if($qtiae != '' && $qtiac != $qtiae ){
-                $prods[$p]['cor'] = 'bg-warning';
+                $prods[$p]['cor'] = 'bg-danger';
             }
             if($qtiac == ''){
                 $prods[$p]['cor'] = 'bg-yellow';
             } else if($qtiap != $qtiac){
-                $prods[$p]['cor'] = 'bg-danger';
+                $prods[$p]['cor'] = 'bg-warning';
             }
             // $prods[$p][count($prods[$p])] = '';
         }
