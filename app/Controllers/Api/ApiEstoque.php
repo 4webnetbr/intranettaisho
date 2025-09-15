@@ -1010,7 +1010,9 @@ class ApiEstoque extends Auth
                 $dados      = get_object_vars($inform['data']);
                 $usuario    = $dados['id'];
                 $user = $this->usuario->getUsuarioId($usuario);
+
                 session()->set('usu_nome', $user[0]['usu_nome']);
+                session()->set('usu_id', $user[0]['usu_id']);
                 log_message('info', 'Usuário: ' . $usuario . ' Função: gravasolicitacao');
 
                 $empresa        = $this->request->getVar('empresa');

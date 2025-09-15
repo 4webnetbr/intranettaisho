@@ -443,7 +443,7 @@ class EstCompraCotacao extends BaseController
                 $campos[1][$c][count($campos[1][$c])]   = $this->pro_id;
                 $campos[1][$c][count($campos[1][$c])]   = $this->ped_qtia;
                 $campos[1][$c][count($campos[1][$c])]   = $this->und_sigla;
-                $campos[1][$c][count($campos[1][$c])]   = $this->com_id . ' ' . $this->cop_id . ' ' . $this->ped_id . ' ' . $this->und_id . ' ' . $this->cop_quantia;
+                $campos[1][$c][count($campos[1][$c])]   = $this->com_id . ' ' . $this->cop_id . ' ' . $this->ped_id . ' ' . $this->mar_id . ' ' . $this->und_id . ' ' . $this->cop_quantia;
                 $campos[1][$c][count($campos[1][$c])]   = $this->cop_valor;
                 $campos[1][$c][count($campos[1][$c])]   = $this->cop_total;
                 $campos[1][$c][count($campos[1][$c])]   = $this->cop_previsao;
@@ -839,6 +839,12 @@ class EstCompraCotacao extends BaseController
         $pedid->valor = ($dados['ped_id']) ? $dados['ped_id'] : '';
         $this->ped_id = $pedid->crOculto();
 
+        $marca = new MyCampo('est_compra_produto', 'mar_id');
+        $marca->nome               = "mar_id[$pos]";
+        $marca->ordem              = $pos;
+        $marca->valor = ($dados['mar_id']) ? $dados['mar_id'] : '';
+        $this->mar_id = $marca->crOculto();
+
         $compr = new MyCampo('est_compra', 'com_id');
         $compr->nome               = "com_id[$pos]";
         $compr->ordem              = $pos;
@@ -1073,6 +1079,8 @@ class EstCompraCotacao extends BaseController
                     'com_id'    => $com_id,
                     'pro_id'    => $dados['pro_id'][$key],
                     'und_id'    => $dados['und_id'][$key],
+                    'ped_id'    => $dados['ped_id'][$key],
+                    'mar_id'    => $dados['mar_id'][$key],
                     'cop_quantia'   => floatval($qtia),
                     'cop_valor'   => $dados['cop_valor'][$key],
                     'cop_total'   => $dados['cop_total'][$key],

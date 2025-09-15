@@ -727,6 +727,11 @@ class EstPedido extends BaseController
         $dados = $this->request->getPost();
         // debug($dados, true);
         $erros = [];
+        if($dados['pro_id'] == 0){
+            $ret['erro'] = true;
+            $ret['msg'] = 'Não foi possível gravar o Pedido, Verifique!';
+        }
+
         $data = new  \DateTime();
         if (!$ret['erro']) {
             $dados_ped = [

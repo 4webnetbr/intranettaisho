@@ -1420,7 +1420,9 @@ function carrega_lista_cotacao_marca(obj, url, nome) {
 //   });
 // }
 
-let cotacaoRequest = null; // variável global para armazenar a requisição
+if (typeof cotacaoRequest === "undefined") {
+  var cotacaoRequest = null;
+}
 
 function carrega_lista_cotacao(obj, url, nome) {
   // Cancela a requisição anterior, se ainda estiver ativa
