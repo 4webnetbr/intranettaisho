@@ -489,6 +489,7 @@ class RhColaborador extends BaseController
         $sit->opcoes                = $situ;
         $sit->largura               = 30;
         $sit->leitura               = $show;
+        $sit->funcChan              = "mudaObrigatorio(this, 'Demitido', ['col_vale,col_vt,col_folgasemana,col_folgadomingo,col_metropolitana,col_data_admissao,col_matricula','set_id','cag_id'])";
         $this->col_situacao         = $sit->crSelect();
 
         $val                        = new MyCampo('rh_colaborador', 'col_vale');

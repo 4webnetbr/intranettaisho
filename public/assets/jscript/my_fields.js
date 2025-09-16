@@ -3347,3 +3347,36 @@ function buscarProdutoPorCodBarras() {
     });
   }
 }
+
+function mudaObrigatorio(obj, regra, fields) {
+  if (typeof obj === "object" && obj !== null) {
+    nomecampo = obj.name;
+  } else {
+    nomecampo = obj;
+  }
+  nomecampo = nomecampo.replaceAll("[", "\\[");
+  nomecampo = nomecampo.replaceAll("]", "\\]");
+  valor = jQuery('input[name="' + nomecampo + '"]:checked').val();
+  campos = fields.split(",");
+  if (valor == regra) {
+    if (jQuery.type(campos) == "array") {
+      for (v = 0; v < campos.length; v++) {
+        campos[v] = escIdColchetes(campos[v]);
+        jQuery("#" + campos[v]).attr("required", "required");
+      }
+    } else {
+      campos = escIdColchetes(campos);
+      jQuery("#" + campos).attr("required", "required");
+    }
+  } else {
+    if (jQuery.type(campos) == "array") {
+      for (v = 0; v < campos.length; v++) {
+        campos[v] = escIdColchetes(campos[v]);
+        jQuery("#" + campos[v]).attr("required", false);
+      }
+    } else {
+      campos = escIdColchetes(campos);
+      jQuery("#" + campos).attr("required", false);
+    }
+  }
+}

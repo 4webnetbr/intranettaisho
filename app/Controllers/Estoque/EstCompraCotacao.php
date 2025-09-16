@@ -834,31 +834,31 @@ class EstCompraCotacao extends BaseController
         }
         // debug($dados, true);
         $pedid = new MyCampo('est_pedido', 'ped_id');
-        $pedid->nome               = "ped_id[$pos]";
+        $pedid->nome = $pedid->id               = "ped_id[$pos]";
         $pedid->ordem              = $pos;
         $pedid->valor = ($dados['ped_id']) ? $dados['ped_id'] : '';
         $this->ped_id = $pedid->crOculto();
 
         $marca = new MyCampo('est_compra_produto', 'mar_id');
-        $marca->nome               = "mar_id[$pos]";
+        $marca->nome = $marca->id               = "mar_id[$pos]";
         $marca->ordem              = $pos;
         $marca->valor = ($dados['mar_id']) ? $dados['mar_id'] : '';
         $this->mar_id = $marca->crOculto();
 
         $compr = new MyCampo('est_compra', 'com_id');
-        $compr->nome               = "com_id[$pos]";
+        $compr->nome = $compr->id               = "com_id[$pos]";
         $compr->ordem              = $pos;
         $compr->valor = $dados['com_id'];
         $this->com_id = $compr->crOculto();
 
         $proco = new MyCampo('est_compra_produto', 'cop_id');
-        $proco->nome               = "cop_id[$pos]";
+        $proco->nome = $proco->id               = "cop_id[$pos]";
         $proco->ordem              = $pos;
         $proco->valor = $dados['cop_id'];
         $this->cop_id = $proco->crOculto();
 
         $undco = new MyCampo('est_compra_produto', 'und_id');
-        $undco->nome               = "und_id[$pos]";
+        $undco->nome = $undco->id               = "und_id[$pos]";
         $undco->ordem              = $pos;
         $undco->valor = $dados['und_id'];
         $this->und_id = $undco->crOculto();
@@ -868,7 +868,7 @@ class EstCompraCotacao extends BaseController
         $produts = array_column($dados_pro, 'pro_nome', 'pro_id');
 
         $proid = new MyCampo('est_compra_produto', 'pro_id');
-        $proid->nome               = "pro_id[$pos]";
+        $proid->nome = $proid->id               = "pro_id[$pos]";
         $proid->ordem              = $pos;
         $proid->valor = $proid->selecionado = $dados['pro_id'];
         $proid->opcoes = $produts;
@@ -878,7 +878,7 @@ class EstCompraCotacao extends BaseController
 
         $qtia = formataQuantia($dados['ped_qtia']);
         $qtp                        = new MyCampo('est_pedido', 'ped_qtia');
-        $qtp->nome               = "ped_qtia[$pos]";
+        $qtp->nome = $qtp->id               = "ped_qtia[$pos]";
         $qtp->ordem              = $pos;
         $qtp->tipo                  = 'quantia';
         $qtp->label                 = 'Pedido';
@@ -889,7 +889,7 @@ class EstCompraCotacao extends BaseController
         $this->ped_qtia             = $qtp->crInput();
 
         $und                        = new MyCampo('est_unidades', 'und_sigla');
-        $und->nome               = "und_sigla[$pos]";
+        $und->nome = $und->id               = "und_sigla[$pos]";
         $und->ordem              = $pos;
         $und->label                 = 'Und Compra';
         $und->largura               = 30;
@@ -900,8 +900,8 @@ class EstCompraCotacao extends BaseController
 
         $previsao = new DateTime("+2 days");
         $pre                        = new MyCampo('est_compra_produto', 'cop_previsao');
-        $pre->nome               = "cop_previsao[$pos]";
-        $pre->ordem              = $pos;
+        $pre->nome = $pre->id                  = "cop_previsao[$pos]";
+        $pre->ordem                 = $pos;
         $pre->valor                 = $dados['cop_previsao'] ?? $dados['com_previsao'];
         $pre->largura               = 16;
         $this->cop_previsao         = $pre->crInput();
@@ -909,7 +909,7 @@ class EstCompraCotacao extends BaseController
         $qtia = formataQuantia($dados['cop_quantia']);
 
         $qti                        = new MyCampo('est_compra_produto', 'cop_quantia');
-        $qti->nome               = "cop_quantia[$pos]";
+        $qti->nome = $qti->id       = "cop_quantia[$pos]";
         $qti->ordem              = $pos;
         $qti->tipo                  = 'quantia';
         $qti->largura               = 10;
@@ -919,7 +919,7 @@ class EstCompraCotacao extends BaseController
         $this->cop_quantia          = $qti->crInput();
 
         $val                        = new MyCampo('est_compra_produto', 'cop_valor');
-        $val->nome               = "cop_valor[$pos]";
+        $val->nome = $val->id               = "cop_valor[$pos]";
         $val->ordem              = $pos;
         $val->largura               = 15;
         $val->valor                 = $dados['cop_valor'];
@@ -927,7 +927,7 @@ class EstCompraCotacao extends BaseController
         $this->cop_valor            = $val->crInput();
 
         $tot                        = new MyCampo('est_compra_produto', 'cop_total');
-        $tot->nome               = "cop_total[$pos]";
+        $tot->nome = $tot->id               = "cop_total[$pos]";
         $tot->ordem              = $pos;
         $tot->largura               = 20;
         $tot->classep               = 'text-end';
