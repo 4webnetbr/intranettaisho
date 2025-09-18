@@ -76,6 +76,7 @@ class EstProduto extends BaseController
         for ($p = 0; $p < count($dados_produto); $p++) {
             $dados_produto[$p]['pro_fcc'] = formataQuantia($dados_produto[$p]['pro_fcc'])['qtiv'];
         }
+        $this->data['exclusao'] = false;
         $produtos = [
             'data' => montaListaColunas($this->data, 'pro_id', $dados_produto, 'pro_nome'),
         ];
