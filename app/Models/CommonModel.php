@@ -202,6 +202,7 @@ class CommonModel extends Model
         // debug($sql);
         $ret = $builder->get()->getResultArray();
         $sql = $db->getLastQuery();
+        // debug($sql);
         log_message('info', $sql);
         return $ret;
     }

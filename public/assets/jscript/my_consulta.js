@@ -1613,29 +1613,32 @@ function carrega_sults(obj) {
     let marcado = false;
 
     if (jQuery(obj).is("select[multiple]")) {
-      const valoresAntes = jQuery(obj).data("valores-antes") || [];
-      const valoresAtuais = jQuery(obj).val() || [];
+      const $obj = jQuery(obj);
+      const valoresAntes = $obj.data("valores-antes") || [];
+      const valoresAtuais = $obj.val() || [];
 
-      const marcados = valoresAtuais.filter((v) => !valoresAntes.includes(v));
+      // Verifica se houve algum novo valor marcado
+      const novosMarcados = valoresAtuais.filter(
+        (v) => !valoresAntes.includes(v)
+      );
 
-      if (marcados.length > 0) {
-        marcado = true;
-        if (Array.isArray(marcados)) {
-          marc = marcados.join(","); // Converte array para string
-        }
-
-        formData[obj.id] = marc;
-      } else {
-        if (valoresAtuais.length == 0) {
-          desBloqueiaTela();
-          return;
-        }
+      if (novosMarcados.length > 0) {
+        // Houve novo item marcado → não segue com os outros campos
+        formData[obj.id] = valoresAtuais.join(","); // captura apenas esse campo
+        return; // interrompe o processamento dos demais selects e inputs
       }
+
+      // Caso contrário, segue normalmente com os demais campos
+      formData[obj.id] = valoresAtuais.join(",");
+
       $section.find("input, select").each(function () {
         const $field = jQuery(this);
         const id = $field.attr("id");
+
+        // Pula o select[multiple] que já foi tratado
+        if ($obj.is($field)) return;
+
         if ($field.hasClass("daterange")) {
-          // Se for um campo daterange, captura início e fim
           const val = $field.val();
           if (val && val.includes(" - ")) {
             const [inicio, fim] = val.split(" - ");
@@ -1646,13 +1649,11 @@ function carrega_sults(obj) {
             formData[id + "_fim"] = "";
           }
         } else {
-          if (!marcado) {
-            let valor = $field.val();
-            if (Array.isArray(valor)) {
-              valor = valor.join(","); // Converte array para string
-            }
-            formData[id] = valor;
+          let valor = $field.val();
+          if (Array.isArray(valor)) {
+            valor = valor.join(",");
           }
+          formData[id] = valor;
         }
       });
     }

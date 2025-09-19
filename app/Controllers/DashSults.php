@@ -40,15 +40,15 @@ class DashSults extends BaseController
         // $integ_sults->integrar();
         
         $this->def_campos();
-        $campos[0] = $this->dash_aberto;
-        $campos[1] = $this->dash_resolvido;
-        $campos[2] = $this->dash_concluido;
-        $campos[3] = $this->dash_unidade;
-        $campos[4] = $this->dash_departamento;
-        $campos[5] = $this->dash_assunto;
-        $campos[6] = $this->dash_solicitante;
-        $campos[7] = $this->dash_responsavel;
-        $campos[8] = $this->dash_situacao;
+        // $campos[0] = $this->dash_aberto;
+        $campos[0] = $this->dash_resolvido;
+        $campos[1] = $this->dash_concluido;
+        $campos[2] = $this->dash_unidade;
+        $campos[3] = $this->dash_departamento;
+        $campos[4] = $this->dash_assunto;
+        $campos[5] = $this->dash_solicitante;
+        $campos[6] = $this->dash_responsavel;
+        $campos[7] = $this->dash_situacao;
 
         $this->data['campos']     	= $campos;  
         return view('vw_dashsults', $this->data);
@@ -72,7 +72,6 @@ class DashSults extends BaseController
         $resolvido->valor       = '';
         $resolvido->size        = 30;
         $resolvido->funcChan    = 'carrega_sults(this)';
-        $resolvido->func    = 'carrega_sults(this)';
         $resolvido->dispForm    = 'col-12';
         $this->dash_resolvido    = $resolvido->crDaterange();
 
@@ -204,7 +203,8 @@ class DashSults extends BaseController
     public function busca_dados()
     {
         $postData = $this->request->getPost();
-
+        $postData['aberto_inicio'] = '01/01/2025';
+        $postData['aberto_fim'] = '31/12/2026';
         // 1) Normaliza arrays do tipo [""] -> []
         foreach ($postData as $k => $v) {
             if (is_array($v) && count($v) === 1 && $v[0] === '') {
@@ -315,7 +315,7 @@ class DashSults extends BaseController
         // $resolvido = array_values(array_unique(array_column($retorno, 'resolvido')));
 
         // debug($resolvido, true);
-        $score['Chamados'] = count($retorno);
+        $score['Criados'] = count($retorno);
         $score['Abertos'] = count(array_filter($retorno, function($item) {
             return empty($item['resolvido']);
         }));
