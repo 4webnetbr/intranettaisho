@@ -73,15 +73,17 @@ class EstCompra extends BaseController
      */
     public function index()
     {
-        $this->def_campos_lista();
-        $campos[0] = $this->dash_empresa;
+        $this->data['erromsg'] = 'Essa opção não está disponível, utilize o Compras por Cotação';
+        $this->__erro();
+        // $this->def_campos_lista();
+        // $campos[0] = $this->dash_empresa;
 
-        $this->data['nome']         = 'compra';
-        $this->data['colunas']      = montaColunasLista($this->data, 'com_id');
-        $this->data['url_lista']    = base_url($this->data['controler'] . '/lista');
-        $this->data['campos']         = $campos;
-        $this->data['script'] = "<script>carrega_lista('empresa', '" . $this->data['url_lista'] . "','" . $this->data['nome'] . "');</script>";
-        echo view('vw_lista_filtrada', $this->data);
+        // $this->data['nome']         = 'compra';
+        // $this->data['colunas']      = montaColunasLista($this->data, 'com_id');
+        // $this->data['url_lista']    = base_url($this->data['controler'] . '/lista');
+        // $this->data['campos']         = $campos;
+        // $this->data['script'] = "<script>carrega_lista('empresa', '" . $this->data['url_lista'] . "','" . $this->data['nome'] . "');</script>";
+        // echo view('vw_lista_filtrada', $this->data);
     }
 
     public function def_campos_lista($tipo = 1, $idempresa = false)

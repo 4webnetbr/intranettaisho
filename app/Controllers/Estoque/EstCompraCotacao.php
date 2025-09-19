@@ -475,11 +475,7 @@ class EstCompraCotacao extends BaseController
             $dados_com = $this->compra->getCompra($id)[0];
 
             $dados_pro = $this->compra->getCompraProd($id);
-            // debug($dados_pro);
-            $pedido = [];
-            for ($pr = 0; $pr < count($dados_pro) ; $pr++) {
-                array_push($pedido, $dados_pro[$pr]['ped_id']);
-            }
+            $pedido = array_column($dados_pro, 'ped_id');
             // debug($pedido, true);
             $this->compra->delete($id);
             $com_exc = $this->common->deleteReg('dbEstoque', 'est_compra_produto', "com_id = " . $id);

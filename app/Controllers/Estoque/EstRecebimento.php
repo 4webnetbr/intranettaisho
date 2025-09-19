@@ -106,7 +106,7 @@ class EstRecebimento extends BaseController
             $emp->leitura           = true;
         }
         if ($tipo == 1) {
-            $emp->funcChan              = "carrega_lista(this,'EstRecebimento/lista','compra')";
+            $emp->funcChan              = "carrega_lista(this,'EstRecebimento/lista','recebe')";
         } else {
             $emp->funcChan              = "carrega_lista_edit(this, '" . base_url($this->data['controler'] . '/listaadd') . "','produtos');";
         }

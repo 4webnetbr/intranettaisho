@@ -98,7 +98,7 @@ class EstoquProdutoModel extends Model
         if ($pro_id) {
             $builder->where("pro_id", $pro_id);
         }
-        $builder->where("pro_status", 'A');
+        // $builder->where("pro_status", 'A');
         $builder->orderBy("gru_nome, pro_nome");
         $ret = $builder->get()->getResultArray();
 

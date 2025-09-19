@@ -53,15 +53,17 @@ class EstEntrada extends BaseController
      */
     public function index()
     {
-        $this->def_campos_lista();
-        $campos[0] = $this->dash_empresa;
+        $this->data['erromsg'] = 'Essa opção não está disponível, utilize o Compras por Cotação';
+        $this->__erro();
+        // $this->def_campos_lista();
+        // $campos[0] = $this->dash_empresa;
 
-        $this->data['nome']         = 'entrada';
-        $this->data['colunas'] = montaColunasLista($this->data, 'ent_id', 'd');
-        $this->data['url_lista'] = base_url($this->data['controler'] . '/lista_prod');
-        $this->data['campos']         = $campos;
-        $this->data['script'] = "<script>carrega_lista_detail('empresa', '" . $this->data['url_lista'] . "','" . $this->data['nome'] . "');</script>";
-        echo view('vw_lista_filtrada', $this->data);
+        // $this->data['nome']         = 'entrada';
+        // $this->data['colunas'] = montaColunasLista($this->data, 'ent_id', 'd');
+        // $this->data['url_lista'] = base_url($this->data['controler'] . '/lista_prod');
+        // $this->data['campos']         = $campos;
+        // $this->data['script'] = "<script>carrega_lista_detail('empresa', '" . $this->data['url_lista'] . "','" . $this->data['nome'] . "');</script>";
+        // echo view('vw_lista_filtrada', $this->data);
     }
 
     public function def_campos_lista()

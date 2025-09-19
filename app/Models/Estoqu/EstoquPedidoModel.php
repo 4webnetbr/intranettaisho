@@ -232,6 +232,7 @@ class EstoquPedidoModel extends Model
         if ($fim) {
             $builder->where("ped_data <=", $fim);
         }
+        $builder->where("ped_excluido", NULL);
         $builder->orderBy("emp_apelido, ped_data, pro_nome ");
         $ret = $builder->get()->getResultArray();
 

@@ -75,6 +75,9 @@ class EstProduto extends BaseController
         $dados_produto = $this->Produto->getProduto();
         for ($p = 0; $p < count($dados_produto); $p++) {
             $dados_produto[$p]['pro_fcc'] = formataQuantia($dados_produto[$p]['pro_fcc'])['qtiv'];
+            if($dados_produto[$p]['pro_status'] == 'I'){
+                // $dados_produto[$p]['cor'] = 'bg-warning';
+            }
         }
         $this->data['exclusao'] = false;
         $produtos = [
