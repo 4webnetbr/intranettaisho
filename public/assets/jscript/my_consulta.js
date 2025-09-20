@@ -1617,45 +1617,51 @@ function carrega_sults(obj) {
       const valoresAntes = $obj.data("valores-antes") || [];
       const valoresAtuais = $obj.val() || [];
 
-      // Verifica se houve algum novo valor marcado
+      // Se nenhum item está selecionado, não prossegue
+      if (valoresAtuais.length === 0) {
+        desBloqueiaTela();
+        return;
+      }
+
+      // Verifica se houve novos itens marcados
       const novosMarcados = valoresAtuais.filter(
         (v) => !valoresAntes.includes(v)
       );
 
+      // Se marcou algum novo, não processa os demais campos
       if (novosMarcados.length > 0) {
-        // Houve novo item marcado → não segue com os outros campos
-        formData[obj.id] = valoresAtuais.join(","); // captura apenas esse campo
-        return; // interrompe o processamento dos demais selects e inputs
-      }
+        formData[obj.id] = valoresAtuais.join(",");
+        // return;
+      } else {
+        // Caso contrário, segue normalmente e processa todos os campos
+        formData[obj.id] = valoresAtuais.join(",");
 
-      // Caso contrário, segue normalmente com os demais campos
-      formData[obj.id] = valoresAtuais.join(",");
+        $section.find("input, select").each(function () {
+          const $field = jQuery(this);
+          const id = $field.attr("id");
 
-      $section.find("input, select").each(function () {
-        const $field = jQuery(this);
-        const id = $field.attr("id");
+          // Evita reprocessar o select múltiplo já tratado
+          if ($obj.is($field)) return;
 
-        // Pula o select[multiple] que já foi tratado
-        if ($obj.is($field)) return;
-
-        if ($field.hasClass("daterange")) {
-          const val = $field.val();
-          if (val && val.includes(" - ")) {
-            const [inicio, fim] = val.split(" - ");
-            formData[id + "_inicio"] = inicio.trim();
-            formData[id + "_fim"] = fim.trim();
+          if ($field.hasClass("daterange")) {
+            const val = $field.val();
+            if (val && val.includes(" - ")) {
+              const [inicio, fim] = val.split(" - ");
+              formData[id + "_inicio"] = inicio.trim();
+              formData[id + "_fim"] = fim.trim();
+            } else {
+              formData[id + "_inicio"] = "";
+              formData[id + "_fim"] = "";
+            }
           } else {
-            formData[id + "_inicio"] = "";
-            formData[id + "_fim"] = "";
+            let valor = $field.val();
+            if (Array.isArray(valor)) {
+              valor = valor.join(",");
+            }
+            formData[id] = valor;
           }
-        } else {
-          let valor = $field.val();
-          if (Array.isArray(valor)) {
-            valor = valor.join(",");
-          }
-          formData[id] = valor;
-        }
-      });
+        });
+      }
     }
   }
   console.log("Dados do formulário:", JSON.parse(JSON.stringify(formData)));

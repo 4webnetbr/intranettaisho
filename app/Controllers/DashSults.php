@@ -40,15 +40,15 @@ class DashSults extends BaseController
         // $integ_sults->integrar();
         
         $this->def_campos();
-        // $campos[0] = $this->dash_aberto;
-        $campos[0] = $this->dash_resolvido;
-        $campos[1] = $this->dash_concluido;
-        $campos[2] = $this->dash_unidade;
-        $campos[3] = $this->dash_departamento;
-        $campos[4] = $this->dash_assunto;
-        $campos[5] = $this->dash_solicitante;
-        $campos[6] = $this->dash_responsavel;
-        $campos[7] = $this->dash_situacao;
+        $campos[0] = $this->dash_aberto;
+        // $campos[1] = $this->dash_resolvido;
+        // $campos[2] = $this->dash_concluido;
+        $campos[1] = $this->dash_unidade;
+        $campos[2] = $this->dash_departamento;
+        $campos[3] = $this->dash_assunto;
+        $campos[4] = $this->dash_solicitante;
+        $campos[5] = $this->dash_responsavel;
+        $campos[6] = $this->dash_situacao;
 
         $this->data['campos']     	= $campos;  
         return view('vw_dashsults', $this->data);
@@ -58,32 +58,33 @@ class DashSults extends BaseController
         $aberto =  new MyCampo();
         $aberto->nome        = 'aberto'; 
         $aberto->id          = 'aberto';
-        $aberto->label       = 'Aberto entre';
-        $aberto->valor       = '';
+        $aberto->label       = 'Período entre';
+        $aberto->valor       = '01/01/2025 - '.date('d/m/Y');
         $aberto->size        = 30;
         $aberto->funcChan    = 'carrega_sults(this)';
         $aberto->dispForm    = 'col-12';
         $this->dash_aberto    = $aberto->crDaterange();
 
-        $resolvido =  new MyCampo();
-        $resolvido->nome        = 'resolvido'; 
-        $resolvido->id          = 'resolvido';
-        $resolvido->label       = 'Resolvido entre';
-        $resolvido->valor       = '';
-        $resolvido->size        = 30;
-        $resolvido->funcChan    = 'carrega_sults(this)';
-        $resolvido->dispForm    = 'col-12';
-        $this->dash_resolvido    = $resolvido->crDaterange();
+        // $resolvido =  new MyCampo();
+        // $resolvido->nome        = 'resolvido'; 
+        // $resolvido->id          = 'resolvido';
+        // $resolvido->label       = 'Resolvido entre';
+        // $resolvido->valor       = '';
+        // $resolvido->size        = 30;
+        // $resolvido->funcChan    = 'carrega_sults(this)';
+        // $resolvido->func    = 'carrega_sults(this)';
+        // $resolvido->dispForm    = 'col-12';
+        // $this->dash_resolvido    = $resolvido->crDaterange();
 
-        $concluido =  new MyCampo();
-        $concluido->nome        = 'concluido'; 
-        $concluido->id          = 'concluido';
-        $concluido->label       = 'Concluido entre';
-        $concluido->valor       = '';
-        $concluido->size        = 30;
-        $concluido->funcChan    = 'carrega_sults(this)';
-        $concluido->dispForm    = 'col-12';
-        $this->dash_concluido    = $concluido->crDaterange();
+        // $concluido =  new MyCampo();
+        // $concluido->nome        = 'concluido'; 
+        // $concluido->id          = 'concluido';
+        // $concluido->label       = 'Concluido entre';
+        // $concluido->valor       = '';
+        // $concluido->size        = 30;
+        // $concluido->funcChan    = 'carrega_sults(this)';
+        // $concluido->dispForm    = 'col-12';
+        // $this->dash_concluido    = $concluido->crDaterange();
 
         $unidades = $this->common->getResult('default', 'ger_sults_unidade','1=1','trim(und_nome) as und_nome,und_id','trim(und_nome),und_id');
         $opcunida = array_column($unidades,'und_nome','und_id');
@@ -203,8 +204,7 @@ class DashSults extends BaseController
     public function busca_dados()
     {
         $postData = $this->request->getPost();
-        $postData['aberto_inicio'] = '01/01/2025';
-        $postData['aberto_fim'] = '31/12/2026';
+
         // 1) Normaliza arrays do tipo [""] -> []
         foreach ($postData as $k => $v) {
             if (is_array($v) && count($v) === 1 && $v[0] === '') {
@@ -288,9 +288,10 @@ class DashSults extends BaseController
             }
         }
         // debug($clausulas);
+        $filtroFinal = '1=1';
         if(count($clausulas)){
             $filtroFinal = implode(' AND ', $clausulas);
-
+        }
             $retorno = $this->common->getResult('default', 'vw_ger_sults_relac',$filtroFinal);
             
             $unidade = array_values(array_unique(array_column($retorno, 'id_unidade')));
@@ -299,23 +300,23 @@ class DashSults extends BaseController
             $solicitante = array_values(array_unique(array_column($retorno, 'id_solicitante')));
             $responsavel = array_values(array_unique(array_column($retorno, 'id_responsavel')));
             $situacao = array_values(array_unique(array_column($retorno, 'situacao')));
-        } else {
-            $filtroFinal = '';
-            $retorno = [];
-            $unidade = [];
-            $departamento = [];
-            $assunto = [];
-            $solicitante = [];
-            $responsavel = [];
-            $situacao = [];
-        }
+        // } else {
+        //     $filtroFinal = '';
+        //     $retorno = [];
+        //     $unidade = [];
+        //     $departamento = [];
+        //     $assunto = [];
+        //     $solicitante = [];
+        //     $responsavel = [];
+        //     $situacao = [];
+        // }
         $colunas = ['Id','Unidade','Departamento', 'Assunto', 'Solicitante','Aberto em','Responsável','Resolvido em','Concluído em','Situação','Aberto c/ Atraso','Fechado c/ Atraso','Título'];
         $campos  = ['id','unidade_nome','departamento_nome','assunto_nome','solicitante_nome','aberto','responsavel_nome','resolvido','concluido','descsituacao','aberto_com_atraso','resolvido_com_atraso','titulo'];
         
         // $resolvido = array_values(array_unique(array_column($retorno, 'resolvido')));
 
         // debug($resolvido, true);
-        $score['Criados'] = count($retorno);
+        $score['Chamados'] = count($retorno);
         $score['Abertos'] = count(array_filter($retorno, function($item) {
             return empty($item['resolvido']);
         }));

@@ -19,7 +19,7 @@ function carregamentos_iniciais() {
       ranges: {
         Hoje: [moment(), moment()],
         Ontem: [moment().subtract(1, "days"), moment().subtract(1, "days")],
-        "Não Considerar": [moment(), moment()], // apenas gatilho
+        "Não Considerar": [moment().subtract(1, "year"), moment()], // apenas gatilho
         "Últimos 7 dias": [moment().subtract(6, "days"), moment()],
         "Últimos 30 dias": [moment().subtract(29, "days"), moment()],
         "Mês atual": [moment().startOf("month"), moment().endOf("month")],
@@ -66,15 +66,13 @@ function carregamentos_iniciais() {
   );
 
   // valor inicial (últimos 30 dias)
+  // jQuery("#aberto.daterange").val("Não Considerar");
   jQuery(".daterange")
-    .not("#concluido")
-    .not("#resolvido")
+    .not("#aberto")
     .each(function () {
       setValue(jQuery(this), start, end);
       jQuery(this).trigger("change");
     });
-  jQuery("#concluido.daterange").val("Não Considerar");
-  jQuery("#resolvido.daterange").val("Não Considerar");
 
   var temNumero = /[0-9]/;
   var temMaiusc = /[A-Z]/;

@@ -199,11 +199,14 @@ class CommonModel extends Model
         $builder->where($chave);
         $builder->orderBy($order);
 
-        // debug($sql);
-        $ret = $builder->get()->getResultArray();
-        $sql = $db->getLastQuery();
-        // debug($sql);
-        log_message('info', $sql);
-        return $ret;
+        // if($chave == '1 = 1'){
+        //     // debug($builder->getCompiledSelect());
+        // } else {
+            $ret = $builder->get()->getResultArray();
+            $sql = $db->getLastQuery();
+            // debug($sql);
+            log_message('info', $sql);
+            return $ret;
+        // }
     }
 }
