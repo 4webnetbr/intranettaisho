@@ -734,33 +734,41 @@ class EstPedido extends BaseController
 
         $data = new  \DateTime();
         if (!$ret['erro']) {
-            $dados_ped = [
-                'ped_id'    => $dados['ped_id'],
-                'ped_data'  => $data->format('Y-m-d'),
-                'pro_id'    => $dados['pro_id'],
-                'emp_id'    => (isset($dados['emp_id'])) ? $dados['emp_id'] : $dados['empresa'],
-                'ped_qtia'  => $dados['ped_qtia'],
-                'und_id'    => $dados['und_id'],
-                'ped_justifica'    => $dados['ped_justifica'],
-                'ped_sugestao'    => $dados['ped_sugestao'],
-                'ped_datains'   =>  date('Y-m-d H:i:s'),
-            ];
-            if ($this->pedido->save($dados_ped)) {
-                if ($dados['ped_id'] == '') {
-                    $ped_id = $this->pedido->getInsertID();
+            if((float)$dados['ped_qtia'] > 0){
+                $dados_ped = [
+                    'ped_id'    => $dados['ped_id'],
+                    'ped_data'  => $data->format('Y-m-d'),
+                    'pro_id'    => $dados['pro_id'],
+                    'emp_id'    => (isset($dados['emp_id'])) ? $dados['emp_id'] : $dados['empresa'],
+                    'ped_qtia'  => $dados['ped_qtia'],
+                    'und_id'    => $dados['und_id'],
+                    'ped_justifica'    => $dados['ped_justifica'],
+                    'ped_sugestao'    => $dados['ped_sugestao'],
+                    'ped_datains'   =>  date('Y-m-d H:i:s'),
+                ];
+                if ($this->pedido->save($dados_ped)) {
+                    if ($dados['ped_id'] == '') {
+                        $ped_id = $this->pedido->getInsertID();
+                    } else {
+                        $ped_id = $dados_ped['ped_id'];
+                    }
+                    $ret['erro'] = false;
+                    $ret['msg'] = 'Pedido gravado com Sucesso!!!';
+                    // session()->setFlashdata('msg', $ret['msg']);
+                    $ret['id'] = $ped_id;
+                    $ret['ped_data'] = dataDbToBr($dados_ped['ped_data']);
+                    $ret['url'] = site_url($this->data['controler']);
                 } else {
-                    $ped_id = $dados_ped['ped_id'];
+                    $erros = $this->pedido->errors();
+                    $ret['erro'] = true;
+                    $ret['msg'] = 'Não foi possível gravar o Pedido, Verifique!';
+                    foreach ($erros as $erro) {
+                        $ret['msg'] .= $erro . '<br>';
+                    }
                 }
-                $ret['erro'] = false;
-                $ret['msg'] = 'Pedido gravado com Sucesso!!!';
-                // session()->setFlashdata('msg', $ret['msg']);
-                $ret['id'] = $ped_id;
-                $ret['ped_data'] = dataDbToBr($dados_ped['ped_data']);
-                $ret['url'] = site_url($this->data['controler']);
             } else {
-                $erros = $this->pedido->errors();
                 $ret['erro'] = true;
-                $ret['msg'] = 'Não foi possível gravar o Pedido, Verifique!';
+                $ret['msg'] = 'Não foi possível gravar o Pedido, Quantia Zerada!';
                 foreach ($erros as $erro) {
                     $ret['msg'] .= $erro . '<br>';
                 }

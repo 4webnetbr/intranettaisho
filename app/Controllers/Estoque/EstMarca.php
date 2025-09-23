@@ -83,6 +83,7 @@ class EstMarca extends BaseController {
                 $qtia = formataQuantia($dados_marcas[$dm]['mar_conversao']);
                 $dados_marcas[$dm]['mar_conversao'] = $qtia['qtia'];
             }
+            // $this->data['exclusao'];
             $marcas = [
                 'data' => montaListaColunas($this->data,'mar_id',$dados_marcas,'pro_nome'),
             ];
@@ -271,6 +272,7 @@ class EstMarca extends BaseController {
         $unm->opcoes                = $unids;
         $unm->largura               = 30;
         $unm->leitura               = $show;
+        $unm->obrigatorio           = true;
         $this->unm_id               = $unm->crSelect();
 
         $nome                       = new MyCampo('est_marca','mar_nome');

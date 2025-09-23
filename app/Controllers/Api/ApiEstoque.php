@@ -1022,35 +1022,38 @@ class ApiEstoque extends Auth
                 $quantia        = $this->request->getVar('quantia');
                 $justi          = $this->request->getVar('justificativa');
                 $data           = new  \DateTime();
+                if((float)$quantia > 0){
+                    $dados_ped = [
+                        'ped_data'  => $data->format('Y-m-d'),
+                        'pro_id'    => $produto,
+                        'emp_id'    => $empresa,
+                        'ped_qtia'  => $quantia,
+                        'und_id'    => $undid,
+                        'ped_justifica'    => $justi,
+                        'ped_sugestao'    => $sugestao,
+                        'ped_datains'    => $data->format('Y-m-d H:i:s'),
+                    ];
+                    // Verifica se o registro existe
+                    $existingRecord = $this->pedido->where('emp_id', $empresa)
+                        ->where('pro_id', $produto)->where('ped_data', $data->format('Y-m-d'))
+                        ->first();
 
-                $dados_ped = [
-                    'ped_data'  => $data->format('Y-m-d'),
-                    'pro_id'    => $produto,
-                    'emp_id'    => $empresa,
-                    'ped_qtia'  => $quantia,
-                    'und_id'    => $undid,
-                    'ped_justifica'    => $justi,
-                    'ped_sugestao'    => $sugestao,
-                    'ped_datains'    => $data->format('Y-m-d H:i:s'),
-                ];
-                // Verifica se o registro existe
-                $existingRecord = $this->pedido->where('emp_id', $empresa)
-                    ->where('pro_id', $produto)->where('ped_data', $data->format('Y-m-d'))
-                    ->first();
+                    if ($existingRecord) {
+                        // Se o registro já existe, faz o update
+                        $dados_ped['ped_id'] = $existingRecord['ped_id']; // Setando o ID do registro existente para o update
+                    }
 
-                if ($existingRecord) {
-                    // Se o registro já existe, faz o update
-                    $dados_ped['ped_id'] = $existingRecord['ped_id']; // Setando o ID do registro existente para o update
-                }
+                    // Agora, seja insert ou update, o save vai funcionar
 
-                // Agora, seja insert ou update, o save vai funcionar
-
-                log_message('info', 'Solicitação: ' . json_encode($dados_ped) . ' Função: gravasolicitacao');
-                if ($this->pedido->save($dados_ped)) {
-                    return $this->respond(['message' => 'Gravou Solicitação'], 200);
-                } else {
-                    return $this->respond(['message' => 'Erro ao Gravar Solicitação'], 401);
-                }
+                    log_message('info', 'Solicitação: ' . json_encode($dados_ped) . ' Função: gravasolicitacao');
+                    if ($this->pedido->save($dados_ped)) {
+                        return $this->respond(['message' => 'Gravou Solicitação'], 200);
+                    } else {
+                        return $this->respond(['message' => 'Erro ao Gravar Solicitação'], 401);
+                    }
+                 } else {
+                    return $this->respond(['message' => 'Erro ao Gravar Solicitação... Quantia zerada'], 401);
+                 }
             } else {
                 return $this->respond(['message' => 'Token Inválido'], 401);
             }
