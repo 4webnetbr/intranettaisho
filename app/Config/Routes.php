@@ -73,7 +73,13 @@ $routes->get('(.+)\.map', function ($filename) {
 });
 $routes->set404Override(function () {
     log_message('critical', 'Rota 404 chamada: {uri}', ['uri' => current_url()]);
-    return service('response')->respond(['error' => 'Rota não encontrada'], 404);
+    return view('vw_semacesso', [
+        'title' => current_url(),
+        'permissao' => false,
+        'erromsg' => "<h2>Atenção</h2>O Caminho <b>" . current_url() . "</b><br>
+        <span style='color:red; font-size:16px'>Não foi Encontrado!</span><br>
+        Informe o Problema ao Administrador do Sistema!",
+    ]);
 });
 $routes->setAutoRoute(true);
 
