@@ -2189,88 +2189,86 @@ function atualiza_ponto(obj) {
 }
 
 function gravaPedido(obj) {
-  alterado = obj.getAttribute("data-alter");
-  if (alterado) {
-    ordem = obj.getAttribute("data-index");
-    id = jQuery("#ped_id\\[" + ordem + "\\]").val();
-    qtia = jQuery("#ped_qtia\\[" + ordem + "\\]").val();
-    if (qtia > 0) {
-      suge = jQuery("#ped_sugestao\\[" + ordem + "\\]").val();
-      just = jQuery("#ped_justifica\\[" + ordem + "\\]").val();
-      cont = jQuery("#gru_controlaestoque\\[" + ordem + "\\]").val();
-      // if (suge != qtia &&
-      //     just.trim().split(/\s+/).filter(Boolean).length < 2 &&
-      //     cont == 'S'
-      // ) {
-      //     boxAlert('Informe a Justificativa, com pelo menos 2 palavras', true, '', false, 1, false);
-      //     // jQuery("#ped_justifica\\[" + ordem + "\\]").focus();
-      // } else {
-      prod = jQuery("#pro_id\\[" + ordem + "\\]").val();
-      unid = jQuery("#und_id\\[" + ordem + "\\]").val();
-      empr = jQuery("#empresa").val();
-      url = "/EstPedido/store";
-      jQuery.ajax({
-        type: "POST",
-        async: true,
-        dataType: "json",
-        url: url,
-        data: {
-          ped_id: id,
-          pro_id: prod,
-          und_id: unid,
-          ped_qtia: qtia,
-          ped_justifica: just,
-          ped_sugestao: suge,
-          emp_id: empr,
-        },
-        success: function (retorno) {
-          if (retorno.erro) {
-            boxAlert(retorno.msg, retorno.erro, "", false, 1, false);
-          } else {
-            jQuery("#ped_id\\[" + ordem + "\\]").val(retorno.id);
-            jQuery("#ped_data\\[" + ordem + "\\]").html(retorno.ped_data);
-            jQuery(".toast-body").html(retorno.msg);
-            jQuery(".toast").toast({
-              delay: 500,
-              animation: true,
-            });
-            jQuery(".toast").toast("show");
-          }
-        },
-        error: function () {
-          boxAlert("Erro ao Gravar o Pedido.", true, "");
-        },
-      });
-      // }
-    } else if (id != "") {
-      if (qtia == "") {
-        jQuery("#ped_qtia\\[" + ordem + "\\]").val(0);
-      }
-      url = "/EstPedido/delete/" + id;
-      jQuery.ajax({
-        type: "POST",
-        async: true,
-        dataType: "json",
-        url: url,
-        success: function (retorno) {
-          jQuery("#ped_id\\[" + ordem + "\\]").val("");
+  // alterado = obj.getAttribute("data-alter");
+  // if (alterado) {
+  ordem = obj.getAttribute("data-index");
+  id = jQuery("#ped_id\\[" + ordem + "\\]").val();
+  qtia = jQuery("#ped_qtia\\[" + ordem + "\\]").val();
+  if (qtia > 0) {
+    suge = jQuery("#ped_sugestao\\[" + ordem + "\\]").val();
+    just = jQuery("#ped_justifica\\[" + ordem + "\\]").val();
+    cont = jQuery("#gru_controlaestoque\\[" + ordem + "\\]").val();
+    // if (suge != qtia &&
+    //     just.trim().split(/\s+/).filter(Boolean).length < 2 &&
+    //     cont == 'S'
+    // ) {
+    //     boxAlert('Informe a Justificativa, com pelo menos 2 palavras', true, '', false, 1, false);
+    //     // jQuery("#ped_justifica\\[" + ordem + "\\]").focus();
+    // } else {
+    prod = jQuery("#pro_id\\[" + ordem + "\\]").val();
+    unid = jQuery("#und_id\\[" + ordem + "\\]").val();
+    empr = jQuery("#empresa").val();
+    url = "/EstPedido/store";
+    jQuery.ajax({
+      type: "POST",
+      async: true,
+      dataType: "json",
+      url: url,
+      data: {
+        ped_id: id,
+        pro_id: prod,
+        und_id: unid,
+        ped_qtia: qtia,
+        ped_justifica: just,
+        ped_sugestao: suge,
+        emp_id: empr,
+      },
+      success: function (retorno) {
+        if (retorno.erro) {
+          boxAlert(retorno.msg, retorno.erro, "", false, 1, false);
+        } else {
+          jQuery("#ped_id\\[" + ordem + "\\]").val(retorno.id);
           jQuery("#ped_data\\[" + ordem + "\\]").html(retorno.ped_data);
-          jQuery("#ped_justifica\\[" + ordem + "\\]").html(
-            retorno.ped_justifica
-          );
           jQuery(".toast-body").html(retorno.msg);
           jQuery(".toast").toast({
             delay: 500,
             animation: true,
           });
           jQuery(".toast").toast("show");
-        },
-        error: function () {
-          boxAlert("Erro ao Excluir o Pedido.", true, "");
-        },
-      });
+        }
+      },
+      error: function () {
+        boxAlert("Erro ao Gravar o Pedido.", true, "");
+      },
+    });
+    // }
+  } else if (id != "") {
+    if (qtia == "") {
+      jQuery("#ped_qtia\\[" + ordem + "\\]").val(0);
     }
+    url = "/EstPedido/delete/" + id;
+    jQuery.ajax({
+      type: "POST",
+      async: true,
+      dataType: "json",
+      url: url,
+      success: function (retorno) {
+        jQuery("#ped_id\\[" + ordem + "\\]").val("");
+        jQuery("#ped_data\\[" + ordem + "\\]").html(retorno.ped_data);
+        jQuery("#ped_justifica\\[" + ordem + "\\]").html(retorno.ped_justifica);
+        jQuery(".toast-body").html(retorno.msg);
+        jQuery(".toast").toast({
+          delay: 500,
+          animation: true,
+        });
+        jQuery(".toast").toast("show");
+      },
+      error: function () {
+        boxAlert("Erro ao Excluir o Pedido.", true, "");
+      },
+    });
   }
+  // }
 }
 
 function gravaConsumo(obj) {
