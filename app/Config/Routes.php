@@ -66,7 +66,7 @@ $routes = Services::routes();
 $routes->setDefaultNamespace('App\Controllers');
 $routes->setDefaultController('home');
 $routes->setDefaultMethod('index');
-$routes->setTranslateURIDashes(true);
+$routes->setTranslateURIDashes(false);
 $routes->get('(.+)\.map', function ($filename) {
     // Redireciona todas as chamadas a .map para um arquivo vazio
     return redirect()->to('/assets/empty.map');

@@ -40,8 +40,8 @@ class DashSults extends BaseController
         // $integ_sults->integrar();
         
         $this->def_campos();
-        $campos[0] = $this->dash_aberto;
-        // $campos[1] = $this->dash_resolvido;
+        // $campos[0] = $this->dash_aberto;
+        $campos[0] = $this->dash_resolvido;
         // $campos[2] = $this->dash_concluido;
         $campos[1] = $this->dash_unidade;
         $campos[2] = $this->dash_departamento;
@@ -49,32 +49,34 @@ class DashSults extends BaseController
         $campos[4] = $this->dash_solicitante;
         $campos[5] = $this->dash_responsavel;
         $campos[6] = $this->dash_situacao;
+        $campos[7] = $this->bt_filtro;
 
         $this->data['campos']     	= $campos;  
+        $this->data['script']     	= "jQuery('#bt_filtro').trigger('click')";  
         return view('vw_dashsults', $this->data);
     }
     
     public function def_campos(){
-        $aberto =  new MyCampo();
-        $aberto->nome        = 'aberto'; 
-        $aberto->id          = 'aberto';
-        $aberto->label       = 'Período entre';
-        $aberto->valor       = '01/01/2025 - '.date('d/m/Y');
-        $aberto->size        = 30;
-        $aberto->funcChan    = 'carrega_sults(this)';
-        $aberto->dispForm    = 'col-12';
-        $this->dash_aberto    = $aberto->crDaterange();
+        // $aberto =  new MyCampo();
+        // $aberto->nome        = 'aberto'; 
+        // $aberto->id          = 'aberto';
+        // $aberto->label       = 'Período entre';
+        // $aberto->valor       = '01/01/2025 - '.date('d/m/Y');
+        // $aberto->size        = 30;
+        // $aberto->funcChan    = 'carrega_sults(this)';
+        // $aberto->dispForm    = 'col-12';
+        // $this->dash_aberto    = $aberto->crDaterange();
 
-        // $resolvido =  new MyCampo();
-        // $resolvido->nome        = 'resolvido'; 
-        // $resolvido->id          = 'resolvido';
-        // $resolvido->label       = 'Resolvido entre';
-        // $resolvido->valor       = '';
-        // $resolvido->size        = 30;
+        $resolvido =  new MyCampo();
+        $resolvido->nome        = 'resolvido'; 
+        $resolvido->id          = 'resolvido';
+        $resolvido->label       = 'Resolvido entre';
+        $resolvido->valor       = '';
+        $resolvido->size        = 30;
         // $resolvido->funcChan    = 'carrega_sults(this)';
         // $resolvido->func    = 'carrega_sults(this)';
-        // $resolvido->dispForm    = 'col-12';
-        // $this->dash_resolvido    = $resolvido->crDaterange();
+        $resolvido->dispForm    = 'col-12';
+        $this->dash_resolvido    = $resolvido->crDaterange();
 
         // $concluido =  new MyCampo();
         // $concluido->nome        = 'concluido'; 
@@ -96,8 +98,8 @@ class DashSults extends BaseController
         $unidade->label       = 'Unidade';
         $unidade->valor       = '';
         $unidade->largura     = 30;
-        $unidade->funcFoco    = 'foco_sults(this)';
-        $unidade->funcChan    = 'carrega_sults(this)';
+        // $unidade->funcFoco    = 'foco_sults(this)';
+        // $unidade->funcChan    = 'carrega_sults(this)';
         $unidade->dispForm    = 'col-12';
         $unidade->opcoes      = $opcunida;
         $unidade->selecionado = [$unidade->valor];
@@ -113,8 +115,8 @@ class DashSults extends BaseController
         $departamento->label       = 'Departamento';
         $departamento->valor       = '';
         $departamento->largura     = 30;
-        $departamento->funcFoco    = 'foco_sults(this)';
-        $departamento->funcChan    = 'carrega_sults(this)';
+        // $departamento->funcFoco    = 'foco_sults(this)';
+        // $departamento->funcChan    = 'carrega_sults(this)';
         $departamento->dispForm    = 'col-12';
         $departamento->opcoes      = $opcdepto;
         $departamento->selecionado = [$departamento->valor];
@@ -130,8 +132,8 @@ class DashSults extends BaseController
         $assunto->label       = 'Assunto';
         $assunto->valor       = '';
         $assunto->largura     = 30;
-        $assunto->funcFoco    = 'foco_sults(this)';
-        $assunto->funcChan    = 'carrega_sults(this)';
+        // $assunto->funcFoco    = 'foco_sults(this)';
+        // $assunto->funcChan    = 'carrega_sults(this)';
         $assunto->dispForm    = 'col-12';
         $assunto->opcoes      = $opcassu;
         $assunto->selecionado = [$assunto->valor];
@@ -151,8 +153,8 @@ class DashSults extends BaseController
         $solicitante->label       = 'Solicitante';
         $solicitante->valor       = '';
         $solicitante->largura     = 30;
-        $solicitante->funcFoco    = 'foco_sults(this)';
-        $solicitante->funcChan    = 'carrega_sults(this)';
+        // $solicitante->funcFoco    = 'foco_sults(this)';
+        // $solicitante->funcChan    = 'carrega_sults(this)';
         $solicitante->dispForm    = 'col-12';
         $solicitante->opcoes      = $opcsolicitan;
         $solicitante->selecionado = [$solicitante->valor];
@@ -169,8 +171,8 @@ class DashSults extends BaseController
         $responsavel->label       = 'Responsavel';
         $responsavel->valor       = '';
         $responsavel->largura     = 30;
-        $responsavel->funcFoco    = 'foco_sults(this)';
-        $responsavel->funcChan    = 'carrega_sults(this)';
+        // $responsavel->funcFoco    = 'foco_sults(this)';
+        // $responsavel->funcChan    = 'carrega_sults(this)';
         $responsavel->dispForm    = 'col-12';
         $responsavel->opcoes      = $opcresponsav;
         $responsavel->selecionado = [$responsavel->valor];
@@ -186,12 +188,21 @@ class DashSults extends BaseController
         $situacao->label       = 'Situação';
         $situacao->valor       = '';
         $situacao->largura     = 30;
-        $situacao->funcFoco    = 'foco_sults(this)';
-        $situacao->funcChan    = 'carrega_sults(this)';
+        // $situacao->funcFoco    = 'foco_sults(this)';
+        // $situacao->funcChan    = 'carrega_sults(this)';
         $situacao->dispForm    = 'col-12';
         $situacao->opcoes      = $opcsituac;
         $situacao->selecionado = [$situacao->valor];
         $this->dash_situacao    = $situacao->crMultiple();
+
+        $filt            = new MyCampo();
+        $filt->nome      = "bt_filtro";
+        $filt->id        = "bt_filtro";
+        $filt->i_cone    = "<i class='fas fa-filter'></i> Filtrar";
+        $filt->place     = "Filtrar";
+        $filt->classep   = "btn-outline-success btn-sm bt-repete mt-4";
+        $filt->funcChan  = "carrega_sults(this)";
+        $this->bt_filtro   = $filt->crBotao();
 
     }
 
@@ -204,6 +215,8 @@ class DashSults extends BaseController
     public function busca_dados()
     {
         $postData = $this->request->getPost();
+        $postData['aberto_inicio'] = '01/01/2025';
+        $postData['aberto_fim'] = date('d/m/Y');
 
         // 1) Normaliza arrays do tipo [""] -> []
         foreach ($postData as $k => $v) {
@@ -274,11 +287,14 @@ class DashSults extends BaseController
         foreach ($bases as $base) {
             $ini = $datasInicio[$base] ?? '';
             $fim = $datasFim[$base] ?? '';
-
             if ($ini !== '' && $fim !== '') {
                 $iniDb = dataBrToDb($ini);
                 $fimDb = dataBrToDb($fim);
-                $clausulas[] = "CAST($base as DATE) BETWEEN '" . addslashes(trim($iniDb)) . "' AND '" . addslashes(trim($fimDb)) . "'";
+                if($base == 'resolvido'){
+                    $clausulas[] = "(resolvido IS NULL OR (CAST($base as DATE) BETWEEN '" . addslashes(trim($iniDb)) . "' AND '" . addslashes(trim($fimDb)) . "'))";
+                } else {
+                    $clausulas[] = "CAST($base as DATE) BETWEEN '" . addslashes(trim($iniDb)) . "' AND '" . addslashes(trim($fimDb)) . "'";
+                }
             } elseif ($ini !== '') {
                 $iniDb = dataBrToDb($ini);
                 $clausulas[] = "CAST($base as DATE) >= '" . addslashes(trim($iniDb)) . "'";
@@ -292,6 +308,7 @@ class DashSults extends BaseController
         if(count($clausulas)){
             $filtroFinal = implode(' AND ', $clausulas);
         }
+        // debug($filtroFinal, true);
             $retorno = $this->common->getResult('default', 'vw_ger_sults_relac',$filtroFinal);
             
             $unidade = array_values(array_unique(array_column($retorno, 'id_unidade')));

@@ -66,10 +66,14 @@ function carregamentos_iniciais() {
   );
 
   // valor inicial (últimos 30 dias)
-  // jQuery("#aberto.daterange").val("Não Considerar");
+  jQuery("#resolvido.daterange").val("Não Considerar");
   jQuery(".daterange")
     .not("#aberto")
     .each(function () {
+      if (this.id == "resolvido") {
+        start = moment().subtract(10, "years");
+        end = moment();
+      }
       setValue(jQuery(this), start, end);
       jQuery(this).trigger("change");
     });
@@ -235,22 +239,41 @@ function carregamentos_iniciais() {
    * Mostra ou oculta a Senha
    * Document Ready my_fields
    */
-  jQuery(".show_password").hover(function (e) {
-    e.preventDefault();
-    field = this.getAttribute("data-field");
-    alvo = document.getElementById(field);
-    if (jQuery(alvo).attr("type") == "password") {
-      jQuery(alvo).attr("type", "text");
-      jQuery("#ada_" + fields).attr("class", "fa fa-eye");
-      // jQuery('#ada_'+ fields).removeClass('bi bi-eye-slash-fill');
-      // jQuery('#ada_'+ fields).addClass('bi bi-eye');
-    } else {
-      jQuery(alvo).attr("type", "password");
-      jQuery("#ada_" + fields).attr("class", "fa fa-eye-slash");
-      // jQuery('#ada_'+ fields).removeClass('bi bi-eye');
-      // jQuery('#ada_'+ fields).addClass('bi bi-eye-slash-fill');
-    }
+  jQuery(function ($) {
+    jQuery(".show_password").on("mouseenter mouseleave", function (e) {
+      e.preventDefault();
+
+      const fieldId = jQuery(this).data("field");
+      const $input = jQuery("#" + fieldId);
+
+      if (!$input.length) return;
+
+      const isMouseEnter = e.type === "mouseenter";
+      $input.attr("type", isMouseEnter ? "text" : "password");
+
+      // Controle de ícone (se quiser reabilitar):
+      // const $icon = jQuery("#ada_" + fieldId);
+      // if ($icon.length) {
+      //   $icon.toggleClass("fa-eye", isMouseEnter);
+      //   $icon.toggleClass("fa-eye-slash", !isMouseEnter);
+      // }
+    });
   });
+
+  // jQuery(".show_password").hover(function (e) {
+  //   e.preventDefault();
+  //   field = this.getAttribute("data-field");
+  //   alvo = document.getElementById(field);
+  //   if (jQuery(alvo).attr("type") == "password") {
+  //     jQuery(alvo).attr("type", "text");
+  //     // jQuery("#ada_" + field).removeClass("fa-solid fa-eye-slash");
+  //     // jQuery("#ada_" + field).addClass("fa-solid fa-eye");
+  //   } else {
+  //     jQuery(alvo).attr("type", "password");
+  //     // jQuery("#ada_" + field).removeClass("fa-solid fa-eye");
+  //     // jQuery("#ada_" + field).addClass("fa-solid fa-eye-slash");
+  //   }
+  // });
 
   /**
    * Clique upnumber

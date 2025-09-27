@@ -1594,6 +1594,259 @@ function foco_sults(obj) {
 }
 
 function carrega_sults(obj) {
+  console.log("obj:", obj);
+  bloqueiaTela();
+  const formData = {};
+  const $section = jQuery(obj).closest("section"); // Busca a section mais próxima do obj
+
+  $section.find("input, select").each(function () {
+    const $field = jQuery(this);
+    const id = $field.attr("id");
+
+    if ($field.hasClass("daterange")) {
+      const val = $field.val();
+      if (val && val.includes(" - ")) {
+        const [inicio, fim] = val.split(" - ");
+        formData[id + "_inicio"] = inicio.trim();
+        formData[id + "_fim"] = fim.trim();
+      } else {
+        formData[id + "_inicio"] = "";
+        formData[id + "_fim"] = "";
+      }
+    } else {
+      let valor = $field.val();
+      if (Array.isArray(valor)) {
+        valor = valor.join(",");
+      }
+      formData[id] = valor;
+    }
+  });
+  console.log("Dados do formulário:", JSON.parse(JSON.stringify(formData)));
+  jQuery.ajax({
+    url: "/DashSults/busca_dados", // Caminho para o controller/método
+    type: "POST",
+    data: formData,
+    dataType: "json",
+    success: async function (response) {
+      console.log("✅ Resposta do servidor:", response);
+      jQuery("#conteudo").html(response.tabela);
+      montaListaDadosCarregados("table");
+      desBloqueiaTela();
+      const json = response;
+      if (window["chartjs-plugin-zoom"]) {
+        Chart.register(window["chartjs-plugin-zoom"]);
+      }
+
+      // Paleta opcional (Abertos, Abertos atraso, Resolvidos, Resolvidos atraso)
+      const COLORS = {
+        ABERTOS: "rgba(13,110,253,0.8)", // bg-primary
+        ABERTOS_ATR: "rgba(13,110,253,0.3)", // bg-warning
+        RESOLVIDOS: "rgba(25,135,84,0.8)", // bg-success
+        RESOLVIDOS_ATR: "rgba(25,135,84,0.3)",
+      };
+
+      function toDatasets(series) {
+        return series.map((s) => {
+          const stack =
+            s.stack || (/abertos/i.test(s.name) ? "Abertos" : "Resolvidos");
+          let bg;
+          if (/Abertos com atraso/i.test(s.name)) bg = COLORS.ABERTOS_ATR;
+          else if (/Abertos/i.test(s.name)) bg = COLORS.ABERTOS;
+          else if (/Resolvidos com atraso/i.test(s.name))
+            bg = COLORS.RESOLVIDOS_ATR;
+          else if (/Resolvidos/i.test(s.name)) bg = COLORS.RESOLVIDOS;
+          else bg = "rgba(100,100,100,0.8)";
+
+          return {
+            label: s.name,
+            stack: stack,
+            data: s.data,
+            backgroundColor: bg,
+            borderWidth: 0,
+          };
+        });
+      }
+
+      const fmt = (n) => Number(n || 0).toLocaleString("pt-BR");
+
+      function baseOptions(labels, title) {
+        return {
+          type: "bar",
+          data: { labels, datasets: [] },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              title: { display: true, text: title },
+              legend: { position: "top" },
+              tooltip: {
+                callbacks: {
+                  title(items) {
+                    return items?.[0]?.label || "";
+                  },
+                  label(ctx) {
+                    const chart = ctx.chart;
+                    const idx = ctx.dataIndex;
+                    const label = ctx.dataset.label || "";
+                    const stackName = ctx.dataset.stack;
+
+                    const sumStack = (stack) =>
+                      chart.data.datasets
+                        .filter(
+                          (ds) => ds.stack === stack && ds.hidden !== true
+                        )
+                        .reduce(
+                          (acc, ds) => acc + (Number(ds.data?.[idx]) || 0),
+                          0
+                        );
+
+                    if (
+                      stackName === "stack_abertos" &&
+                      !/com atraso/i.test(label)
+                    ) {
+                      return `Abertos: ${fmt(sumStack("stack_abertos"))}`;
+                    }
+                    if (
+                      stackName === "stack_resolvidos" &&
+                      !/com atraso/i.test(label)
+                    ) {
+                      return `Resolvidos: ${fmt(sumStack("stack_resolvidos"))}`;
+                    }
+
+                    const v = Number(ctx.parsed?.y ?? ctx.raw ?? 0);
+                    return `${label}: ${fmt(v)}`;
+                  },
+                },
+              },
+              zoom: {
+                pan: { enabled: true, mode: "x" },
+                zoom: {
+                  wheel: { enabled: true },
+                  pinch: { enabled: true },
+                  drag: { enabled: true },
+                  mode: "x",
+                },
+                limits: { x: { min: 0 } },
+              },
+            },
+            scales: {
+              x: {
+                stacked: true,
+                ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 },
+                grid: {
+                  offset: true,
+                },
+              },
+              y: {
+                stacked: true,
+                beginAtZero: true,
+                ticks: { precision: 0 },
+              },
+            },
+          },
+        };
+      }
+
+      function renderStackedGrouped(canvasEl, data, title) {
+        const cfg = baseOptions(data.categories, title);
+        cfg.data.datasets = toDatasets(data.series);
+        return new Chart(canvasEl, cfg);
+      }
+
+      function setMinWidthForScroll(canvasEl, categories, pxPerCategory = 80) {
+        const w = Math.max(1200, categories.length * pxPerCategory);
+        const box = canvasEl.closest(".chart-box");
+        if (box) box.style.minWidth = w + "px";
+      }
+
+      function openChartWindow(title, data) {
+        const w = window.open("", "_blank");
+        w.document.write(`
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <title>${title}</title>
+            <style>
+              body { margin: 16px; font-family: system-ui, Segoe UI, Roboto, Arial; }
+            </style>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
+          </head>
+          <body>
+            <h3 style="margin:0 0 10px;">${title}</h3>
+            <div style="height:70vh;">
+              <canvas id="c"></canvas>
+            </div>
+            <script>
+              window.onload = function () {
+                const data = ${JSON.stringify(data)};
+                const COLORS = ${JSON.stringify(COLORS)};
+                const toDatasets = ${toDatasets.toString()};
+
+                // Adiciona fmt aqui
+                const fmt = (n) => Number(n || 0).toLocaleString("pt-BR");
+
+                // Adiciona baseOptions aqui
+                const baseOptions = ${baseOptions.toString()};
+
+                const cfg = baseOptions(data.categories, ${JSON.stringify(
+                  title
+                )});
+                cfg.data.datasets = toDatasets(data.series);
+                const ctx = document.getElementById('c').getContext('2d');
+                new Chart(ctx, cfg);
+              };
+            </script>
+          </body>
+          </html>
+        `);
+        w.document.close();
+      }
+
+      // Pega dados do backend
+      const unidade = json.charts.unidade;
+      const responsavel = json.charts.responsavel;
+      const assunto = json.charts.assunto;
+
+      // Render
+      const chUnidade = renderStackedGrouped(
+        document.getElementById("chartUnidade").getContext("2d"),
+        unidade,
+        "Abertos x Resolvidos por Unidade"
+      );
+      const chResp = renderStackedGrouped(
+        document.getElementById("chartResponsavel").getContext("2d"),
+        responsavel,
+        "Abertos x Resolvidos por Responsável"
+      );
+      const chAssunto = renderStackedGrouped(
+        document.getElementById("chartAssunto").getContext("2d"),
+        assunto,
+        "Abertos x Resolvidos por Assunto"
+      );
+
+      // Botões "Abrir em nova janela"
+      document
+        .getElementById("openUnidade")
+        .addEventListener("click", () =>
+          openChartWindow("Abertos x Resolvidos por Unidade", unidade)
+        );
+      document
+        .getElementById("openResponsavel")
+        .addEventListener("click", () =>
+          openChartWindow("Abertos x Resolvidos por Responsável", responsavel)
+        );
+      document
+        .getElementById("openAssunto")
+        .addEventListener("click", () =>
+          openChartWindow("Abertos x Resolvidos por Assunto", assunto)
+        );
+    },
+  });
+}
+
+function carrega_sultsBKP(obj) {
   bloqueiaTela();
   const formData = {};
   const $section = jQuery(obj).closest("section"); // Busca a section mais próxima do obj

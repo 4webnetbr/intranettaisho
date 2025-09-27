@@ -26,6 +26,6 @@
 		</div>
 	</div>
 </div>
-<script src="<?=base_url('assets/jscript/my_fields.js');?>"></script>
+<!-- <script src="<?//=base_url('assets/jscript/my_fields.js');?>"></script> -->
 
 <?=$this->endSection();?>
