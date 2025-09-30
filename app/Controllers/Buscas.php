@@ -567,4 +567,24 @@ class Buscas extends BaseController
 
         echo json_encode($retorno);
     }
+
+    public function gravasessao()
+    {
+        if ($_REQUEST['msg']) {
+            $msg            = $_REQUEST['msg'];
+            session()->setFlashdata('msg', $msg);
+            $ret['erro'] = false;
+        } else {
+            $ret['erro'] = true;
+        }
+        echo json_encode($ret);
+    }
+
+    public function verSessao()
+    {
+        $sessao = session();
+        $ret['sessao'] = $sessao->logged_in;
+        echo json_encode($ret);
+    }
+
 }
