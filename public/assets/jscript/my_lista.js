@@ -292,6 +292,22 @@ function montaListaDados(tabela, url) {
             jQuery(nRow).addClass(aData.cor);
           }
         }
+
+        if (aData && aData.DT_RowIndex === 0) {
+          // Determina o índice da coluna a ser ordenada
+          let ordColIndex = aData.hasOwnProperty("ord")
+            ? parseInt(aData.ord)
+            : 1;
+
+          // Seleciona o <th> correspondente e simula o clique
+          setTimeout(function () {
+            jQuery(nRow)
+              .closest("table")
+              .find("thead th")
+              .eq(ordColIndex)
+              .trigger("click");
+          }, 0); // ou um pequeno delay, ex: 10ms, se necessário
+        }
       },
       fnDrawCallback: function (oSettings) {
         jQuery("table#" + tabela + " > tbody > tr")

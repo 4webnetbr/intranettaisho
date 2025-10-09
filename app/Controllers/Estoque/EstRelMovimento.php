@@ -38,7 +38,7 @@ class EstRelMovimento extends BaseController
         $campos[0] = $this->periodo;
         $campos[1] = $this->dash_empresa;
 
-        $colunas = ['Código', 'Produto','Und Compra','Data Solicitação','Quantia Solicitada','Data Compra','Quantia Comprada','Valor Comprado','Total Comprado','Data Recebimento','Quantia Recebida','Valor Recebido','Total Recebido'];
+        $colunas = ['Código', 'Produto','Und Compra','Data Solicitação','Quantia Solicitada','Data Compra','Quantia Comprada','Valor Comprado','Total Comprado','Data Recebimento','Quantia Recebida','Valor Recebido','Total Recebido','Fornecedor'];
 
         $this->data['cols']     	= $colunas;  
         $this->data['nome']     	= 'relmovimentos';  
@@ -94,7 +94,7 @@ class EstRelMovimento extends BaseController
         $ret = [];
         $prods = [];
         $movimentos       = $this->produto->getRelMovimento($empresa, $inicio, $fim);
-        // debug($movimentos);
+        // debug($movimentos,true);
         // debug(count($movimentos));
         for($p=0;$p<count($movimentos);$p++){
             $prod = $movimentos[$p];
@@ -127,6 +127,7 @@ class EstRelMovimento extends BaseController
             $prods[$p][count($prods[$p])] = $qtiae;
             $prods[$p][count($prods[$p])] = floatToMoeda($prod['enp_valor']);
             $prods[$p][count($prods[$p])] = floatToMoeda($prod['enp_total']);
+            $prods[$p][count($prods[$p])] = "<div class='col-3 text-wrap text-start'>".$prod['for_nome']."</div>";
             $prods[$p]['cor'] = 'bg-white';
             if($qtiae == '' && date('Y-m-d') > $prod['cop_previsao']){
                 $prods[$p]['cor'] = 'bg-gray-padrao';
@@ -138,6 +139,7 @@ class EstRelMovimento extends BaseController
             } else if($qtiap != $qtiac){
                 $prods[$p]['cor'] = 'bg-warning';
             }
+            $prods[$p]['ord'] = '3';
             // $prods[$p][count($prods[$p])] = '';
         }
         // debug(count($prods));
