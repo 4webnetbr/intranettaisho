@@ -61,13 +61,14 @@ class RhPagamento extends BaseController
         $this->def_campos();
 
         // $campos[0] = $this->emp_id;
-        $campos[0] = $this->emp_id_registro;
-        $campos[1] = $this->competencia;
-        $campos[2] = $this->vtcuritiba;
-        $campos[3] = $this->vtmetropolitana;
-        $campos[4] = $this->botao;
+        $campos[0] = $this->emp_id;
+        $campos[1] = $this->emp_id_registro;
+        $campos[2] = $this->competencia;
+        $campos[3] = $this->vtcuritiba;
+        $campos[4] = $this->vtmetropolitana;
+        $campos[5] = $this->botao;
 
-        $colunas = ['id', 'Colaborador', 'Tipo', 'Combinado', 'Vencimentos', 'Descontos', 'Vale', 'VT', 'VT Falta', 'V Premio', 'Premio', 'V Mercado', 'Banco', 'p/fora', 'Total'];
+        $colunas = ['id', 'Reg','Colaborador', 'Tipo', 'Combinado', 'Vencimentos', 'Descontos', 'Vale', 'VT', 'VT Falta', 'V Premio', 'Premio', 'V Mercado', 'Banco', 'p/fora', 'Total'];
 
         $desc_edicao = 
         "<div class='float-start bg-success py-1 px-3 me-1' >Férias</div> ".
@@ -87,8 +88,18 @@ class RhPagamento extends BaseController
         // debug($dados_emp);
         $filtro          = $this->request->getVar();
         // debug($filtro, false);
-        // $empresa        = $filtro['empresa'];
-        $empresa        = $filtro['registro'];
+        $empresa        = $filtro['empresa'];
+        $registro        = $filtro['registro'];
+        if($registro == '-1' || $registro == ''){
+            $registro = false;
+        } else {
+        // Se for string com vírgula, explode
+            if (is_string($registro) && str_contains($registro, ',')) {
+                $registro = explode(',', $registro);
+            } else {
+                $registro = (array)$registro;
+            }
+        }
         $competencia    = $filtro['competencia'];
         $vtcur          = moedaToFloat($filtro['vtcur']);
         $vtmet          = moedaToFloat($filtro['vtmet']);
@@ -104,7 +115,7 @@ class RhPagamento extends BaseController
         // debug('Dias '.$diasvt);
         $ret = [];
 
-        $dados_holerite = $this->holerite->getHolerite(false, $empresa, $competencia);
+        $dados_holerite = $this->holerite->getHolerite(false, $empresa, $registro, $competencia);
         // debug(count($dados_holerite));
         // debug($dados_holerite);
         $ct = 0;
@@ -283,39 +294,41 @@ class RhPagamento extends BaseController
             $totpremi += 0;
             $totmerca += $merca;
             $pagam[$ct][0] = 0;
-            $pagam[$ct][1] = $hole['col_nome'];
-            $pagam[$ct][2] = $hole['col_tipo'];
-            $pagam[$ct][3] = ($tipo != 0) ? floatToMoeda($hole['col_salario']) : '';
-            $pagam[$ct][4] = floatToMoeda($hole['hol_proventos']);
-            $pagam[$ct][5] = floatToMoeda($hole['hol_descontos']);
-            $pagam[$ct][6] = floatToMoeda($vale);
-            $pagam[$ct][7] = floatToMoeda($valorvt);
-            $pagam[$ct][8] = floatToMoeda($valorde);
-            $pagam[$ct][9] = floatToMoeda($hole['col_premio']);
-            $pagam[$ct][10] = floatToMoeda($premio);
-            $pagam[$ct][11] = floatToMoeda($merca);
-            $pagam[$ct][12] = floatToMoeda($banco);
-            $pagam[$ct][13] = floatToMoeda($pfora);
-            $pagam[$ct][14] = floatToMoeda($total);
+            $pagam[$ct][count($pagam[$ct])] = $hole['emp_reg'];
+            $pagam[$ct][count($pagam[$ct])] = $hole['col_nome'];
+            $pagam[$ct][count($pagam[$ct])] = $hole['col_tipo'];
+            $pagam[$ct][count($pagam[$ct])] = ($tipo != 0) ? floatToMoeda($hole['col_salario']) : '';
+            $pagam[$ct][count($pagam[$ct])] = floatToMoeda($hole['hol_proventos']);
+            $pagam[$ct][count($pagam[$ct])] = floatToMoeda($hole['hol_descontos']);
+            $pagam[$ct][count($pagam[$ct])] = floatToMoeda($vale);
+            $pagam[$ct][count($pagam[$ct])] = floatToMoeda($valorvt);
+            $pagam[$ct][count($pagam[$ct])] = floatToMoeda($valorde);
+            $pagam[$ct][count($pagam[$ct])] = floatToMoeda($hole['col_premio']);
+            $pagam[$ct][count($pagam[$ct])] = floatToMoeda($premio);
+            $pagam[$ct][count($pagam[$ct])] = floatToMoeda($merca);
+            $pagam[$ct][count($pagam[$ct])] = floatToMoeda($banco);
+            $pagam[$ct][count($pagam[$ct])] = floatToMoeda($pfora);
+            $pagam[$ct][count($pagam[$ct])] = floatToMoeda($total);
             $pagam[$ct]['cor'] = (trim($situac) == 'Férias') ? 'bg-success' : (($situac == 'Demitido') ? 'bg-warning' : (($situac == 'Doença') ? 'bg-info' : ''));
             $ct++;
             // }
         }
         $pagam[$ct][0] = '';
-        $pagam[$ct][1] = '';
-        $pagam[$ct][2] = '';
-        $pagam[$ct][3] = '';
-        $pagam[$ct][4] = floatToMoeda($totvenci);
-        $pagam[$ct][5] = floatToMoeda($totdesco);
-        $pagam[$ct][6] = floatToMoeda($totvale);
-        $pagam[$ct][7] = floatToMoeda($totvt);
-        $pagam[$ct][8] = floatToMoeda($totvtfal);
-        $pagam[$ct][9] = 0;
-        $pagam[$ct][10] = 0;
-        $pagam[$ct][11] = floatToMoeda($totmerca);
-        $pagam[$ct][12] = floatToMoeda($totbanco);
-        $pagam[$ct][13] = floatToMoeda($totpfora);
-        $pagam[$ct][14] = floatToMoeda($tottotal);
+        $pagam[$ct][count($pagam[$ct])] = '';
+        $pagam[$ct][count($pagam[$ct])] = '';
+        $pagam[$ct][count($pagam[$ct])] = '';
+        $pagam[$ct][count($pagam[$ct])] = '';
+        $pagam[$ct][count($pagam[$ct])] = floatToMoeda($totvenci);
+        $pagam[$ct][count($pagam[$ct])] = floatToMoeda($totdesco);
+        $pagam[$ct][count($pagam[$ct])] = floatToMoeda($totvale);
+        $pagam[$ct][count($pagam[$ct])] = floatToMoeda($totvt);
+        $pagam[$ct][count($pagam[$ct])] = floatToMoeda($totvtfal);
+        $pagam[$ct][count($pagam[$ct])] = 0;
+        $pagam[$ct][count($pagam[$ct])] = 0;
+        $pagam[$ct][count($pagam[$ct])] = floatToMoeda($totmerca);
+        $pagam[$ct][count($pagam[$ct])] = floatToMoeda($totbanco);
+        $pagam[$ct][count($pagam[$ct])] = floatToMoeda($totpfora);
+        $pagam[$ct][count($pagam[$ct])] = floatToMoeda($tottotal);
         $pagam[$ct]['cor'] = '';
 
         $ret['data'] = $pagam;
@@ -344,16 +357,28 @@ class RhPagamento extends BaseController
         $emp->opcoes                = $opc_emp;
         $emp->largura               = 50;
         $emp->leitura               = $show;
-        $emp->dispForm  = 'col-3';
+        $emp->dispForm              = 'col-6';
         $this->emp_id               = $emp->crSelect();
 
         $reg                        = new MyCampo('rh_colaborador', 'emp_id_registro');
-        $reg->valor = $emp->selecionado = isset($dados['emp_id_registro']) ? $dados['emp_id_registro'] : '';
+        $reg->valor                 = isset($dados['emp_id_registro']) ? $dados['emp_id_registro'] : '';
+        $reg->selecionado           = isset($dados['emp_id_registro']) ? [$dados['emp_id_registro']] : [];
         $reg->obrigatorio           = true;
         $reg->opcoes                = $opc_emp;
         $reg->largura               = 50;
         $reg->leitura               = $show;
-        $this->emp_id_registro               = $reg->crSelect();
+        $reg->dispForm              = 'col-6';
+        $reg->pai                   = 'emp_id';
+        $reg->urlbusca              = 'buscas/buscaEmpRegistro';
+        $this->emp_id_registro               = $reg->crDependeMultiple();
+
+        $meses = [];
+
+        for ($i = 1; $i < 7; $i++) {
+            $data = date('m/Y', strtotime("-$i months"));
+            $meses[$data] = $data;
+        }
+
 
         $comp                        = new MyCampo();
         $comp->id = $comp->nome      = 'competencia';
@@ -361,13 +386,13 @@ class RhPagamento extends BaseController
         $comp->label                 = 'Competência';
         $comp->place                 = '';
         $comp->obrigatorio           = true;
-        $comp->opcoes                = [];
+        $comp->opcoes                = $meses;
         $comp->largura               = 20;
         $comp->leitura               = $show;
-        $comp->pai                  = 'emp_id_registro';
-        $comp->urlbusca             = 'buscas/buscaCompetencia';
+        // $comp->pai                  = 'emp_id_registro[]';
+        // $comp->urlbusca             = 'buscas/buscaCompetencia';
         $comp->dispForm             = 'col-2';
-        $this->competencia          = $comp->crDepende();
+        $this->competencia          = $comp->crSelect();
 
         $vtcu                        = new MyCampo();
         $vtcu->id = $vtcu->nome      = 'vtcuritiba';

@@ -188,4 +188,28 @@ class RechumColaboradorModel extends Model
 
     }                 
 
+    /**
+     * getColaborador
+     *
+     * Retorna os dados da Linha, pelo ID informado
+     * 
+     * @param bool $id 
+     * @return array
+     */
+    public function getEmpresaRegistro($emp_id = false)
+    {
+        $db = db_connect('dbRh');
+        $builder = $db->table('vw_rh_colaborador_empresas');
+        $builder->select('*'); 
+        if($emp_id){
+            $builder->where("emp_id", $emp_id);
+        }
+        $ret = $builder->get()->getResultArray();
+
+        // debug($this->db->getLastQuery(), false);
+        
+        return $ret;
+
+    }                 
+
 }

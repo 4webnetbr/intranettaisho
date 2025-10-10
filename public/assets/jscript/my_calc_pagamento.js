@@ -3,8 +3,8 @@
  *
  */
 function calcula_pagamento() {
-  empresa = jQuery("#emp_id_registro").val();
-  registro = jQuery("#emp_id_registro").val();
+  empresa = jQuery("#emp_id").val();
+  registro = (jQuery("#emp_id_registro\\[\\]").val() || []).join(",");
   competencia = jQuery("#competencia").val();
   vtcuritiba = jQuery("#vtcuritiba").val();
   vtmetropolitana = jQuery("#vtmetropolitana").val();

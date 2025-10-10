@@ -1125,3 +1125,26 @@ function showToast(message, isAlert = false) {
     toast.addEventListener("transitionend", () => toast.remove());
   });
 }
+
+function rhDemitir(url) {
+  msg = "Confirma a Demissão do Colaborador?";
+  boxAlert(msg, false, url, false, 4, true, "Demissão");
+
+  // jQuery.ajax({
+  //   type: "GET",
+  //   async: true,
+  //   dataType: "json",
+  //   url: url,
+  //   success: function (retorno) {
+  //     if (!retorno.erro) {
+  //       window.location.reload();
+  //     } else {
+  //       boxAlert(retorno.msg, true, "", false, 2, false);
+  //     }
+  //   },
+  //   error: function (xhr, ajaxOptions, thrownError) {
+  //     retorno = xhr.statusText;
+  //     boxAlert(retorno, true, "", false, 2, false);
+  //   },
+  // });
+}

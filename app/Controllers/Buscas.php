@@ -587,4 +587,24 @@ class Buscas extends BaseController
         echo json_encode($ret);
     }
 
+    public function buscaEmpRegistro()
+    {
+        $ret    = [];
+        if ($_REQUEST['busca']) {
+            $termo              = $_REQUEST['busca'];
+            $empresas            = $this->colaborador->getEmpresaRegistro($termo);
+            
+            if (sizeof($empresas) <= 0) {
+                $ret[0]['id'] = '-1';
+                $ret[0]['text'] = 'Empresa não encontrado...';
+            } else {
+                for ($c = 0; $c < sizeof($empresas); $c++) {
+                    $ret[$c]['id']      = $empresas[$c]['emp_id_registro'];
+                    $ret[$c]['text']    = $empresas[$c]['emp_registro'];
+                }
+            }
+        }
+        echo json_encode($ret);
+        exit;
+    }
 }

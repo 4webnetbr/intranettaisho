@@ -108,12 +108,26 @@ class RhColaborador extends BaseController
             session()->set('empresa_atual', $param);
         }
         // $empresas = explode(',',session()->get('usu_empresa'));
+        $botao[0] = [
+            'condicao' => [
+                'campo' => 'col_situacao',
+                'cond'  => 'igual',
+                'valor' => 'Trabalhando'
+            ],
+            'url'    => base_url('/RhColaborador/demitir/chave'),
+            'funcao' => "rhDemitir(\"url\");",
+            'classe' => 'btn btn-outline-dark btn-sm ',
+            'title'  => 'Demitir',
+            'icone'  => 'fas fa-user-slash',
+        ];
 
         $dados_colaboradors = $this->colaborador->getColaborador(false, $param);
         foreach ($dados_colaboradors as $key => $value) {
             $situac = $value['col_situacao']; // Atribui o valor quando a chave for 'col_situacao'
             $dados_colaboradors[$key]['cor'] = (trim($situac) == 'Férias') ? 'bg-success' : (($situac == 'Demitido') ? 'bg-warning' : (($situac == 'Doença') ? 'bg-info' : ''));
         }
+        $this->data['botoes'] = $botao;
+
         $colaboradors = [
             'data' => montaListaColunas($this->data, 'col_id', $dados_colaboradors, 'col_nome'),
         ];
@@ -275,6 +289,27 @@ class RhColaborador extends BaseController
         echo view('vw_edicao', $this->data);
     }
 
+    public function demitir($id){
+        $dados = [
+            'col_id' => $id,
+            'col_situacao' => 'Demitido'
+        ];
+        if ($this->colaborador->save($dados)) {
+            $ret['erro'] = false;
+            $ret['msg'] = 'Colaborador demitido com Sucesso!!!';
+            session()->setFlashdata('msg', $ret['msg']);
+            $ret['url'] = site_url($this->data['controler']);
+        } else {
+            $ret['erro'] = true;
+            $erros = $this->colaborador->errors();
+            $ret['msg'] = 'Não foi possível demitir o Colaborador, Verifique!<br><br>';
+            foreach ($erros as $erro) {
+                $ret['msg'] .= $erro;
+            }
+        }
+        echo json_encode($ret);
+
+    }
     /**
      * Exclusão
      * delete

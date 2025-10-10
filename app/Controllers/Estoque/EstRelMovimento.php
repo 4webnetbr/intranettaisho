@@ -139,7 +139,7 @@ class EstRelMovimento extends BaseController
             } else if($qtiap != $qtiac){
                 $prods[$p]['cor'] = 'bg-warning';
             }
-            $prods[$p]['ord'] = '3';
+            $prods[$p]['ord'] = '4';
             // $prods[$p][count($prods[$p])] = '';
         }
         // debug(count($prods));

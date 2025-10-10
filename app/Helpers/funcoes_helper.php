@@ -1662,3 +1662,45 @@ function formatarCPF(string $texto): ?string
         $numeros
     );
 }
+
+function mostra_botao($campo, $condic)
+{
+    $valido = false;
+    if ($condic['cond'] == 'contem') {
+        if (in_array($campo, $condic['valor'])) {
+            $valido = true;
+        }
+    }
+    if ($condic['cond'] == 'igual') {
+        if (is_array($condic['valor'])) {
+            if (in_array($campo, $condic['valor'])) {
+                $valido = true;
+            }
+        } else {
+            if ($campo == $condic['valor']) {
+                $valido = true;
+            }
+        }
+    }
+    if ($condic['cond'] == 'maior') {
+        if ($campo > $condic['valor']) {
+            $valido = true;
+        }
+    }
+    if ($condic['cond'] == 'menor') {
+        if ($campo < $condic['valor']) {
+            $valido = true;
+        }
+    }
+    if ($condic['cond'] == 'maiorouigual') {
+        if ($campo >= $condic['valor']) {
+            $valido = true;
+        }
+    }
+    if ($condic['cond'] == 'menorouigual') {
+        if ($campo <= $condic['valor']) {
+            $valido = true;
+        }
+    }
+    return $valido;
+}

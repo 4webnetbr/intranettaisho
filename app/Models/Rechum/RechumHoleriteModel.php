@@ -100,7 +100,7 @@ class RechumHoleriteModel extends Model
      * @param bool $id 
      * @return array
      */
-    public function getHolerite($hol_id = false, $emp_id = false, $competencia = false)
+    public function getHolerite($hol_id = false, $emp_id = false, $reg_id = false, $competencia = false)
     {
         $db = db_connect('dbRh');
         $builder = $db->table($this->view);
@@ -109,9 +109,12 @@ class RechumHoleriteModel extends Model
             $builder->where("hol_id", $hol_id);
         }
         if ($emp_id) {
-            $builder->groupStart();
             $builder->where("emp_id", $emp_id);
-            $builder->orWhere("emp_id_registro", $emp_id);
+        }
+        if ($reg_id) {
+            $builder->groupStart();
+            $builder->whereIn("emp_id_registro", $reg_id);
+            $builder->orWhere("emp_id_registro", null);
             $builder->groupEnd();
         }
         if ($competencia) {
@@ -186,7 +189,11 @@ class RechumHoleriteModel extends Model
         $db = db_connect('dbRh');
         $builder = $db->table('vw_rh_competencia_hol');
         $builder->select('*');
-        $builder->where('emp_id', $empresa);
+        if (is_array($empresa)) {
+            $builder->whereIn('emp_id', $empresa);
+        } else {
+            $builder->where('emp_id', $empresa);
+        }
         $builder->orderBy('data_competencia', 'DESC');
         $ret = $builder->get()->getResultArray();
         // debug($this->db->getLastQuery(), false);

@@ -133,6 +133,14 @@ function montaListaDadosAnt(tabela, url) {
               jQuery(this).children().find(".btn").removeClass("hover");
             });
         },
+        initComplete: function (settings, json) {
+          const table = new $.fn.dataTable.Api(settings);
+
+          setTimeout(function () {
+            // Força ajuste de largura das colunas
+            table.columns.adjust().draw(false);
+          }, 10);
+        },
       }
     );
 
@@ -292,23 +300,16 @@ function montaListaDados(tabela, url) {
             jQuery(nRow).addClass(aData.cor);
           }
         }
-
-        if (aData && aData.DT_RowIndex === 0) {
-          // Determina o índice da coluna a ser ordenada
-          let ordColIndex = aData.hasOwnProperty("ord")
-            ? parseInt(aData.ord)
-            : 1;
-
-          // Seleciona o <th> correspondente e simula o clique
-          setTimeout(function () {
-            jQuery(nRow)
-              .closest("table")
-              .find("thead th")
-              .eq(ordColIndex)
-              .trigger("click");
-          }, 0); // ou um pequeno delay, ex: 10ms, se necessário
-        }
       },
+      initComplete: function (settings, json) {
+        const table = new $.fn.dataTable.Api(settings);
+
+        setTimeout(function () {
+          // Força ajuste de largura das colunas
+          table.columns.adjust().draw(false);
+        }, 10);
+      },
+
       fnDrawCallback: function (oSettings) {
         jQuery("table#" + tabela + " > tbody > tr")
           .on("mouseover", function () {
@@ -526,6 +527,14 @@ function montaListaDadosEdit(tabela, url) {
               jQuery(this).children().find(".btn").removeClass("hover");
             });
         },
+        initComplete: function (settings, json) {
+          const table = new $.fn.dataTable.Api(settings);
+
+          setTimeout(function () {
+            // Força ajuste de largura das colunas
+            table.columns.adjust().draw(false);
+          }, 10);
+        },
       }
     );
 
@@ -701,6 +710,14 @@ function montaListaDadosDetail(tabela, url) {
             .on("mouseleave", function () {
               jQuery(this).children().find(".btn").removeClass("hover");
             });
+        },
+        initComplete: function (settings, json) {
+          const table = new $.fn.dataTable.Api(settings);
+
+          setTimeout(function () {
+            // Força ajuste de largura das colunas
+            table.columns.adjust().draw(false);
+          }, 10);
         },
       }
     );
@@ -923,6 +940,14 @@ function montaListaDadosGrupo(tabela, url, groupColumn = 0) {
               }
             });
         },
+        initComplete: function (settings, json) {
+          const table = new $.fn.dataTable.Api(settings);
+
+          setTimeout(function () {
+            // Força ajuste de largura das colunas
+            table.columns.adjust().draw(false);
+          }, 10);
+        },
       }
     );
 
@@ -1060,6 +1085,14 @@ function montaListaDadosCarregados(tabela) {
         .on("mouseleave", function () {
           jQuery(this).children().find(".btn").removeClass("hover");
         });
+    },
+    initComplete: function (settings, json) {
+      const table = new $.fn.dataTable.Api(settings);
+
+      setTimeout(function () {
+        // Força ajuste de largura das colunas
+        table.columns.adjust().draw(false);
+      }, 10);
     },
   });
 
