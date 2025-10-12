@@ -868,8 +868,8 @@ function fmtEtiquetaCorBst($cor)
 
 function get_cloudfy_curl($config, $empresa, $inicio = false, $fim = false)
 {
-    // $inicio = '20250803';
-    // $fim = '20250805';
+    // $inicio = '20250731';
+    // $fim = '20250802';
     $api = $config['api_nome'];
     if (!$inicio) {
         $inicio = date('Ymd', strtotime("-1 days"));
@@ -877,7 +877,6 @@ function get_cloudfy_curl($config, $empresa, $inicio = false, $fim = false)
     if (!$fim) {
         $fim = date('Ymd');
     }
-    debug('Empresa '.$empresa['emp_apelido']);
     debug('Início ' . $inicio);
     debug('Fim    ' . $fim);
 
@@ -916,7 +915,6 @@ function get_cloudfy_curl($config, $empresa, $inicio = false, $fim = false)
     // log_message('info','ch  '.$ch);
     $ret = curl_exec($ch);
     curl_close($ch);
-    // debug()
     return json_decode($ret);
 };;
 
@@ -1663,4 +1661,46 @@ function formatarCPF(string $texto): ?string
         "$1.$2.$3-$4",
         $numeros
     );
+}
+
+function mostra_botao($campo, $condic)
+{
+    $valido = false;
+    if ($condic['cond'] == 'contem') {
+        if (in_array($campo, $condic['valor'])) {
+            $valido = true;
+        }
+    }
+    if ($condic['cond'] == 'igual') {
+        if (is_array($condic['valor'])) {
+            if (in_array($campo, $condic['valor'])) {
+                $valido = true;
+            }
+        } else {
+            if ($campo == $condic['valor']) {
+                $valido = true;
+            }
+        }
+    }
+    if ($condic['cond'] == 'maior') {
+        if ($campo > $condic['valor']) {
+            $valido = true;
+        }
+    }
+    if ($condic['cond'] == 'menor') {
+        if ($campo < $condic['valor']) {
+            $valido = true;
+        }
+    }
+    if ($condic['cond'] == 'maiorouigual') {
+        if ($campo >= $condic['valor']) {
+            $valido = true;
+        }
+    }
+    if ($condic['cond'] == 'menorouigual') {
+        if ($campo <= $condic['valor']) {
+            $valido = true;
+        }
+    }
+    return $valido;
 }

@@ -82,7 +82,7 @@ class Graph extends BaseController
         $emp->label                 = 'Empresa(s)';
         $emp->selecionado           = $empresa;
         $emp->opcoes                = $empres;
-        $emp->funcChan              = 'carrega_graficos()';
+        // $emp->funcChan              = 'carrega_graficos()';
         $emp->dispForm              = '3col';
         // if(gettype($empresa[0]) == 'array'){
         //     $this->dash_empresa         = $emp->crMultiple();

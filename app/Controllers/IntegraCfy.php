@@ -38,7 +38,7 @@ class IntegraCfy extends BaseController
                 debug($cupons->Error);
             if($cupons->Status != -1) {
                 $cuponsvenda = $cupons->ResultSet->CuponsVenda;
-                // debug($cuponsvenda);
+                debug($cuponsvenda);
                 if(count((array)$cuponsvenda)>0){
                     for($c=0;$c<count((array)$cuponsvenda);$c++){
                         $cupom = $cuponsvenda[$c];

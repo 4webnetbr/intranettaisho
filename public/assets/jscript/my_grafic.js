@@ -595,6 +595,7 @@ function criaViewCard(
   txt +=
     '<i id="j_' +
     nome +
+    nome +
     '" class="fa-solid fa-arrow-up-right-from-square btn px-1 text-info" onclick="graf_janela(' +
     nome +
     ')"></i>';
@@ -1208,4 +1209,94 @@ function addGruSubgrupo(idTabela, arrResult) {
 
 function montaTabela(nome, valores) {
   adicionaLinhas(nome, valores);
+}
+
+function abrirCardEmNovaGuia(triggerEl) {
+  // 1) encontra .card e seu canvas original
+  const card = triggerEl.closest(".card");
+  const canvas = card?.querySelector("canvas");
+  const header = card?.querySelector(".card-header .col-11");
+  if (!card || !canvas) {
+    console.error("Card ou canvas não encontrado.");
+    return;
+  }
+
+  // 2) extrai os dados armazenados no canvas original
+  const valores = JSON.parse(canvas.dataset.chartValores);
+  const cores = JSON.parse(canvas.dataset.chartCores);
+  const tipo = canvas.dataset.chartTipo;
+  const cols = canvas.dataset.chartCols;
+  const titulo = header ? header.innerText.trim() : "";
+
+  // 3) coleta folhas de estilo e scripts da página atual
+  const cssLinks = Array.from(
+    document.querySelectorAll('link[rel="stylesheet"]')
+  )
+    .map((l) => `<link rel="stylesheet" href="${l.href}">`)
+    .join("\n");
+  const jsScripts = Array.from(document.querySelectorAll("script[src]"))
+    .map((s) => `<script src="${s.src}"></script>`)
+    .join("\n");
+
+  // 4) monta o HTML da nova guia com flexbox e canvas 1700x900
+  const html = `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>${titulo}</title>
+  <style>
+    html, body {
+      margin:0; padding:0;
+      height:100vh; width:100vw;
+      display:flex; flex-direction:column;
+    }
+    #header {
+      background:#00bcd4; color:#fff;
+      padding:8px 12px; flex:0 0 auto;
+      font-size:1.1em;
+    }
+    #chart-wrap {
+      flex:1 1 auto;
+      display:flex; align-items:center; justify-content:center;
+      background:#fff;
+      overflow:hidden;
+      height: calc(100vh - 50px);
+    }
+    #gr_full {
+    }
+  </style>
+  ${cssLinks}
+</head>
+<body>
+  <div id="header">${titulo}</div>
+  <div id="chart-wrap">
+    <canvas id="gr_full"
+            data-cols="${cols}"
+            style="display: block;position: inherit;height: 100% !important;width: 100% !important;"></canvas>
+  </div>
+
+  ${jsScripts}
+
+  <script>
+    jQuery(function(){
+      // recria o gráfico no canvas de 1700x900
+      montaGrafico('full',
+                   ${JSON.stringify(valores)},
+                   '${tipo}',
+                   ${JSON.stringify(cores)});
+    });
+  </script>
+</body>
+</html>`;
+
+  // 5) abre nova guia e injeta o HTML
+  const win = window.open("", "_blank");
+  if (!win) {
+    alert("Por favor, permita pop-ups ou abas para este site.");
+    return;
+  }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
 }

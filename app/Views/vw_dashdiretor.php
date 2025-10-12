@@ -29,6 +29,8 @@
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
 
+    <script src="<?=base_url('assets/jscript/jquery-3.6.3.js');?>" defer></script>
+
   <script src="<?=base_url('assets/jscript/bootstrap-select.js');?>"></script>
   <script src="<?=base_url('assets/jscript/my_fields.js');?>"></script>
   <script src="<?=base_url('assets/jscript/my_grafic.js');?>"></script>
@@ -146,6 +148,9 @@
               abrev[5] = 'DAV';
               abrev[6] = 'DSF';
               abrev[7] = 'YSC';
+              abrev[8] = 'CP';
+              abrev[9] = 'FSO';
+              abrev[10] = 'CSC';
               for(emp=0;emp<empresas.length;emp++){
                 empr = abrev[empresas[emp]];
                 opc.push(empr);

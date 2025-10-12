@@ -252,7 +252,9 @@
         5: 'DAV',
         6: 'DSF',
         7: 'YSC',
-        8: 'CP'
+        8: 'CP',
+        9: 'FSO',
+        10: 'CSC',
       };
 
       const opcAll = ['Data', ...empresas.map(e => abrev[e] || e)];

@@ -65,7 +65,7 @@ class DashDiretorV2 extends BaseController
     }
 
     public function def_campos()
-    {
+    { 
         $periodo =  new MyCampo();
         $periodo->nome        = 'periodo';
         $periodo->id          = 'periodo';

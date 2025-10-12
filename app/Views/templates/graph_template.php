@@ -4,14 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?=APP_NAME;?></title>
-
+    
+    <script src="<?=base_url('assets/jscript/jquery-3.6.3.js');?>" defer></script>
   <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <!-- Bootstrap icones -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/assets/css/fontawesome/all.min.css">
+    <!-- <link rel="stylesheet" href="/assets/css/fontawesome/all.min.css"> -->
   <!-- Estilos personalizados -->
   <?php 
   $nocache = time();
@@ -21,7 +22,6 @@
     <link rel="stylesheet" href="<?=base_url('assets/css/default.css?nocache='.$nocache);?>">
     
   <!-- Scripts personalizados -->
-    <script src="<?=base_url('assets/jscript/jquery-3.6.3.js');?>" defer></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js" defer></script>
 
     <script src="<?=base_url('assets/jscript/my_grafic.js');?> " defer></script>

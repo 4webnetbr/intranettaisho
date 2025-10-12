@@ -1,28 +1,21 @@
+
 <?=$this->extend('templates/graph_template')?>
 
 <?=$this->section('content');?>
-<div class='col-12 d-none p-3 float-start bg-white' style="height: 10vh">
-            <?
-            for ($cs=0;$cs<sizeof($campos);$cs++) {
-                echo $campos[$cs];
-            }
-            ?>
-        </div>
+    <div class='col-12 d-none p-3 float-start bg-white' style="height: 10vh">
+    <?
+    for ($cs=0;$cs<sizeof($campos);$cs++) {
+        echo $campos[$cs];
+    }
+    ?>
+    </div>
     <div id='content' class='container page-content bg-light' style='max-height: 95vh;width: 98%'>
         <h4><?=$titulo.' - '.$periodo;?></h4>
         <div id="graphs" class='col-12 d-block float-start bg-white' style="max-height:95vh;overflow-y:auto;">
         </div>
     </div>
-    <script src="<?=base_url('assets/jscript/my_mask.js?noc=' . time());?>"></script>
-    <script src="<?=base_url('assets/jscript/my_grafic.js');?>"></script>
     <script>
         <?php
-            // $js_array = json_encode($dados);
-            // $js_cores = json_encode($cores);
-            // echo "var dados_js = ". $js_array . ";\n";
-            // echo "var cores_js = ". $js_cores . ";\n";
-            // echo "var tipo_js = '".$tipo. "';\n";
-            // echo "var nome    = '".$nome. "';\n";
             $cols = rtrim($cols,',');
             $acols = explode(',',$cols);
             // debug($acols);
@@ -32,7 +25,7 @@
             }
             // echo $scols;
             $cols = rtrim($scols,',');
-            ?>
+        ?>
 
         var opc = [<?=$cols;?>];
         var gru = 0;
