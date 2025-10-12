@@ -91,7 +91,7 @@ class GerenteV2Model extends Model
         );
         $builder->whereIn('NrEmpresa', $empresa);
         if ($filial !== null) {
-            $builder->where('NrFilial', $filial);
+            $builder->whereIn('NrFilial', $filial);
         }
         $builder->where('DataMovimento >=', $inicio);
         $builder->where('DataMovimento <=', $fim);
@@ -99,7 +99,7 @@ class GerenteV2Model extends Model
         $builder->orderBy('DataMovimento');
 
         $ret = $builder->get()->getResultArray();
-        // $sql = $this->db->getLastQuery();
+        $sql = $this->db->getLastQuery();
         // echo $sql;
 
         return $ret;

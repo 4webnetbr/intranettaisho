@@ -27,29 +27,33 @@
             $cols = rtrim($scols,',');
         ?>
 
-        var opc = [<?=$cols;?>];
-        var gru = 0;
-        var graf = ['<?=$tipodesc;?>'];
-        criaCardGraf('<?=$nome;?>', '<?=$titulo;?>', opc, gru, graf, 'graphs');
+        function carregaGrafico(){
+            var opc = [<?=$cols;?>];
+            var gru = 0;
+            var graf = ['<?=$tipodesc;?>'];
+            criaCardGraf('<?=$nome;?>', '<?=$titulo;?>', opc, gru, graf, 'graphs');
 
-        let card = jQuery('#<?=$nome;?>')[0];
-        let ncard = '<?=$nome;?>';
-        let f = "_";
-        let count = ncard.split(f).length - 1; 
-        if(count == 1){
-            refresh_card(card,'<?=$tipo;?>');
-        } else {
-            var pos = ncard.lastIndexOf('_');
-            var empr = ncard.substr(pos+1);
-            if(empr == 'all'){
-                empr = [];
-                jQuery.each(jQuery("#empresa option:selected"), function () {
-                    empr.push(jQuery(this).val());
-                });
+            let card = jQuery('#<?=$nome;?>')[0];
+            let ncard = '<?=$nome;?>';
+            let f = "_";
+            let count = ncard.split(f).length - 1; 
+            if(count == 1){
+                refresh_card(card,'<?=$tipo;?>');
+            } else {
+                var pos = ncard.lastIndexOf('_');
+                var empr = ncard.substr(pos+1);
+                if(empr == 'all'){
+                    empr = [];
+                    jQuery.each(jQuery("#empresa option:selected"), function () {
+                        empr.push(jQuery(this).val());
+                    });
+                }
+                refresh_card_diretor(card, '<?=$tipo;?>',empr);
             }
-            refresh_card_diretor(card, '<?=$tipo;?>',empr);
         }
-
+        setTimeout(() => {
+            carregaGrafico();
+        }, 10);
         // refresh_card()
         // montaGrafico(nome, dados_js.dados, tipo_js, cores_js);
     </script>

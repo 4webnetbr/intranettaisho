@@ -51,7 +51,7 @@ class IntegraCfy extends BaseController
                         unset($cupom->Pagamentos);
                         $produtos   = $cupom->Produtos;
                         unset($cupom->Produtos);
-                        $sv_cupom = $this->common->insertReg('default', 'cfy_cuponsvenda',$cupom);
+                        $sv_cupom = $this->common->insertReg('default', 'cfy_cuponsvenda',$cupom, false);
                         if($sv_cupom) {
                             debug('Gravou Cupom');
                             for($p=0;$p<count($pagamentos);$p++){
@@ -63,7 +63,7 @@ class IntegraCfy extends BaseController
                                 $pagamentos[$p]->DataCorte   = numTodataBrToDb($pag->DataCorte);
                                 $pagamentos[$p]->DataPrevRecebimento   = numTodataBrToDb($pag->DataPrevRecebimento);
                                 $pagamentos[$p]->DataHoraAutorizacao   = numTodataBrToDb($pag->DataHoraAutorizacao);
-                                $sv_pagam = $this->common->insertReg('default', 'cfy_pagamentocupom',$pagamentos[$p]);
+                                $sv_pagam = $this->common->insertReg('default', 'cfy_pagamentocupom',$pagamentos[$p], false);
                                 // debug($pagamentos[$p]);
                             }
                             for($pr=0;$pr<count($produtos);$pr++){
@@ -72,7 +72,7 @@ class IntegraCfy extends BaseController
                                 $produtos[$pr]->NrFilial  = $cupom->NrFilial;
                                 $produtos[$pr]->NrCupom   = $cupom->NrCupom;
                                 $produtos[$pr]->DataHoraLancamento   = numTodataBrToDb($pro->DataHoraLancamento);
-                                $sv_produt = $this->common->insertReg('default', 'cfy_produtocupom',$produtos[$pr]);
+                                $sv_produt = $this->common->insertReg('default', 'cfy_produtocupom',$produtos[$pr], false);
                                 // debug($produtos[$p]);
                             }
                         }

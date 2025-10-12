@@ -30,7 +30,7 @@ class CommonModel extends Model
      * @param mixed $data 
      * @return int
      */
-    public function insertReg($grupo, $table, $data)
+    public function insertReg($grupo, $table, $data, $log = true)
     {
         $db = db_connect($grupo);
         $builder = $db->table($table);
@@ -40,10 +40,11 @@ class CommonModel extends Model
         } catch (\Throwable $th) {
             $insert_id = $th;
         }
-        $logdb = new LogMonModel();
-        $registro = $insert_id;
-        $log = $logdb->insertLog($table, 'Incluído', $registro, $data);
-
+        if($log){
+            $logdb = new LogMonModel();
+            $registro = $insert_id;
+            $log = $logdb->insertLog($table, 'Incluído', $registro, $data);
+        }
         return $insert_id;
     }
 

@@ -436,13 +436,19 @@ class DashDiretorService
             $empres = $this->empresaModel->getEmpresa($empresa);
             $empr = array_column($empres, 'emp_codempresa');
             $emp = array_values($empr);
-            $filial = null;
+            $filiais = array_column($empres, 'emp_codfilial');
+            $filial = array_values($filiais);
+            // debug($empres);
+            // debug($empr);
+            // debug($empf);
+            // debug($emp);
+            // $filial = null;
         } else {
             $empres = $this->empresaModel->getEmpresa($empresa);
             $emp[] = $empres[0]['emp_codempresa'];
-            $filial = $empres[0]['emp_codfilial'];
+            $filial[] = $empres[0]['emp_codfilial'];
         }
-
+        // debug($empres);
         // $empresa = $emp['emp_codempresa'];
         // $filial = $emp['emp_codfilial'];
 
