@@ -817,7 +817,6 @@ function montaListaDadosGrupo(tabela, url, groupColumn = 0) {
           { "min-width": "8em", targets: "_all" },
           { width: "8em", targets: "_all" },
           { orderable: false, targets: "_all" },
-          { searchable: false, targets: "_all" },
           { className: "text-center acao text-nowrap", targets: [-1] },
           { className: "acao", targets: [0] },
           { className: "agrupando", targets: groupColumn },

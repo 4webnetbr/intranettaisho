@@ -108,7 +108,7 @@ class EstRelPedido extends BaseController
         for($p=0;$p<count($pedidos);$p++){
             $prod = $pedidos[$p];
             $prods[$p][0] = $prod['ped_id'];
-            $prods[$p][1] = $prod['emp_apelido'];
+            $prods[$p][1] = substr($prod['emp_apelido'],0,3);
             $prods[$p][2] = dataDbToBr($prod['ped_data']);
             $prods[$p][3] = $prod['pro_nome'];
             $prods[$p][4] = ($prod['und_sigla_compra']=='und'||$prod['und_sigla_compra']=='cx')?intval($prod['ped_qtia']):floatval($prod['ped_qtia']);
