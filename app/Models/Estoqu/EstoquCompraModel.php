@@ -91,7 +91,7 @@ class EstoquCompraModel extends Model
      * @param bool $id 
      * @return array
      */
-    public function getCompra($pro_id = false, $empresa = false)
+    public function getCompra($pro_id = false, $empresa = false, $status = 'P')
     {
         $db = db_connect('dbEstoque');
         $builder = $db->table('vw_est_compras_relac');
@@ -102,7 +102,7 @@ class EstoquCompraModel extends Model
         if ($empresa) {
             $builder->where("emp_id", $empresa);
         }
-        $builder->where("com_status", 'P');
+        $builder->where("com_status", $status);
         $builder->orderBy("com_id desc, com_previsao, for_razao");
         $ret = $builder->get()->getResultArray();
 
@@ -147,13 +147,16 @@ class EstoquCompraModel extends Model
      * @param bool $id 
      * @return array
      */
-    public function getCompraProd($com_id = false, $pro_id = false, $stat = false)
+    public function getCompraProd($com_id = false, $pro_id = false, $stat = false, $emp_id = false)
     {
         $db = db_connect('dbEstoque');
         $builder = $db->table('vw_est_compras_produto_relac');
         $builder->select('*');
         if ($com_id) {
             $builder->where("com_id", $com_id);
+        }
+        if ($emp_id) {
+            $builder->where("emp_id", $emp_id);
         }
         if ($pro_id) {
             $builder->where("pro_id", $pro_id);
@@ -325,5 +328,33 @@ class EstoquCompraModel extends Model
         // debug($this->db->getLastQuery(), false);
 
         return $ret;
+    }
+
+    /**
+     * getResumoDashCompras
+     *
+     * Retorna os Movimentos de Pedido, Compra e Entrada de Produtos
+     * 
+     * @param bool $id 
+     * @return array
+     */
+    public function getResumoDashCompras($emp_id = false, $inicio = false, $final = false)
+    {
+        if (!$emp_id || !$inicio || !$final) {
+            return false;
+        }
+        
+        $db = db_connect('dbEstoque');
+        $sql = "CALL sp_resumo_empresas(?, ?, ?)";
+        $query = $db->query($sql, [$emp_id, $inicio, $final]);
+        // debug($query);
+        // Obtém o resultado
+        $result = $query->getResultArray();
+
+        // Libera o resultado, se necessário
+        $query->freeResult();
+
+        log_message('info', 'SQL: ' . $sql . ' Função: getMovimento');
+        return $result;
     }
 }

@@ -101,7 +101,7 @@ class LogMonModel
 			$result = $this->conn->executeCommand($this->database, $command);
 			return $result->toArray();
 		} catch (RuntimeException $ex) {
-			show_error('Error while fetching logs: ' . $ex->getMessage(), 500);
+			// show_error('Error while fetching logs: ' . $ex->getMessage(), 500);
 		}
 	}
 

@@ -720,3 +720,22 @@ function monta_filtro($data_lis, $dados_base)
     // debug($filtros);
     return $filtros;
 }
+
+function envia_msg_ws(){
+    log_message('info','Vou conectar no servidor');
+    \Ratchet\Client\connect('wss://delivery.taisho.com.br/ws')->then(function($conn) {
+        log_message('info','Conectou ao Servidor');
+
+        $msg  = session()->getFlashdata('msgsocket');
+
+        $conn->send(json_encode(['msg' => 'S '.$msg]));
+        log_message('info','Enviou Mensagem '.$msg);
+        
+        $conn->close();
+        log_message('info','Fechou a conexão');
+        
+    }, function ($e) {
+        log_message('info','Não Conectou ao Servidor'.$e->getMessage());
+    });
+    return;
+}    

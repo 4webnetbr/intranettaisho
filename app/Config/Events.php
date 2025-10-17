@@ -5,6 +5,7 @@ namespace Config;
 use CodeIgniter\Events\Events;
 use CodeIgniter\Exceptions\FrameworkException;
 use App\Models\LogMonModel;
+use App\Common;
 /*
  * --------------------------------------------------------------------
  * Application Events
@@ -186,3 +187,20 @@ Events::on('pre_system', static function () {
 //     $mongo = new LogMonModel();
 //     $mongo->insertLogAcesso($log);
 // });
+// Listener global para alterações nas tabelas desejadas
+Events::on('DBQuery', function ($query) {
+    $sql = strtolower($query->getQuery());
+
+    // Verifica se é um INSERT, UPDATE ou DELETE nas tabelas desejadas
+    if (
+        ((str_contains($sql, 'insert') ||
+         str_contains($sql, 'update') ||
+         str_contains($sql, 'delete')) &&
+
+         (str_contains($sql, 'est_pedido') ||
+         str_contains($sql, 'est_compra_produto')))
+    ) {
+        session()->setFlashdata('msgsocket', 'Resumo');
+        envia_msg_ws();
+    }
+});
