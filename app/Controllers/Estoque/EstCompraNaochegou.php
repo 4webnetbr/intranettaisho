@@ -110,11 +110,11 @@ class EstCompraNaochegou extends BaseController
         $this->data['colunas']      = montaColunasLista($this->data, 'cop_id');
         $this->data['url_lista']    = base_url($this->data['controler'] . '/lista_prod');
         $this->data['campos']         = $campos;
-        $this->data['script'] = "<script>carrega_lista_detail('empresa', '" . $this->data['url_lista'] . "','" . $this->data['nome'] . "');</script>";
+        $this->data['script'] = "<script>carrega_lista('empresa', '" . $this->data['url_lista'] . "','" . $this->data['nome'] . "');</script>";
         echo view('vw_lista_filtrada', $this->data);
     }
 
-    public function def_campos_lista($tipo = 1, $dados = false)
+    public function def_campos_lista($tipo = 1, $dados = false, $show = false)
     {
         $idempresa = false;
         if ($dados) {
@@ -132,18 +132,19 @@ class EstCompraNaochegou extends BaseController
         $emp->nome                  = 'empresa';
         $emp->id                    = 'empresa';
         $emp->label = $emp->place   = 'Empresa(s)';
-        $emp->valor = $emp->selecionado  = $idempresa ? $idempresa : $empresas[0];
+        $emp->valor = $emp->selecionado  = $dados['emp_id'] ?? $empresas[0];
         $emp->opcoes                = $empres;
         // $emp->funcChan              = 'carrega_saldos()';
-        $emp->dispForm              = 'col-6 linha';
+        // $emp->dispForm              = 'col-6 linha';
         $emp->largura               = 40;
+        $emp->leitura               = $show;
         if (count($empresas) == 1) {
             $emp->leitura           = true;
         }
         if ($tipo == 1) {
-            $emp->funcChan              = "carrega_lista_detail(this,'" . base_url($this->data['controler'] . '/lista_prod') . "','compra')";
+            $emp->funcChan              = "carrega_lista(this,'" . base_url($this->data['controler'] . '/lista_prod') . "','compra')";
         } else {
-            $emp->funcChan              = "carrega_lista_cotacao(this, '" . base_url($this->data['controler'] . '/listaadd') . "','produtos');";
+            $emp->funcChan              = "carrega_lista(this, '" . base_url($this->data['controler'] . '/listaadd') . "','produtos');";
         }
         $this->dash_empresa         = $emp->crSelect();
 
@@ -169,7 +170,7 @@ class EstCompraNaochegou extends BaseController
         $forn->opcoes               = $fornec;
         $forn->valor = $forn->selecionado = $dados['for_id'] ?? '';
         $forn->largura              = 60;
-        $forn->leitura              = false;
+        $forn->leitura              = $show;
         // $forn->dispForm              = 'col-12';
         $this->for_id               = $forn->crSelect();
 
@@ -197,26 +198,26 @@ class EstCompraNaochegou extends BaseController
         $dados_prods = $this->compra->getCompraProd(false, false, 'N', $param);
 
         $botao[0] = [
-            'url'    => base_url('/CriaPdf2025/PedidoCompra/chave'),
-            'funcao' => "redirec_blank(\"url\");",
-            'classe' => 'btn btn-white btn-sm border border-2 border-dark',
-            'title'  => 'Pedido',
-            'icone'  => 'fa fa-print',
+            'url'    => base_url('/EstCompraNaochegou/cancela/chave'),
+            'funcao' => "cancela(\"url\",\"\");",
+            'classe' => 'btn btn-outline-danger border-0 btn-sm ',
+            'title'  => 'Cancela',
+            'icone'  => 'fa fa-cancel',
         ];
-        // $this->data['edicao'] = false;
         foreach ($dados_prods as &$com) {
             // Verificar se o log já está disponível para esse ana_id
             $com['com_usuario'] = $log[$com['com_id']]['usua_alterou'] ?? '';
             $qtia = formataQuantia(isset($com['cop_quantia']) ? $com['cop_quantia'] : 0);
-
+            
             $com['cop_quantia'] = $qtia['qtia'];
-            $com['d'] = '';
+            // $com['d'] = '';
         }
         $this->data['botoes'] = $botao;
         // $compr = [
-        //     'data' => montaListaColunas($this->data, 'com_id', $dados_compr, 'com_id'),
-        // ];
-        $compr = montaListaColunas($this->data, 'com_id', $dados_prods, $campos[1]);
+            //     'data' => montaListaColunas($this->data, 'com_id', $dados_compr, 'com_id'),
+            // ];
+            $this->data['exclusao'] = false;
+        $compr = montaListaColunas($this->data, 'cop_id', $dados_prods, $campos[1]);
         // debug($compr);
         $compras['data'] = $compr;
         cache()->save('cont', $compras, 60000);
@@ -395,90 +396,81 @@ class EstCompraNaochegou extends BaseController
     //     $this->edit($id, true);
     // }
 
-    // /**
-    //  * Edição
-    //  * edit
-    //  *
-    //  * @param mixed $id
-    //  * @return void
-    //  */
-    // public function edit($id, $show = false)
-    // {
-    //     $dados_com = $this->compra->getCompraLista($id);
-    //     // debug($dados_com);
-    //     // $this->def_campos_prod_comprados($dados_com, $show);
+    /**
+     * Edição
+     * edit
+     *
+     * @param mixed $id
+     * @return void
+     */
+    public function edit($id, $show = false)
+    {
+        $dados_com = $this->compra->getCompraCop($id);
+        // debug($dados_com);
+        // $this->def_campos_prod_comprados($dados_com, $show);
 
-    //     $this->def_campos_lista(2, $dados_com[0]);
-    //     $secao[0] = 'Dados da Compra';
-    //     $campos[0][0] = $this->dash_empresa;
-    //     $campos[0][1] = $this->for_id;
+        $this->def_campos_lista(2, $dados_com[0], true);
+        $secao[0] = 'Dados da Compra';
+        $campos[0][0] = $this->dash_empresa;
+        $campos[0][1] = $this->for_id;
 
-    //     $secao[1] = 'Produtos';
-    //     $displ[1] = 'tabela';
-    //     // $dados_com = $this->compra->getCompra($id);
-    //     if (count($dados_com) > 0) {
-    //         for ($c = 0; $c < count($dados_com); $c++) {
-    //             $this->def_campos_prod_comprados($dados_com[$c], $c, $show);
-    //             $campos[1][$c] = [];
-    //             $campos[1][$c][count($campos[1][$c])]   = $this->pro_id;
-    //             $campos[1][$c][count($campos[1][$c])]   = $this->ped_qtia;
-    //             $campos[1][$c][count($campos[1][$c])]   = $this->und_sigla;
-    //             $campos[1][$c][count($campos[1][$c])]   = $this->com_id . ' ' . $this->cop_id . ' ' . $this->ped_id . ' ' . $this->mar_id . ' ' . $this->und_id . ' ' . $this->cop_quantia;
-    //             $campos[1][$c][count($campos[1][$c])]   = $this->cop_valor;
-    //             $campos[1][$c][count($campos[1][$c])]   = $this->cop_total;
-    //             $campos[1][$c][count($campos[1][$c])]   = $this->cop_previsao;
-    //             $campos[1][$c][count($campos[1][$c])]   = '';
-    //             $campos[1][$c][count($campos[1][$c])]   = '';
-    //         }
-    //     } else {
-    //         $campos[1][0] = [];
-    //     }
+        $this->def_campos_prod_comprados($dados_com[0]);
+        $campos[0][count($campos[0])]   = $this->pro_id;
+        $campos[0][count($campos[0])]   = $this->ped_qtia;
+        $campos[0][count($campos[0])]   = $this->und_sigla;
+        $campos[0][count($campos[0])]   = $this->com_id . ' ' . $this->cop_id . ' ' . $this->ped_id . ' ' . $this->mar_id . ' ' . $this->und_id . ' ' . $this->cop_quantia;
+        $campos[0][count($campos[0])]   = $this->cop_valor;
+        $campos[0][count($campos[0])]   = $this->cop_total;
+        $campos[0][count($campos[0])]   = $this->cop_previsao;
 
-    //     $this->data['secoes'] = $secao;
-    //     $this->data['displ'] = $displ;
-    //     $this->data['campos'] = $campos;
-    //     $this->data['destino'] = 'store';
+        $this->data['secoes'] = $secao;
+        $this->data['campos'] = $campos;
+        $this->data['destino'] = 'store';
 
-    //     echo view('vw_edicao', $this->data);
-    // }
-    // /**
-    //  * Exclusão
-    //  * delete
-    //  *
-    //  * @param mixed $id
-    //  * @return void
-    //  */
-    // public function delete($id)
-    // {
-    //     $ret = [];
-    //     try {
-    //         $dados_com = $this->compra->getCompra($id)[0];
+        echo view('vw_edicao', $this->data);
+    }
 
-    //         $dados_pro = $this->compra->getCompraProd($id);
-    //         $pedido = array_column($dados_pro, 'ped_id');
-    //         // debug($pedido, true);
-    //         $this->compra->delete($id);
-    //         $com_exc = $this->common->deleteReg('dbEstoque', 'est_compra_produto', "com_id = " . $id);
+    /**
+     * Exclusão
+     * delete
+     *
+     * @param mixed $id
+     * @return void
+     */
+    public function cancela($id)
+    {
+        $ret = [];
+        try {
+            // $dados_com = $this->compra->getCompra($id)[0];
 
-    //         for ($pd = 0; $pd < count($pedido) ; $pd++) {
-    //             if($pedido[$pd] != ''){
-    //                 $dados_ped = [
-    //                     'ped_id' => $pedido[$pd],
-    //                     'ped_status' => 'P',
-    //                 ];
-    //                 $this->pedido->save($dados_ped);
-    //             }
-    //         }
+            $dados_pro = $this->compra->getCompraCop($id);
+            $pedido = array_column($dados_pro, 'ped_id');
+            // debug($pedido, true);
+            $dados_cop = [
+                'cop_id' => $id,
+                'cop_status' => 'C',
+            ];
+            $com_exc = $this->common->updateReg('dbEstoque', 'est_compra_produto', "cop_id = " . $id, $dados_cop);
 
-    //         $ret['erro'] = false;
-    //         $ret['msg']  = 'Compra Excluída com Sucesso';
-    //         session()->setFlashdata('msg', 'Compra Excluída com Sucesso');
-    //     } catch (\CodeIgniter\Database\Exceptions\DatabaseException $e) {
-    //         $ret['erro'] = true;
-    //         $ret['msg']  = 'Não foi possível Excluir a Compra, Verifique!<br>';
-    //     }
-    //     echo json_encode($ret);
-    // }
+            for ($pd = 0; $pd < count($pedido) ; $pd++) {
+                if($pedido[$pd] != ''){
+                    $dados_ped = [
+                        'ped_id' => $pedido[$pd],
+                        'ped_status' => 'P',
+                    ];
+                    $this->pedido->save($dados_ped);
+                }
+            }
+
+            $ret['erro'] = false;
+            $ret['msg']  = 'Compra Cancelada com Sucesso';
+            session()->setFlashdata('msg', 'Compra Cancelada com Sucesso');
+        } catch (\CodeIgniter\Database\Exceptions\DatabaseException $e) {
+            $ret['erro'] = true;
+            $ret['msg']  = 'Não foi possível Cancelar a Compra, Verifique!<br>';
+        }
+        echo json_encode($ret);
+    }
 
     // /**
     //  * Definição de Campos
@@ -796,121 +788,123 @@ class EstCompraNaochegou extends BaseController
     //     $this->bt_dup   = $dup->crBotao();
     // }
 
-    // /**
-    //  * Definição de Campos
-    //  * def_campos
-    //  *
-    //  * @param bool $dados
-    //  * @return void
-    //  */
-    // public function def_campos_prod_comprados($dados = false, $pos = 0, $show = false)
-    // {
-    //     if (!$dados) {
-    //         return;
-    //     }
-    //     // debug($dados, true);
-    //     $pedid = new MyCampo('est_pedido', 'ped_id');
-    //     $pedid->nome = $pedid->id               = "ped_id[$pos]";
-    //     $pedid->ordem              = $pos;
-    //     $pedid->valor = ($dados['ped_id']) ? $dados['ped_id'] : '';
-    //     $this->ped_id = $pedid->crOculto();
+    /**
+     * Definição de Campos
+     * def_campos
+     *
+     * @param bool $dados
+     * @return void
+     */
+    public function def_campos_prod_comprados($dados = false, $pos = 0, $show = false)
+    {
+        if (!$dados) {
+            return;
+        }
+        // debug($dados, true);
+        $pedid = new MyCampo('est_pedido', 'ped_id');
+        $pedid->nome = $pedid->id               = "ped_id[$pos]";
+        $pedid->ordem              = $pos;
+        $pedid->valor = ($dados['ped_id']) ? $dados['ped_id'] : '';
+        $this->ped_id = $pedid->crOculto();
 
-    //     $marca = new MyCampo('est_compra_produto', 'mar_id');
-    //     $marca->nome = $marca->id               = "mar_id[$pos]";
-    //     $marca->ordem              = $pos;
-    //     $marca->valor = ($dados['mar_id']) ? $dados['mar_id'] : '';
-    //     $this->mar_id = $marca->crOculto();
+        $marca = new MyCampo('est_compra_produto', 'mar_id');
+        $marca->nome = $marca->id               = "mar_id[$pos]";
+        $marca->ordem              = $pos;
+        $marca->valor = ($dados['mar_id']) ? $dados['mar_id'] : '';
+        $this->mar_id = $marca->crOculto();
 
-    //     $compr = new MyCampo('est_compra', 'com_id');
-    //     $compr->nome = $compr->id               = "com_id[$pos]";
-    //     $compr->ordem              = $pos;
-    //     $compr->valor = $dados['com_id'];
-    //     $this->com_id = $compr->crOculto();
+        $compr = new MyCampo('est_compra', 'com_id');
+        $compr->nome = $compr->id               = "com_id[$pos]";
+        $compr->ordem              = $pos;
+        $compr->valor = $dados['com_id'];
+        $this->com_id = $compr->crOculto();
 
-    //     $proco = new MyCampo('est_compra_produto', 'cop_id');
-    //     $proco->nome = $proco->id               = "cop_id[$pos]";
-    //     $proco->ordem              = $pos;
-    //     $proco->valor = $dados['cop_id'];
-    //     $this->cop_id = $proco->crOculto();
+        $proco = new MyCampo('est_compra_produto', 'cop_id');
+        $proco->nome = $proco->id               = "cop_id[$pos]";
+        $proco->ordem              = $pos;
+        $proco->valor = $dados['cop_id'];
+        $this->cop_id = $proco->crOculto();
 
-    //     $undco = new MyCampo('est_compra_produto', 'und_id');
-    //     $undco->nome = $undco->id               = "und_id[$pos]";
-    //     $undco->ordem              = $pos;
-    //     $undco->valor = $dados['und_id'];
-    //     $this->und_id = $undco->crOculto();
+        $undco = new MyCampo('est_compra_produto', 'und_id');
+        $undco->nome = $undco->id               = "und_id[$pos]";
+        $undco->ordem              = $pos;
+        $undco->valor = $dados['und_id'];
+        $this->und_id = $undco->crOculto();
 
-    //     $produts = [];
-    //     $dados_pro = $this->produto->getProduto();
-    //     $produts = array_column($dados_pro, 'pro_nome', 'pro_id');
+        $produts = [];
+        $dados_pro = $this->produto->getProduto();
+        $produts = array_column($dados_pro, 'pro_nome', 'pro_id');
 
-    //     $proid = new MyCampo('est_compra_produto', 'pro_id');
-    //     $proid->nome = $proid->id               = "pro_id[$pos]";
-    //     $proid->ordem              = $pos;
-    //     $proid->valor = $proid->selecionado = $dados['pro_id'];
-    //     $proid->opcoes = $produts;
-    //     $proid->largura = 60;
-    //     $proid->leitura = true;
-    //     $this->pro_id = $proid->crSelect();
+        $proid = new MyCampo('est_compra_produto', 'pro_id');
+        $proid->nome = $proid->id               = "pro_id[$pos]";
+        $proid->ordem              = $pos;
+        $proid->valor = $proid->selecionado = $dados['pro_id'];
+        $proid->opcoes = $produts;
+        $proid->largura = 60;
+        $proid->leitura = true;
+        $this->pro_id = $proid->crSelect();
 
-    //     $qtia = formataQuantia($dados['ped_qtia']);
-    //     $qtp                        = new MyCampo('est_pedido', 'ped_qtia');
-    //     $qtp->nome = $qtp->id               = "ped_qtia[$pos]";
-    //     $qtp->ordem              = $pos;
-    //     $qtp->tipo                  = 'quantia';
-    //     $qtp->label                 = 'Pedido';
-    //     $qtp->largura               = 10;
-    //     $qtp->valor                 = $qtia['qtiv'];
-    //     $qtp->decimal               = $qtia['dec'];
-    //     $qtp->leitura               = true;
-    //     $this->ped_qtia             = $qtp->crInput();
+        $qtia = formataQuantia($dados['ped_qtia']);
+        $qtp                        = new MyCampo('est_pedido', 'ped_qtia');
+        $qtp->nome = $qtp->id               = "ped_qtia[$pos]";
+        $qtp->ordem              = $pos;
+        $qtp->tipo                  = 'quantia';
+        $qtp->label                 = 'Pedido';
+        $qtp->largura               = 10;
+        $qtp->valor                 = $qtia['qtiv'];
+        $qtp->decimal               = $qtia['dec'];
+        $qtp->leitura               = true;
+        $this->ped_qtia             = $qtp->crInput();
 
-    //     $und                        = new MyCampo('est_unidades', 'und_sigla');
-    //     $und->nome = $und->id               = "und_sigla[$pos]";
-    //     $und->ordem              = $pos;
-    //     $und->label                 = 'Und Compra';
-    //     $und->largura               = 30;
-    //     $und->valor                 = $dados['und_sigla'];
-    //     $und->leitura               = true;
-    //     $this->und_sigla             = $und->crInput();
+        $und                        = new MyCampo('est_unidades', 'und_sigla');
+        $und->nome = $und->id               = "und_sigla[$pos]";
+        $und->ordem              = $pos;
+        $und->label                 = 'Und Compra';
+        $und->largura               = 30;
+        $und->valor                 = $dados['und_sigla'];
+        $und->leitura               = true;
+        $this->und_sigla             = $und->crInput();
 
 
-    //     $previsao = new DateTime("+2 days");
-    //     $pre                        = new MyCampo('est_compra_produto', 'cop_previsao');
-    //     $pre->nome = $pre->id                  = "cop_previsao[$pos]";
-    //     $pre->ordem                 = $pos;
-    //     $pre->valor                 = $dados['cop_previsao'] ?? $dados['com_previsao'];
-    //     $pre->largura               = 16;
-    //     $this->cop_previsao         = $pre->crInput();
+        $previsao = new DateTime("+2 days");
+        $pre                        = new MyCampo('est_compra_produto', 'cop_previsao');
+        $pre->nome = $pre->id                  = "cop_previsao[$pos]";
+        $pre->ordem                 = $pos;
+        $pre->valor                 = $dados['cop_previsao'] ?? $dados['com_previsao'];
+        $pre->largura               = 16;
+        $this->cop_previsao         = $pre->crInput();
 
-    //     $qtia = formataQuantia($dados['cop_quantia']);
+        $qtia = formataQuantia($dados['cop_quantia']);
 
-    //     $qti                        = new MyCampo('est_compra_produto', 'cop_quantia');
-    //     $qti->nome = $qti->id       = "cop_quantia[$pos]";
-    //     $qti->ordem              = $pos;
-    //     $qti->tipo                  = 'quantia';
-    //     $qti->largura               = 10;
-    //     $qti->valor                 = $qtia['qtiv'];
-    //     $qti->decimal               = $qtia['dec'];
-    //     $qti->funcBlur              = "calculaTotal(this,'cop_quantia', 'cop_valor', 'cop_total');";
-    //     $this->cop_quantia          = $qti->crInput();
+        $qti                        = new MyCampo('est_compra_produto', 'cop_quantia');
+        $qti->nome = $qti->id       = "cop_quantia[$pos]";
+        $qti->ordem              = $pos;
+        $qti->tipo                  = 'quantia';
+        $qti->largura               = 10;
+        $qti->valor                 = $qtia['qtiv'];
+        $qti->decimal               = $qtia['dec'];
+        $qti->leitura = true;
+        $qti->funcBlur              = "calculaTotal(this,'cop_quantia', 'cop_valor', 'cop_total');";
+        $this->cop_quantia          = $qti->crInput();
 
-    //     $val                        = new MyCampo('est_compra_produto', 'cop_valor');
-    //     $val->nome = $val->id               = "cop_valor[$pos]";
-    //     $val->ordem              = $pos;
-    //     $val->largura               = 15;
-    //     $val->valor                 = $dados['cop_valor'];
-    //     $val->funcBlur              = "calculaTotal(this,'cop_quantia', 'cop_valor', 'cop_total');";
-    //     $this->cop_valor            = $val->crInput();
+        $val                        = new MyCampo('est_compra_produto', 'cop_valor');
+        $val->nome = $val->id               = "cop_valor[$pos]";
+        $val->ordem              = $pos;
+        $val->largura               = 15;
+        $val->valor                 = $dados['cop_valor'];
+        $val->funcBlur              = "calculaTotal(this,'cop_quantia', 'cop_valor', 'cop_total');";
+        $val->leitura = true;
+        $this->cop_valor            = $val->crInput();
 
-    //     $tot                        = new MyCampo('est_compra_produto', 'cop_total');
-    //     $tot->nome = $tot->id               = "cop_total[$pos]";
-    //     $tot->ordem              = $pos;
-    //     $tot->largura               = 20;
-    //     $tot->classep               = 'text-end';
-    //     $tot->valor                 = $dados['cop_total'];
-    //     $tot->leitura               = true;
-    //     $this->cop_total            = $tot->crInput();
-    // }
+        $tot                        = new MyCampo('est_compra_produto', 'cop_total');
+        $tot->nome = $tot->id               = "cop_total[$pos]";
+        $tot->ordem              = $pos;
+        $tot->largura               = 20;
+        $tot->classep               = 'text-end';
+        $tot->valor                 = $dados['cop_total'];
+        $tot->leitura               = true;
+        $this->cop_total            = $tot->crInput();
+    }
 
     // /**
     //  * Gravação
@@ -1010,94 +1004,40 @@ class EstCompraNaochegou extends BaseController
     //     return $this->response->setJSON($ret);
     // }
 
-    // /**
-    //  * Gravação
-    //  * store
-    //  *
-    //  * @return void
-    //  */
-    // public function store()
-    // {
-    //     $ret = [];
-    //     $ret['erro'] = false;
-    //     $dados = $this->request->getPost();
-    //     // debug($dados, true);
-    //     $erros = [];
-    //     $total = 0;
-    //     foreach ($dados['pro_id'] as $key => $value) {
-    //         $tot = str_replace(",", ".", $dados['cop_total'][$key]);
-    //         $total += $tot;
-    //     }
-
-
-    //     $dados_com = [
-    //         'com_id'    => $dados['com_id'][0],
-    //         'com_data'  => date('Y-m-d'),
-    //         // 'com_previsao'  => $dados['com_previsao'],
-    //         'emp_id'    => (isset($dados['emp_id'])) ? $dados['emp_id'] : $dados['empresa'],
-    //         'for_id'    => $dados['for_id'],
-    //         // 'ped_id'    => $dados['ped_id'],
-    //         'com_valor' => $total,
-    //     ];
-    //     // debug($dados_com, true);
-    //     if ($this->compra->save($dados_com)) {
-    //         if ($dados['com_id'] == '') {
-    //             $com_id = $this->compra->getInsertID();
-    //         } else {
-    //             $com_id = $dados['com_id'][0];
-    //         }
-    //         $data_atu = date('Y-m-d H:i:s');
-    //         foreach ($dados['pro_id'] as $key => $value) {
-    //             $qtia = str_replace(",", ".", $dados['cop_quantia'][$key]);
-
-    //             $dados_pro = [
-    //                 // 'cop_id'    => $dados['cop_id'][$key],
-    //                 'com_id'    => $com_id,
-    //                 'pro_id'    => $dados['pro_id'][$key],
-    //                 'und_id'    => $dados['und_id'][$key],
-    //                 'ped_id'    => $dados['ped_id'][$key],
-    //                 'mar_id'    => $dados['mar_id'][$key],
-    //                 'cop_quantia'   => floatval($qtia),
-    //                 'cop_valor'   => $dados['cop_valor'][$key],
-    //                 'cop_total'   => $dados['cop_total'][$key],
-    //                 'cop_previsao'   => $dados['cop_previsao'][$key],
-    //                 'cop_atualizado' => $data_atu
-    //             ];
-    //             $salva = $this->common->insertReg('dbEstoque', 'est_compra_produto', $dados_pro);
-    //             $cop_id = $salva;
-    //             if (!$salva) {
-    //                 $ret['erro'] = true;
-    //                 $ret['msg'] = 'Não foi possível gravar os produtos, Verifique!';
-    //                 break;
-    //             } else {
-    //                 $cta_exc = $this->common->deleteReg('dbEstoque', 'est_compra_produto', "com_id = " . $com_id . " AND cop_atualizado != '" . $data_atu . "'");
-    //                 $dados_ped = [
-    //                     'ped_id' => $dados['ped_id'][$key],
-    //                     'ped_status' => 'C',
-    //                 ];
-    //                 $this->pedido->save($dados_ped);
-    //                 $ret['erro'] = false;
-    //                 $ret['com_id'] = $com_id;
-    //                 $ret['cop_id'] = $cop_id;
-    //                 $ret['msg'] = 'Compra gravada com Sucesso!!!';
-    //                 // session()->setFlashdata('msg', $ret['msg']);
-    //                 $ret['url'] = site_url($this->data['controler']);
-    //             }
-    //         }
-    //         $ret['erro'] = false;
-    //         $ret['msg'] = 'Compra gravada com Sucesso!!!';
-    //         session()->setFlashdata('msg', $ret['msg']);
-    //         $ret['url'] = site_url($this->data['controler']);
-    //     } else {
-    //         $erros = $this->compra->errors();
-    //         $ret['erro'] = true;
-    //         $ret['msg'] = 'Não foi possível gravar a Compra, Verifique!';
-    //         foreach ($erros as $erro) {
-    //             $ret['msg'] .= $erro . '<br>';
-    //         }
-    //     }
-    //     echo json_encode($ret);
-    // }
+    /**
+     * Gravação
+     * store
+     *
+     * @return void
+     */
+    public function store()
+    {
+        $ret = [];
+        $ret['erro'] = false;
+        $dados = $this->request->getPost();
+        // debug($dados, true);
+        $erros = [];
+        $data_atu = date('Y-m-d H:i:s');
+        $dados_pro = [
+            // 'cop_id'    => $dados['cop_id'][$key],
+            'cop_previsao'   => $dados['cop_previsao'][0],
+            'cop_status'   => 'P',
+            'cop_atualizado' => $data_atu
+        ];
+        $salva = $this->common->updateReg('dbEstoque', 'est_compra_produto', 'cop_id ='.$dados['cop_id'][0], $dados_pro);
+        $cop_id = $salva;
+        if (!$salva) {
+            $ret['erro'] = true;
+            $ret['msg'] = 'Não foi possível atualizar o produto, Verifique!';
+        } else {
+            $ret['erro'] = false;
+            $ret['cop_id'] = $cop_id;
+            $ret['msg'] = 'Produto atualizado com Sucesso!!!';
+            // session()->setFlashdata('msg', $ret['msg']);
+            $ret['url'] = site_url($this->data['controler']);
+        }
+        echo json_encode($ret);
+    }
 }
 
 // public function montalistaProdutos($dados_ped = false, $empresa = false){

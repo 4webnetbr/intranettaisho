@@ -393,6 +393,22 @@ function excluir(url, registro) {
 }
 
 /**
+ * Cancela
+ * Apresenta o box de alerta de exclusão, e caso confirmado, exclui o registro
+ *
+ * @param {url} url - url de exclusão do Registro
+ * @param {string} registro - descrição do Registro que será excluído
+ */
+
+function cancela(url, registro) {
+  msg =
+    "Confirma o Cancelamento do Registro?<br><h5 class='text-center'>" +
+    registro +
+    "</h5>";
+  boxAlert(msg, false, url, false, 4, true, "Cancelar Registro");
+}
+
+/**
  * ativInativ
  * Apresenta o box de alerta de Ativação/Inativação, e caso confirmado, ativa ou inativa o registro
  *

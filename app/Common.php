@@ -475,7 +475,7 @@ function montaListaColunas($data_lis, $chave, $dados, $nome, $detalhe = false)
                             "' data-mdb-toggle='tooltip' data-mdb-placement='top' 
                                 title='" . $botao['title'] . "' href='" . $url_bot . "'><i class='" . $botao['icone'] . "'></i></a>";
                     } else {
-                        $bot = "<button class='" . $botao['classe'] .
+                        $bot = "<button type='button' class='" . $botao['classe'] .
                             "' data-mdb-toggle='tooltip' data-mdb-placement='top' 
                                 title='" . $botao['title'] . "' onclick='" . $funcao . "'><i class='" . $botao['icone'] . "'></i></button>";
                     }

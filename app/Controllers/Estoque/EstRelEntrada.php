@@ -133,7 +133,7 @@ class EstRelEntrada extends BaseController
             $prods[$p][6] = $conv['qtia'];
             $prods[$p][7] = $prod['und_sigla'];
             $prods[$p][8] = dataDbToBr($prod['ent_datahora']);
-            $prods[$p][9] = $logs[$prod['ent_id']]['usua_alterou'];
+            $prods[$p][9] = $logs[$prod['ent_id']]['usua_alterou']??'';
             // $prods[$p][9] = '';    
         }
         // debug($prods);

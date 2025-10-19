@@ -134,7 +134,7 @@ function montaListaDadosAnt(tabela, url) {
             });
         },
         initComplete: function (settings, json) {
-          const table = new $.fn.dataTable.Api(settings);
+          const table = new jQuery.fn.dataTable.Api(settings);
 
           setTimeout(function () {
             // Força ajuste de largura das colunas
@@ -302,7 +302,7 @@ function montaListaDados(tabela, url) {
         }
       },
       initComplete: function (settings, json) {
-        const table = new $.fn.dataTable.Api(settings);
+        const table = new jQuery.fn.dataTable.Api(settings);
 
         setTimeout(function () {
           // Força ajuste de largura das colunas
@@ -528,7 +528,7 @@ function montaListaDadosEdit(tabela, url) {
             });
         },
         initComplete: function (settings, json) {
-          const table = new $.fn.dataTable.Api(settings);
+          const table = new jQuery.fn.dataTable.Api(settings);
 
           setTimeout(function () {
             // Força ajuste de largura das colunas
@@ -712,7 +712,7 @@ function montaListaDadosDetail(tabela, url) {
             });
         },
         initComplete: function (settings, json) {
-          const table = new $.fn.dataTable.Api(settings);
+          const table = new jQuery.fn.dataTable.Api(settings);
 
           setTimeout(function () {
             // Força ajuste de largura das colunas
@@ -940,7 +940,7 @@ function montaListaDadosGrupo(tabela, url, groupColumn = 0) {
             });
         },
         initComplete: function (settings, json) {
-          const table = new $.fn.dataTable.Api(settings);
+          const table = new jQuery.fn.dataTable.Api(settings);
 
           setTimeout(function () {
             // Força ajuste de largura das colunas
@@ -1086,7 +1086,7 @@ function montaListaDadosCarregados(tabela) {
         });
     },
     initComplete: function (settings, json) {
-      const table = new $.fn.dataTable.Api(settings);
+      const table = new jQuery.fn.dataTable.Api(settings);
 
       setTimeout(function () {
         // Força ajuste de largura das colunas
