@@ -123,6 +123,7 @@ class EstRelMovimento extends BaseController
             $qtiae = '';
             if($prod['enp_quantia'] != null){
                 $qtiae = formataQuantia($prod['enp_quantia'])['qtia'];
+                $prod['enp_total'] = $prod['enp_quantia'] * $prod['enp_valor'];
             }
             $prods[$p][count($prods[$p])] = $qtiae;
             $prods[$p][count($prods[$p])] = floatToMoeda($prod['enp_valor']);
