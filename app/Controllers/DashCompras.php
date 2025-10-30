@@ -102,37 +102,6 @@ class DashCompras extends BaseController
         return $ret;
     }
 
-	public function busca_dadosAnt()
-	{
-        // debug($dados_emp);
-		$filtro  		= $this->request->getVar();
-		// debug($filtro, false);
-		$empresa        = [$filtro['empresa']];
-		$deposito       = $filtro['deposito'];
-
-        $ret = [];
-        $saldos       = $this->produto->getSaldos($deposito);
-        // debug($saldos);
-        $ct = 0;
-        $prods =[];
-        for($s=0;$s<count($saldos);$s++){
-            $prod = $saldos[$s];
-            if($prod['qtia_ultima_contagem'] + $prod['total_entradas'] + $prod['total_saidas'] > 0 ){
-                $prods[$ct][0] = $prod['pro_id'];
-                $prods[$ct][1] = $prod['pro_nome'];
-                $prods[$ct][2] = dataDbToBr($prod['data_ultima_contagem']);
-                $prods[$ct][3] = formataQuantia($prod['qtia_ultima_contagem'])['qtia'];
-                $prods[$ct][4] = formataQuantia($prod['total_entradas'])['qtia'];
-                $prods[$ct][5] = formataQuantia($prod['total_saidas'])['qtia'];
-                $prods[$ct][6] = formataQuantia($prod['saldo'])['qtia'];
-                $prods[$ct][7] = $prod['und_sigla'];
-                $ct++;
-            }
-        }
-        $ret['data'] = $prods;
-        echo json_encode($ret);
-    }
-
     public function busca_dados2()
 	{
         // debug($dados_emp);

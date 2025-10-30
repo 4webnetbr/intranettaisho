@@ -54,38 +54,39 @@ async function carrega_dash_compras() {
     empresas.push(jQuery(this).val());
     nomempre.push(jQuery(this).text());
   });
+  if(empresas.length > 0){
+    const periodo = jQuery("#periodo").val();
+    const startDate = periodo.substr(0, 10);
+    const endDate = periodo.substr(-10);
+    const url = "/DashCompras/busca_dados";
 
-  const periodo = jQuery("#periodo").val();
-  const startDate = periodo.substr(0, 10);
-  const endDate = periodo.substr(-10);
-  const url = "/DashCompras/busca_dados";
-
-  return new Promise((resolve, reject) => {
-    jQuery.ajax({
-      type: "POST",
-      url: url,
-      async: true,
-      dataType: "html",
-      data: {
-        periodo: periodo,
-        inicio: startDate,
-        fim: endDate,
-        empresa: empresas,
-      },
-      beforeSend: function () {
-      },
-      success: function (retorno) {
-        jQuery('#indicadores').html(retorno);
-        resolve(true); // Sinaliza sucesso
-      },
-      error: function (xhr, status, error) {
-        console.error("Erro AJAX:", status, error);
-        resolve(false); // Ainda resolve, mas com falha
-      },
-      complete: function () {
-      },
+    return new Promise((resolve, reject) => {
+      jQuery.ajax({
+        type: "POST",
+        url: url,
+        async: true,
+        dataType: "html",
+        data: {
+          periodo: periodo,
+          inicio: startDate,
+          fim: endDate,
+          empresa: empresas,
+        },
+        beforeSend: function () {
+        },
+        success: function (retorno) {
+          jQuery('#indicadores').html(retorno);
+          resolve(true); // Sinaliza sucesso
+        },
+        error: function (xhr, status, error) {
+          console.error("Erro AJAX:", status, error);
+          resolve(false); // Ainda resolve, mas com falha
+        },
+        complete: function () {
+        },
+      });
     });
-  });
+  }
 }
 </script>
 <?= $this->endSection(); ?>
