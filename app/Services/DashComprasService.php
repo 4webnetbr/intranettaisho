@@ -80,10 +80,11 @@ class DashComprasService
             $valores[6]  += $resu['compras_naochegou'];
             $valores[7]  += $resu['compras_devolvidas'];
         }
-        $taxa_de_eficiencia = floatval(($valores[1] / $valores[0]) *100) ;
+        //$taxa_de_eficiencia = floatval(($valores[1] / $valores[0]) *100) ;
         $taxa_sucesso = floatval(($valores[3] / $valores[0]) *100) ;
         $taxa_nao_comprados = floatval(($valores[2] / $valores[0]) *100) ;
         $taxa_nao_recebidos = floatval(100 - $taxa_sucesso) ;
+        taxa de não chegou, taxa de devolvidos
         $valores[8]  = number_format($taxa_de_eficiencia,2).'%';
         $valores[9]  = number_format($taxa_sucesso,2).'%';
         $valores[10]  = number_format($taxa_nao_comprados,2).'%';
