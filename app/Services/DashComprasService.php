@@ -35,32 +35,46 @@ class DashComprasService
     ){
         // prepara retorno inicial
         $indica[0] = 'Produtos<br>Solicitados';
-        $indica[count($indica)] = 'Produtos<br>Comprados';
-        $indica[count($indica)] = 'Solicitações<br>Pendentes';
-        $indica[count($indica)] = 'Produtos<br>Recebidos ';
-        $indica[count($indica)] = 'Recebimentos<br>Pendentes';
-        $indica[count($indica)] = 'Entregas<br>Atrasadas';
-        $indica[count($indica)] = 'Produtos NÃO<br>chegaram ';
-        $indica[count($indica)] = 'Compras<br>Devolvidas';
-        $indica[count($indica)] = 'Taxa de<br>Eficiência ';
-        $indica[count($indica)] = 'Taxa de<br>Sucesso';
-        $indica[count($indica)] = 'Taxa de<br>NÃO comprados';
-        $indica[count($indica)] = 'Taxa de<br>NÃO recebidos';
+        $indica[1] = 'Produtos<br>Comprados';
+        $indica[2] = '% Sucesso';
+        $indica[3] = 'Solicitações<br>Pendentes';
+        $indica[4] = '% NÃO comprados';
+        $indica[5] = 'Produtos<br>Recebidos ';
+        $indica[6] = 'Recebimentos<br>Pendentes';
+        $indica[7] = '% NÃO recebidos';
+        $indica[8] = 'Entregas<br>Atrasadas';
+        $indica[9] = 'Produtos NÃO<br>chegaram ';
+        $indica[10] = '% NÃO chegaram';
+        $indica[11] = 'Compras<br>Devolvidas';
+        $indica[12] = '% Devolução ';
 
         $valores[0] = 0;
-        $valores[count($valores)] = 0;
-        $valores[count($valores)] = 0;
-        $valores[count($valores)] = 0;
-        $valores[count($valores)] = 0;
-        $valores[count($valores)] = 0;
-        $valores[count($valores)] = 0;
-        $valores[count($valores)] = 0;
-        $valores[count($valores)] = 0;
-        $valores[count($valores)] = 0;
-        $valores[count($valores)] = 0;
-        $valores[count($valores)] = 0;
+        $valores[1] = 0;
+        $valores[2] = 0;
+        $valores[3] = 0;
+        $valores[4] = 0;
+        $valores[5] = 0;
+        $valores[6] = 0;
+        $valores[7] = 0;
+        $valores[8] = 0;
+        $valores[9] = 0;
+        $valores[10] = 0;
+        $valores[11] = 0;
+        $valores[12] = 0;
 
-        $cores = ['bg-primary', 'bg-success', 'bg-secondary', 'bg-danger', 'bg-warning', 'bg-info', 'bg-light', 'bg-body','bg-white'];
+        $cores[0] = 'bg-primary';
+        $cores[1] = 'bg-success';
+        $cores[2] = '';
+        $cores[3] = 'bg-secondary';
+        $cores[4] = '';
+        $cores[5] = 'bg-info';
+        $cores[6] = 'bg-warning';
+        $cores[7] = '';
+        $cores[8] = 'bg-danger';
+        $cores[9] = 'bg-light';
+        $cores[10] = '';
+        $cores[11] = 'bg-secondary';
+        $cores[12] = '';
 
 
         // debug($empresa, true);
@@ -73,22 +87,25 @@ class DashComprasService
             $recebidos = $resu['compras_total'] - $resu['compras_pendentes'];
             $valores[0]  += $resu['solic_total'];
             $valores[1]  += $resu['compras_total'];
-            $valores[2]  += $resu['solic_pendentes'];
-            $valores[3]  += $recebidos;
-            $valores[4]  += $resu['compras_pendentes'];
-            $valores[5]  += $resu['compras_atrasadas'];
-            $valores[6]  += $resu['compras_naochegou'];
-            $valores[7]  += $resu['compras_devolvidas'];
+            $valores[3]  += $resu['solic_pendentes'];
+            $valores[5]  += $recebidos;
+            $valores[6]  += $resu['compras_pendentes'];
+            $valores[8]  += $resu['compras_atrasadas'];
+            $valores[9]  += $resu['compras_naochegou'];
+            $valores[11]  += $resu['compras_devolvidas'];
         }
         //$taxa_de_eficiencia = floatval(($valores[1] / $valores[0]) *100) ;
-        $taxa_sucesso = floatval(($valores[3] / $valores[0]) *100) ;
-        $taxa_nao_comprados = floatval(($valores[2] / $valores[0]) *100) ;
-        $taxa_nao_recebidos = floatval(100 - $taxa_sucesso) ;
-        taxa de não chegou, taxa de devolvidos
-        $valores[8]  = number_format($taxa_de_eficiencia,2).'%';
-        $valores[9]  = number_format($taxa_sucesso,2).'%';
-        $valores[10]  = number_format($taxa_nao_comprados,2).'%';
-        $valores[11]  = number_format($taxa_nao_recebidos,2).'%';
+        $taxa_sucesso = floatval(($valores[1] / $valores[0]) *100) ;
+        $taxa_nao_comprados = floatval(($valores[3] / $valores[0]) *100) ;
+        $taxa_nao_recebidos = floatval(($valores[6] / $valores[1]) *100) ;
+        $taxa_nao_chegou = floatval(($valores[9] / $valores[1]) *100);
+        $taxa_devolvidos = floatval(($valores[11] / $valores[1]) *100);
+        $valores[2]  = number_format($taxa_sucesso,2).'%';
+        $valores[4]  = number_format($taxa_nao_comprados,2).'%';
+        $valores[7]  = number_format($taxa_nao_recebidos,2).'%';
+
+        $valores[10]  = number_format($taxa_nao_chegou,2).'%';
+        $valores[12]  = number_format($taxa_devolvidos,2).'%';
         $ret = view('partials/vw_cards_dashcompras', ['indica' => $indica, 'valores' =>$valores,'cores' => $cores]);
         // debug($ret, true);
 
