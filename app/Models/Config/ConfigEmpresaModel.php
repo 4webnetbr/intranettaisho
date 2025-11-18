@@ -32,6 +32,14 @@ class ConfigEmpresaModel extends Model
 		'emp_cnae_desc',
 		'emp_obs',
 		'emp_endereco',
+		'emp_abrev',
+		'emp_id_sults',
+		'emp_uf',
+		'emp_cert_senha',
+		'emp_cert_tipo',
+		'emp_sefaz_ambiente',
+		'emp_sefaz_ult_nsu',
+
 	];
 
 

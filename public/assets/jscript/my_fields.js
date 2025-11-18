@@ -3399,3 +3399,32 @@ function mudaObrigatorio(obj, regra, fields) {
     }
   }
 }
+
+function validaCertificado() {
+  let formData = new FormData();
+  formData.append("certificado", jQuery("#emp_cert_arquivo")[0].files[0]);
+  formData.append("senha", jQuery("#emp_cert_senha").val());
+
+  jQuery.ajax({
+    url: window.location.origin + "/CfgEmpresa/testaCertificado",
+    method: "POST",
+    data: formData,
+    contentType: false,
+    processData: false,
+
+    success: function (resp) {
+      if (resp.ok) {
+        boxAlert(
+          "Certificado válido!<br>Válido até: <b>" + resp.validade + "</b>",
+          false
+        );
+      } else {
+        boxAlert("Falha: " + resp.msg, true);
+      }
+    },
+
+    error: function () {
+      boxAlert("Erro ao validar certificado", true);
+    },
+  });
+}

@@ -586,17 +586,18 @@ function buscaLogBatch($tabela, $registros)
     // debug($logList);
     $dados = [];
 
-    foreach ($logList as $log) {
-        $registro = $log->last_record->log_id_registro;
-        $dados[$registro] = [
-            'operacao'     => $log->last_record->log_operacao,
-            'usua_alterou' => $log->last_record->log_id_usuario,
-            'data_alterou' => dataDbToBr($log->last_record->log_data),
-            'tabela'       => $tabela,
-            'registro'     => $registro,
-        ];
+    if($logList){
+        foreach ($logList as $log) {
+            $registro = $log->last_record->log_id_registro;
+            $dados[$registro] = [
+                'operacao'     => $log->last_record->log_operacao,
+                'usua_alterou' => $log->last_record->log_id_usuario,
+                'data_alterou' => dataDbToBr($log->last_record->log_data),
+                'tabela'       => $tabela,
+                'registro'     => $registro,
+            ];
+        }
     }
-
     return $dados;
 }
 

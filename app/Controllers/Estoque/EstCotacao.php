@@ -350,31 +350,6 @@ class EstCotacao extends BaseController
         // Busca empresas e produtos pendentes
         $empresas = $this->empresa->getEmpresa();
         $pendentes = $this->cotacao->getPedidosPendentes($empresas);
-        // debug($pendentes);
-        // Identifica produtos que já estão em cotações abertas (prazo > agora)
-        // $cotacoesAbertas = $this->cotacao
-        //     ->where('cot_status', 'A')
-        //     ->findAll();
-        
-        // // debug($cotacoesAbertas);
-
-        // $idsEmCotacao = [];
-        // foreach ($cotacoesAbertas as $cot) {
-        //     // Busca produtos dessa cotação aberta
-        //     $produtosCot = $this->cotacao->getCotacaoProd($cot['cot_id']);
-        //     debug($produtosCot);
-        //     foreach ($produtosCot as $pc) {
-        //         $idsEmCotacao[] = $pc['pro_id'];
-        //     }
-        // }
-        // $idsEmCotacao = array_unique($idsEmCotacao);
-        // // debug($idsEmCotacao, true);
-
-        // // Filtra pendentes removendo produtos em cotação aberta
-        // $pendentes = array_filter($pendentes, function ($prod) use ($idsEmCotacao) {
-        //     return !in_array($prod['pro_id'], $idsEmCotacao);
-        // });
-
         // Monta colunas dinâmicas
         // $campos = ['pro_id', 'grc_id', 'grc_nome', 'pro_nome'];
         $campos = ['pro_id', 'grc_nome', 'pro_nome'];

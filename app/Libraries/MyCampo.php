@@ -79,6 +79,7 @@ class MyCampo
         $this->infotop      = '';
         $this->inforig      = '';
         $this->cadModal     = '';
+        $this->size         = 0;
         $this->maximo       = 100;
         $this->tabela       = $tabela;
         $this->campo        = $campo;
@@ -178,24 +179,34 @@ class MyCampo
                     }
                     break;
                 case 'Caracter longo':
+                    // debug(strtolower($dad_camp['COLUMN_NAME']));
+                    // debug($this->size);
                     if (intval($dad_camp['COLUMN_SIZE']) <= 200) {
                         $this->objeto = 'input';
                         $this->tipo = 'text';
-                        if (intval($dad_camp['COLUMN_SIZE']) > 50) {
-                            $this->size = 50;
-                            $this->maximo = intval($dad_camp['COLUMN_SIZE']);
-                            $this->largura = 55;
-                        } else {
-                            $this->size = intval($dad_camp['COLUMN_SIZE']);
-                            $this->maximo = intval($dad_camp['COLUMN_SIZE']);
-                            $this->largura = $this->size + 5;
+                        if($this->size == 0){
+                            if (intval($dad_camp['COLUMN_SIZE']) > 50) {
+                                $this->size = 50;
+                                $this->maximo = intval($dad_camp['COLUMN_SIZE']);
+                                $this->largura = 55;
+                            } else {
+                                $this->size = intval($dad_camp['COLUMN_SIZE']);
+                                $this->maximo = intval($dad_camp['COLUMN_SIZE']);
+                                $this->largura = $this->size + 5;
+                            }
                         }
                     } else {
-                        $this->objeto = 'texto';
-                        $this->size = intval($dad_camp['COLUMN_SIZE']);
-                        $this->maximo = intval($dad_camp['COLUMN_SIZE']);
-                        $this->linhas = 3;
-                        $this->colunas = 80;
+                        if($this->size == 0){
+                            $this->objeto = 'texto';
+                            $this->size = intval($dad_camp['COLUMN_SIZE']);
+                            $this->maximo = intval($dad_camp['COLUMN_SIZE']);
+                            $this->linhas = 3;
+                            $this->colunas = 80;
+                        } else {
+                            $this->objeto = 'input';
+                            $this->tipo = 'text';
+                            $this->largura = $this->size + 5;
+                        }
                     }
                     break;
                 case 'Texto':
@@ -805,11 +816,12 @@ class MyCampo
     public function crInput(): string
     {
         $resp = '';
-        if (isset($this->objeto) && $this->objeto == 'texto') {
+        if (isset($this->objeto) && $this->objeto == 'texto'  && $this->size > 50) {
+            // debug('entrei aqui');
             $resp .= $this->crTexto();
         } else if (isset($this->objeto) && $this->objeto == 'oculto') {
             $resp .= $this->crOculto();
-        } else {
+        } else { 
             $groupant = '';
             $grouppos = '';
             $this->field = array(
@@ -1605,32 +1617,39 @@ class MyCampo
         return $resp;
     }
 
-    public function crArquivo()
+    public function crArquivo(): string
     {
-        $resp = '';
+        $resp     = '';
         $groupant = '';
         $grouppos = '';
-        if (isset($this->ordem) && strpos($this->nome, "[") == false) {
-            $this->nome     = $this->nome . "[" . $this->ordem . "]";
-            $this->id       = $this->id . "[" . $this->ordem . "]";
+
+        $this->field = [
+            'name'           => $this->nome,
+            'id'             => $this->id,
+            'data-file-type' => (isset($this->tipoArq)) ? $this->tipoArq : '.pdf,.docx',
+            'accept'         => (isset($this->tipoArq)) ? $this->tipoArq : '.pdf,.docx',
+            'style'          => "display:none",
+            'class'          => "",
+        ];
+        if ($this->leitura !== true) {
+            $groupant .= "<label id='lbl_$this->id' class='btn btn-primary' style='white-space: normal;width:" . $this->size . "px; padding:0.8em;'>";
+            if ($this->valor == '') {
+                $groupant .= "<i class=\"fas fa-file\"></i> Clique para selecionar Arquivo de $this->label";
+            } else {
+                $groupant .= "<i class=\"fas fa-file\"></i> Clique para SUBSTITUIR o Arquivo de $this->label";
+            }
+
+            $grouppos = 'arquivo';
         }
 
-        $this->field = array(
-            'name'          => $this->nome,
-            'id'            => $this->id,
-            'data-folder'     => $this->pasta,
-            'data-alter'     => false,
-            'data-label'     => $this->label,
-            'data-valor'    => $this->valor,
-            'accept'        => $this->tipoArq,
-            'data-file-type'    => $this->tipoArq,
-            'style'         => "display:none",
-            'class'         => ""
-        );
-        $this->funcChan = 'identArquivo(this)';
+        // if ($this->leitura !== true) {
+        //     $grouppos .= "</label>";
+        // }
         $this->propriedades();
 
         $campo = form_upload($this->field, $this->valor);
+        // debug($campo, true);
+        // $campo['tipo'] = 'Arquivo';
 
         $resp .= $this->fmtDisplay($campo, $groupant, $grouppos);
         return $resp;

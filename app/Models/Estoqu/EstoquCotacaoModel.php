@@ -288,7 +288,7 @@ class EstoquCotacaoModel extends Model
         $columns_sql = implode(",",$columns);
         $where = "WHERE pro_status = 'A' ";
         if ($grupo > 0) {
-            $where = "AND grc_id = $grupo ";
+            $where .= " AND grc_id = $grupo ";
         }
         $query = "
             SELECT

@@ -38,7 +38,6 @@ class EstRelMovimento extends BaseController
         $campos[0] = $this->periodo;
         $campos[1] = $this->dash_empresa;
 
-        // $colunas = ['Código', 'Solic', 'Produto','Und Compra','Data Solicitação','Quantia Solicitada','Pedido','Data Compra','Quantia Comprada','Valor Comprado','Total Comprado','Data Recebimento','Quantia Recebida','Valor Recebido','Total Recebido','Fornecedor'];
         $colunas = ['Código', 'Produto','Und Compra','Data Solicitação','Quantia Solicitada','Data Compra','Quantia Comprada','Valor Comprado','Total Comprado','Data Recebimento','Quantia Recebida','Valor Recebido','Total Recebido','Fornecedor'];
 
         $this->data['cols']     	= $colunas;  
@@ -100,7 +99,6 @@ class EstRelMovimento extends BaseController
         for($p=0;$p<count($movimentos);$p++){
             $prod = $movimentos[$p];
             $prods[$p][0] = $prod['pro_id'];
-            // $prods[$p][count($prods[$p])] = $prod['ped_id'];
             $prods[$p][count($prods[$p])] = $prod['pro_nome'];
             $prods[$p][count($prods[$p])] = $prod['und_sigla'];
             $prods[$p][count($prods[$p])] = dataDbToBr($prod['ped_data']);
@@ -109,7 +107,6 @@ class EstRelMovimento extends BaseController
                 $qtiap = formataQuantia($prod['ped_qtia'])['qtia'];
             }
             $prods[$p][count($prods[$p])] = $qtiap;
-            // $prods[$p][count($prods[$p])] = $prod['com_id'];
             $prods[$p][count($prods[$p])] = dataDbToBr($prod['com_data']);
             $qtiac = '';
             if($prod['cop_quantia'] != null){
@@ -126,6 +123,7 @@ class EstRelMovimento extends BaseController
             $qtiae = '';
             if($prod['enp_quantia'] != null){
                 $qtiae = formataQuantia($prod['enp_quantia'])['qtia'];
+                $prod['enp_total'] = $prod['enp_quantia'] * $prod['enp_valor'];
             }
             $prods[$p][count($prods[$p])] = $qtiae;
             $prods[$p][count($prods[$p])] = floatToMoeda($prod['enp_valor']);

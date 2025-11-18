@@ -352,6 +352,7 @@ class EstCompraCotacao extends BaseController
             }
             // Chama sua função normalmente
             $prod['cop_id'] = $prod['ped_id'];
+            // debug($prod);
             $camp = $this->def_campos_forn($prod, $fornec, $pro_id);// $dc agora é o pro_id (chave única do produto)
             // debug($camp, true);
             // Copia os campos dinâmicos
@@ -410,8 +411,7 @@ class EstCompraCotacao extends BaseController
      * @param mixed $id
      * @return void
      */
-    public function show($id)
-    {
+    public function show($id){
         $this->edit($id, true);
     }
 
@@ -555,15 +555,15 @@ class EstCompraCotacao extends BaseController
         $marcs = [];
         $chave = "mar_id";
         // debug($dados);
+        // debug($dados[$chave]);
         if(isset($dados[$chave]) && $dados[$chave] != null && $dados[$chave] != 0 && $dados[$chave] != '' ){
             $this->dados_mar = $this->marca->getMarca($dados[$chave]);
             $valor = $dados[$chave];
         } else {
             $this->dados_mar = $this->marca->getMarcaProd($dados['pro_id'], 'A'); // somente marcas aprovadas
         }
-        // debug($dados[$chave]);
         // debug($this->dados_mar);
-        $marcs = array_column($this->dados_mar, 'mar_nomecodbar', 'mar_id');
+        $marcs = array_column($this->dados_mar, 'mar_nome', 'mar_id');
         // debug($marcs);
         
         $marc = new MyCampo('est_cotacao_fornec', 'mar_id');
@@ -677,10 +677,11 @@ class EstCompraCotacao extends BaseController
         $ret[$chave]            = $val->crInput();
 
         $previsao = new DateTime("+1 days");
-        $chave = "cop_previsao";
+        $chave = "cof_previsao";
         if(isset($dados[$chave]) && $dados[$chave] != ''){
             $previsao = new DateTime("+".$dados[$chave]." days");
         }
+        $chave = "cop_previsao";
         $pre                        = new MyCampo('est_compra_produto', 'cop_previsao');
         $pre->valor                 = isset($dados[$chave]) ? $dados[$chave] : $previsao->format('Y-m-d');
         $pre->ordem                 = $ord;
@@ -877,7 +878,7 @@ class EstCompraCotacao extends BaseController
         $qtp->nome = $qtp->id               = "ped_qtia[$pos]";
         $qtp->ordem              = $pos;
         $qtp->tipo                  = 'quantia';
-        $qtp->label                 = 'Pedido';
+        $qtp->label                 = 'Qtia Pedido';
         $qtp->largura               = 10;
         $qtp->valor                 = $qtia['qtiv'];
         $qtp->decimal               = $qtia['dec'];
