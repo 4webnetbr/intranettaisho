@@ -63,7 +63,9 @@ class Filters extends BaseConfig
                     'criapdf2025',
                     'criapdf2025/*',
                     'public/*',
-                    'paginas/*'
+                    'paginas/*',
+                    'estsefazimportacao',
+                    'estsefazimportacao/*',
                 ]
             ],
             'limpezaAuto',

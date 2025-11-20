@@ -1,0 +1,18 @@
+{
+  "atualizacao": "2025-01-01 12:00:00",
+  "tpAmb": 2,
+  "razaosocial": "Nome da Empresa",
+  "siglaUF": "PR",
+  "cnpj": "",
+  "schemes": "PL_009_V4",
+  "versao": "4.00",
+  "tokenIBPT": "",
+  "CSC": "",
+  "CSCid": "",
+  "proxyConf": {
+    "proxyIp": "",
+    "proxyPort": "",
+    "proxyUser": "",
+    "proxyPass": ""
+  }
+}

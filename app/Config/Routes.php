@@ -202,6 +202,11 @@ $routes->get('/EstEntrada', 'Estoque\EstEntrada::index');
 $routes->get('/EstEntrada/(:any)', 'Estoque\EstEntrada::$1');
 $routes->post('/EstEntrada/(:any)', 'Estoque\EstEntrada::$1');
 
+// Controller de importação SEFAZ
+$routes->get('/EstSefazImportacao', 'Estoque\EstSefazImportacao::index');
+$routes->get('/EstSefazImportacao/(:any)', 'Estoque\EstSefazImportacao::$1');
+$routes->post('/EstSefazImportacao/(:any)', 'Estoque\EstSefazImportacao::$1');
+
 $routes->get('/EstSaida', 'Estoque\EstSaida::index');
 $routes->get('/EstSaida/(:any)', 'Estoque\EstSaida::$1');
 $routes->post('/EstSaida/(:any)', 'Estoque\EstSaida::$1');
