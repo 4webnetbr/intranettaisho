@@ -618,7 +618,7 @@ class EstSaida extends BaseController
                         // debug('Sap Id '.$dados['sap_id'][$key]);
                         // debug($dados_pro);
                         // if($dados['sap_id'][$key] != ''){
-                        //     $salva = $this->common->updateReg('dbEstoque','est_saida_produto','sap_id = '.$dados['sap_id'][$key],$dados_pro);
+                        //     $salva = $this->common->updateReg('dbEstoque','est_saida_produto','sap_id = '.$dados['sap_id'][$key],$dados_pro,$dados['sap_id'][$key]);
                         // } else {
                         $salva = $this->common->insertReg('dbEstoque', 'est_saida_produto', $dados_pro);
                         // }

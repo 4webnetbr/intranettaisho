@@ -902,7 +902,8 @@ function get_cloudfy_curl($config, $empresa, $inicio = false, $fim = false)
                     "IdentifTaxaServico" => 1,
                     "IdentifConsultaProd" => 1,
                     "IdentifConsultaFormaPagto" => 1,
-                    "IdentifConsultaProdCancelados" => 2
+                    "IdentifConsultaProdCancelados" => 2,
+                    "IdentifConsultaItens" => 1
                 )
             )
         )

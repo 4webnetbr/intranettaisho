@@ -280,7 +280,7 @@ class EstCompraNaochegou extends BaseController
                 'cop_id' => $id,
                 'cop_status' => 'C',
             ];
-            $com_exc = $this->common->updateReg('dbEstoque', 'est_compra_produto', "cop_id = " . $id, $dados_cop);
+            $com_exc = $this->common->updateReg('dbEstoque', 'est_compra_produto', "cop_id = " . $id, $dados_cop, $id);
 
             for ($pd = 0; $pd < count($pedido) ; $pd++) {
                 if($pedido[$pd] != ''){

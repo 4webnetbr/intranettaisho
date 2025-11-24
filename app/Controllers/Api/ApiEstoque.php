@@ -689,7 +689,7 @@ class ApiEstoque extends Auth
                     'cop_status' => 'R'
                 ];
                 $chave = "com_id = $compra AND pro_id = $produto";
-                $salva = $this->common->updateReg('dbEstoque', 'est_compra_produto',$chave, $dados_com);
+                $salva = $this->common->updateReg('dbEstoque', 'est_compra_produto',$chave, $dados_com, $produto);
 
                 if ($compra != null) {
                     $completo = $this->compra->getCompraVsEntrada($compra)[0];
@@ -780,7 +780,7 @@ class ApiEstoque extends Auth
 
                 try {
                     $chave = "com_id = $compra AND pro_id = $produto";
-                    $salva = $this->common->updateReg('dbEstoque', 'est_compra_produto',$chave, $dados_com);
+                    $salva = $this->common->updateReg('dbEstoque', 'est_compra_produto',$chave, $dados_com, $produto);
                     if (!$salva) {
                         // Erros de validação do Model
                         $db->transRollback();

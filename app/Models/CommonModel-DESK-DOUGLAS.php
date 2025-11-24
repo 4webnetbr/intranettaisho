@@ -57,7 +57,7 @@ class CommonModel extends Model
      * @param mixed $data 
      * @return int
      */
-    public function updateReg($grupo, $table, $chave, $data)
+    public function updateReg($grupo, $table, $chave, $data, $registro)
     {
         $db = db_connect($grupo);
         $builder = $db->table($table);
@@ -65,7 +65,6 @@ class CommonModel extends Model
 
         $update_id = $builder->update($data);
         $logdb = new LogMonModel();
-        $registro = $chave;
         $log = $logdb->insertLog($table, 'Alterado', $registro, $data);
         $sql = $db->getLastQuery();
         // log_message('info', 'Não Chegou: ' . $sql . ' Função: gravanaochegou');

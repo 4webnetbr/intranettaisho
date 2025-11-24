@@ -584,7 +584,7 @@ class EstContagem extends BaseController
             ];
             // debug($dados_pro, true);
             if ($dados['ctp_id'] != '') {
-                $salva = $this->common->updateReg('dbEstoque', 'est_contagem_produto', 'ctp_id = ' . $dados['ctp_id'], $dados_pro);
+                $salva = $this->common->updateReg('dbEstoque', 'est_contagem_produto', 'ctp_id = ' . $dados['ctp_id'], $dados_pro, $dados['ctp_id']);
                 $idctp = $dados['ctp_id'];
             } else {
                 $salva = $this->common->insertReg('dbEstoque', 'est_contagem_produto', $dados_pro);
@@ -658,7 +658,7 @@ class EstContagem extends BaseController
                     ];
                     // debug($dados_pro, true);
                     if ($dados['ctp_id'][$key] != '') {
-                        $salva = $this->common->updateReg('dbEstoque', 'est_contagem_produto', 'ctp_id = ' . $dados['ctp_id'][$key], $dados_pro);
+                        $salva = $this->common->updateReg('dbEstoque', 'est_contagem_produto', 'ctp_id = ' . $dados['ctp_id'][$key], $dados_pro, $dados['ctp_id'][$key]);
                     } else {
                         $salva = $this->common->insertReg('dbEstoque', 'est_contagem_produto', $dados_pro);
                     }

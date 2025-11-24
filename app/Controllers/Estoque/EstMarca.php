@@ -400,7 +400,7 @@ class EstMarca extends BaseController {
                         $sql_ent = [
                             'enp_conversao' => str_replace(',','.',$dados['mar_conversao']),
                         ];
-                        $salva = $this->common->updateReg('dbEstoque','est_entrada_produto',"enp_id = ".$lst_entr[$e]['enp_id'],$sql_ent);
+                        $salva = $this->common->updateReg('dbEstoque','est_entrada_produto',"enp_id = ".$lst_entr[$e]['enp_id'],$sql_ent, $lst_entr[$e]['enp_id']);
                     }
                     $saidas = new EstoquSaidaModel();
                     $lst_said = $saidas->getProdutoSaidaMarca($dados['mar_codigo'][$cvs]);
@@ -408,7 +408,7 @@ class EstMarca extends BaseController {
                         $sql_sai = [
                             'sap_conversao' => str_replace(',','.',$dados['mar_conversao']),
                         ];
-                        $salva = $this->common->updateReg('dbEstoque','est_saida_produto',"sap_id = ".$lst_said[$s]['sap_id'],$sql_sai);
+                        $salva = $this->common->updateReg('dbEstoque','est_saida_produto',"sap_id = ".$lst_said[$s]['sap_id'],$sql_sai, $lst_said[$s]['sap_id']);
                     }
                 }
             }

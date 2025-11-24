@@ -53,7 +53,7 @@ class LogMonModel
 		}
 	}
 
-	function get_logs_lastVarios($tabela, $registros, $maisAntigo = false)
+	function get_logs_lastVarios($tabela, $registros, $maisAntigo = false, $metodo = false)
 	{
 		try {
 			// Define a direção da ordenação

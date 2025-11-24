@@ -1,8 +1,9 @@
 <?php namespace App\Controllers;
 
-use App\Controllers\BaseController;
 use App\Models\CommonModel;
+use App\Controllers\BaseController;
 use App\Models\Config\ConfigApiModel;
+use App\Services\ImportacaoErpService;
 use App\Models\Config\ConfigEmpresaModel;
 
 
@@ -38,7 +39,7 @@ class IntegraCfy extends BaseController
                 debug($cupons->Error);
             if($cupons->Status != -1) {
                 $cuponsvenda = $cupons->ResultSet->CuponsVenda;
-                debug($cuponsvenda);
+                // debug($cuponsvenda);
                 if(count((array)$cuponsvenda)>0){
                     for($c=0;$c<count((array)$cuponsvenda);$c++){
                         $cupom = $cuponsvenda[$c];
@@ -81,23 +82,65 @@ class IntegraCfy extends BaseController
                 }
                 // debug($cupom, true);
             }
-            //     $dia = '';
-            //     $total = 0;
-            //         // debug($cupom);
-            //         if($dia != $cupom->DataMovimento){
-            //             if($dia != ''){
-            //                 $this->data['empresa'][$e]['faturamento']['dia'] = $dia;
-            //                 $this->data['empresa'][$e]['faturamento']['total'] = $total;
-            //             }
-            //             $total = 0;
-            //             $dia = $cupom->DataMovimento;
-            //         }
-            //         $total += floatval($cupom->VlrTotal);
-            //     }
-            //     $this->data['empresa'][$e]['faturamento']['dia'] = $dia;
-            //     $this->data['empresa'][$e]['faturamento']['total'] = $total;
-            // }
         }
+
+        // INTEGRAR COMPRAS
+        $api['api_nome']        = 'CFYCC892';
+        $api['api_acckey']      = $apis[0]['api_acckey'];
+        $api['api_tokenkey']    = $apis[0]['api_tokenkey'];
+        $api['api_login']       = $apis[0]['api_login'];
+        $api['api_usuario']     = $apis[0]['api_usuario'];
+        $emp = $dados_emp[0];
+        $inicio = '20251101';
+        $fim = '20251124';
+
+        $compras = get_cloudfy_curl($api, $emp, $inicio, $fim);
+        debug($compras);
+
+        $service = new ImportacaoErpService();
+
+        // Verificações mínimas
+        if (
+            empty($compras) ||
+            !isset($compras->ResultSet) ||
+            !isset($compras->ResultSet->Compras) ||
+            !is_array($compras->ResultSet->Compras)
+        ) {
+            echo "Nenhuma compra encontrada.";
+            return;
+        }
+
+        // Loop das compras
+        foreach ($compras->ResultSet->Compras as $compra) {
+
+            // Importa UMA nota por vez
+            $ret = $service->importar($emp['emp_id'], $compra);
+
+            // 🔥 Log / retorno
+            $chaveLog = $ret['chave'] ?: '(sem chave)';
+
+            if ($ret['sucesso']) {
+
+                log_message(
+                    'info',
+                    "NF-e {$chaveLog} importada com sucesso ({$ret['acao']})."
+                );
+
+                debug("NF-e {$chaveLog} importada com sucesso ({$ret['acao']}).");
+
+            } else {
+
+                $erro = implode(' | ', $ret['erros']);
+
+                log_message(
+                    'error',
+                    "Erro ao importar NF-e {$chaveLog}: {$erro}"
+                );
+
+                debug("Erro ao importar NF-e {$chaveLog}: {$erro}");
+            }
+        }
+
         debug('Acabou');
     }
 }

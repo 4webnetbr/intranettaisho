@@ -687,7 +687,7 @@ class EstEntrada extends BaseController
                             'enp_atualizado' => $data_atu
                         ];
                         // if($dados['enp_id'][$key] != ''){
-                        //     $salva = $this->common->updateReg('dbEstoque','est_entrada_produto','enp_id = '.$dados['enp_id'][$key],$dados_pro);
+                        //     $salva = $this->common->updateReg('dbEstoque','est_entrada_produto','enp_id = '.$dados['enp_id'][$key],$dados_pro,$dados['enp_id'][$key]);
                         // } else {
                         $salva = $this->common->insertReg('dbEstoque', 'est_entrada_produto', $dados_pro);
                         // }
