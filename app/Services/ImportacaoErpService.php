@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Estoqu\EstoquNfeEntradaModel;
 use App\Models\Estoqu\EstoquNfeEntradaProdutosModel;
 use App\Models\Estoqu\EstoquFornecedorModel;
-use CodeIgniter\I18n\Time;
 
 class ImportacaoErpService
 {
@@ -21,166 +20,252 @@ class ImportacaoErpService
     }
 
     /**
-     * IMPORTA TODAS AS NFEs DO ERP
+     * Importa UMA NF-e
      */
-    public function importar(int $emp_id, object $apiResult): array
+    public function importar(int $emp_id, object $compra): array
     {
-        $resumo = [
-            'empresa'          => $emp_id,
-            'total'            => 0,
-            'novas'            => 0,
-            'atualizadas'      => 0,
-            'erros'            => [],
-        ];
+        $chave = $compra->ChaveNF ?? null;
 
-        // Validação básica
-        if (
-            !is_object($apiResult) ||
-            !isset($apiResult->ResultSet) ||
-            !isset($apiResult->ResultSet->Compras) ||
-            !is_array($apiResult->ResultSet->Compras)
-        ) {
-            $resumo['erros'][] = "Retorno inválido da API";
-            return $resumo;
+        try {
+            $acao = $this->importarCompra($emp_id, $compra);
+
+            return [
+                'sucesso' => true,
+                'acao'    => $acao,
+                'chave'   => $chave,
+                'erros'   => [],
+            ];
+        } 
+        catch (\Throwable $e) {
+
+            log_message('error', 
+                "ERRO AO IMPORTAR NF-e: ".$e->getMessage().
+                " | COMPRA: " . json_encode($compra, JSON_UNESCAPED_UNICODE)
+            );
+            debug( 
+                "ERRO AO IMPORTAR NF-e: ".$e->getMessage().
+                " | COMPRA: " . json_encode($compra, JSON_UNESCAPED_UNICODE)
+            );
+
+            return [
+                'sucesso' => false,
+                'acao'    => null,
+                'chave'   => $chave,
+                'erros'   => [$e->getMessage()],
+            ];
         }
-
-        foreach ($apiResult->ResultSet->Compras as $compra) {
-            $resumo['total']++;
-
-            try {
-                $ret = $this->importarCompra($emp_id, $compra);
-
-                if ($ret === 'novo') {
-                    $resumo['novas']++;
-                } elseif ($ret === 'atualizado') {
-                    $resumo['atualizadas']++;
-                }
-            } catch (\Throwable $e) {
-                $resumo['erros'][] = "Erro ao importar NF-e " .
-                    ($compra->ChaveNF ?? '(sem chave)') . ': ' . $e->getMessage();
-            }
-        }
-
-        return $resumo;
     }
 
+
     /**
-     * IMPORTA UMA ÚNICA NFE
+     * Lógica interna da importação
      */
     protected function importarCompra(int $emp_id, object $c): string
     {
-        //  🔹 Chave pode vir vazia → não quebra mais
-        $chave = $c->ChaveNF ?? null;
+        try {
 
-        //  🔹 Datas — formato YYYYMMDD
-        $dataCompra   = $this->formatarData($c->DataCompra ?? null);
-        $dataEntrada  = $dataCompra; // entrada = compra, porque o ERP não manda dhRecbto
+            // 1️⃣ Chave NF-e segura
+            $chave = $c->ChaveNF ?? null;
 
-        // 🔹 Busca fornecedor
-        $cnpjFor = preg_replace('/\D/', '', ($c->CPFCNPJFornecedor ?? ''));
+            // 2️⃣ Datas
+            $dataCompra   = $this->formatarData($c->DataCompra ?? null);
+            $dataEntrada  = $dataCompra;
 
-        $for = null;
-        if (!empty($cnpjFor)) {
-            $for = $this->fornecedorModel->getFornecedorCNPJ($cnpjFor);
-        }
+            // 3️⃣ Fornecedor
+            debug($c->CPFCNPJFornecedor);
+            $cnpjFor = preg_replace('/\D/', '', ($c->CPFCNPJFornecedor ?? ''));
 
-        // 🔹 Dados do cabeçalho
-        $dados = [
-            'emp_id'               => $emp_id,
-            'nfe_chave'            => $chave,
-            'nfe_modelo'           => 55, // o ERP já traz somente NF-e
-            'nfe_serie'            => null,
-            'nfe_numero'           => $c->NrDoc ?? null,
-            'nfe_data_emissao'     => $dataCompra,
-            'nfe_data_entrada'     => $dataEntrada,
-            'for_id'               => $for['for_id'] ?? null,
-            'nfe_valor_total'      => $c->VlrTotal ?? $c->VlrTotalItens ?? 0,
-            'nfe_xml'              => null,     // não vem da API
-            'nfe_resumo'           => json_encode($c, JSON_UNESCAPED_UNICODE),
-            'nfe_protocolo'        => null,
-            'nfe_tipo_evento'      => null,
-            'nfe_status'           => 1,
-            'nfe_fornecedor_nome'  => $c->Fornecedor ?? '',
-            'nfe_fornecedor_cnpj'  => $cnpjFor,
-        ];
-
-        // 🔹 Verifica se já existe
-        $existente = null;
-        if ($chave) {
-            $existente = $this->nfeEntradaModel
-                ->where('emp_id', $emp_id)
-                ->where('nfe_chave', $chave)
-                ->first();
-        }
-
-        $acao = 'novo';
-
-        if ($existente) {
-            $dados['nfe_id'] = $existente['nfe_id'];
-            $acao = 'atualizado';
-        }
-
-        // 🔹 Salva cabeçalho
-        $this->nfeEntradaModel->save($dados);
-
-        $nfe_id = $existente
-            ? $existente['nfe_id']
-            : $this->nfeEntradaModel->getInsertID();
-
-        // 🔹 Remove itens antigos
-        $this->nfeProdutosModel
-            ->where('nfe_id', $nfe_id)
-            ->delete();
-
-        // 🔹 Grava itens
-        if (isset($c->Itens) && is_array($c->Itens)) {
-            foreach ($c->Itens as $item) {
-                $this->salvarItem($nfe_id, $item);
+            try {
+                $for = (!empty($cnpjFor))
+                    ? $this->fornecedorModel->getFornecedorCNPJ($cnpjFor)
+                    : null;
             }
-        }
+            catch (\Throwable $e) {
+                log_message('error',
+                    "ERRO AO BUSCAR FORNECEDOR: ".$e->getMessage().
+                    " | CNPJ: $cnpjFor"
+                );
+                debug(
+                    "ERRO AO BUSCAR FORNECEDOR: ".$e->getMessage().
+                    " | CNPJ: $cnpjFor"
+                );
+                $for = null;
+            }
 
-        return $acao;
+            // 4️⃣ Cabeçalho completo
+            try {
+                $dados = [
+                    'emp_id'               => $emp_id,
+                    'nfe_chave'            => $chave,
+                    'nfe_modelo'           => 55,
+                    'nfe_serie'            => null,
+                    'nfe_numero'           => $c->NrDoc ?? null,
+                    'nfe_data_emissao'     => $dataCompra,
+                    'nfe_data_entrada'     => $dataEntrada,
+                    'for_id'               => $for['for_id'] ?? null,
+                    'nfe_valor_total'      => $c->VlrTotal ?? $c->VlrTotalItens ?? 0,
+                    'nfe_xml'              => null,
+                    'nfe_resumo'           => json_encode($c, JSON_UNESCAPED_UNICODE),
+                    'nfe_protocolo'        => null,
+                    'nfe_tipo_evento'      => null,
+                    'nfe_status'           => 1,
+                    'nfe_fornecedor_nome'  => $c->Fornecedor ?? '',
+                    'nfe_fornecedor_cnpj'  => $cnpjFor,
+                ];
+            }
+            catch (\Throwable $e) {
+                throw new \Exception("ERRO AO MONTAR CABEÇALHO NFE: ".$e->getMessage());
+            }
+
+            // 5️⃣ Verifica existente
+            try {
+                $existente = null;
+
+                if ($chave) {
+                    $existente = $this->nfeEntradaModel
+                        ->where('emp_id', $emp_id)
+                        ->where('nfe_chave', $chave)
+                        ->first();
+                }
+            }
+            catch (\Throwable $e) {
+                throw new \Exception("ERRO AO CONSULTAR NOTA EXISTENTE: ".$e->getMessage());
+            }
+
+
+            // 6️⃣ Insere ou atualiza cabeçalho
+            try {
+
+                $acao = 'novo';
+
+                if ($existente && isset($existente['nfe_id'])) {
+                    $dados['nfe_id'] = $existente['nfe_id'];
+                    $acao = 'atualizado';
+                }
+
+                $this->nfeEntradaModel->save($dados);
+
+                $nfe_id = $existente['nfe_id'] 
+                        ?? $this->nfeEntradaModel->getInsertID();
+
+            }
+            catch (\Throwable $e) {
+                throw new \Exception(
+                    "ERRO AO SALVAR CABEÇALHO NFE: ".$e->getMessage() .
+                    " | DADOS: " . json_encode($dados, JSON_UNESCAPED_UNICODE)
+                );
+            }
+
+
+            // 7️⃣ Remove itens antigos
+            debug($nfe_id);
+            try {
+                $this->nfeProdutosModel
+                    ->where('nfe_id', $nfe_id)
+                    ->delete();
+            }
+            catch (\Throwable $e) {
+                throw new \Exception("ERRO AO LIMPAR ITENS ANTIGOS: ".$e->getMessage());
+            }
+
+
+            // 8️⃣ Insere novos itens
+            if (!empty($c->Itens) && is_array($c->Itens)) {
+
+                foreach ($c->Itens as $item) {
+
+                    try {
+                        $this->salvarItem($nfe_id, $item);
+                    }
+                    catch (\Throwable $e) {
+                        throw new \Exception(
+                            "ERRO AO SALVAR ITEM DA NF-e: ".$e->getMessage().
+                            " | ITEM: " . json_encode($item, JSON_UNESCAPED_UNICODE)
+                        );
+                    }
+                }
+            }
+
+            return $acao;
+        }
+        catch (\Throwable $e) {
+
+            log_message('error',
+                "ERRO GERAL AO PROCESSAR COMPRA: ".$e->getMessage() .
+                " | COMPRA: " . json_encode($c, JSON_UNESCAPED_UNICODE)
+            );
+            debug(
+                "ERRO GERAL AO PROCESSAR COMPRA: ".$e->getMessage() .
+                " | COMPRA: " . json_encode($c, JSON_UNESCAPED_UNICODE)
+            );
+
+            throw $e;
+        }
     }
 
+
     /**
-     * SALVA ITEM DA NOTA
+     * SALVA UM ITEM
      */
     protected function salvarItem(int $nfe_id, object $i): void
     {
-        $this->nfeProdutosModel->insert([
-            'nfe_id'             => $nfe_id,
-            'nfp_numero_item'    => $i->NrItem ?? null,
-            'nfp_codigo_produto' => $i->CodBarras ?? '',
-            'nfp_descricao'      => $i->ItemCompra ?? '',
-            'nfp_ncm'            => $i->NCM ?? null,
-            'nfp_cfop'           => $i->CFOP ?? null,
-            'nfp_unidade'        => $i->UndMedidaCompra ?? '',
-            'nfp_quantidade'     => $i->Qtde ?? 0,
-            'nfp_valor_unitario' => $i->VlrUnit ?? $i->VlrUnitIntegrado ?? 0,
-            'nfp_valor_total'    => $i->VlrBruto ?? $i->ValorTotal ?? 0,
-            'nfp_origem'         => null,
-            'nfp_cst'            => null,
-            'nfp_csosn'          => null,
-            'nfp_icms'           => null,
-            'nfp_ipi'            => null,
-            'nfp_pis'            => null,
-            'nfp_cofins'         => null,
-        ]);
+        try {
+
+            // normalização do valor total
+            $valorTotal = $i->VlrBruto
+                ?? ($i->{'Valor total'} ?? null)
+                ?? ($i->ValorTotal ?? 0);
+
+            $dadosItem = [
+                'nfe_id'             => $nfe_id,
+                'nfp_numero_item'    => $i->NrItem ?? null,
+                'nfp_codigo_produto' => $i->CodBarras ?? '',
+                'nfp_descricao'      => $i->ItemCompra ?? '',
+                'nfp_ncm'            => $i->NCM ?? null,
+                'nfp_cfop'           => $i->CFOP ?? null,
+                'nfp_unidade'        => $i->UndMedidaCompra ?? '',
+                'nfp_quantidade'     => $i->Qtde ?? 0,
+                'nfp_valor_unitario' => $i->VlrUnit ?? $i->VlrUnitIntegrado ?? 0,
+                'nfp_valor_total'    => $valorTotal,
+                'nfp_origem'         => null,
+                'nfp_cst'            => null,
+                'nfp_csosn'          => null,
+                'nfp_icms'           => null,
+                'nfp_ipi'            => null,
+                'nfp_pis'            => null,
+                'nfp_cofins'         => null,
+            ];
+
+            $this->nfeProdutosModel->insert($dadosItem);
+        }
+        catch (\Throwable $e) {
+
+            throw new \Exception(
+                "Erro ao inserir item: ".$e->getMessage().
+                " | DADOS: ".json_encode($dadosItem ?? [], JSON_UNESCAPED_UNICODE)
+            );
+        }
     }
 
+
     /**
-     * FORMATA DATA YYYYMMDD → YYYY-MM-DD
+     * Formata data YYYYMMDD
      */
     protected function formatarData(?string $data): ?string
     {
-        if (!$data || strlen($data) !== 8) {
+        try {
+            if (!$data || strlen($data) !== 8) {
+                return null;
+            }
+
+            return substr($data, 0, 4) . "-" .
+                   substr($data, 4, 2) . "-" .
+                   substr($data, 6, 2) . " 00:00:00";
+        }
+        catch (\Throwable $e) {
+            log_message('error', "ERRO AO FORMATAR DATA: ".$e->getMessage()." | DATA RAW: $data");
+            debug("ERRO AO FORMATAR DATA: ".$e->getMessage()." | DATA RAW: $data");
             return null;
         }
-
-        $ano  = substr($data, 0, 4);
-        $mes  = substr($data, 4, 2);
-        $dia  = substr($data, 6, 2);
-
-        return "$ano-$mes-$dia 00:00:00";
     }
 }

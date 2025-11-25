@@ -14,7 +14,7 @@ class EstoquNfeEntradaModel extends Model
     protected $useAutoIncrement = true;
 
     protected $returnType       = 'array';
-    protected $useSoftDeletes   = true;
+    protected $useSoftDeletes   = false;
 
     protected $allowedFields = [
         'nfe_id',
@@ -41,10 +41,9 @@ class EstoquNfeEntradaModel extends Model
         'nfe_tipo_evento',
         'nfe_status',
 
-        'nfe_excluido',
     ];
 
-    protected $deletedField = 'nfe_excluido';
+    // protected $deletedField = 'nfe_excluido';
 
     protected $allowCallbacks = true;
     protected $afterInsert   = ['depoisInsert'];

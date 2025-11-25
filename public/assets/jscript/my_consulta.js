@@ -1435,7 +1435,7 @@ function carrega_lista_cotacao(obj, url, nome) {
   bloqueiaTela();
 
   const param = jQuery("#empresa").val();
-  const param2 = jQuery("#grc_id").val();
+  const param2 = jQuery("#grc_id\\[\\]").val();
   url = `${url}?param=${param}&param2=${param2}`;
 
   cotacaoRequest = jQuery.ajax({

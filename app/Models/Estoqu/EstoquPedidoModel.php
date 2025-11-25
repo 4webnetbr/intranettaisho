@@ -332,8 +332,15 @@ public function getProdutosCotados($empresa = false, $grc_id = false)
         }
     }
 
-    if ($grc_id) {
-        $where[] = "grc_id = " . intval($grc_id);
+    if (!empty($grc_id)) {
+        if (is_array($grc_id)) {
+            // Escapa e converte cada valor para inteiro
+            $ids = array_map('intval', $grc_id);
+            $where[] = "grc_id IN (" . implode(',', $ids) . ")";
+        } else {
+            // Trata como string ou inteiro
+            $where[] = "grc_id = " . intval($grc_id);
+        }
     }
 
     $whereSql = $where ? ' AND ' . implode(' AND ', $where) : '';

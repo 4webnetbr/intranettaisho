@@ -94,52 +94,51 @@ class IntegraCfy extends BaseController
         $inicio = '20251101';
         $fim = '20251124';
 
+        // Chama a API do ERP
         $compras = get_cloudfy_curl($api, $emp, $inicio, $fim);
-        debug($compras);
-
+        // debug($compras);
+            
         $service = new ImportacaoErpService();
 
-        // Verificações mínimas
-        if (
-            empty($compras) ||
-            !isset($compras->ResultSet) ||
-            !isset($compras->ResultSet->Compras) ||
-            !is_array($compras->ResultSet->Compras)
-        ) {
-            echo "Nenhuma compra encontrada.";
-            return;
-        }
-
-        // Loop das compras
-        foreach ($compras->ResultSet->Compras as $compra) {
-
-            // Importa UMA nota por vez
-            $ret = $service->importar($emp['emp_id'], $compra);
-
-            // 🔥 Log / retorno
-            $chaveLog = $ret['chave'] ?: '(sem chave)';
-
-            if ($ret['sucesso']) {
-
-                log_message(
-                    'info',
-                    "NF-e {$chaveLog} importada com sucesso ({$ret['acao']})."
-                );
-
-                debug("NF-e {$chaveLog} importada com sucesso ({$ret['acao']}).");
-
-            } else {
-
-                $erro = implode(' | ', $ret['erros']);
-
-                log_message(
-                    'error',
-                    "Erro ao importar NF-e {$chaveLog}: {$erro}"
-                );
-
-                debug("Erro ao importar NF-e {$chaveLog}: {$erro}");
+            // Verificações mínimas do retorno
+            if (
+                empty($compras) ||
+                !isset($compras->ResultSet) ||
+                !isset($compras->ResultSet->Compras) ||
+                !is_array($compras->ResultSet->Compras)
+            ) {
+                echo "Nenhuma compra encontrada.";
+                return;
             }
-        }
+
+            foreach ($compras->ResultSet->Compras as $compra) {
+
+                // Importa UMA nota por vez
+                $ret = $service->importar($emp['emp_id'], $compra);
+
+                $chaveLog = isset($ret['ChaveNF']) ?? '(sem chave)';
+
+                if ($ret['sucesso']) {
+
+                    log_message(
+                        'info',
+                        "NF-e {$chaveLog} importada com sucesso ({$ret['acao']})."
+                    );
+
+                    debug("NF-e {$chaveLog} importada com sucesso ({$ret['acao']}).");
+
+                } else {
+
+                    $erro = implode(' | ', $ret['erros']);
+                    debug($compra);
+                    log_message(
+                        'error',
+                        "Erro ao importar NF-e {$chaveLog}: {$erro}"
+                    );
+
+                    debug("Erro ao importar NF-e {$chaveLog}: {$erro}");
+                }
+            }
 
         debug('Acabou');
     }

@@ -152,13 +152,14 @@ class EstCompraCotacao extends BaseController
         $grucs = ['0' => ':: Todos ::'] + $grucs;
 
         $grc                        = new MyCampo('est_produto', 'grc_id');
-        $grc->valor = $grc->selecionado = '1';
+        $grc->valor                 = '1';
+        $grc->selecionado           = [1];
         $grc->label                 = 'Grupo';
         $grc->opcoes                = $grucs;
         $grc->largura               = 40;
         $grc->dispForm              = 'col-6 linha';
         $grc->funcChan              = "carrega_lista_cotacao(this, '" . base_url($this->data['controler'] . '/listaadd') . "','produtos');";
-        $this->grupo                = $grc->crSelect();
+        $this->grupo                = $grc->crMultiple();
 
         $fornec = [];
         // $fornecedor = new EstoquFornecedorModel();
@@ -280,7 +281,10 @@ class EstCompraCotacao extends BaseController
         if ($param2 == 'undefined' || $param2 == -1 || $param2 == 0) {
             $param2 = false;
         }
-
+        if($param2){
+            $param2 = explode(',', $param2); 
+        }
+        // debug($param2, true);
         $empresas = explode(',', $param);
         $produtos = $this->pedido->getProdutosCotados($empresas[0], $param2);
         // debug($produtos, true);

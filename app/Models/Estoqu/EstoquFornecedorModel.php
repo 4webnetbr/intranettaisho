@@ -139,6 +139,7 @@ class EstoquFornecedorModel extends Model
 
         $builder->orderBy("for_fantasia");
         $ret = $builder->get()->getResultArray();
+        debug($this->db->getLastQuery(), false);
 
         return $ret;
     }

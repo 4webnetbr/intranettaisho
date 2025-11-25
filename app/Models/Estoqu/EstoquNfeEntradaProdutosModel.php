@@ -14,7 +14,7 @@ class EstoquNfeEntradaProdutosModel extends Model
     protected $useAutoIncrement = true;
 
     protected $returnType       = 'array';
-    protected $useSoftDeletes   = true;
+    protected $useSoftDeletes   = false;
 
     protected $allowedFields = [
         'nfp_id',
@@ -39,10 +39,9 @@ class EstoquNfeEntradaProdutosModel extends Model
         'nfp_pis',
         'nfp_cofins',
 
-        'nfp_excluido',
     ];
 
-    protected $deletedField = 'nfp_excluido';
+    // protected $deletedField = 'nfp_excluido';
 
     protected $allowCallbacks = true;
     protected $afterInsert   = ['depoisInsert'];
@@ -51,28 +50,48 @@ class EstoquNfeEntradaProdutosModel extends Model
 
     protected function depoisInsert(array $data)
     {
+        if (!isset($data['id'])) {
+            return $data;
+        }
+
         $log = new LogMonModel();
-        $registro = $data['id'];
-        $log->insertLog($this->table, 'Incluído', $registro, $data['data']);
+        $registro = is_array($data['id']) ? ($data['id'][0] ?? null) : $data['id'];
+
+        if ($registro) {
+            $log->insertLog($this->table, 'Incluído', $registro, $data['data'] ?? []);
+        }
+
         return $data;
     }
 
     protected function depoisUpdate(array $data)
     {
+        if (!isset($data['id']) || empty($data['id'][0])) {
+            return $data; // update sem ID
+        }
+
         $log = new LogMonModel();
         $registro = $data['id'][0];
-        $log->insertLog($this->table, 'Alterado', $registro, $data['data']);
+
+        $log->insertLog($this->table, 'Alterado', $registro, $data['data'] ?? []);
+
         return $data;
     }
 
     protected function depoisDelete(array $data)
     {
+        // Quando não existe nada a excluir, o CI4 manda id = null
+        if (!isset($data['id']) || empty($data['id'][0])) {
+            return $data; // nada a logar
+        }
+
         $log = new LogMonModel();
         $registro = $data['id'][0];
-        $log->insertLog($this->table, 'Excluído', $registro, $data['data']);
+
+        $log->insertLog($this->table, 'Excluído', $registro, $data['data'] ?? []);
+
         return $data;
     }
-
     /**
      * Retorna produtos de uma NF específica
      */
