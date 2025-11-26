@@ -43,55 +43,55 @@ class EstoquNfeEntradaProdutosModel extends Model
 
     // protected $deletedField = 'nfp_excluido';
 
-    protected $allowCallbacks = true;
-    protected $afterInsert   = ['depoisInsert'];
-    protected $afterUpdate   = ['depoisUpdate'];
-    protected $afterDelete   = ['depoisDelete'];
+    // protected $allowCallbacks = true;
+    // protected $afterInsert   = ['depoisInsert'];
+    // protected $afterUpdate   = ['depoisUpdate'];
+    // protected $afterDelete   = ['depoisDelete'];
 
-    protected function depoisInsert(array $data)
-    {
-        if (!isset($data['id'])) {
-            return $data;
-        }
+    // protected function depoisInsert(array $data)
+    // {
+    //     if (!isset($data['id'])) {
+    //         return $data;
+    //     }
 
-        $log = new LogMonModel();
-        $registro = is_array($data['id']) ? ($data['id'][0] ?? null) : $data['id'];
+    //     $log = new LogMonModel();
+    //     $registro = is_array($data['id']) ? ($data['id'][0] ?? null) : $data['id'];
 
-        if ($registro) {
-            $log->insertLog($this->table, 'Incluído', $registro, $data['data'] ?? []);
-        }
+    //     if ($registro) {
+    //         $log->insertLog($this->table, 'Incluído', $registro, $data['data'] ?? []);
+    //     }
 
-        return $data;
-    }
+    //     return $data;
+    // }
 
-    protected function depoisUpdate(array $data)
-    {
-        if (!isset($data['id']) || empty($data['id'][0])) {
-            return $data; // update sem ID
-        }
+    // protected function depoisUpdate(array $data)
+    // {
+    //     if (!isset($data['id']) || empty($data['id'][0])) {
+    //         return $data; // update sem ID
+    //     }
 
-        $log = new LogMonModel();
-        $registro = $data['id'][0];
+    //     $log = new LogMonModel();
+    //     $registro = $data['id'][0];
 
-        $log->insertLog($this->table, 'Alterado', $registro, $data['data'] ?? []);
+    //     $log->insertLog($this->table, 'Alterado', $registro, $data['data'] ?? []);
 
-        return $data;
-    }
+    //     return $data;
+    // }
 
-    protected function depoisDelete(array $data)
-    {
-        // Quando não existe nada a excluir, o CI4 manda id = null
-        if (!isset($data['id']) || empty($data['id'][0])) {
-            return $data; // nada a logar
-        }
+    // protected function depoisDelete(array $data)
+    // {
+    //     // Quando não existe nada a excluir, o CI4 manda id = null
+    //     if (!isset($data['id']) || empty($data['id'][0])) {
+    //         return $data; // nada a logar
+    //     }
 
-        $log = new LogMonModel();
-        $registro = $data['id'][0];
+    //     $log = new LogMonModel();
+    //     $registro = $data['id'][0];
 
-        $log->insertLog($this->table, 'Excluído', $registro, $data['data'] ?? []);
+    //     $log->insertLog($this->table, 'Excluído', $registro, $data['data'] ?? []);
 
-        return $data;
-    }
+    //     return $data;
+    // }
     /**
      * Retorna produtos de uma NF específica
      */

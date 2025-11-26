@@ -43,8 +43,8 @@ class ImportacaoErpService
                 " | COMPRA: " . json_encode($compra, JSON_UNESCAPED_UNICODE)
             );
             debug( 
-                "ERRO AO IMPORTAR NF-e: ".$e->getMessage().
-                " | COMPRA: " . json_encode($compra, JSON_UNESCAPED_UNICODE)
+                "ERRO AO IMPORTAR NF-e: ".$e->getMessage()
+                // " | COMPRA: " . json_encode($compra, JSON_UNESCAPED_UNICODE)
             );
 
             return [
@@ -72,7 +72,7 @@ class ImportacaoErpService
             $dataEntrada  = $dataCompra;
 
             // 3️⃣ Fornecedor
-            debug($c->CPFCNPJFornecedor);
+            debug('CNPJ '.$c->CPFCNPJFornecedor);
             $cnpjFor = preg_replace('/\D/', '', ($c->CPFCNPJFornecedor ?? ''));
 
             try {
@@ -102,7 +102,7 @@ class ImportacaoErpService
                     'nfe_numero'           => $c->NrDoc ?? null,
                     'nfe_data_emissao'     => $dataCompra,
                     'nfe_data_entrada'     => $dataEntrada,
-                    'for_id'               => $for['for_id'] ?? null,
+                    'for_id'               => $for[0]['for_id'] ?? null,
                     'nfe_valor_total'      => $c->VlrTotal ?? $c->VlrTotalItens ?? 0,
                     'nfe_xml'              => null,
                     'nfe_resumo'           => json_encode($c, JSON_UNESCAPED_UNICODE),
@@ -195,8 +195,9 @@ class ImportacaoErpService
                 " | COMPRA: " . json_encode($c, JSON_UNESCAPED_UNICODE)
             );
             debug(
-                "ERRO GERAL AO PROCESSAR COMPRA: ".$e->getMessage() .
-                " | COMPRA: " . json_encode($c, JSON_UNESCAPED_UNICODE)
+                "ERRO GERAL AO PROCESSAR COMPRA: ".$e->getMessage()
+                //  .
+                // " | COMPRA: " . json_encode($c, JSON_UNESCAPED_UNICODE)
             );
 
             throw $e;

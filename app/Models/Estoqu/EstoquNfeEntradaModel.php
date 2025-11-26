@@ -19,63 +19,56 @@ class EstoquNfeEntradaModel extends Model
     protected $allowedFields = [
         'nfe_id',
         'emp_id',
-
         'nfe_chave',
         'nfe_modelo',
         'nfe_serie',
         'nfe_numero',
-
         'nfe_data_emissao',
         'nfe_data_entrada',
-
-        'nfe_emit_cnpj',
-        'nfe_emit_nome',
-        'nfe_dest_cnpj',
-        'nfe_dest_nome',
-
+        'for_id',
+        'nfe_fornecedor_nome',
+        'nfe_fornecedor_cnpj',
         'nfe_valor_total',
         'nfe_xml',
-
         'nfe_resumo',
         'nfe_protocolo',
         'nfe_tipo_evento',
         'nfe_status',
-
     ];
 
     // protected $deletedField = 'nfe_excluido';
 
-    protected $allowCallbacks = true;
-    protected $afterInsert   = ['depoisInsert'];
-    protected $afterUpdate   = ['depoisUpdate'];
-    protected $afterDelete   = ['depoisDelete'];
+    // protected $allowCallbacks = true;
+    // protected $afterInsert   = ['depoisInsert'];
+    // protected $afterUpdate   = ['depoisUpdate'];
+    // protected $afterDelete   = ['depoisDelete'];
 
     /**
      * Logs
      */
-    protected function depoisInsert(array $data)
-    {
-        $log = new LogMonModel();
-        $registro = $data['id'];
-        $log->insertLog($this->table, 'Incluído', $registro, $data['data']);
-        return $data;
-    }
+    // protected function depoisInsert(array $data)
+    // {
+    //     $log = new LogMonModel();
+    //     $registro = $data['id'];
+    //     $log->insertLog($this->table, 'Incluído', $registro, $data['data']);
+    //     return $data;
+    // }
 
-    protected function depoisUpdate(array $data)
-    {
-        $log = new LogMonModel();
-        $registro = $data['id'][0];
-        $log->insertLog($this->table, 'Alterado', $registro, $data['data']);
-        return $data;
-    }
+    // protected function depoisUpdate(array $data)
+    // {
+    //     $log = new LogMonModel();
+    //     $registro = $data['id'][0];
+    //     $log->insertLog($this->table, 'Alterado', $registro, $data['data']);
+    //     return $data;
+    // }
 
-    protected function depoisDelete(array $data)
-    {
-        $log = new LogMonModel();
-        $registro = $data['id'][0];
-        $log->insertLog($this->table, 'Excluído', $registro, $data['data']);
-        return $data;
-    }
+    // protected function depoisDelete(array $data)
+    // {
+    //     $log = new LogMonModel();
+    //     $registro = $data['id'][0];
+    //     $log->insertLog($this->table, 'Excluído', $registro, $data['data']);
+    //     return $data;
+    // }
 
     /**
      * getEntrada
