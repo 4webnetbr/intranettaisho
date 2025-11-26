@@ -538,7 +538,7 @@ class EstCompraNaochegou extends BaseController
             'cop_status'   => 'P',
             'cop_atualizado' => $data_atu
         ];
-        $salva = $this->common->updateReg('dbEstoque', 'est_compra_produto', 'cop_id ='.$dados['cop_id'][0], $dados_pro);
+        $salva = $this->common->updateReg('dbEstoque', 'est_compra_produto', 'cop_id ='.$dados['cop_id'][0], $dados_pro,$dados['cop_id'][0]);
         $cop_id = $salva;
         if (!$salva) {
             $ret['erro'] = true;
