@@ -120,22 +120,25 @@ document.addEventListener('DOMContentLoaded', function () {
     // Recupera o valor salvo do localStorage
     const savedEmpresa = localStorage.getItem('empresaSelecionada');
 
-    // Aplica o valor salvo a todos os selects encontrados
-    selects.forEach(function (select) {
-      if(savedEmpresa != null){
-        if (savedEmpresa != select.value) {
-            select.value = savedEmpresa;
-            jQuery(select).selectpicker('val',savedEmpresa);
-            jQuery(select).trigger('change');
+    if(parseInt(savedEmpresa) > 0){
+
+      // Aplica o valor salvo a todos os selects encontrados
+      selects.forEach(function (select) {
+        if(savedEmpresa != null){
+          if (savedEmpresa != select.value) {
+              select.value = savedEmpresa;
+              jQuery(select).selectpicker('val',savedEmpresa);
+              jQuery(select).trigger('change');
+          }
         }
-      }
-      // Evento de mudança para salvar o valor
-      select.addEventListener('change', function () {
-          localStorage.setItem('empresaSelecionada', this.value);
-          document.cookie = "empresaSelecionada=" + localStorage.getItem('empresaSelecionada');
-          console.log('Empresa selecionada:', this.value); // DEBUG
+        // Evento de mudança para salvar o valor
+        select.addEventListener('change', function () {
+            localStorage.setItem('empresaSelecionada', this.value);
+            document.cookie = "empresaSelecionada=" + localStorage.getItem('empresaSelecionada');
+            console.log('Empresa selecionada:', this.value); // DEBUG
+        });
       });
-    });
+    }
 });
 
 </script>
