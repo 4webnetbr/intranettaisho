@@ -69,7 +69,7 @@ class EstCotacao extends BaseController
         $this->def_campos_lista();
 
         $this->data['nome']         = 'cotacao';
-        $this->data['colunas']      = montaColunasLista($this->data, 'cot_id','d');
+        $this->data['colunas']      = montaColunasLista($this->data, 'cot_id', 'd');
         $this->data['url_lista']    = base_url($this->data['controler'] . '/lista_prod');
         // $this->data['script']       = "<script>carrega_lista('empresa', '" . $this->data['url_lista'] . "','" . $this->data['nome'] . "');</script>";
         echo view('vw_lista_details', $this->data);
@@ -117,6 +117,7 @@ class EstCotacao extends BaseController
         $praz                       = new MyCampo('est_cotacao', 'cot_prazo');
         $praz->valor                = $termina;
         $praz->dispForm             = 'col-6';
+        $praz->largura              = 50;
         $this->cot_prazo            = $praz->crInput();
 
         $cota          = new MyCampo();
@@ -142,7 +143,6 @@ class EstCotacao extends BaseController
         $marc->funcChan = 'checkRadioButtons(this)';
         $marc->valor = $marc->selecionado = 0;
         $this->marctodos = $marc->crRadio();
-
     }
 
     /**
@@ -192,7 +192,7 @@ class EstCotacao extends BaseController
     //     // if (!$compr = cache('compr')) {
     //     $campos = montaColunasCampos($this->data, 'cot_id', 'd');
     //     // debug($campos, true);
-        // $dados_compr = $this->cotacao->getCotacao();
+    // $dados_compr = $this->cotacao->getCotacao();
     //     // $this->data['edicao'] = false;
     //     $agora = date('Y-m-d H:i:s');
     //     for ($dc = 0; $dc < count($dados_compr); $dc++) {
@@ -212,26 +212,26 @@ class EstCotacao extends BaseController
     //     }
 
     //     $cotac = montaListaColunas($this->data, 'cot_id', $dados_compr, $campos[1], true);
-        // for ($cp = 0; $cp < count($cotac); $cp++) {
-        //     $cont = $cotac[$cp];
-        //     $cotac[$cp]['col_details'] = [
-        //         'tit' => ['Produto', 'Qtia', 'Und'],
-        //         'tam' => ['col-5', 'col-2', 'col-2'],
-        //         'cam' => ['pro_nome', 'ctp_quantia', 'und_sigla'],
-        //     ];
-        //     $dados_prods = $this->cotacao->getCotacaoProd($cont[0]);
-        //     $prod = '';
-        //     $ct =0;
-        //     for ($p = 0; $p < count($dados_prods); $p++) {
-        //         if($prod != $dados_prods[$p]['pro_id']){
-        //             $qtia = formataQuantia(isset($dados_prods[$p]['ctp_quantia']) ? $dados_prods[$p]['ctp_quantia'] : 0);
-        //             $dados_prods[$p]['ctp_quantia'] = $qtia['qtia'];
-        //             $cotac[$cp]['details'][$ct] = $dados_prods[$p];
-        //             $prod = $dados_prods[$p]['pro_id'];
-        //             $ct++;
-        //         }
-        //     }
-        // }
+    // for ($cp = 0; $cp < count($cotac); $cp++) {
+    //     $cont = $cotac[$cp];
+    //     $cotac[$cp]['col_details'] = [
+    //         'tit' => ['Produto', 'Qtia', 'Und'],
+    //         'tam' => ['col-5', 'col-2', 'col-2'],
+    //         'cam' => ['pro_nome', 'ctp_quantia', 'und_sigla'],
+    //     ];
+    //     $dados_prods = $this->cotacao->getCotacaoProd($cont[0]);
+    //     $prod = '';
+    //     $ct =0;
+    //     for ($p = 0; $p < count($dados_prods); $p++) {
+    //         if($prod != $dados_prods[$p]['pro_id']){
+    //             $qtia = formataQuantia(isset($dados_prods[$p]['ctp_quantia']) ? $dados_prods[$p]['ctp_quantia'] : 0);
+    //             $dados_prods[$p]['ctp_quantia'] = $qtia['qtia'];
+    //             $cotac[$cp]['details'][$ct] = $dados_prods[$p];
+    //             $prod = $dados_prods[$p]['pro_id'];
+    //             $ct++;
+    //         }
+    //     }
+    // }
     //     $cotacao['data'] = $cotac;
     //     // }
     //     // debug($compr, true);
@@ -430,7 +430,6 @@ class EstCotacao extends BaseController
         $this->data['log'] = buscaLog('est_cotacao', $id);
 
         echo view('vw_edicao', $this->data);
-
     }
     /**
      * Exclusão
@@ -622,7 +621,7 @@ class EstCotacao extends BaseController
         $ret = [];
         $dados = $this->request->getPost();
         // debug($dados);
-        $precocompra = isset($dados['precocompra']) && floatval(str_replace(',', '.', $dados['precocompra'])) > 0?str_replace(',', '.', $dados['precocompra']):str_replace(',', '.', $dados['preco']);
+        $precocompra = isset($dados['precocompra']) && floatval(str_replace(',', '.', $dados['precocompra'])) > 0 ? str_replace(',', '.', $dados['precocompra']) : str_replace(',', '.', $dados['preco']);
         $cofDados = [
             'cot_id'       => $dados['cotacao'],
             'cop_id'       => $dados['cop_id'],
