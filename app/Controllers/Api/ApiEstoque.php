@@ -168,17 +168,17 @@ class ApiEstoque extends Auth
                     $prods[$d]['for_nome']      = $chave['for_razao'];
                     $prods[$d]['comid']        = $chave['com_id'];
                     $prods[$d]['datacompra']      = dataDbToBr($chave['com_data']);
-                    $prods[$d]['entrega']      = isset($chave['cop_previsao'])?dataDbToBr($chave['cop_previsao']):dataDbToBr($chave['com_previsao']);
+                    $prods[$d]['entrega']      = isset($chave['cop_previsao']) ? dataDbToBr($chave['cop_previsao']) : dataDbToBr($chave['com_previsao']);
                     $prods[$d]['qtia']          = (string) formataQuantia($chave['cop_quantia'])['qtis'];
                     $prods[$d]['valor']          = floatToMoeda($chave['cop_valor']);
                     $prods[$d]['total']          = floatToMoeda($chave['cop_total']);
 
                     $prods[$d]['codbar']          = '';
                     $produto = $this->compra->getCompraProd($chave['com_id'], $chave['pro_id'])[0];
-                    if($produto['gru_controlaestoque'] == 'N'){ // busca a marca, traz preenchida e pede a quantidade
+                    if ($produto['gru_controlaestoque'] == 'N') { // busca a marca, traz preenchida e pede a quantidade
                         $marcax = $this->marca->getMarcaProd($chave['pro_id']);
                         // debug($marcax);
-                        if($marcax){
+                        if ($marcax) {
                             $prods[$d]['codbar']          = $marcax[0]['mar_codigo'];
                         }
                     }
@@ -247,7 +247,7 @@ class ApiEstoque extends Auth
                     $prods[$d]['for_nome']      = $chave['for_razao'];
                     $prods[$d]['comid']        = $chave['com_id'];
                     $prods[$d]['datacompra']      = dataDbToBr($chave['com_data']);
-                    $prods[$d]['entrega']      = isset($chave['cop_previsao'])?dataDbToBr($chave['cop_previsao']):dataDbToBr($chave['com_previsao']);
+                    $prods[$d]['entrega']      = isset($chave['cop_previsao']) ? dataDbToBr($chave['cop_previsao']) : dataDbToBr($chave['com_previsao']);
                     $prods[$d]['qtia']          = (string) formataQuantia($chave['cop_quantia'])['qtis'];
                     $prods[$d]['valor']          = floatToMoeda($chave['cop_valor']);
                     $prods[$d]['total']          = floatToMoeda($chave['cop_total']);
@@ -257,10 +257,10 @@ class ApiEstoque extends Auth
 
                     $prods[$d]['codbar']          = '';
                     $produto = $this->compra->getCompraProd($chave['com_id'], $chave['pro_id'])[0];
-                    if($produto['gru_controlaestoque'] == 'N'){ // busca a marca, traz preenchida e pede a quantidade
+                    if ($produto['gru_controlaestoque'] == 'N') { // busca a marca, traz preenchida e pede a quantidade
                         $marcax = $this->marca->getMarcaProd($chave['pro_id']);
                         // debug($marcax);
-                        if($marcax){
+                        if ($marcax) {
                             $prods[$d]['codbar']          = $marcax[0]['mar_codigo'];
                         }
                     }
@@ -294,7 +294,7 @@ class ApiEstoque extends Auth
                 $comid       = $this->request->getVar('comid');
                 // $deposito       = $this->request->getVar('deposito');
 
-                $compras       =  $this->compra->getCompraProdPendente(false, false,false,$comid); // somente produtos pendentes
+                $compras       =  $this->compra->getCompraProdPendente(false, false, false, $comid); // somente produtos pendentes
 
                 // echo $this->api->getLastQuery();
                 $prods      = [];
@@ -327,7 +327,7 @@ class ApiEstoque extends Auth
                     $prods[$d]['for_nome']      = $chave['for_razao'];
                     $prods[$d]['comid']        = $chave['com_id'];
                     $prods[$d]['datacompra']      = dataDbToBr($chave['com_data']);
-                    $prods[$d]['entrega']      = isset($chave['cop_previsao'])?dataDbToBr($chave['cop_previsao']):dataDbToBr($chave['com_previsao']);
+                    $prods[$d]['entrega']      = isset($chave['cop_previsao']) ? dataDbToBr($chave['cop_previsao']) : dataDbToBr($chave['com_previsao']);
                     $prods[$d]['qtia']          = (string) formataQuantia($chave['cop_quantia'])['qtis'];
                     $prods[$d]['valor']          = floatToMoeda($chave['cop_valor']);
                     $prods[$d]['total']          = floatToMoeda($chave['cop_total']);
@@ -337,10 +337,10 @@ class ApiEstoque extends Auth
 
                     $prods[$d]['codbar']          = '';
                     $produto = $this->compra->getCompraProd($chave['com_id'], $chave['pro_id'])[0];
-                    if($produto['gru_controlaestoque'] == 'N'){ // busca a marca, traz preenchida e pede a quantidade
+                    if ($produto['gru_controlaestoque'] == 'N') { // busca a marca, traz preenchida e pede a quantidade
                         $marcax = $this->marca->getMarcaProd($chave['pro_id']);
                         // debug($marcax);
-                        if($marcax){
+                        if ($marcax) {
                             $prods[$d]['codbar']          = $marcax[0]['mar_codigo'];
                         }
                     }
@@ -614,7 +614,7 @@ class ApiEstoque extends Auth
                 $deposito   = $this->request->getVar('deposito');
                 $codbar     = $this->request->getVar('codbar');
                 $produto    = $this->request->getVar('produto');
-                $marca      = $this->request->getVar('promarca')!==null?$this->request->getVar('promarca'):'';
+                $marca      = $this->request->getVar('promarca') !== null ? $this->request->getVar('promarca') : '';
                 $quantia    = $this->request->getVar('quantia');
                 $preco      = $this->request->getVar('preco');
                 $total      = $this->request->getVar('total');
@@ -649,13 +649,12 @@ class ApiEstoque extends Auth
                     if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
                         // Tratar erro de duplicidade
                         $ent_id = $this->entrada->getInsertID();
-                        log_message('info', 'Tentativa de entrada duplicada '.$ent_id.' Função: gravaentrada');
+                        log_message('info', 'Tentativa de entrada duplicada ' . $ent_id . ' Função: gravaentrada');
                         return $this->respond(['success' => true, 'id_entrada' => $ent_id], 200);
-
                     } else {
                         // Outro erro de banco
                         $db->transRollback();
-                        return $this->respond(['success' => false, 'message' => 'Erro ao gravar entrada'. $e], 500);
+                        return $this->respond(['success' => false, 'message' => 'Erro ao gravar entrada' . $e], 500);
                         // throw $e; // rethrow se quiser tratar globalmente
                     }
                 }
@@ -689,11 +688,11 @@ class ApiEstoque extends Auth
                     'cop_status' => 'R'
                 ];
                 $chave = "com_id = $compra AND pro_id = $produto";
-                $salva = $this->common->updateReg('dbEstoque', 'est_compra_produto',$chave, $dados_com, $produto);
+                $salva = $this->common->updateReg('dbEstoque', 'est_compra_produto', $chave, $dados_com, $produto);
 
                 if ($compra != null) {
                     $completo = $this->compra->getCompraVsEntrada($compra)[0];
-                    if($completo['entrada_completa'] == 1){
+                    if ($completo['entrada_completa'] == 1) {
                         $dados_com = [
                             'com_id'    => $compra,
                             'com_status'    => 'R',
@@ -704,18 +703,18 @@ class ApiEstoque extends Auth
 
                 // verifica se o código de barras existe
                 log_message('info', 'Marca: ' . $marca . ' Função: gravaentrada');
-                if($marca != ''){
+                if ($marca != '') {
                     $existecodbar = $this->marca->getMarcaCod($codbar);
-                    if(count($existecodbar) == 0){ // codbar não existe, insere a marca
+                    if (count($existecodbar) == 0) { // codbar não existe, insere a marca
                         // busca a marca pelo nome para pegar o ID
                         $marcaencontrada = $this->marca->getMarcaSearch(trim($marca));
-                        if($marcaencontrada){
+                        if ($marcaencontrada) {
                             $id = $marcaencontrada[0]['mar_id'];
                             $dados_mar = [
                                 'mar_id'         => $id,
                                 'mar_codigo'         => $codbar,
                             ];
-                            $cod_id = $this->common->insertReg('dbEstoque','est_marca_codigo_link', $dados_mar);
+                            $cod_id = $this->common->insertReg('dbEstoque', 'est_marca_codigo_link', $dados_mar);
                             log_message('info', 'Gravou: ' . json_encode($dados_mar) . ' Função: gravaentrada');
                         }
                     }
@@ -753,7 +752,7 @@ class ApiEstoque extends Auth
                 log_message('info', 'Usuário: ' . $usuario . ' Função: gravanaochegou');
 
                 $key = $this->request->getHeaderLine('Idempotency-Key');
-                log_message('info', 'Key '.$key.' Função: gravanaochegou');
+                log_message('info', 'Key ' . $key . ' Função: gravanaochegou');
 
                 if (!$key) {
                     return $this->fail('Idempotency key required', 400);
@@ -773,14 +772,17 @@ class ApiEstoque extends Auth
                 $db = Database::connect(); // Instancia o DB
                 $db->transStart(); // <<< INICIA TRANSACAO
 
+                $agora = date('Y-m-d H:i:s');
+
                 $dados_com = [
                     'cop_status'     => $tipo,
+                    'cop_atualizado' => $agora
                 ];
                 log_message('info', 'Não Chegou: ' . json_encode($dados_com) . ' Função: gravanaochegou');
 
                 try {
                     $chave = "com_id = $compra AND pro_id = $produto";
-                    $salva = $this->common->updateReg('dbEstoque', 'est_compra_produto',$chave, $dados_com, $produto);
+                    $salva = $this->common->updateReg('dbEstoque', 'est_compra_produto', $chave, $dados_com, $produto);
                     if (!$salva) {
                         // Erros de validação do Model
                         $db->transRollback();
@@ -789,7 +791,7 @@ class ApiEstoque extends Auth
                 } catch (\CodeIgniter\Database\Exceptions\DatabaseException $e) {
                     // Outro erro de banco
                     $db->transRollback();
-                    return $this->respond(['success' => false, 'message' => 'Erro ao gravar não chegou'. $e], 500);
+                    return $this->respond(['success' => false, 'message' => 'Erro ao gravar não chegou' . $e], 500);
                     // throw $e; // rethrow se quiser tratar globalmente
                 }
 
@@ -1022,7 +1024,7 @@ class ApiEstoque extends Auth
                 $quantia        = $this->request->getVar('quantia');
                 $justi          = $this->request->getVar('justificativa');
                 $data           = new  \DateTime();
-                if((float)$quantia > 0){
+                if ((float)$quantia > 0) {
                     $dados_ped = [
                         'ped_data'  => $data->format('Y-m-d'),
                         'pro_id'    => $produto,
@@ -1051,9 +1053,9 @@ class ApiEstoque extends Auth
                     } else {
                         return $this->respond(['message' => 'Erro ao Gravar Solicitação'], 401);
                     }
-                 } else {
+                } else {
                     return $this->respond(['message' => 'Erro ao Gravar Solicitação... Quantia zerada'], 401);
-                 }
+                }
             } else {
                 return $this->respond(['message' => 'Token Inválido'], 401);
             }
