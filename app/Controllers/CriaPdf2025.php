@@ -69,18 +69,16 @@ class CriaPdf2025 extends BaseController
                 for ($p = 0; $p < count($produtos); $p++) {
                     $prod = $produtos[$p];
                     $previsao = $prod['cop_previsao'] ?? $compra['com_previsao'];
-                    // if (strlen($prod['pro_nome']) < 30) {
-                    // } else {
-                    //     $this->pdf->EtiqTexto('', substr($prod['pro_nome'], 0, 30) . '<br>' . substr($prod['pro_nome'], 30, 30), 'Arial', 8, 6, 55, 1, 0, 'L');
-                    // }
                     $this->pdf->SetFont('Arial', '', 8);
-                    // $this->pdf->Rect(10, $this->pdf->GetY(), 55, 6);
                     $this->pdf->MultiCellSafe(55, 3, formata_texto($prod['pro_nome']), 1, 'J');
-                    // $this->pdf->EtiqTexto('', $texto, 'Arial', 8, 6, 55, 1, 0, 'L');
                     $this->pdf->setY($this->pdf->GetY() - 6);
                     $this->pdf->setX(65);
+                    $this->pdf->SetFont('Arial', '', 8);
+                    $this->pdf->MultiCellSafe(30, 3, formata_texto($prod['mar_nome']), 1, 'J');
+                    $this->pdf->setY($this->pdf->GetY() - 6);
+                    $this->pdf->setX(95);
 
-                    $this->pdf->EtiqTexto('', $prod['mar_nome'] ?? '.', 'Arial', 8, 6, 30, 1, 0, 'L');
+                    // $this->pdf->EtiqTexto('', $prod['mar_nome'] ?? '.', 'Arial', 8, 6, 30, 1, 0, 'L');
                     $this->pdf->EtiqTexto('', $prod['und_sigla'], 'Arial', 8, 6, 23, 1, 0, 'L');
                     $this->pdf->EtiqTexto('', formataQuantia($prod['cop_quantia'])['qtia'], 'Arial', 8, 6, 15, 1, 0, 'R');
                     $this->pdf->EtiqTexto('', floatToMoeda($prod['cop_valor']), 'Arial', 8, 6, 20, 1, 0, 'R');
