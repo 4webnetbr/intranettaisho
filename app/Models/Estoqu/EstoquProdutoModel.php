@@ -22,12 +22,13 @@ class EstoquProdutoModel extends Model
         'gru_id',
         'grc_id',
         'pro_nome',
+        'pro_coderp',
+        'pro_deserp',
         'und_id',
         'und_id_compra',
         'pro_fcc',
         'pro_link',
         'pro_status'
-
     ];
 
 

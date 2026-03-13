@@ -97,16 +97,17 @@ class EstProduto extends BaseController
         $this->def_campos();
 
         $secao[0] = 'Dados Gerais';
-        $campos[0][0] = $this->pro_id;
-        $campos[0][1] = $this->gru_id;
-        $campos[0][2] = $this->grc_id;
-        $campos[0][3] = $this->pro_nome;
-        $campos[0][4] = $this->und_id;
-        // $campos[0][5] = $this->pro_minimo;
-        $campos[0][5] = $this->und_compra;
-        $campos[0][6] = $this->pro_fcc;
-        $campos[0][7] = $this->pro_link;
-        $campos[0][8] = $this->pro_status;
+        $campos[0][] = $this->pro_id;
+        $campos[0][] = $this->gru_id;
+        $campos[0][] = $this->grc_id;
+        $campos[0][] = $this->pro_nome;
+        $campos[0][] = $this->pro_coderp;
+        $campos[0][] = $this->pro_deserp;
+        $campos[0][] = $this->und_id;
+        $campos[0][] = $this->und_compra;
+        $campos[0][] = $this->pro_fcc;
+        $campos[0][] = $this->pro_link;
+        $campos[0][] = $this->pro_status;
 
         $this->data['secoes'] = $secao;
         $this->data['campos'] = $campos;
@@ -143,16 +144,17 @@ class EstProduto extends BaseController
         $dados_Produto = $this->Produto->getProduto($id)[0];
         $this->def_campos($dados_Produto, 0, $show);
         $secao[0] = 'Dados Gerais';
-        $campos[0][0] = $this->pro_id;
-        $campos[0][1] = $this->gru_id;
-        $campos[0][2] = $this->grc_id;
-        $campos[0][3] = $this->pro_nome;
-        $campos[0][4] = $this->und_id;
-        // $campos[0][5] = $this->pro_minimo;
-        $campos[0][5] = $this->und_compra;
-        $campos[0][6] = $this->pro_fcc;
-        $campos[0][7] = $this->pro_link;
-        $campos[0][8] = $this->pro_status;
+        $campos[0][] = $this->pro_id;
+        $campos[0][] = $this->gru_id;
+        $campos[0][] = $this->grc_id;
+        $campos[0][] = $this->pro_nome;
+        $campos[0][] = $this->pro_coderp;
+        $campos[0][] = $this->pro_deserp;
+        $campos[0][] = $this->und_id;
+        $campos[0][] = $this->und_compra;
+        $campos[0][] = $this->pro_fcc;
+        $campos[0][] = $this->pro_link;
+        $campos[0][] = $this->pro_status;
 
         $this->data['secoes'] = $secao;
         $this->data['campos'] = $campos;
@@ -297,6 +299,18 @@ class EstProduto extends BaseController
         $atin->classep             = 'mark';
         $this->pro_status          = $atin->cr2opcoes();
 
+        $cerp = new MyCampo('est_produto', 'pro_coderp');
+        $cerp->obrigatorio = true;
+        $cerp->valor = isset($dados['pro_coderp']) ? $dados['pro_coderp'] : '';
+        $cerp->leitura       = $show;
+        $this->pro_coderp = $cerp->crInput();
+
+        $derp = new MyCampo('est_produto', 'pro_deserp');
+        $derp->obrigatorio = true;
+        $derp->valor = isset($dados['pro_deserp']) ? $dados['pro_deserp'] : '';
+        $derp->leitura       = $show;
+        $this->pro_deserp = $derp->crInput();
+
     }
 
 
@@ -315,6 +329,8 @@ class EstProduto extends BaseController
             'gru_id'            => $dados['gru_id'],
             'grc_id'            => $dados['grc_id'],
             'pro_nome'          => $dados['pro_nome'],
+            'pro_coderp'          => $dados['pro_coderp'],
+            'pro_deserp'          => $dados['pro_deserp'],
             'pro_fcc'           => $dados['pro_fcc'],
             'pro_link'          => $dados['pro_link'],
             'pro_status'        => $dados['pro_status'],

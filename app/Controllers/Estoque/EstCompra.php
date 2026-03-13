@@ -667,7 +667,7 @@ class EstCompra extends BaseController
             ];
             // debug($dados_pro);
             if ($dados['cop_id'] != '') {
-                $salva = $this->common->updateReg('dbEstoque', 'est_compra_produto', 'cop_id = ' . $dados['cop_id'], $dados_pro);
+                $salva = $this->common->updateReg('dbEstoque', 'est_compra_produto', 'cop_id = ' . $dados['cop_id'], $dados_pro,$dados['cop_id']);
                 $cop_id = $dados['cop_id'];
             } else {
                 $salva = $this->common->insertReg('dbEstoque', 'est_compra_produto', $dados_pro);
