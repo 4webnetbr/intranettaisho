@@ -281,6 +281,7 @@ class EstoquContagemModel extends Model
         }
         $db = db_connect('dbEstoque');
         $builder = $db->table('vw_produtos_marca_relac pro');
+        $builder->distinct(true);
         $builder->select('pro.pro_id, pro.pro_nome, pro.gru_nome, pro.und_nome, pro.und_id, sld.saldo, mar_nome, mar_apresenta, mar_conversao, mar_codigo');
         $builder->join('vw_saldo_produtos sld', "sld.pro_id = pro.pro_id AND sld.emp_id = $empresa AND sld.dep_id = $deposito", 'left');
         $builder->join('est_consumo con', "con.pro_id = pro.pro_id AND con.emp_id = $empresa", 'left');
